@@ -1,6 +1,7 @@
 *.class
 target/
-
+*/target/
 /.settings
 */.settings
+*.jar
 
