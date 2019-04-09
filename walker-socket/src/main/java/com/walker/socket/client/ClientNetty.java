@@ -43,7 +43,7 @@ public class ClientNetty extends ClientFrame {
 //		}
 //		serverIp = Setting.get("socket_ip", "127.0.0.1");
 	}
-	ClientNetty(String ip, int port){
+	public ClientNetty(String ip, int port){
 		this();
 		this.serverIp = ip;
 		this.serverPort = port;

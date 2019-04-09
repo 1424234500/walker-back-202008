@@ -1,8 +1,12 @@
-package com.walker.socket.server_1;
+package test;
+
+import org.junit.Test;
+
+import com.walker.socket.server_1.SocketNetty;
 
 public class ServerTest {
-
-	public static void main(String[] args) throws Exception {
+	@Test
+	public void main() throws Exception {
 		
 //		Session<String> aaa = new Session<>("aaa", "127.0.0.1:10000");
 //		Session<String> bbb = new Session<>("aaa", "127.0.0.1:10000");
