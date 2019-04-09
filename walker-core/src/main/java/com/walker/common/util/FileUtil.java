@@ -390,10 +390,7 @@ public class FileUtil {
 		if (Arrays.binarySearch(exts, ext, String.CASE_INSENSITIVE_ORDER) >= 0) {
 			return readByLines(path, fun);
 		} else if (ext.equals("xls") || ext.equals("xlsx")) {
-			ArrayList<ArrayList<Object>> res = ExcelUtil.readExcel(new File(path));
-			if (excel != null)
-				excel.make(res);
-			return res;
+			return "xls error";
 		} else {
 			return "File:" + path + " 不能识别";
 		}
