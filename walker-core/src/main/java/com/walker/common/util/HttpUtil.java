@@ -1,8 +1,11 @@
 package com.walker.common.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -27,11 +31,13 @@ import org.apache.log4j.Logger;
  */
 public class HttpUtil {
 	private static Logger log = Logger.getLogger("Http");
+	
+	private final static int DEFAULT_BUFFER = 4096;
 	private final static String DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
 	private final static String DEFAULT_ENCODE = "utf-8";
 
 	public static String encode(String str) throws Exception {
-		return URLEncoder.encode(str, "utf-8").replaceAll("\\+", "%20");
+		return URLEncoder.encode(str, DEFAULT_ENCODE).replaceAll("\\+", "%20");
 	}
 
 	public static String get(String url, Map<?, ?> data) throws Exception {
@@ -47,23 +53,23 @@ public class HttpUtil {
 		// ddd = encode(ddd);
 		// ddd = URLEncoder.encode(ddd);
 		url = url + ddd.toString();
-		return get(url, "utf-8");
+		return get(url, DEFAULT_ENCODE);
 	}
 
 	public static String get(String url) throws Exception {
-		return get(url, "utf-8");
+		return get(url, DEFAULT_ENCODE);
 	}
 
 	public static String post(String url, List<?> listBean) throws Exception {
-		return post(url, listBean, "utf-8", null);
+		return post(url, listBean, DEFAULT_ENCODE, null);
 	}
 
 	public static String post(String url, Map<?, ?> bean) throws Exception {
-		return post(url, bean, "utf-8", null);
+		return post(url, bean, DEFAULT_ENCODE, null);
 	}
 
 	public static String post(String url, String data) throws Exception {
-		return post(url, data, "utf-8", null);
+		return post(url, data, DEFAULT_ENCODE, null);
 	}
 
 	public static String post(String url, Map<?, ?> bean, String encode, String userAgent) throws Exception {
@@ -192,8 +198,65 @@ public class HttpUtil {
 		return res;
 	}
 
-	
-	
+	public static void download(String url, String saveFilePath) throws Exception {
+		File file = new File(saveFilePath);
+		if(file.isDirectory()) {
+			throw new Exception("save to dir?");
+		}else {
+			if(file.exists()) {
+				file.delete();
+			}
+			file.createNewFile();
+		}
+		download(url, file);
+	}
+	/**
+	 * 下载文件 统计耗时
+	 * @param url
+	 * @param file
+	 * @throws Exception
+	 */
+	public static void download(String url, File file) throws Exception {
+		StopWatch sw = new StopWatch();
+		sw.start();
+		log.warn(Arrays.toString(new String[] {"download", url, file.getAbsolutePath()}));
+		long length = 0;
+		
+		FileOutputStream op = null;
+		InputStream is = null;
+		try {
+			op = new FileOutputStream(file);
+			URL ur = new URL(url);
+			is = ur.openStream();
+			int flushSize = 1024 * 1024 * 10;
+			int count = 0;
+			int size = 0;
+			byte[] buffer = new byte[4092];
+			while((size = is.read(buffer)) != -1) {
+				op.write(buffer, 0, size);
+				count += size;
+				length += size;
+				if(count > flushSize) {
+					op.flush();
+					count = 0;
+				}
+			}
+			op.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(op != null) {
+				op.flush();
+				op.close();
+			}
+			if(is != null) {
+				is.close();
+			}
+			sw.split();
+			log.warn(Arrays.toString(new String[] {"download", url, file.getAbsolutePath(), "size", Tools.calcSize(length), "cost", sw.toSplitString()}));
+		}
+	}
 	
 	
 	
