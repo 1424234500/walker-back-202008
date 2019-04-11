@@ -16,7 +16,6 @@ public class TaskMake{
 	} 
 	
 	TaskInterface taskResult = null;
-	int threadType = ThreadUtilServer.DefaultThread;
 	long time = 1000;
 	int maxRetryCount = 5;	//最大重试次数
 	String doName = "操作";
@@ -38,7 +37,7 @@ public class TaskMake{
 		this.task = new Task(this.taskResult, this.doName, this.time, this.maxRetryCount);
 	}
 	public void startTask(){
-		ThreadUtilServer.execute(threadType,  task);
+		ThreadUtil.execute(task);
 	}
 	class Task implements Runnable{
 		int count = 0;			//操作失败次数

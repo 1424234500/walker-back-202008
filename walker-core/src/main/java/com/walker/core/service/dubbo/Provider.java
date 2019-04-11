@@ -1,13 +1,9 @@
 package com.walker.core.service.dubbo;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.web.context.WebApplicationContext;
 
-import com.alibaba.dubbo.container.spring.SpringContainer;
 import com.walker.common.util.Call;
-import com.walker.common.util.SpringContextUtil;
 
 /**
  * service provider

@@ -6,7 +6,6 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.walker.common.util.Tools;
 
 public abstract class TaskJob implements Job,Runnable {
 	private static Logger log = Logger.getLogger(TaskJob.class);

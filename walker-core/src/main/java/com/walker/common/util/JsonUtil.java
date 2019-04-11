@@ -108,7 +108,8 @@ public class JsonUtil {
      * 解析json为map/list/string
      * @param jsonstr
      */
-    public static <T> T get(String jsonstr) {
+    @SuppressWarnings("unchecked")
+	public static <T> T get(String jsonstr) {
         try {
         	int type = getType(jsonstr);
         	if(type == 0){

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 
@@ -27,9 +26,10 @@ public class SomethingTest {
 		testSort();
 	
 	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void testSort(){
 		int arr[] = {0,3,2,1,4,5,6,2};
-		List<Integer> list = new ArrayList();
+		List<Integer> list = new ArrayList<Integer>();
 		for(int i : arr){
 			list.add(i);
 		}
@@ -183,6 +183,7 @@ public class SomethingTest {
 	}
 
 	int arr = 0;	//全局命名重用为私有
+	@SuppressWarnings("unused")
 	void defineWord(){
 		int arr = 1;
 		
@@ -204,6 +205,7 @@ public class SomethingTest {
 	public static void out(Object...objects){
 		Tools.out(objects);
 	}
+	@SuppressWarnings("unused")
 	boolean isValid(int x){
 		 /* 给 i 加 1 */
 		//但是永远不要记录包或者方法的整体设计这样的干货。
@@ -232,6 +234,7 @@ public class SomethingTest {
 		return x*2>0?true:false;
 	}
 	
+	@SuppressWarnings("unused")
 	int s_um(int i) throws Exception{
 		int res = 0;
 		int j = 0;

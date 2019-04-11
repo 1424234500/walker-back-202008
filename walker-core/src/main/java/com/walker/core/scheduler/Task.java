@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.quartz.CronScheduleBuilder;
+import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
@@ -91,9 +92,10 @@ public class Task {
 	
 	
 
+	@SuppressWarnings("unchecked")
 	JobDetail getJobDetail(){
 		String name = this.toString();
-		Class clz = ClassUtil.loadClass(className);
+		Class<? extends Job> clz = (Class<? extends Job>) ClassUtil.loadClass(className);
 		this.jobDetail = JobBuilder
 			.newJob (clz)
 			.withIdentity(name)

@@ -29,7 +29,7 @@ public abstract class ClientFrame implements Client, InterfaceOut{
 	//开始连接任务
 
 	public void start() throws Exception{
-		TaskMake task = new TaskMake(new TaskInterface() {
+		new TaskMake(new TaskInterface() {
 
 			public void onTrue() {
 				out("连接成功");
@@ -53,7 +53,7 @@ public abstract class ClientFrame implements Client, InterfaceOut{
 	}  
 	//开始读取任务
 	protected void read() throws Exception{
-		TaskMake taskMake = new TaskMake(new TaskInterface() {
+		new TaskMake(new TaskInterface() {
 
 			public void onTrue() {
 //				read();	//一个task(20延迟,最多连续两次异常读取)
@@ -74,7 +74,7 @@ public abstract class ClientFrame implements Client, InterfaceOut{
 			public void tip(Object... objects) {
 				out(objects);
 			}
-		}, "读取消息",1000, 5);	//最多5次读取
+		}, "读取消息",1000, 5);
 //		taskMake.startTask();
 		String readLine = readImpl();
 		if(Tools.notNull(readLine)){
@@ -84,7 +84,7 @@ public abstract class ClientFrame implements Client, InterfaceOut{
 	//开启发送任务
 
 	public void send(final String jsonstr) throws Exception{
-		TaskMake task = new TaskMake(new TaskInterface() {
+		new TaskMake(new TaskInterface() {
 
 			public void onTrue() {
 				out("发送", jsonstr);

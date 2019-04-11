@@ -1,12 +1,10 @@
 package com.walker.core.annotation;
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import com.walker.common.util.FunT;
 import com.walker.common.util.Tools;
 
 /**

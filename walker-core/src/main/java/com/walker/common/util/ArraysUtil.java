@@ -33,6 +33,7 @@ public class ArraysUtil {
 	 * 测试array关键问题
 	 * @param argv
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void main(String[] argv){
 		Set<String> arr1 = new LinkedHashSet<>();
 		arr1.add("s1");
@@ -87,13 +88,13 @@ public class ArraysUtil {
 		Integer b[][] = new Integer[a.length][];
 		System.arraycopy(a, 0, b, 0, a.length); //系统浅复制
 		Tools.out(Arrays.deepToString(b));
-		Tools.out(b);
+		Tools.out(b,1);
 		
 		List<Integer[]> listInte = Arrays.asList(a); //asList获取到 的 List是底层实现 保留 不可改变特性
 		Tools.formatOut(listInte);
 //		listInte.add(new Integer[]{7, 8, 9}); //异常
 		String[] sss = {"a","b"};
-		List<String> stooges = Arrays.asList("Larry", "Moe", "Curly");
+		Arrays.asList("Larry", "Moe", "Curly");
 		arr1.addAll(Arrays.asList(sss));
 		arr1.add("bb"); //异常
 

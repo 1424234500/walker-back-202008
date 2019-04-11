@@ -14,7 +14,6 @@ import com.walker.core.cache.CacheMgr;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import sun.util.logging.resources.logging;
 
 /**
  * redis工具数据库

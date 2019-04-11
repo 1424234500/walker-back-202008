@@ -3,6 +3,7 @@ package com.walker.common.util;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -14,14 +15,16 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 
 /**
@@ -100,11 +103,21 @@ public class HttpUtil {
 	 */
 	private static HttpClient makeHttpClient(){
 		//创造HttpClient浏览器端
-		BasicHttpParams httpParameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);// 连接超时
-		HttpConnectionParams.setSoTimeout(httpParameters, 300000);//
-		HttpClient client = new DefaultHttpClient(httpParameters);
-		client.getParams().setIntParameter("http.socket.timeout", 15000);
+//		BasicHttpParams httpParameters = new BasicHttpParams();
+//		HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);// 连接超时
+//		HttpConnectionParams.setSoTimeout(httpParameters, 300000);//
+//		HttpClient client = new DefaultHttpClient(httpParameters);
+//		client.getParams().setIntParameter("http.socket.timeout", 15000);
+		
+		HttpClient client = HttpClientBuilder.create()
+				.addInterceptorFirst(
+				new HttpRequestInterceptor() {
+					@Override
+					public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
+						
+					}}
+				).build();
+
 		return client;
 	}
 	
@@ -231,7 +244,7 @@ public class HttpUtil {
 			int flushSize = 1024 * 1024 * 10;
 			int count = 0;
 			int size = 0;
-			byte[] buffer = new byte[4092];
+			byte[] buffer = new byte[DEFAULT_BUFFER];
 			while((size = is.read(buffer)) != -1) {
 				op.write(buffer, 0, size);
 				count += size;

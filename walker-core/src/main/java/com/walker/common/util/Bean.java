@@ -7,7 +7,7 @@ import java.util.Map;
  * @author Walker
  * 2018年7月13日
  */
-public class Bean extends HashMap{ 
+public class Bean extends HashMap<Object, Object>{ 
 	private static final long serialVersionUID = 1L;
 
 
@@ -105,13 +105,6 @@ public class Bean extends HashMap{
            tar.putAll(this);
        }
        return tar;
-   }
-   
-   /**
-    * @param bean 将指定对象的数据复制到本对象中
-    */
-   public void copyFrom(Bean bean) {
-       copyFrom(bean, null);
    }
    
    /**

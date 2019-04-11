@@ -1,7 +1,6 @@
 package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
-import com.walker.common.util.TimeUtil;
 import com.walker.socket.server_1.Msg;
 
 public class EchoPlugin<T> extends Plugin<T>{

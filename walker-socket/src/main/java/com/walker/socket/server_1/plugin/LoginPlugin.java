@@ -17,9 +17,8 @@ public class LoginPlugin<T> extends Plugin<T>{
 		Bean data = (Bean) msg.getData();
 		String userId = data.get("user", "");
 		String pwd = data.get("pwd", "");
-		
-//		msg.setType("onlogin");
-//		session.onLogin(data);
+		log.info(userId);
+		log.info(pwd);
 		pub.publish(msg.getFrom(), msg);
 		
 	}

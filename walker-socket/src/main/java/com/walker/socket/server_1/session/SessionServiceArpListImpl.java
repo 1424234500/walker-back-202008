@@ -8,7 +8,6 @@ import org.apache.log4j.NDC;
 
 import com.walker.common.setting.Setting;
 import com.walker.common.util.Fun;
-import com.walker.common.util.ThreadUtil;
 import com.walker.core.pipe.Pipe;
 import com.walker.core.pipe.PipeMgr;
 import com.walker.core.pipe.PipeMgr.Type;

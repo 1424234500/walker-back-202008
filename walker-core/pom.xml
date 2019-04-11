@@ -45,13 +45,6 @@
 			<artifactId>jedis</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>4.0.0</version>
-		</dependency>
-
 
 		<!-- https://mvnrepository.com/artifact/com.mchange/c3p0 -->
 		<dependency>
@@ -71,6 +64,12 @@
 			<artifactId>dubbo</artifactId>
 			<version>2.5.3</version>
 		</dependency>
+<!-- https://mvnrepository.com/artifact/org.glassfish.main.javaee-api/javax.jws -->
+<dependency>
+    <groupId>org.glassfish.main.javaee-api</groupId>
+    <artifactId>javax.jws</artifactId>
+    <version>3.1.2.2</version>
+</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.belerweb/pinyin4j -->
 		<dependency>

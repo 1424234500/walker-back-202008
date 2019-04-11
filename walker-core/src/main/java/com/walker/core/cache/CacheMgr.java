@@ -24,11 +24,6 @@ public class CacheMgr implements Call{
 	private static Logger log = Logger.getLogger("Cache"); 
 	static public Type DEFAULT_TYPE = Type.MAP;
 	
-	/**
-	 * 用以保证默认的cache只初始化一次
-	 */
-	private static Cache<String> cache = null;
-
 	public CacheMgr() {
 	}
     private static class SingletonFactory{           

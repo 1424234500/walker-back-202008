@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 
 import com.walker.common.util.Call;
 import com.walker.common.util.ClassUtil;
-import com.walker.common.util.HttpUtil;
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;

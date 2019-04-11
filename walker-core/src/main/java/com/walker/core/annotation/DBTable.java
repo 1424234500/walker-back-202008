@@ -1,7 +1,8 @@
 package com.walker.core.annotation;
-import java.lang.annotation.*;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 /**
  * 注解
  * 看起来就像接口的方法, 唯一的区别是你可以为其指定默认值

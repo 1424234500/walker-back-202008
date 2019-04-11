@@ -248,6 +248,7 @@ public class ClassUtil {
 	/**
 	 * "hello", 2, 3L, false
 	 */
+	@SuppressWarnings("rawtypes")
 	private static Object[] parseObject(Map index, String args, String splitArr){
 		List<Object> res = new ArrayList<>();
 		splitArr = splitArr == null ? "," : splitArr;
@@ -651,13 +652,10 @@ public class ClassUtil {
 	public ClassUtil(){
 //		out("private constructor");
 	}
+	@SuppressWarnings("unused")
 	private ClassUtil(String str){
 		out("private constructor str");
 	}
-	private ClassUtil(String str, Integer i){
-//		out("private constructor str integer");
-	}
-	
 
 	public String test(String str, Bean bean, Integer in, Boolean bool){
 		return Arrays.toString(new Object[]{str, bean, in, bool});
@@ -679,6 +677,7 @@ public class ClassUtil {
 		out(i);
 		return "testStr";
 	}
+	@SuppressWarnings("unused")
 	private String testBean(Bean i){
 		out(i);
 		return "testBean";
@@ -721,14 +720,17 @@ public class ClassUtil {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public <T> T[] testCreate(T type){
 		return (T[]) Array.newInstance(type.getClass(), 10);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T[] testCreate(Class<T> cls){
 		return (T[]) Array.newInstance(cls, 10);
 	}
 	//推断 协变类型  下转
+	@SuppressWarnings("unchecked")
 	public <T> T[] testCreate1(Class<?> cls){
 		return (T[]) Array.newInstance(cls, 10);
 	}

@@ -61,6 +61,8 @@ class FactoryMethod{
 		switch (type) {
 		case STUDENT:
 			return new Student();
+		default:
+			break;
 		}
 		return null;
 	}

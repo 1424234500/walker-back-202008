@@ -116,7 +116,9 @@ public class Tools {
 //		System.out.println(getNowTimeS() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
 		log.info(str);;
 	}
-
+	public static void out(Object object) {
+		out(object);
+	}
 	public static void out(Object... objects) {
 //		out(Arrays.toString(objects));
 		out(objects2string(objects));

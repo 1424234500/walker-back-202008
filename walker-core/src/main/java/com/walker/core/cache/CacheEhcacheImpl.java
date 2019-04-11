@@ -64,12 +64,12 @@ class CacheEhcacheImpl implements Cache<String> {
 	}
 
 	@Override
-	public void putAll(final Map map) {
+	public void putAll(final Map<?, ?> map) {
 		
 	}
 
 	@Override
-	public Map getAll() {
+	public Map<String, Object> getAll() {
 		Map<String, Object> res = new HashMap<>();
 		Set<String> keys = keySet();
 		for(String item : keys){
@@ -104,7 +104,6 @@ class CacheEhcacheImpl implements Cache<String> {
 		return get(key, null);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <V> V get(final String key, final V defaultValue) {
 		V res = defaultValue;
@@ -116,14 +115,14 @@ class CacheEhcacheImpl implements Cache<String> {
 	}
 	
 	@Override
-	public <V> Cache put(String key, V value) {
+	public <V> Cache<String> put(String key, V value) {
 		put(key, value, TIME_DEFAULT_EXPIRE);
 		return this;
 	}
 
 	
 	@Override
-	public <V> Cache put(final String key, final V value, final long expire) {
+	public <V> Cache<String> put(final String key, final V value, final long expire) {
 		Element ele = new Element(key, value);
 		if(expire > 0){
 			ele.setTimeToLive((int) Math.ceil(expire / 1000));
@@ -201,14 +200,14 @@ class CacheEhcacheImpl implements Cache<String> {
 					oftype = 0;
 					break;
 				}else if(obj instanceof Map){//最后查询层级应该是此 
-					Map objMap = (Map)obj;
+					Map<?, ?> objMap = (Map<?, ?>)obj;
 					temp = objMap.get(item); //预读取取出值为 map list ? 否则中断跳出
 					if(temp == null) break;
 					if(temp instanceof Map){	//取出对象为map
 						obj = temp;
 						oftype = 1;
 					}else if(temp instanceof List){ //输出对象为list
-						List tempList = (List)temp;
+						List<?> tempList = (List<?>)temp;
 						if(cc >= 0 && cc < tempList.size()){ //后续判定是否有选中某项 list[2]
 							Object objTemp = tempList.get(cc);
 							if(objTemp instanceof Map){ //list[2] = map
@@ -244,23 +243,24 @@ class CacheEhcacheImpl implements Cache<String> {
 			res = mapToList((Map<?,?>)obj, page, rootKey, toUrl, key, value, expire, type);
 			size = ((Map<?,?>)obj).size();
 		}else if(obj instanceof List){
-			res = listToList((List)obj, page, rootKey, toUrl, key, value, expire, type);
-			size = ((List)obj).size();
+			res = listToList((List<?>)obj, page, rootKey, toUrl, key, value, expire, type);
+			size = ((List<?>)obj).size();
 		}else{
 			res = new ArrayList<>();
 		}
 		SortUtil.sort(res, page.getDESC().length()==0, page.getORDER(), "TYPE", "COUNT", "KEY", "EXPIRE");
 		return new Bean().put("ok", toUrl==urls).put("urls", toUrl).put("list", res).put("oftype", oftype).put("size", size);
 	}
-	public List mapToList(Map theMap, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
-		List<Map> res = new ArrayList<>();
-		Set<Entry<String, Object>> set = theMap.entrySet();
+	public List<Map<?,?>> mapToList(Map<?, ?> theMap, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
+		List<Map<?,?>> res = new ArrayList<>();
+		Set<?> set = theMap.entrySet();
 		int start = page.start();
 		int stop = page.stop();
 		int count = 0;
 //		boolean ffExpire = false;
-		for(Entry<String, Object> item : set){
-			String ikey = item.getKey();
+		for(Object item1 : set){
+			Entry<?, ?> item = (Entry<?, ?>) item1;
+			String ikey = (String) item.getKey();
 			int ihash = ikey.hashCode();
 			Object ivalue = item.getValue();
 			int itype = Tools.getType(ivalue);
@@ -291,8 +291,8 @@ class CacheEhcacheImpl implements Cache<String> {
 		}
 		return res;
 	}
-	public List listToList(List theList, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
-		List<Map> res = new ArrayList<>();
+	public List<Map<?,?>> listToList(List<?> theList, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
+		List<Map<?,?>> res = new ArrayList<>();
 		int start = page.start();
 		int stop = page.stop();
 		int count = 0;

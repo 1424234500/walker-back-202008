@@ -4,15 +4,11 @@ import java.util.Date;
 
 import com.walker.common.util.Tools;
 
-import io.netty.buffer.ByteBuf;  
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;  
-import io.netty.channel.ChannelInboundHandlerAdapter;  
-import io.netty.handler.timeout.IdleState;  
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;  
-import io.netty.util.CharsetUtil;  
-import io.netty.util.ReferenceCountUtil;  
   
 public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {  
   

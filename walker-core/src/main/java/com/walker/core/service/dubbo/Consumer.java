@@ -2,7 +2,6 @@ package com.walker.core.service.dubbo;
 
 import java.rmi.RemoteException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.alibaba.dubbo.rpc.RpcContext;

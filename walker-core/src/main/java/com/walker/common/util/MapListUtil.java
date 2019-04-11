@@ -25,6 +25,7 @@ public class MapListUtil {
 	/**
 	 *  测试list set map相关区别 争议点
 	 */
+	@SuppressWarnings("unchecked")
 	public static void testListSetMap(){
 		Tools.out("-------测试list set map相关区别 争议点");
 
@@ -93,9 +94,11 @@ public class MapListUtil {
 
 
 	}
+	@SuppressWarnings({ "rawtypes" })
 	public static Map copy(Map<Object, Object> map){
 		return copy(map, map.keySet().toArray());
 	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map copy(Map map, Object...keys){
 		Map res = new HashMap<>();
 		for(Object key : keys){
@@ -152,6 +155,7 @@ public class MapListUtil {
 	 * @param list
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public static List<Map<String, String>> getList(List<Map> list){
 		List<Map<String, String>> res = new ArrayList<Map<String, String>>();
 		if(list != null && list.size() > 0){
@@ -183,6 +187,7 @@ public class MapListUtil {
 		return getMap(map, name, "");
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T getMap(Map map, Object key, T defaultValue){
 		if(map == null) return defaultValue;
 		
@@ -255,6 +260,7 @@ public class MapListUtil {
 	 * @param list
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static String list2string(List<Map> list){
 		String res = "[ \n";
 		for(Map<String,Object> map: list){
@@ -271,6 +277,7 @@ public class MapListUtil {
 	 * @param list2
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List  listAdd( List  list1, List  list2) {
 		if(list1 != null ){
 			if(list2 != null){
@@ -337,6 +344,7 @@ public class MapListUtil {
 	 * 		col12, col22, col32, col42
 	 * 		col13, col23, col33, col43
 	 */
+	@SuppressWarnings("unused")
 	public static List<Map<String, Object>> turnListMap(List<Map<String, Object>> list){
 
 		List<Map<String, Object>> res = new ArrayList<Map<String, Object>>();
@@ -366,9 +374,11 @@ public class MapListUtil {
 	 * @param urls
 	 * @return null/obj
 	 */
+	@SuppressWarnings("rawtypes")
 	public static <T> T getMapUrl(Map map, String urls){
 		return getMapUrl(map, urls, null);
 	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T getMapUrl(Map map, String urls, T defaultValue){
 		T res = defaultValue;
 		Object obj = map;
@@ -432,7 +442,8 @@ public class MapListUtil {
 	 * put map1.map11.cc test
 	 * @return 
 	 */
-	public static String putMapUrl(Map<String, Object> map, String urls, Object value){
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static String putMapUrl(Map map, String urls, Object value){
 		if(urls.length() == 0) return null;
 		String key = "";
 		String[] keys = urls.split("\\."); //map1,   map1 map11
@@ -449,7 +460,7 @@ public class MapListUtil {
 					make = new Bean().put(keys[i], make); //map{map11:value}
 				}else{ //必须为map
 					if(temp instanceof Map)
-						((Map<String, Object>)temp).put(keys[i], make);
+						((Map)temp).put(keys[i], make);
 					else//找到上层url 替换为新map
 						putMapUrl(map, urls, value);
 					break;
@@ -468,6 +479,7 @@ public class MapListUtil {
 
 
 
+	@SuppressWarnings("rawtypes")
 	public static List<Map> testList(){
 		List<Map> res = new ArrayList<Map>();
 

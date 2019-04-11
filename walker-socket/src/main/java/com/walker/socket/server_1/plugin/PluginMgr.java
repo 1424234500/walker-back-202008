@@ -9,10 +9,12 @@ import com.walker.common.util.Bean;
 import com.walker.common.util.ClassUtil;
 import com.walker.common.util.FileUtil;
 import com.walker.common.util.JsonUtil;
-import com.walker.core.database.RedisMgr;
-import com.walker.core.scheduler.*;
-import com.walker.socket.server_1.*;
-import com.walker.socket.server_1.plugin.aop.*;
+import com.walker.core.scheduler.Scheduler;
+import com.walker.core.scheduler.SchedulerMgr;
+import com.walker.core.scheduler.Task;
+import com.walker.socket.server_1.Msg;
+import com.walker.socket.server_1.SocketException;
+import com.walker.socket.server_1.plugin.aop.Aop;
 
 public class PluginMgr {
 	private static Logger log = Logger.getLogger(PluginMgr.class);
@@ -45,7 +47,11 @@ public class PluginMgr {
 //	},
 	
 	void init() {
-    	String str = FileUtil.readByLines(ClassLoader.getSystemResource("").getPath() + "plugin.json", null);
+		String path = ClassLoader.getSystemResource("").getPath() + "plugin.json";
+    	String str = FileUtil.readByLines(path, null, "utf-8");
+    	log.warn("plugin mgr init file: " + path);
+    	log.warn(str);
+    	
 		Bean bean = JsonUtil.get(str);
 		plugins = ((Bean)bean.get("plugins"));	
 		aopsBefore = (List<Bean>)bean.get("before");
@@ -55,7 +61,7 @@ public class PluginMgr {
 //		初始化定时任务计算qps
 		Scheduler sch = SchedulerMgr.getInstance();
 		try {
-			sch.add(new Task("util.socket.server_1.job.JobQpsMinute", "calc each minute qps job", "0/10 * * * * ?"));
+			sch.add(new Task("com.walker.socket.server_1.job.JobQpsMinute", "calc each minute qps job", "0/10 * * * * ?"));
 //			sch.add(new Task("util.socket.server_1.job.JobQpsHour", "calc each Hour qps job", "0 0 * * * ?"));
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,7 +1,6 @@
 package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
-import com.walker.common.util.ThreadUtil;
 import com.walker.socket.server_1.Msg;
 
 public  class MessagePlugin<T> extends Plugin<T>{

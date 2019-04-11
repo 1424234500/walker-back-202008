@@ -4,12 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Properties;
 
 import com.walker.common.util.Bean;
-import com.walker.common.util.FileUtil;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Tools;
 

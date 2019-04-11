@@ -2,7 +2,7 @@ package com.walker.socket.server_0;
 
 public class ServerTest {
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 		
 //		new ServerHashmapImpl(new SocketIO()).start();

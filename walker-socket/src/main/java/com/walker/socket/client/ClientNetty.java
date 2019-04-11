@@ -1,11 +1,7 @@
 package com.walker.socket.client;
  
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
-import com.walker.common.setting.Setting;
-import com.walker.common.util.Tools;
 import com.walker.socket.server_1.netty.handler.NettyDecoder;
 import com.walker.socket.server_1.netty.handler.NettyEncoder;
 

@@ -20,7 +20,7 @@ public class UseCaseTracker implements OnAnnotation{
 		Tools.out(this, annotation, type, object);
 
 		UseCase instance = (UseCase)annotation;
-//		Tools.out("", instance.id(), instance.description());
+		Tools.out("", instance.id(), instance.description());
 		
 		return Status.NORMAL;
 	}

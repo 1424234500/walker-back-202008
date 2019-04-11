@@ -1,7 +1,6 @@
 package com.walker.core.annotation;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.walker.common.util.ClassUtil;

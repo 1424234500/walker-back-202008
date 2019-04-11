@@ -84,7 +84,7 @@ class CacheMapImpl implements Cache<String> {
 	}
 
 	@Override
-	public void putAll(Map map) {
+	public void putAll(Map<?, ?> map) {
 		for(Object key : map.keySet()){
 			put(key.toString(), map.get(key));
 		}
@@ -92,7 +92,7 @@ class CacheMapImpl implements Cache<String> {
 	}
 
 	@Override
-	public Map getAll() {
+	public Map<String, Object> getAll() {
 		return map;
 	}
 
@@ -129,13 +129,13 @@ class CacheMapImpl implements Cache<String> {
 	}
 
 	@Override
-	public <V> Cache put(String key, V value) {
+	public <V> Cache<String> put(String key, V value) {
 		put(key, value, TIME_DEFAULT_EXPIRE);
 		return this;
 	}
 
 	@Override
-	public <V> Cache put(String key, V value, long expire) {
+	public <V> Cache<String> put(String key, V value, long expire) {
 		map.put(key, value);
 		Index index;
 		if(mapIndex.containsKey(key)){
@@ -152,6 +152,7 @@ class CacheMapImpl implements Cache<String> {
 	public <V> String put(String url, String key, V value) {
 		return put(url, key, value, TIME_DEFAULT_EXPIRE);
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V> String put(String url, String key, V value, long expire) {
 		if(Tools.isNull(url)) {
@@ -172,10 +173,10 @@ class CacheMapImpl implements Cache<String> {
 //			out(res);
 		}else{
 			if(obj instanceof List){
-				((List)obj).add(value);
+				((List<V>)obj).add(value);
 				res = "true";
 			}else if(obj instanceof Map){
-				((Map)obj).put(key, value);
+				((Map<String, V>)obj).put(key, value);
 				res = "true";
 			}else{
 				res = "基本数据类型,无子对象";
@@ -216,7 +217,7 @@ class CacheMapImpl implements Cache<String> {
 		}else{
 			if(obj instanceof List){
 				int cc = Tools.parseInt(key, -1);
-				List list = (List)obj;
+				List<?> list = (List<?>)obj;
 				if(cc >= 0 && cc < list.size()){
 					(list.remove(cc)).toString();
 					res = "true";
@@ -224,7 +225,7 @@ class CacheMapImpl implements Cache<String> {
 					res = "List越界," + cc + "->[0," + list.size() + "]";
 				}
 			}else if(obj instanceof Map){
-				Map mapp = (Map)obj;
+				Map<?, ?> mapp = (Map<?, ?>)obj;
 				if(mapp.containsKey(key)){
 					(mapp.remove(key)).toString();
 					res = "true";
@@ -294,14 +295,14 @@ class CacheMapImpl implements Cache<String> {
 					oftype = 0;
 					break;
 				}else if(obj instanceof Map){//最后查询层级应该是此 
-					Map objMap = (Map)obj;
+					Map<?, ?> objMap = (Map<?, ?>)obj;
 					temp = objMap.get(item); //预读取取出值为 map list ? 否则中断跳出
 					if(temp == null) break;
 					if(temp instanceof Map){	//取出对象为map
 						obj = temp;
 						oftype = 1;
 					}else if(temp instanceof List){ //输出对象为list
-						List tempList = (List)temp;
+						List<?> tempList = (List<?>)temp;
 						if(cc >= 0 && cc < tempList.size()){ //后续判定是否有选中某项 list[2]
 							Object objTemp = tempList.get(cc);
 							if(objTemp instanceof Map){ //list[2] = map
@@ -337,17 +338,17 @@ class CacheMapImpl implements Cache<String> {
 			res = mapToList((Map<?,?>)obj, page, rootKey, toUrl, key, value, expire, type);
 			size = ((Map<?,?>)obj).size();
 		}else if(obj instanceof List){
-			res = listToList((List)obj, page, rootKey, toUrl, key, value, expire, type);
-			size = ((List)obj).size();
+			res = listToList((List<?>)obj, page, rootKey, toUrl, key, value, expire, type);
+			size = ((List<?>)obj).size();
 		}else{
 			res = new ArrayList<>();
 		}
 		SortUtil.sort(res, page.getDESC().length()==0, page.getORDER(), "TYPE", "COUNT", "KEY", "EXPIRE");
 		return new Bean().put("ok", toUrl==urls).put("urls", toUrl).put("list", res).put("oftype", oftype).put("size", size);
 	}
-	public List mapToList(Map theMap, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
-		List<Map> res = new ArrayList<>();
-		Set<Entry<String, Object>> set = theMap.entrySet();
+	public List<Map<?,?>> mapToList(Map<?, ?> theMap, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
+		List<Map<?,?>> res = new ArrayList<>();
+		Set<?> set = theMap.entrySet();
 		Index index = null;
 		int start = page.start();
 		int stop = page.stop();
@@ -357,8 +358,9 @@ class CacheMapImpl implements Cache<String> {
 			index = mapIndex.get(rootKey);
 			ffExpire = index.isExpire();
 		}
-		for(Entry<String, Object> item : set){
-			String ikey = item.getKey();
+		for(Object item1 : set){
+			Entry<?,?> item = (Entry<?,?>) item1;
+			String ikey = (String) item.getKey();
 			if(rootKey.length() <= 0){
 				index = mapIndex.get(ikey);
 				ffExpire = index.isExpire();
@@ -393,8 +395,8 @@ class CacheMapImpl implements Cache<String> {
 		}
 		return res;
 	}
-	public List listToList(List theList, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
-		List<Map> res = new ArrayList<>();
+	public List<Map<?,?>> listToList(List<?> theList, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
+		List<Map<?,?>> res = new ArrayList<>();
 		Index index = null;
 		int start = page.start();
 		int stop = page.stop();

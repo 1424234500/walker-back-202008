@@ -3,8 +3,7 @@ package com.walker.socket.server_1.plugin.aop;
 import org.apache.log4j.Logger;
 
 import com.walker.common.util.Bean;
-import com.walker.socket.server_1.*;
-import com.walker.socket.server_1.session.*;
+import com.walker.socket.server_1.Msg;
 
 public abstract class Aop<T> {
 	protected Logger log = Logger.getLogger(Aop.class); 

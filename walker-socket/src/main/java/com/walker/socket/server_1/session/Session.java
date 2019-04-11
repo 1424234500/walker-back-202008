@@ -3,7 +3,6 @@ package com.walker.socket.server_1.session;
 import org.apache.log4j.Logger;
 
 import com.walker.common.util.Bean;
-import com.walker.common.util.ThreadUtil;
 import com.walker.core.route.SubPub;
 import com.walker.core.route.SubPubMgr;
 import com.walker.core.route.SubPub.OnSubscribe;
