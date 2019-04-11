@@ -46,6 +46,7 @@
   * Msg 统一传递消息类
 
 ## walker-web
+	java web 项目 使用spring mvc hibernate mybatis 实现oracle数据处理
 ### service 业务service处理
 
 ### web 网络服务servlet提供

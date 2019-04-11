@@ -40,7 +40,7 @@ public class StudentControll {
 	
 
 	@RequestMapping("/listh.do")
-	public String listh(HttpServletRequest request, Map<String,Object> map) {
+	public String listh(HttpServletRequest request, Map<Object,Object> map) {
 		String id = request.getParameter("id");
 		String name = request.getParameter("name");
 		String timefrom = request.getParameter("timefrom");
@@ -103,7 +103,7 @@ public class StudentControll {
 	   
 	 
 	@RequestMapping("/listm.do") 
-	public String listm(HttpServletRequest request, Map<String,Object> map) {
+	public String listm(HttpServletRequest request, Map<Object,Object> map) {
 		String id = request.getParameter("id");
 		String name = request.getParameter("name");
 		String timefrom = request.getParameter("timefrom");

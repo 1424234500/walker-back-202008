@@ -34,7 +34,7 @@ public class LogInterceptors implements HandlerInterceptor{
     LogService logService;
     
 	// 统计应用性能
-    private NamedThreadLocal<Long> startTimeThreadLocal = new NamedThreadLocal<>("ThreadLocal-Action-Stop-Start-Time");
+    private NamedThreadLocal startTimeThreadLocal = new NamedThreadLocal("ThreadLocal-Action-Stop-Start-Time");
 
 	
     /** 
@@ -46,7 +46,7 @@ public class LogInterceptors implements HandlerInterceptor{
         //结束时间   统计应用的性能 
         long endTime = System.currentTimeMillis();
         // 得到线程绑定的局部变量（开始时间）
-        long beginTime = startTimeThreadLocal.get(); 
+        long beginTime = (long) startTimeThreadLocal.get(); 
         long time = endTime - beginTime;
         // 此处认为处理时间超过500毫秒的请求为慢请求
 //        logger.info("--------stop " + Tools.calcTime(time));
