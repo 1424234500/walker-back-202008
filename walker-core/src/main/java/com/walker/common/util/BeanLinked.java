@@ -1,19 +1,19 @@
 package com.walker.common.util;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * HashMap子类 new Bean().put("key","value").put("key2","value2);
+ * LinkedHashMap子类 new Bean().put("key","value").put("key2","value2);
  * @author Walker
  * 2018年7月13日
  */
-public class Bean extends HashMap<Object, Object>{ 
+public class BeanLinked extends LinkedHashMap<Object, Object>{ 
 	private static final long serialVersionUID = 1L;
 
 	/**
      * 构造体方法
      */
-    public Bean() {
+    public BeanLinked() {
         super();
     }
     
@@ -21,7 +21,7 @@ public class Bean extends HashMap<Object, Object>{
      * 构造体方法，直接初始化Bean
      * @param values    带数据信息
      */
-    public Bean(Map<?, ?> values) {
+    public BeanLinked(Map<?, ?> values) {
         super(values);
     }
 
@@ -31,23 +31,23 @@ public class Bean extends HashMap<Object, Object>{
      * @param obj   对象数据
      * @return this，当前Bean
      */
-    public Bean set(Object key, Object value) {
+    public BeanLinked set(Object key, Object value) {
         put(key, value);
         return this;
     }
-    public Bean put(Object key, Object value){
+    public BeanLinked put(Object key, Object value){
     	super.put(key, value);
     	return this;
     }    
-    public Bean put(String key, String value){
+    public BeanLinked put(String key, String value){
     	super.put(key, value);
     	return this;
     }
-    public Bean set(String key, String value){
+    public BeanLinked set(String key, String value){
     	super.put(key, value);
     	return this;
     }
-    public Bean set(String key, Bean value){
+    public BeanLinked set(String key, BeanLinked value){
     	super.put(key, value);
     	return this;
     }
@@ -78,7 +78,7 @@ public class Bean extends HashMap<Object, Object>{
      * @param key 键值
      * @return 当前对象
      */
-    public Bean remove(Object key) {
+    public BeanLinked remove(Object key) {
         if (containsKey(key)) {
             super.remove(key);
         }
@@ -91,8 +91,8 @@ public class Bean extends HashMap<Object, Object>{
     * @param keys  键值数组 null表示传全部src中的数据
     * @return 复制出来的数据内容，
     */
-   public Bean copyOf(Object... keys)  {
-       Bean tar = new Bean(); 
+   public BeanLinked copyOf(Object... keys)  {
+       BeanLinked tar = new BeanLinked(); 
        if (keys != null) {
            for (Object key : keys) {
                tar.set(key, get(key));
@@ -107,7 +107,7 @@ public class Bean extends HashMap<Object, Object>{
     * @param bean 将指定对象的数据复制到本对象中
     * @param keys 指定键值
     */
-   public void copyFrom(Bean bean, Object ...keys) {
+   public void copyFrom(BeanLinked bean, Object ...keys) {
        if (keys != null) {
            for (Object key : keys) {
                if(bean.containsKey(key)) {

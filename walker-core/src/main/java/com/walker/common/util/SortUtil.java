@@ -232,7 +232,7 @@ public class SortUtil {
 		Bean[] res;
 		int[] sequence = ArraysUtil.getSequence(len, 0);
 		for(int i = 0; i < len; i++){
-			list[i] = (Bean.getBean().put("k", sequence[i]));//Tools.getRandomNum(0, len, 0)));
+			list[i] = (new Bean().put("k", sequence[i]));//Tools.getRandomNum(0, len, 0)));
 		}
 //		Tools.out(list);
 		Comparator<Bean> comp = new Comparator<Bean>(){

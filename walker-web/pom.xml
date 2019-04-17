@@ -13,7 +13,7 @@
 	<description>desc</description>
 
 	<properties>
-		<spring.version>4.3.10.RELEASE</spring.version>
+		<spring.version>4.3.0.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
@@ -99,11 +99,11 @@
 			<version>1.2</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
-		</dependency>
+		</dependency> -->
 		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>

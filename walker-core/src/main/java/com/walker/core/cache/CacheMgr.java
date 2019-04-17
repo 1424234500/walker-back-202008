@@ -85,6 +85,7 @@ public class CacheMgr implements Call{
 		log.info("**!初始化完毕------------------ ");
 
 	}
+	@SuppressWarnings("unused")
 	private static void initOracle(Cache<String> cache) {
 		try {
 			Dao dao = new Dao();
@@ -111,10 +112,10 @@ public class CacheMgr implements Call{
 		List<Object> list = new ArrayList<>();
 		list.add("string item");
 		list.add(1111111);
-		list.add(Bean.getBean().put("key of list map", "aldkjfakljf").put("keyint", 2222));
-		Bean map = Bean.getBean().put("key1", 111).put("key2", 222);
-		Bean bean = Bean.getBean().put("key1", 111).put("key2", map);
-		Bean bean2 = Bean.getBean().put("key1", 333).put("key2", map).put("key3", bean);
+		list.add(new Bean().put("key of list map", "aldkjfakljf").put("keyint", 2222));
+		Bean map = new Bean().put("key1", 111).put("key2", 222);
+		Bean bean = new Bean().put("key1", 111).put("key2", map);
+		Bean bean2 = new Bean().put("key1", 333).put("key2", map).put("key3", bean);
 		list.add(bean);
 		list.add(bean2);
 		list.add(map);
@@ -123,8 +124,8 @@ public class CacheMgr implements Call{
 		cache.put("long", 998);
 		cache.put("string", "the is a string");
 		cache.put("map", 
-			Bean.getBean().put("key-int", 2)
-				.put("key-map", Bean.getBean().put("key-map-key-int", 3))
+			new Bean().put("key-int", 2)
+				.put("key-map", new Bean().put("key-map-key-int", 3))
 				.put("key-list", list)
 				.put("list", list)
 				.put("map1", map)
