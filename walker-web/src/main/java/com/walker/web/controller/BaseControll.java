@@ -95,7 +95,7 @@ public abstract class BaseControll {
 		echo(true, "", data);
 	}
 	public void echo(List<?> list, Page page) throws IOException{
-		Bean data = Bean.getBean().put("list", list).put("page", page);
+		Bean data = new Bean().put("list", list).put("page", page);
 		echo(true, "", data);
 	}
 	public void echo(boolean flag, String info) throws IOException{
@@ -115,7 +115,7 @@ public abstract class BaseControll {
 		long timestart = Context.getTimeStart();
 		long timestop = System.currentTimeMillis();
 		long time = timestop - timestart;
-		Bean bean = Bean.getBean()
+		Bean bean = new Bean()
 				.put("flag", flag)
 				.put("info", info)
 				.put("timestart", timestart)
