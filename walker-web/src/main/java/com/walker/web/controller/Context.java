@@ -74,7 +74,7 @@ public class Context extends ContextSystem {
 	
 	/**
 	 * 获取分页对象
-	 * @return
+	 * @return 
 	 */
 	public static Page getPage(){
 		return Page.getPage(Context.getRequest());

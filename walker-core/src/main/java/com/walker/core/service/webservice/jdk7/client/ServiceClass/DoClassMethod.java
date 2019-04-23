@@ -1,5 +1,5 @@
 
-package com.walker.core.service.webservice.client.ServiceClass;
+package com.walker.core.service.webservice.jdk7.client.ServiceClass;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
-package com.walker.core.service.webservice;
+package com.walker.core.service.webservice.jdk7;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.walker.common.util.Tools;
-import com.walker.core.service.webservice.client.ServiceClass.ServiceClassImpl;
-import com.walker.core.service.webservice.client.ServiceClass.ServiceClassImplService;
+import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImpl;
+import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImplService;
 
 
 /**

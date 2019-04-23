@@ -1,5 +1,5 @@
 
-package com.walker.core.service.webservice.client.ServiceClass;
+package com.walker.core.service.webservice.jdk7.client.ServiceClass;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;

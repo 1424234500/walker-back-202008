@@ -122,14 +122,15 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>5.4.1.Final</version>
 		</dependency>
+		
 		<!-- mybatis- -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
-			<version>3.2.8</version>
+			<version>3.4.0</version>
 		</dependency>
 
- <!--mybatis-spring适配器 -->
+		<!--mybatis-spring适配器 -->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>

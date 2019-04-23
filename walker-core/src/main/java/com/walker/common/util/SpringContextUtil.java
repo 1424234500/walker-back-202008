@@ -5,8 +5,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * 获取spring上下文环境
@@ -22,9 +20,8 @@ public class SpringContextUtil implements ApplicationContextAware {
 	 * Spring容器初始化时不可用！
 	 * @return
 	 */
-	public static WebApplicationContext getWebApplicationContext() {
-		WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-		return wac;
+	public static ApplicationContext getWebApplicationContext() {
+		return null;
 	}
 	
 	/**

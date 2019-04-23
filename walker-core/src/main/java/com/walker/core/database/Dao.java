@@ -222,7 +222,6 @@ public class Dao implements BaseDao{
 
 		Connection conn = null;
 		CallableStatement cst = null;
-		ResultSet rs = null;
 		try {
 			conn = this.getConnection();
 			

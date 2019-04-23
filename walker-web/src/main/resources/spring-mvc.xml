@@ -22,7 +22,7 @@
 	<!-- 装配拦截器  实现aop 事务 日志 权限 限流 -->  
     <mvc:interceptors>  
   		<!-- 日志拦截访问url 外层bean拦截所有 --> 
-     	<bean class="com.event.intercept.LogInterceptors" />   
+     	<bean class="com.walker.web.event.intercept.LogInterceptors" />   
      	<!-- 登录拦截例外跳转 -->
     	<mvc:interceptor> 
  	 	   <mvc:mapping path="/*/**" />    
@@ -33,7 +33,7 @@
            <!-- 登录拦截例外 -->
 	 	   <mvc:exclude-mapping path="/*/*onlogin.do" />
 	 	   <mvc:exclude-mapping path="/*/*loginin.do" />
-	       <bean class="com.event.intercept.LoginInterceptors" />  
+	       <bean class="com.walker.web.event.intercept.LoginInterceptors" />  
       	</mvc:interceptor>
     </mvc:interceptors>   
 	
@@ -42,7 +42,7 @@
 	<mvc:resources location="/jsp/" 	mapping="/jsp/**"/>		<!-- 直接访问jsp目录下 -->
 	<mvc:resources location="/test/"	mapping="/test/**"/> 	<!--  直接访问test目录下 -->
 	<!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
-	<context:component-scan base-package="com.controller,com.event" />
+	<context:component-scan base-package="com.controller,com.walker.web.event" />
 
 	<!-- 启动SpringMVC的注解功能，完成请求和注解P 的映射 --> 
 	<!-- 代替注解映射器和注解适配器配置 mvc:annotation-driven默认加载很多的参数绑定方法， 比如json转换解析器就默认加载 -->

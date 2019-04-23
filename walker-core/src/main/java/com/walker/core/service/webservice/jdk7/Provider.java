@@ -1,9 +1,8 @@
-package com.walker.core.service.webservice;
+package com.walker.core.service.webservice.jdk7;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.ws.Endpoint;
 
 import org.apache.log4j.Logger;
 
@@ -12,8 +11,8 @@ import com.walker.common.util.ClassUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
-import com.walker.core.service.webservice.client.ServiceClass.ServiceClassImpl;
-import com.walker.core.service.webservice.client.ServiceClass.ServiceClassImplService;
+import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImpl;
+import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImplService;
 
 /**
  * webService 服务初始化 

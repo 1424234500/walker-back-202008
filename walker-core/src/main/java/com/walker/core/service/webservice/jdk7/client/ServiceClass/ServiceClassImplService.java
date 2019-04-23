@@ -1,5 +1,5 @@
 
-package com.walker.core.service.webservice.client.ServiceClass;
+package com.walker.core.service.webservice.jdk7.client.ServiceClass;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -76,12 +76,12 @@
 		<!-- 指定配置文件 -->
 		<property name="configLocation" value="classpath:mybatis-config.xml"/> 
 		<!-- 配置扫描  dao接口实现的 配置文件mapper.xml -->
-		<property name="mapperLocations" value="classpath:com/dao/mybatis/mapper/*.xml" />
+		<property name="mapperLocations" value="classpath:com/walker/web/dao/mybatis/mapper/*.xml" />
 		<property name="typeAliasesPackage" value="com.dao.mode"></property>
 	</bean>
 	<!-- 配置mybatis dao 接口 java文件 路径 , 另外必须让mapper.xml文件中接口路径对应接口类 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.dao.mybatis" />
+		<property name="basePackage" value="com.walker.web.dao.mybatis" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
  

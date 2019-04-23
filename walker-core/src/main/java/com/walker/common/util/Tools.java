@@ -13,11 +13,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.ws.BindingProvider;
 
 import org.apache.log4j.Logger;
 
-import com.walker.core.service.webservice.client.ServiceClass.ServiceClassImpl;
+import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImpl;
 
 public class Tools {
 	
@@ -625,20 +624,4 @@ public class Tools {
 		return 0;
 	}
 
-	/**
-	 * webservice超时设置
-	 * @param port
-	 * @return
-	 */
-	public static <T> T webserviceConfig(T soap) {
-		try {
-			Map<String, Object> map = ((BindingProvider)soap).getRequestContext();
-			map.put("com.sun.xml.internal.ws.connect.timeout",  2000);
-			map.put("com.sun.xml.internal.ws.request.timeout", 5000);
-		}catch(Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return soap;
-	}
-	
 }
