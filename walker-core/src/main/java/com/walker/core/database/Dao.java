@@ -1,10 +1,12 @@
 package com.walker.core.database;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -204,6 +206,40 @@ public class Dao implements BaseDao{
 			log.error(SqlHelp.makeSql(sql, objects), e);
 		} finally {
 			close(conn, pst, null);
+		}
+		return res;
+	}
+	/**
+	 * 
+	 * 调用存储过程的语句，call后面的就是存储过程名和需要传入的参数
+	 * @param proc "{call countBySal(?,?)}"
+	 * @param objects
+	 * @return
+	 */
+	@Override
+	public int execute(String proc, Object...objects) {
+		int res = 0;
+
+		Connection conn = null;
+		CallableStatement cst = null;
+		ResultSet rs = null;
+		try {
+			conn = this.getConnection();
+			
+			cst=conn.prepareCall(proc);
+			for (int i = 0; i < objects.length; i++) {
+				if(i == objects.length - 1) {
+					cst.registerOutParameter(objects.length + 1, Types.INTEGER);//注册out参数的类型
+				}else {
+					cst.setObject(i + 1, objects[i]); 
+				}
+			}
+			cst.execute();
+			res = cst.getInt(objects.length);
+		} catch (Exception e) {
+			log.error(proc, e);
+		} finally {
+			close(conn, cst, null);
 		}
 		return res;
 	}

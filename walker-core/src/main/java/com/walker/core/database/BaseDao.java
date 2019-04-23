@@ -73,5 +73,14 @@ public interface BaseDao {
 	 */
 	public int count(String sql, Object... params);
 
+	/**
+	 * 执行存储过程 最后一个占位?返回值
+	 * @param proc "{call countBySal(?,?)}"
+	 * @param objects
+	 * @return
+	 */
+	public int execute(String proc, Object...objects);	
+	
+	
 	
 }
