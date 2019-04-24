@@ -96,7 +96,7 @@ public class Context extends ContextSystem {
 	}
 	public static Bean setResponse(HttpServletResponse response){
 		return Context.set(STR_RESPONSE, response);
-	}
+	} 
 	public static HttpServletResponse getResponse(){
 		Bean bean = Context.getContext();
 		if(bean.containsKey(STR_RESPONSE)){
