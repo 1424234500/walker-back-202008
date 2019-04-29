@@ -286,7 +286,9 @@ public class FileUtil {
 	}
 
 	
-
+	public static boolean saveAs(String content, String path, Boolean append) {
+		return saveAs(content, new File(path), append);
+	}
 	/**
 	 * 把内容content写的path文件中
 	 * 
@@ -296,7 +298,7 @@ public class FileUtil {
 	 * 
 	 * @return 是否保存成功
 	 */
-	public static boolean saveAs(String content, String path, Boolean append) {
+	public static boolean saveAs(String content, File file, Boolean append) {
 		FileWriter fw = null;
 		// out("把内容：" + content + "， 写入文件：" + path);
 		try {
@@ -315,7 +317,7 @@ public class FileUtil {
 			 * file对象是一个存在的常规文件，但不能被打开
 			 *
 			 */
-			fw = new FileWriter(new File(path), append);
+			fw = new FileWriter(file, append);
 			if (content != null) {
 				fw.write(content);
 				fw.flush();

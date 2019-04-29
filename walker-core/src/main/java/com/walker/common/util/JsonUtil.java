@@ -26,22 +26,27 @@ public class JsonUtil {
 		Tools.out(makeJson(list));
 	}
 	
-	
-	
-	/**
-	 * map转json
-	 * @param obj
-	 */
-	public static String makeJson(Map<?,?> obj) {
-        String res = "";
+	public static String makeJson(Object obj) {
+		return makeJson(obj, 0);
+	}
+	public static String makeJson(Object obj, int indentFactor) {
+		String res = "";
         try {
-            JSONObject jo = new JSONObject(obj);
-            res = jo.toString();
+            JSONObject jo = null;
+        	if(obj instanceof  Map) {
+        		jo = new JSONObject((Map)obj);
+        	}else if (obj instanceof List) {
+        		jo = new JSONObject((List)obj);
+        	}else {
+        		 jo = new JSONObject(obj);
+        	}
+        	res = jo.toString(indentFactor);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return res;
-    } 
+	}
+
 	/**
 	 * list转json
 	 * @param list

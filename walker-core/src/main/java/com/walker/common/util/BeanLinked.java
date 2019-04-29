@@ -118,10 +118,10 @@ public class BeanLinked extends LinkedHashMap<Object, Object>{
            putAll(bean);
        }
    }
-@Override
-public String toString() {
-	return JsonUtil.makeJson(this);
-}
+	@Override
+	public String toString() {
+		return JsonUtil.makeJson(this);
+	}
 
    
 

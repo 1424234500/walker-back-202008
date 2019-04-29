@@ -45,10 +45,10 @@
 	<!-- com.mchange.v2.c3p0.ComboPooledDataSource org.apache.commons.dbcp.BasicDataSource -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"   destroy-method="close">
 		<!-- 基本属性 url、user、password -->
-		<property name="driverClassName" value="${jdbc.oracle.DriverClass}"/>
-		<property name="url" value="${jdbc.oracle.JdbcUrl}"/>
-		<property name="username" value="${jdbc.oracle.User}"/>
-		<property name="password" value="${jdbc.oracle.Password}"/>
+		<property name="driverClassName" value="${jdbc.mysql.DriverClass}"/>
+		<property name="url" value="${jdbc.mysql.JdbcUrl}"/>
+		<property name="username" value="${jdbc.mysql.User}"/>
+		<property name="password" value="${jdbc.mysql.Password}"/>
 		<!-- 配置初始化大小、最小、最大 -->
 		<property name="initialSize" value="${ds.initialSize}"/>
 		<property name="minIdle" value="${ds.minIdle}"/>
