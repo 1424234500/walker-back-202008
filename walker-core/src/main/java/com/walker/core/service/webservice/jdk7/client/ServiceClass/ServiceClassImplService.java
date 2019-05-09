@@ -11,6 +11,7 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
 
 import com.walker.common.util.Tools;
+import com.walker.core.service.webservice.WebServiceTool;
 
 
 /**
@@ -71,7 +72,7 @@ public class ServiceClassImplService
      */
     @WebEndpoint(name = "ServiceClassImplPort")
     public ServiceClassImpl getServiceClassImplPort() {
-        return Tools.webserviceConfig(super.getPort(new QName("http://serviceImpl.service.util/", "ServiceClassImplPort"), ServiceClassImpl.class));
+        return WebServiceTool.webserviceConfig(super.getPort(new QName("http://serviceImpl.service.util/", "ServiceClassImplPort"), ServiceClassImpl.class));
     }
 
     /**
@@ -83,7 +84,7 @@ public class ServiceClassImplService
      */
     @WebEndpoint(name = "ServiceClassImplPort")
     public ServiceClassImpl getServiceClassImplPort(WebServiceFeature... features) {
-        return Tools.webserviceConfig(super.getPort(new QName("http://serviceImpl.service.util/", "ServiceClassImplPort"), ServiceClassImpl.class, features));
+        return WebServiceTool.webserviceConfig(super.getPort(new QName("http://serviceImpl.service.util/", "ServiceClassImplPort"), ServiceClassImpl.class, features));
     }
 
     private static URL __getWsdlLocation() {

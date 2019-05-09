@@ -1,7 +1,7 @@
 package com.walker.socket.server_1.plugin.aop;
 
-import com.walker.core.database.RedisMgr;
-import com.walker.core.database.RedisMgr.Fun;
+import com.walker.core.database.Redis;
+import com.walker.core.database.Redis.Fun;
 import com.walker.socket.server_1.Msg;
 
 import redis.clients.jedis.Jedis;
@@ -45,7 +45,7 @@ public class CountModel {
 		msg.setTimeReceive(System.currentTimeMillis());
 
 //		onType(msg, "net");
-		RedisMgr.getInstance().doJedis(new Fun<Long>() {
+		Redis.doJedis(new Fun<Long>() {
 			@Override
 			public Long make(Jedis obj) {
 				String plugin = msg.getType();
@@ -63,7 +63,7 @@ public class CountModel {
 		msg.setTimeDo(System.currentTimeMillis());
 
 //		onType(msg, "wait");
-		RedisMgr.getInstance().doJedis(new Fun<Long>() {
+		Redis.doJedis(new Fun<Long>() {
 			@Override
 			public Long make(Jedis obj) {
 				String plugin = msg.getType();
@@ -81,7 +81,7 @@ public class CountModel {
 		msg.setTimeSend(System.currentTimeMillis());
 
 		//		onType(msg, "done");
-		RedisMgr.getInstance().doJedis(new Fun<Long>() {
+		Redis.doJedis(new Fun<Long>() {
 			@Override
 			public Long make(Jedis obj) {
 				String plugin = msg.getType();
@@ -102,7 +102,7 @@ public class CountModel {
 //		log.debug(TimeUtil.getTime(msg.getTimeReceive(), "yyyy-MM-dd HH:mm:ss:SSS"));
 //		log.debug(TimeUtil.getTime(msg.getTimeDo(), "yyyy-MM-dd HH:mm:ss:SSS"));
 //		log.debug(TimeUtil.getTime(msg.getTimeSend(), "yyyy-MM-dd HH:mm:ss:SSS"));
-		RedisMgr.getInstance().doJedis(new Fun<Long>() {
+		Redis.doJedis(new Fun<Long>() {
 			@Override
 			public Long make(Jedis obj) {
 				String plugin = msg.getType();

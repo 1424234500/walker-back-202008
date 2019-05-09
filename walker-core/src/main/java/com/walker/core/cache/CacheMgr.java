@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 
 import com.walker.common.setting.SettingUtil;
 import com.walker.common.util.Bean;
-import com.walker.common.util.Call;
 import com.walker.common.util.FileUtil;
+import com.walker.core.aop.TestAdapter;
 import com.walker.core.database.Dao;
 
 /**
@@ -20,7 +20,7 @@ import com.walker.core.database.Dao;
  * 此处不做单例控制
  *
  */
-public class CacheMgr implements Call{
+public class CacheMgr extends TestAdapter{
 	private static Logger log = Logger.getLogger("Cache"); 
 	static public Type DEFAULT_TYPE = Type.MAP;
 	
@@ -29,11 +29,13 @@ public class CacheMgr implements Call{
     private static class SingletonFactory{           
         private static Cache<String> cache;
         static {
-        	System.out.println("静态内部类初始化" + SingletonFactory.class);
+        	log.warn("singleton instance construct " + SingletonFactory.class);
 			cache = getInstance(Type.MAP);
 			reload(cache);
         }
     }
+    
+    
 	public static Cache<String> getInstance() {
 		return SingletonFactory.cache;
 	}
@@ -60,7 +62,7 @@ public class CacheMgr implements Call{
 	 * 2.加载数据库 
 	 */
 	public static void reload(Cache<String> cache){
-		log.info("***初始化缓存");
+		log.warn("初始化缓存");
 		
 		String classRoot = CacheMgr.class.getResource("/").getPath();
 		File dir = new File(classRoot);
@@ -82,7 +84,7 @@ public class CacheMgr implements Call{
 		}
 		
 		//initOracle(cache);
-		log.info("**!初始化完毕------------------ ");
+		log.warn("初始化完毕------------------ ");
 
 	}
 	@SuppressWarnings("unused")
@@ -99,16 +101,13 @@ public class CacheMgr implements Call{
 			e.printStackTrace();
 		}
 	}
-	@Override
-	public void call(){
+
+	public boolean doTest() {
 		Cache<String> cache = getInstance();
 		if(cache == null){
-			log.error(" cache 初始化 异常 xxxxxxxxxxxxxxxxxxx");
-			return;
+			return false;
 		}
 		
-		log.info("** 开始测试 附加缓存--------");
-
 		List<Object> list = new ArrayList<>();
 		list.add("string item");
 		list.add(1111111);
@@ -134,14 +133,8 @@ public class CacheMgr implements Call{
 				);
 		cache.put("list", list);
 		
-		if(cache.get("int", 0) == 1){
-			log.info(" save and read ok ");
-		}else{
-			log.error(" save and read error xxxxxxxxxxxxxxxx");
-		}
-		log.info("**! 附加缓存----------------");
+		return cache.get("int", 0) == 1;
 	}
-
 }
 
 enum Type {

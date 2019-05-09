@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import com.walker.common.util.Fun;
+import com.walker.core.aop.Fun;
 import com.walker.core.pipe.PipeMgr.Type;
 
 /**

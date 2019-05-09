@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.walker.common.util.ClassUtil;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
@@ -17,6 +19,8 @@ import com.walker.core.cache.CacheMgr;
  *
  */
 abstract class Pool {
+	protected static Logger log = Logger.getLogger(Pool.class); 
+
 	/**
 	 * 配置的jdbc集合配置
 	 * {
@@ -56,6 +60,8 @@ abstract class Pool {
 		dsConfig = new LinkedHashMap<>(ds);
 		defaultDsName = cache.get("jdbcdefault", "oracle");
 	}
+	
+
 	
 	/**
 	 * 把map中的key-value作为参数

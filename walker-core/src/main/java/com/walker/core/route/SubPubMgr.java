@@ -1,14 +1,18 @@
 package com.walker.core.route;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.walker.common.util.Call;
+import org.apache.log4j.Logger;
+
+import com.walker.core.aop.TestAdapter;
 
 /**
  * 发布订阅控制器 
  *
  */
-public class SubPubMgr implements Call{
+public class SubPubMgr extends TestAdapter{
+	private static Logger log = Logger.getLogger("subpub"); 
+
 	private static ConcurrentHashMap<String, SubPub<?>> index = new ConcurrentHashMap<>();
 	
 	private SubPubMgr() {}
@@ -42,9 +46,11 @@ public class SubPubMgr implements Call{
 	}
 	
 	
-	public void call(){
-		
+
+	public boolean doTest() {
+		return SubPubMgr.getSubPub(1) == null;
 	}
+
 
 	
 

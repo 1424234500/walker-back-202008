@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.walker.common.setting.Setting;
+import com.walker.core.aop.Fun;
 
 //MD5加密工具类  
 public class MD5 {

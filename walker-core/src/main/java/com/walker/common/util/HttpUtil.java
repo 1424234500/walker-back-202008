@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -13,23 +14,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.protocol.HttpContext;
+import org.apache.http.*; 
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.protocol.*;
 import org.apache.log4j.Logger;
 
+import com.walker.core.exception.InfoException;
+
 /**
- * Http tools for: http get http post with encode stream userAgent
+ * Http工具类
  * 
+ * 模拟浏览器header
+ * encode 编码 解码
+ * userAgent	身份
+ * connect time	超时
+ * 
+ * 支持restful接口访问
+ * get
+ * post
+ * put
+ * delete
+ * 
+ * 文件下载url
+ * 
+ *
+ *4xx状态码表示客户端错误，主要有下面几种。
+400 Bad Request：服务器不理解客户端的请求，未做任何处理。
+401 Unauthorized：用户未提供身份验证凭据，或者没有通过身份验证。
+403 Forbidden：用户通过了身份验证，但是不具有访问资源所需的权限。
+404 Not Found：所请求的资源不存在，或不可用。
+405 Method Not Allowed：用户已经通过身份验证，但是所用的 HTTP 方法不在他的权限之内。
+410 Gone：所请求的资源已从这个地址转移，不再可用。
+415 Unsupported Media Type：客户端要求的返回格式不支持。比如，API 只能返回 JSON 格式，但是客户端要求返回 XML 格式。
+422 Unprocessable Entity ：客户端上传的附件无法处理，导致请求失败。
+429 Too Many Requests：客户端的请求次数超过限额。
+500 Internal Server Error：客户端请求有效，服务器处理时发生了意外。
+503 Service Unavailable：服务器无法处理请求，一般用于网站维护状态。
  *
  */
 public class HttpUtil {
@@ -39,65 +63,32 @@ public class HttpUtil {
 	private final static String DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
 	private final static String DEFAULT_ENCODE = "utf-8";
 
-	public static String encode(String str) throws Exception {
-		return URLEncoder.encode(str, DEFAULT_ENCODE).replaceAll("\\+", "%20");
+	/**
+	 * 参数编码
+	 * @param str
+	 * @return
+	 */
+	public static String argsEncode(String str, String encode){
+		try {
+			return URLEncoder.encode(str, encode).replaceAll("\\+", "%20");
+		}catch(UnsupportedEncodingException e) {
+			throw new InfoException(str, e.getMessage(), e);
+		}
 	}
 
-	public static String get(String url, Map<?, ?> data) throws Exception {
+	public static String makeUrl(String url, Map<?, ?> data, String encode){
 		url = url + "?";
 		StringBuilder ddd = new StringBuilder();
 		for (Object key : data.keySet()) {
-			String str = data.get(key) == null ? "null" : data.get(key).toString();
-			ddd.append(key).append("=").append(encode(str)).append("&");
+			ddd.append(key).append("=").append(argsEncode(String.valueOf(data.get(key)), encode)).append("&");
 		}
 		if(ddd.length() > 0){
 			ddd.setLength(ddd.length() - 1);
 		}
-		// ddd = encode(ddd);
-		// ddd = URLEncoder.encode(ddd);
 		url = url + ddd.toString();
-		return get(url, DEFAULT_ENCODE);
-	}
-
-	public static String get(String url) throws Exception {
-		return get(url, DEFAULT_ENCODE);
-	}
-
-	public static String post(String url, List<?> listBean) throws Exception {
-		return post(url, listBean, DEFAULT_ENCODE, null);
-	}
-
-	public static String post(String url, Map<?, ?> bean) throws Exception {
-		return post(url, bean, DEFAULT_ENCODE, null);
-	}
-
-	public static String post(String url, String data) throws Exception {
-		return post(url, data, DEFAULT_ENCODE, null);
-	}
-
-	public static String post(String url, Map<?, ?> bean, String encode, String userAgent) throws Exception {
-		return post(url, JsonUtil.makeJson(bean), encode, userAgent);
-	}
-
-	public static String post(String url, List<?> bean, String encode, String userAgent) throws Exception {
-		return post(url, JsonUtil.makeJson(bean), encode, userAgent);
-	}
-
-	/**
-	 * 解析httpResponse的数据体
-	 */
-	private static String getResponseData(HttpResponse response, String charset) throws Exception {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		InputStream is = null;
-		try {
-			is = response.getEntity().getContent();
-			IOUtils.copy(is, out);
-			return new String(out.toByteArray(), charset);
-		} finally {
-			IOUtils.closeQuietly(out);
-			IOUtils.closeQuietly(is);
-		}
-	}
+		return url;
+	} 
+	
 	/**
 	 * 创建新的浏览器端httpClient
 	 */
@@ -153,7 +144,8 @@ public class HttpUtil {
 	public static HttpClient getClient(){
 		return getClient("");
 	}
-	public static String post(String url, String data, String encode, String userAgent) throws Exception {
+	
+	public static String post(String url, String data, String encode, String userAgent) {
 		//默认header 编码处理
 		userAgent = userAgent == null || userAgent.length() == 0 ? DEFAULT_USER_AGENT : userAgent;
 		encode = encode == null || encode.length() == 0 ? DEFAULT_ENCODE : encode;
@@ -185,7 +177,7 @@ public class HttpUtil {
 		return res;
 	}
 
-	public static String get(String url, String encode) throws Exception {
+	public static String get(String url, String encode) {
 		//默认header 编码处理
 		encode = encode == null || encode.length() == 0 ? DEFAULT_ENCODE : encode;
 		
@@ -211,15 +203,20 @@ public class HttpUtil {
 		return res;
 	}
 
-	public static void download(String url, String saveFilePath) throws Exception {
+	public static void download(String url, String saveFilePath) {
 		File file = new File(saveFilePath);
 		if(file.isDirectory()) {
-			throw new Exception("save to dir?");
+			throw new InfoException("save to dir?");
 		}else {
 			if(file.exists()) {
 				file.delete();
 			}
-			file.createNewFile();
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				log.error(e.getMessage(), e);
+				throw new InfoException(e.getMessage());
+			}
 		}
 		download(url, file);
 	}
@@ -229,7 +226,7 @@ public class HttpUtil {
 	 * @param file
 	 * @throws Exception
 	 */
-	public static void download(String url, File file) throws Exception {
+	public static void download(String url, File file) {
 		StopWatch sw = new StopWatch();
 		sw.start();
 		log.warn(Arrays.toString(new String[] {"download", url, file.getAbsolutePath()}));

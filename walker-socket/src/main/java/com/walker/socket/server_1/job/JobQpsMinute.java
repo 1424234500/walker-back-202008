@@ -9,8 +9,8 @@ import org.apache.log4j.Logger;
 import com.walker.common.util.Bean;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
-import com.walker.core.database.RedisMgr;
-import com.walker.core.database.RedisMgr.Fun;
+import com.walker.core.database.*;
+import com.walker.core.database.Redis.Fun;
 import com.walker.core.scheduler.TaskJob;
 
 import redis.clients.jedis.Jedis;
@@ -33,7 +33,7 @@ public class JobQpsMinute extends TaskJob{
 	
 	@Override
 	public void run() {
-		RedisMgr.getInstance().doJedis(new Fun<Object>() {
+		Redis.doJedis(new Fun<Object>() {
 			
 			@Override
 			public Object make(Jedis jedis) {

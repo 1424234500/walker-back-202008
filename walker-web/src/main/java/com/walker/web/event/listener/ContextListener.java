@@ -109,7 +109,7 @@ public class ContextListener implements ServletContextListener {
 					log.info("*******************************************");
 					log.info("********** step." + ii + "\t " + clz + ".call()");
 					log.info("*******************************************");
-					ClassUtil.doClassMethod(clz, "call");
+					ClassUtil.doClassMethod(clz, "test");
 				}
 			});
 		}

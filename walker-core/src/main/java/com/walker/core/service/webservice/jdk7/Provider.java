@@ -53,7 +53,7 @@ public class Provider implements Call{
 				}
 				String url = "http://localhost:" + port + "/" + name;	
 				try{
-					Endpoint.publish(url, obj);  
+//					Endpoint.publish(url, obj);  
 					map.put(url, obj);
 					log.info("###publish.ok." + i + " " + url);
 				}catch(Exception e){

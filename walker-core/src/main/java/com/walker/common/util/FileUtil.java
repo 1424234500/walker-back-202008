@@ -22,6 +22,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 
+import com.walker.core.aop.Fun;
+
 public class FileUtil {
 
 	/**

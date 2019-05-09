@@ -1,6 +1,6 @@
 package com.walker.core.pipe;
 
-public class PipeException extends Exception{
+public class PipeException extends RuntimeException{
 
 	/**
 	 * 

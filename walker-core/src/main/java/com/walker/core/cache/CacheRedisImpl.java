@@ -9,16 +9,13 @@ import java.util.Map.Entry;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.Page;
-import com.walker.common.util.RedisUtil;
 import com.walker.common.util.SortUtil;
 import com.walker.common.util.Tools;
-
+import com.walker.core.database.Redis;
+import com.walker.core.database.RedisUtil;
+import com.walker.core.database.Redis.Fun;
 import java.util.Set;
-
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
 
 /**
  * 缓存服务实现类
@@ -26,48 +23,14 @@ import redis.clients.jedis.JedisPoolConfig;
  * redis实现
  */
 class CacheRedisImpl implements Cache<String> {
-	public interface Fun<T>{
-		public T make(Jedis jedis) ;
-	} 
-	
-	static int ALL_COUNT = 0; //所有缓存访问get次数
-	
 	
 	public CacheRedisImpl(){
-		JedisPoolConfig config = new JedisPoolConfig();
-        // 设置最大连接数
-		config.setMaxTotal(100);
-		config.setMaxWaitMillis(1000); 
-        // 设置空闲连接  
-        config.setMaxIdle(10); 
-        
-		pool = new JedisPool(config, "localhost");
- 
 		out("CacheRedisImpl init");
-	}
-	private JedisPool pool;
-	public Jedis getJedis(){
-		return pool.getResource();
-	} 
-
-	private <T> T doJedis(Fun<T> fun){
-		T res = null;
-		Jedis jedis = this.getJedis();
-		if(fun != null){
-			res = fun.make(jedis);
-		}
-		closeJedis(jedis);
-		return res;
-	}
-	private void closeJedis(Jedis jedis){
-		if(jedis != null){
-			jedis.close();
-		}
 	}
 	
 	@Override
 	public int size() {
-		return doJedis(new Fun<Integer>() {
+		return Redis.doJedis(new Fun<Integer>() {
 			@Override
 			public Integer make(Jedis obj) {
 				return obj.keys("*").size();
@@ -77,7 +40,7 @@ class CacheRedisImpl implements Cache<String> {
 
 	@Override
 	public boolean isStart() {
-		return doJedis(new Fun<Boolean>() {
+		return Redis.doJedis(new Fun<Boolean>() {
 			@Override
 			public Boolean make(Jedis obj) {
 				return obj.isConnected();
@@ -87,7 +50,7 @@ class CacheRedisImpl implements Cache<String> {
 
 	@Override
 	public boolean isEmpty() {
-		return doJedis(new Fun<Boolean>() {
+		return Redis.doJedis(new Fun<Boolean>() {
 			@Override
 			public Boolean make(Jedis obj) {
 				return obj.keys("*").isEmpty();
@@ -96,7 +59,7 @@ class CacheRedisImpl implements Cache<String> {
 	}
 	@Override
 	public boolean containsKey(final String key) {
-		return doJedis(new Fun<Boolean>() {
+		return Redis.doJedis(new Fun<Boolean>() {
 			@Override
 			public Boolean make(Jedis obj) {
 				return obj.exists(key);
@@ -110,12 +73,17 @@ class CacheRedisImpl implements Cache<String> {
 
 	@Override
 	public void putAll(final Map<?,?> map) {
-		doJedis(new Fun<Boolean>(){
+		Redis.doJedis(new Fun<Boolean>(){
 			@Override
 			public Boolean make(Jedis jedis) {
-				for(Object key : map.keySet()){
-					if(key != null)
-						put(key.toString(), map.get(key));
+				for(Object keyo : map.keySet()){
+					if(keyo != null) {
+						String key = String.valueOf(keyo);
+						if(jedis.exists(key)){ //策略 存在 则先删除再存 因为不确定 key对应的值类型是否改变
+							jedis.del(key);
+						}
+						RedisUtil.put(jedis, key, map.get(keyo), TIME_DEFAULT_EXPIRE);
+					}
 				}
 				return null;
 			}
@@ -124,7 +92,7 @@ class CacheRedisImpl implements Cache<String> {
 
 	@Override
 	public Map<?,?> getAll() {
-		return doJedis(new Fun<Map<?,?>>(){
+		return Redis.doJedis(new Fun<Map<?,?>>(){
 			@Override
 			public Map<?,?> make(Jedis jedis) {
 				Set<String> set = jedis.keys("*");
@@ -139,7 +107,7 @@ class CacheRedisImpl implements Cache<String> {
 
 	@Override
 	public void clear() {
-		doJedis(new Fun<Object>(){
+		Redis.doJedis(new Fun<Object>(){
 			@Override
 			public Object make(Jedis jedis) {
 				Set<String> keys = jedis.keys("*");
@@ -153,7 +121,7 @@ class CacheRedisImpl implements Cache<String> {
 
 	@Override
 	public Set<String> keySet() {
-		return doJedis(new Fun<Set<String>>(){
+		return Redis.doJedis(new Fun<Set<String>>(){
 			@Override
 			public Set<String> make(Jedis jedis) {
 				return jedis.keys("*");
@@ -174,7 +142,7 @@ class CacheRedisImpl implements Cache<String> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <V> V get(final String key, final V defaultValue) {
-		return (V) doJedis(new Fun<Object>(){
+		return (V) Redis.doJedis(new Fun<Object>(){
 			@Override
 			public Object make(Jedis jedis) {
 				Object res = defaultValue;
@@ -197,13 +165,12 @@ class CacheRedisImpl implements Cache<String> {
 	@Override
 	public <V> Cache<String> put(final String key, final V value, final long expire) {
 		// NX是不存在时才set， XX是存在时才set， EX是秒，PX是毫秒 SET if Not eXists
-		doJedis(new Fun<Object>(){
+		 Redis.doJedis(new Fun<Object>(){
 			@Override
 			public Object make(Jedis jedis) {
 				if(jedis.exists(key)){ //策略 存在 则先删除再存 因为不确定 key对应的值类型是否改变
 					jedis.del(key);
 				}
-				
 				RedisUtil.put(jedis, key, value, expire);
 				return null;
 			}
@@ -230,7 +197,7 @@ class CacheRedisImpl implements Cache<String> {
 	
 	@Override
 	public boolean remove(final String key) {
-		return doJedis(new Fun<Boolean>(){
+		return Redis.doJedis(new Fun<Boolean>(){
 			@Override
 			public Boolean make(Jedis jedis) {
 				if(jedis.exists(key)){

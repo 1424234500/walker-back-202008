@@ -2,6 +2,8 @@ package com.walker.common.util;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
+import com.walker.core.aop.Fun;
+
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;

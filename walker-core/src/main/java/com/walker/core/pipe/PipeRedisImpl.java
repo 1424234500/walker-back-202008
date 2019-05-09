@@ -8,10 +8,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import com.walker.common.util.Fun;
-import com.walker.core.database.RedisMgr;
+import com.walker.core.database.*;
+import com.walker.core.database.Redis.Fun;
 
 import redis.clients.jedis.Jedis;
+
 
 /**
  * 
@@ -31,10 +32,6 @@ public class PipeRedisImpl implements Pipe<String>{
 	 * 簇列
 	 */
 	private String key;
-	/**
-	 * redis连接池
-	 */
-	private RedisMgr redisPool;
 
 	/**
 	 * 线程池消费 每个线程都去消费
@@ -44,61 +41,98 @@ public class PipeRedisImpl implements Pipe<String>{
 	@Override
 	public void start(String key){
 		this.key = key;
+		
+		Boolean res = Redis.doJedis(new Fun<Boolean>() {
+			@Override
+			public Boolean make(Jedis jedis) {
+				return jedis != null;
+			}
+		});
 
-		redisPool = RedisMgr.getInstance();
-		Jedis jedis = redisPool.getJedis();
-		if(jedis == null) {
-			log.error("Start error " + key);
-//			throw new PipeException("start error");
-		}else {
-			log.info("Start ok " + key);
-		}
-		redisPool.close(jedis);
+		log.warn("Start res " + res);
+		if(!res)
+			throw new PipeException("start error");
 	}
 
 	@Override
 	public void stop(){
-		log.info("stop");		
+		log.info("stop");	
+		Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+				return RedisUtil.del(jedis, key);
+			}
+		}) ;
 	}
 
 	@Override
 	public boolean remove(String obj) {
-		redisPool.del(this.key);
-		return false;
+		return Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+				return RedisUtil.del(jedis, key);
+			}
+		}) > 0;
 	}
 
 	@Override
 	public String get() {
-		return redisPool.lpop(this.key);
+		return Redis.doJedis(new Fun<String>() {
+			@Override
+			public String make(Jedis jedis) {
+				return RedisUtil.lpop(jedis, key);
+			}
+		});
 	}
 
 	@Override
 	public boolean put(Collection<String> objs) {
-		redisPool.listRPush(this.key, objs);
-		return true;
+		return Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+				return RedisUtil.listRPush(jedis, key, objs);
+			}
+		}) > objs.size();
 	}
 
 	@Override
 	public boolean put(String obj) {
-		redisPool.listRPush(this.key, Arrays.asList(obj));
-		return true;
+		return Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+				return RedisUtil.listRPush(jedis, key, Arrays.asList(obj));
+			}
+		}) > 0;
 	}
 
 	@Override
 	public boolean putHead(Collection<String> objs) {
-		redisPool.listLPush(this.key, objs);
-		return true;
+		return Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+				return RedisUtil.listLPush(jedis, key, objs);
+			}
+		}) >= objs.size();
 	}
 
 	@Override
 	public boolean putHead(String obj) {
-		redisPool.listLPush(this.key, Arrays.asList(obj));
-		return true;
+		return Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+				return RedisUtil.listLPush(jedis, key, Arrays.asList(obj));
+			}
+		}) > 0;
 	}
 
 	@Override
 	public long size() {
-		return redisPool.size(this.key);
+		return Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+				return RedisUtil.size(jedis, key);
+			}
+		}) ;
 	}
 
 	/**
@@ -106,7 +140,7 @@ public class PipeRedisImpl implements Pipe<String>{
 	 * 多线程 各自轮询  拿到资源 消费处理 继续拿资源	  量力获取
 	 */
 	@Override
-	public void startConsumer(int threadSize, final Fun<String> executer) {
+	public void startConsumer(int threadSize, final com.walker.core.aop.Fun<String> executer){
 		log.warn("StartConsumer");
 		if(threadSize <= 0)return;
 		threadPool = Executors.newFixedThreadPool(threadSize);
@@ -120,7 +154,7 @@ public class PipeRedisImpl implements Pipe<String>{
 					while(! Thread.interrupted()) {
 						//！！！！！！消费 加锁 互斥问题
 						//:Todo
-						String obj = redisPool.getJedis(keyJedis).lpop(key);//get();
+						String obj = Redis.getInstance().getJedis(keyJedis).lpop(key);//get();
 						if(obj != null) {
 							log.debug("Comsumer get " + obj.toString());
 							executer.make(obj);
@@ -133,7 +167,7 @@ public class PipeRedisImpl implements Pipe<String>{
 						}
 					}
 					
-					redisPool.close(keyJedis);
+					Redis.getInstance().close(keyJedis);
 				}
 			});
 		}
@@ -155,6 +189,7 @@ public class PipeRedisImpl implements Pipe<String>{
 			}
 		}
 	}
+
 	
 	
 }

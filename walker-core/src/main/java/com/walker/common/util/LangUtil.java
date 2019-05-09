@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.http.client.utils.CloneUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -326,5 +327,8 @@ public class LangUtil {
 			return def;
 		}
 	}
-
+	
+    public static <T> T cloneObject(final T obj) throws CloneNotSupportedException {
+    	return CloneUtils.cloneObject(obj);
+    }
 }

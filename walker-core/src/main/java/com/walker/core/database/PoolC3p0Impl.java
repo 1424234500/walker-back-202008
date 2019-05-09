@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.walker.common.util.MapListUtil;
 
@@ -21,8 +19,6 @@ import com.walker.common.util.MapListUtil;
  */
 @SuppressWarnings("unchecked")
 class PoolC3p0Impl extends Pool {
-	static Logger logger = org.apache.log4j.Logger.getLogger(PoolC3p0Impl.class);
-
 	/**
 	 * 根据通用配置 初始化多个数据源
 	 */
@@ -64,7 +60,7 @@ class PoolC3p0Impl extends Pool {
 			dsName = dsName == null || dsName.length() == 0 ? defaultDsName : dsName;
 			return dataSource.get(dsName).getConnection();
 		} catch (Exception e) {
-			logger.error("Exception in C3p0Utils! of " + dsName, e);
+			log.error("Exception in C3p0Utils! of " + dsName, e);
 			throw new RuntimeException("数据库连接出错!" + dsName, e);
 		}
 	}
@@ -74,7 +70,7 @@ class PoolC3p0Impl extends Pool {
 			try {
 				rs.close();
 			} catch (SQLException e) {
-				logger.error("Exception in C3p0Utils! ResultSet", e);
+				log.error("Exception in C3p0Utils! ResultSet", e);
 				throw new RuntimeException("数据库连接关闭出错!", e);
 			}
 		}
@@ -82,7 +78,7 @@ class PoolC3p0Impl extends Pool {
 			try {
 				pst.close();
 			} catch (SQLException e) {
-				logger.error("Exception in C3p0Utils! PreparedStatement", e);
+				log.error("Exception in C3p0Utils! PreparedStatement", e);
 				throw new RuntimeException("数据库连接关闭出错!", e);
 			}
 		}
@@ -91,7 +87,7 @@ class PoolC3p0Impl extends Pool {
 			try {
 				conn.close();
 			} catch (SQLException e) {
-				logger.error("Exception in C3p0Utils! Connection", e);
+				log.error("Exception in C3p0Utils! Connection", e);
 				throw new RuntimeException("数据库连接关闭出错!", e);
 			}
 		}

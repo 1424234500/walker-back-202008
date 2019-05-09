@@ -1,12 +1,15 @@
 package com.walker.core.pipe;
 
-import com.walker.common.util.Call;
+import org.apache.log4j.Logger;
+
+import com.walker.core.aop.TestAdapter;
 
 /**
  * 管道控制器 
  *
  */
-public class PipeMgr implements Call{
+public class PipeMgr extends TestAdapter{
+	private static Logger log = Logger.getLogger("pipe"); 
 
 	private PipeMgr() {}
 
@@ -30,12 +33,8 @@ public class PipeMgr implements Call{
 		pipe.start(key);
 		return pipe;
 	}
-	
-	  
-	public void call(){
+	public boolean doTest() {
+		return  PipeMgr.getPipe(Type.PIPE, "test") == null;
 	}
-
-	
-
 
 }

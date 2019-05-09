@@ -7,8 +7,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import com.walker.common.util.Fun;
-import com.walker.core.database.RedisMgr;
+import com.walker.core.database.Redis;
+import com.walker.core.database.RedisUtil;
+import com.walker.core.database.Redis.Fun;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
@@ -32,11 +33,6 @@ public class PipeRedisBroadcastImpl implements Pipe<String>{
 	 * 簇列
 	 */
 	private String key;
-	/**
-	 * redis连接池
-	 */
-	private RedisMgr redisPool;
-
 
 	/**
 	 * 线程池消费 每个线程都去消费
@@ -46,18 +42,18 @@ public class PipeRedisBroadcastImpl implements Pipe<String>{
 	@Override
 	public void start(String key){
 		this.key = key;
+		
+		Boolean res = Redis.doJedis(new Fun<Boolean>() {
+			@Override
+			public Boolean make(Jedis jedis) {
+				return jedis == null;
+			}
+		});
 
-		redisPool = RedisMgr.getInstance();
-		Jedis jedis = redisPool.getJedis();
-		if(jedis == null) {
-			log.error("Start error " + key);
-//			throw new PipeException("start error");
-		}else {
-			log.info("Start ok " + key);
-		}
-		redisPool.close(jedis);
+		log.warn("Start res " + res);
+		if(!res)
+			throw new PipeException("start error");
 	}
-
 	@Override
 	public void stop(){
 		log.info("stop");		
@@ -75,21 +71,26 @@ public class PipeRedisBroadcastImpl implements Pipe<String>{
 
 	@Override
 	public boolean put(Collection<String> objs) {
-		Jedis jedis = redisPool.getJedis();
-		for(String obj : objs) {
-			jedis.publish(this.key, obj);
-		}
-		redisPool.close(jedis);
-		return true;
+		return Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+				long res = 0;
+				for(String obj : objs) {
+					res += RedisUtil.publish(jedis, key, obj);
+				}
+				return res;
+			}
+		}) >= objs.size();
 	}
 
 	@Override
 	public boolean put(String obj) {
-		Jedis jedis = redisPool.getJedis();
-		jedis.expire(obj, 3);
-		jedis.publish(this.key, obj);
-		redisPool.close(jedis);
-		return true;
+		return Redis.doJedis(new Fun<Long>() {
+			@Override
+			public Long make(Jedis jedis) {
+					return RedisUtil.publish(jedis, key, obj);
+			}
+		}) >= 0;
 	}
 
 	@Override
@@ -112,12 +113,12 @@ public class PipeRedisBroadcastImpl implements Pipe<String>{
 	 * 多线程 各自轮询 消费 消费完后继续拿资源
 	 */
 	@Override
-	public void startConsumer(int threadSize, final Fun<String> executer) {
+	public void startConsumer(int threadSize, final  com.walker.core.aop.Fun<String> executer) {
 		log.warn("StartConsumer");
 		if(threadSize <= 0)return;
 
 		threadPool = Executors.newFixedThreadPool(threadSize);
-		Jedis jedis = redisPool.getJedis(this.key);
+		Jedis jedis = Redis.getInstance().getJedis(this.key);
 		jedis.subscribe(new JedisPubSub() {
 			public void onMessage(String channel, final String message) {
 				log.debug("Consumer subcribe [" + channel + "] " + message);
@@ -140,7 +141,7 @@ public class PipeRedisBroadcastImpl implements Pipe<String>{
 	}
 	@Override
 	public void stopConsumer() {
-		redisPool.close(this.key);
+		Redis.getInstance().close(this.key);
 		if(threadPool != null && !threadPool.isShutdown()) {
 			threadPool.shutdown();
 		}

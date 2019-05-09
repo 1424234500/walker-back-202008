@@ -3,12 +3,14 @@ package com.walker.core.scheduler;
 import org.apache.log4j.Logger;
 
 import com.walker.common.util.Call;
+import com.walker.core.aop.TestAdapter;
+import com.walker.core.route.SubPubMgr;
 
 /**
  * 管理器
  *
  */
-public class SchedulerMgr implements Call{
+public class SchedulerMgr extends TestAdapter{
 	private static Logger log = Logger.getLogger(SchedulerMgr.class);
 
 	private static Scheduler scheduler = null;
@@ -50,15 +52,10 @@ public class SchedulerMgr implements Call{
 		}
 	}
 	
-	public void call(){
-		Scheduler scheduler = getInstance();
-		try {
-			scheduler.start();
-			reload(scheduler);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public boolean doTest() {
+		return getInstance() == null;
 	}
+
 
 }
 

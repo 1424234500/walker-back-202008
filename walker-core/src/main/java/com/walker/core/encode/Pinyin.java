@@ -2,7 +2,7 @@ package com.walker.core.encode;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
-import com.walker.common.util.Fun;
+import com.walker.core.aop.Fun;
 
 import net.sourceforge.pinyin4j.*;
 import net.sourceforge.pinyin4j.format.*;

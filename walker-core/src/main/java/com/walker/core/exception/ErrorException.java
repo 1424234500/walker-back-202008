@@ -1,0 +1,30 @@
+package com.walker.core.exception;
+
+import com.walker.common.util.Tools;
+
+/**
+ * 场景:
+ * 		初始化redis连接池
+ * 		正常测试获取连接成功
+ * 		异常则抛出信息 调用方捕获处理  是切换主备或者中止程序	
+ * 
+ * eg:
+ * 		redis启动异常
+ * 
+ * @author walker
+ *
+ */
+public class ErrorException extends RuntimeException{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public ErrorException(Object object) {
+		super(String.valueOf(object));
+	}
+	public ErrorException(Object...objects) {
+		super(Tools.objects2string(objects));
+	}
+
+}

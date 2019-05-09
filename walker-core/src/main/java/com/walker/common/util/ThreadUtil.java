@@ -15,6 +15,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.Logger;
 
+import com.walker.core.aop.Fun;
 import com.walker.core.cache.CacheMgr;
 
 

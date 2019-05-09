@@ -3,7 +3,7 @@ package com.walker.core.pipe;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import com.walker.common.util.Fun;
+import com.walker.core.aop.Fun;
 
 /**
  * 管道 跨 进程通信工具
@@ -35,7 +35,7 @@ public interface Pipe<T>{
 	 */
 	void stop();
 	/**
-	 * 停止管道 
+	 * 停止管道消费线程池  最多等待时间
 	 * 等待执行完毕
 	 */
 	void await(long timeout, TimeUnit unit);
@@ -83,12 +83,14 @@ public interface Pipe<T>{
 	
 	/**
 	 * 开启消费者线程
+	 * 线程池
 	 * 线程数 执行器
 	 */
 	void startConsumer(int threadSize, Fun<T> executer) ;
 
 	/**
 	 * 关闭消费者线程
+	 * 等待线程执行完毕 不再添加新的线程
 	 */
 	void stopConsumer() ;
 	

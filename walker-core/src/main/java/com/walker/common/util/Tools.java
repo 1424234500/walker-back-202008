@@ -126,6 +126,9 @@ public class Tools {
 //		out(Arrays.toString(objects));
 		out(objects2string(objects));
 	}
+	public static void out(Logger log, Object...objects) {
+		log.info(objects2string(objects));
+	}
 	public static <T> void formatOut(Collection<T> list){
 		int i = 0;
 		for(T obj : list){
