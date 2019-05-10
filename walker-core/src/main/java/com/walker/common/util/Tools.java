@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.log4j.Logger;
 
 import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImpl;
@@ -39,13 +39,20 @@ public class Tools {
 		
 	}
 
-	public static String toString(Throwable throwable) {
+	
+	/**
+	 * 异常栈格式化
+	 * @param throwable
+	 * @return
+	 */
+	public static String toString(Throwable e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
         try {
-            throwable.printStackTrace(pw);
-            return sw.toString();
+            e.printStackTrace(pw);
+			return " \nException:" + e.getMessage() + " \n" +sw.toString();
+//            return sw.toString();
         } finally {
             pw.close();
         }
@@ -95,11 +102,13 @@ public class Tools {
 	/**
 	 * ms计算耗时 10M8S100ms
 	 */
-	public static String calcTime(long filesize) {
-		return filesize > 60 * 1000 ? (float) (10 * filesize / (60 * 1000))
-				/ 10 + "M " + filesize % (60 * 1000) / 1000 + "S "
-				: (filesize > 1000 ? filesize / 1000 + "S " + filesize % 1000
-				+ "Ms " : filesize + "Ms ");
+	public static String calcTime(long timemill) {
+//		return timemill > 60 * 1000 ? (float) (10 * timemill / (60 * 1000))
+//				/ 10 + "M " + timemill % (60 * 1000) / 1000 + "S "
+//				: (timemill > 1000 ? timemill / 1000 + "S " + timemill % 1000
+//				+ "Ms " : timemill + "Ms ");
+		
+		return DurationFormatUtils.formatDuration(timemill, "HH:mm:ss.SSS");
 	}
 
 	public static String getValueEncoded(String value) {

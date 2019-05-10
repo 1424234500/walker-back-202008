@@ -152,14 +152,16 @@ public class RobotUtil {
 		};
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
 	}
-
+	public static Process doCmd(String command) throws IOException {
+		Runtime runtime = Runtime.getRuntime();
+		return runtime.exec(command);
+	}
 	public static String getRuntime() {
 		Runtime runtime = Runtime.getRuntime();
 		String res = "Runtime: \n";
 		res += " maxMemory: " + Tools.calcSize(runtime.maxMemory()) + " \n";
 		res += " freeMemory: " + Tools.calcSize(runtime.freeMemory()) + " \n";
 		res += " totalMemory: " + Tools.calcSize(runtime.totalMemory()) + " \n";
-		
 		return res;
 	}
 

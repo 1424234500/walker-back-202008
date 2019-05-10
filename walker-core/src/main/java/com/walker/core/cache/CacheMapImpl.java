@@ -42,10 +42,13 @@ class CacheMapImpl implements Cache<String> {
     private static Map<String, Object> map = new ConcurrentHashMap<>();
     private static Map<String, Index> mapIndex = new ConcurrentHashMap<>();
     CacheMapImpl(){
-		out("CacheMapImpl init");
+		log.info("CacheMapImpl init");
     }
     
-    
+	@Override
+	public String toString() {
+		return "Cache map:" + map.toString();
+	}
 	@Override
 	public int size() {
 		return map.size();
@@ -67,7 +70,7 @@ class CacheMapImpl implements Cache<String> {
 		if(map.containsKey(key) && mapIndex.containsKey(key)){
 			Index index = mapIndex.get(key);
 			if(index.isExpire()){
-				out("expire." + key + "." + map.get(key) + "." + index.expire);
+				log.info("expire." + key + "." + map.get(key) + "." + index.expire);
 				remove(key);
 				return false;
 			}
@@ -170,7 +173,7 @@ class CacheMapImpl implements Cache<String> {
 			index.expire = expire;
 			mapIndex.put(key, index);
 			res = "true";
-//			out(res);
+//			log.info(res);
 		}else{
 			if(obj instanceof List){
 				((List<V>)obj).add(value);
@@ -180,7 +183,7 @@ class CacheMapImpl implements Cache<String> {
 				res = "true";
 			}else{
 				res = "基本数据类型,无子对象";
-				out(res);
+				log.info(res);
 			}
 			//添加子对象后 刷新root key的生命? 不重置次数
 			key = url.split("\\.")[0]; //取出root
@@ -213,7 +216,7 @@ class CacheMapImpl implements Cache<String> {
 		Object obj = MapListUtil.getMapUrl(map, url);
 		if(obj == null){
 			res = "寻址失败" + url;
-			out(res);
+			log.info(res);
 		}else{
 			if(obj instanceof List){
 				int cc = Tools.parseInt(key, -1);
@@ -442,11 +445,6 @@ class CacheMapImpl implements Cache<String> {
 		return res;
 	}
 	
-	private void out(Object...objects){
-		Tools.out(objects);
-	}
-
-
 	@Override
 	public Type getType() {
 		return Type.MAP;

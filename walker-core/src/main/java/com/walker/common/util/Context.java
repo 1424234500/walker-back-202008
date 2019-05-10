@@ -2,11 +2,29 @@ package com.walker.common.util;
 
 
 /**
+ * 运行上下文 
+ * 
+ * 
  * 常量配置池
  * @author walker
  *
  */
-public class Constant {
+public class Context {
+	
+	
+	
+	
+	/**
+	 * 文件路径
+	 * @return
+	 */
+	public static String getPathRoot() {
+		return ClassLoader.getSystemResource("").getPath();
+	}
+	
+	
+	
+	
 	public static String beginTip(Class<?> clz) {
 		return beginTip(clz.getName());
 	}	

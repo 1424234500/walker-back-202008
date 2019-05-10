@@ -192,8 +192,7 @@ public class XmlUtil {
 	 * @throws DocumentException
 	 */
 	public static Object parseConfig(String fileName) throws DocumentException {
-//        return parseElement(XmlUtil.class.getResource("/").getPath()+File.separator + fileName);
-        return ClassLoader.getSystemResource("").getPath() + fileName;
+        return parseElement(Context.getPathRoot() +File.separator + fileName);
 	}
 
     public static void main(String[] args) throws DocumentException {

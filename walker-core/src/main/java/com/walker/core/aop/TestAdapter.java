@@ -2,7 +2,7 @@ package com.walker.core.aop;
 
 import org.apache.log4j.Logger;
 
-import com.walker.common.util.Constant;
+import com.walker.common.util.Context;
 import com.walker.core.exception.ErrorException;
 
 /**
@@ -22,15 +22,15 @@ public abstract class TestAdapter implements Test{
 
 	@Override
 	public void test() {
-		log.warn(Constant.beginTip(getClass()));
+		log.warn(Context.beginTip(getClass()));
 		
 		if(doTest()) {
-			log.warn(Constant.okTip(getClass()));
+			log.warn(Context.okTip(getClass()));
 		}else {
-			throw new ErrorException(Constant.errorTip(getClass()));
+			throw new ErrorException(Context.errorTip(getClass()));
 		}
 
-		log.warn(Constant.endTip(getClass()));
+		log.warn(Context.endTip(getClass()));
 	}
 
 	/**

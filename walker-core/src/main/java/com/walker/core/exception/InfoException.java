@@ -8,15 +8,21 @@ import com.walker.common.util.Tools;
  * 		正常返回用户
  * 		异常则抛出信息 调用方捕获处理  同时拿到了异常信息 而不用修改正常流程
  * 
- * 提示异常 通常不用处理 透传给上级做提示拦截处理 返回结果的第二种方式 
+ * 提示异常 必须处理或者上抛出 用于多种返回状态  
  * 
  * eg:
- * 		查询失败: 用户不存在
+ * 		
+ * 		try{
+ * 			user = find(xxx);
+ * 			return setOk(user);
+ * 		}catch(InfoException e){
+ * 			return setError("error" + e.getMessage());
+ * 		}
  * 
  * @author walker
  *
  */
-public class InfoException extends RuntimeException{
+public class InfoException extends Exception{
 	/**
 	 * 
 	 */

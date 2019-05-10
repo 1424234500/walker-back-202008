@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.walker.common.util.Bean;
 
 
@@ -14,6 +16,8 @@ import com.walker.common.util.Bean;
  * by Walker
  */
 public interface Cache<K> {
+	static Logger log = Logger.getLogger(Cache.class); 
+
 	/**
 	 * 缓存监控接口
 	 * 每一个缓存的键作为一条sql记录  hash, 键, 值, 修改时间, 过期时间, 命中次数, 值类型 map 1/list 2/base 0

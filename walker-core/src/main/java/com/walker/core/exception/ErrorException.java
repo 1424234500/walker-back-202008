@@ -8,6 +8,8 @@ import com.walker.common.util.Tools;
  * 		正常测试获取连接成功
  * 		异常则抛出信息 调用方捕获处理  是切换主备或者中止程序	
  * 
+ * 异常抛出时 程序中断 不需处理
+ * 
  * eg:
  * 		redis启动异常
  * 

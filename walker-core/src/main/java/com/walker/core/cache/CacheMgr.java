@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.walker.common.setting.SettingUtil;
 import com.walker.common.util.Bean;
+import com.walker.common.util.Context;
 import com.walker.common.util.FileUtil;
 import com.walker.core.aop.TestAdapter;
 import com.walker.core.database.Dao;
@@ -64,13 +65,12 @@ public class CacheMgr extends TestAdapter{
 	public static void reload(Cache<String> cache){
 		log.warn("初始化缓存");
 		
-		String classRoot = CacheMgr.class.getResource("/").getPath();
+		String classRoot = Context.getPathRoot();
 		File dir = new File(classRoot);
 //		log.info(dir.getPath());
 //		log.info(dir.getAbsolutePath());
 //		log.info(dir.getName());
 //		log.info(Arrays.toString(dir.list()));
-
 		cache.put("cache_dir_getPath", dir.getPath());
 		cache.put("cache_dir_getAbsolutePath", dir.getAbsolutePath());
 		cache.put("cache_dir_getName", dir.getName());
