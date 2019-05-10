@@ -1,5 +1,6 @@
 package com.walker.common.util;
 
+import java.net.URL;
 
 /**
  * 运行上下文 
@@ -19,7 +20,16 @@ public class Context {
 	 * @return
 	 */
 	public static String getPathRoot() {
-		return ClassLoader.getSystemResource("").getPath();
+		
+		URL url = ClassLoader.getSystemResource("");
+		if(url != null) {
+			return url.getPath();
+		}
+		url = Context.class.getResource("/");
+		if(url != null) {
+			return url.getPath();
+		}
+		return "/root";
 	}
 	
 	

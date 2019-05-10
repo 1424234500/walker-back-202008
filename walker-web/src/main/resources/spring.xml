@@ -144,7 +144,7 @@
 
 	<!-- 事务 aop 配置 -->
 	<aop:config>
-		<aop:pointcut id="serviceMethods" expression="execution(* com.service..*(..))"/>
+		<aop:pointcut id="serviceMethods" expression="execution(* com.walker.service..*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
 	</aop:config>
 
