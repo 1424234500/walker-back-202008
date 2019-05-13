@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.walker.common.mode.Watch;
+import com.walker.common.util.Context;
 import com.walker.common.util.MapListUtil;
 
 
@@ -24,6 +26,7 @@ class PoolC3p0Impl extends Pool {
 	 */
 	private static Map<String, ComboPooledDataSource> dataSource;
 	static {
+		log.warn(Context.beginTip("init pool"));
 		dataSource = new LinkedHashMap<>();
 		for(String name : dsConfigPro.keySet()){ //jdbc
 //			###----------------- Oracle -----------------  
@@ -36,17 +39,25 @@ class PoolC3p0Impl extends Pool {
 //			ds.setJdbcUrl(jdbcUrl);
 //			ds.setUser(user);
 //			ds.setPassword(password);
-			
-			
-			Map<String, String> map = (Map<String, String>) dsConfigPro.get(name); //oracle
-			map.putAll(MapListUtil.copy(dsConfig));//"InitialPoolSize", "MaxPoolSize"
-			ComboPooledDataSource ds = new ComboPooledDataSource(name);
-			//针对c3p0配置的键值  若是其他连接池需要对这些键 做映射 map 之后才能反射初始化
-//			ds.setDataSourceName(name);
-			setDataSource(ds, map);
-			dataSource.put(name, ds);
+			Watch w = new Watch(name);
+			try {
+				Map<String, String> map = (Map<String, String>) dsConfigPro.get(name); //oracle
+				w.put("map", map);
+				map.putAll(MapListUtil.copy(dsConfig));//"InitialPoolSize", "MaxPoolSize"
+				w.put("dsConfig", dsConfig);
+				ComboPooledDataSource ds = new ComboPooledDataSource(name);
+				//针对c3p0配置的键值  若是其他连接池需要对这些键 做映射 map 之后才能反射初始化
+	//			ds.setDataSourceName(name);
+				setDataSource(ds, map);
+				dataSource.put(name, ds);
+				w.res();
+				log.warn(w);
+			}catch (Exception e) {
+				w.exception(e);
+				log.error(e);
+			}
 		}
-		
+		log.warn(Context.endTip("init pool"));
 	}
 
 	

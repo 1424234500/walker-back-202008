@@ -16,6 +16,12 @@ import com.walker.common.util.Page;
 public interface BaseDao {
 
 	/**
+	 * 数据源
+	 * @param ds
+	 */
+	public void setDs(String ds);
+	
+	/**
 	 * 根据SQL获得结果集列名数组
 	 * 
 	 * @param sql
@@ -23,6 +29,11 @@ public interface BaseDao {
 	 * @return String List数组
 	 */
 	public List<String> findColumns(String sql);
+	/**
+	 * 根据表名获取列数组
+	 * @param tableName
+	 * @return
+	 */
 	public List<String> getColumns(String tableName);
 
 	/**

@@ -129,7 +129,7 @@ public class Tools {
 		log.info(str);;
 	}
 	public static void out(Object object) {
-		out(object);
+		out(String.valueOf(object));
 	}
 	public static void out(Object... objects) {
 //		out(Arrays.toString(objects));

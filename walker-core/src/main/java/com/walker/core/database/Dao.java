@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
 
+import com.walker.common.mode.Watch;
 import com.walker.common.util.Page;
+import com.walker.core.exception.ErrorException;
 
 /**
  * 数据库常用操作工具
@@ -27,7 +30,7 @@ public class Dao implements BaseDao{
 	private static Logger log = Logger.getLogger(Dao.class); 
 
 	private Pool pool;
-	private String dsName;
+	private String dsName=Pool.defaultDsName;
 	private Connection conn;
 	
 	public Dao(){
@@ -74,6 +77,8 @@ public class Dao implements BaseDao{
  
 	@Override
 	public List<String> findColumns(String sql) {
+		Watch w = new Watch(SqlHelp.makeSql(sql));
+
 		List<String> res = null;
 		Connection conn = null;
 		PreparedStatement pst = null;
@@ -88,8 +93,11 @@ public class Dao implements BaseDao{
 			for(int i=0; i < columnCount; i++){
 				res.add(md.getColumnName(i+1));
 			}
+			w.res(res);
 		} catch (Exception e) {
-			log.error(sql, e);
+			w.exception(e);
+			log.error(w, e);
+			throw new ErrorException(w);
 		} finally {
 			close(conn, pst, rs);
 		}
@@ -101,6 +109,7 @@ public class Dao implements BaseDao{
 	}
 	@Override
 	public List<Map<String, Object>> find(String sql, Object... objects) {
+		Watch w = new Watch(SqlHelp.makeSql(sql, objects));
 		List<Map<String, Object>> res = null;
 		Connection conn = null;
 		PreparedStatement pst = null;
@@ -115,8 +124,9 @@ public class Dao implements BaseDao{
 			rs = pst.executeQuery();
 			res = rs2list(rs);
 		} catch (Exception e) {
-			res = new ArrayList<>();
-			log.error(SqlHelp.makeSql(sql, objects), e);
+			w.exception(e);
+			log.error(w, e);
+			throw new ErrorException(w);
 		} finally {
 			close(conn, pst, rs);
 		}
@@ -133,18 +143,27 @@ public class Dao implements BaseDao{
 		return res;
 	}
 	@Override
-	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... objects) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Map<String, Object>> findPage(String sql, int start, int rows, Object... objects) {
+		if(this.dsName.equals("mysql")) {
+			sql = "select * from ( " + sql + " ) limit " + start + "," + rows;
+		}else if(this.dsName.equals("oracle")) {
+			sql = " select * from ( select t.*,rownum rowno from ( "
+			        + sql + 
+			 " ) t where rownum <  " + start + " ) where rowno > " + (start+rows);
+		}else{
+			throw new ErrorException("no implements  " + this.dsName);
+		}
+		return this.find(sql, objects);
 	}
 	@Override
-	public List<Map<String, Object>> findPage(Page page, String sql, Object... params) {
-		page.setNUM(this.count(sql, params ));
-		return this.findPage(sql,page.getNOWPAGE(),page.getSHOWNUM(), params );
+	public List<Map<String, Object>> findPage(Page page, String sql, Object... objects) {
+		page.setNUM(this.count(sql, objects ));
+		return this.findPage(sql,page.start(), page.getSHOWNUM(), objects );
 	}
 	
 	@Override
 	public int executeSql(String sql, Object... objects) {
+		Watch w = new Watch(SqlHelp.makeSql(sql, objects));
 		int res = 0;
 		Connection conn = null;
 		PreparedStatement pst = null;
@@ -155,15 +174,18 @@ public class Dao implements BaseDao{
 				pst.setObject(i + 1, objects[i]);
 			}
 			res = pst.executeUpdate();
+			w.res(res);
 		} catch (Exception e) {
-			res = -1;
-			log.error(SqlHelp.makeSql(sql, objects), e);
+			w.exception(e);
+			log.error(w, e);
+			throw new ErrorException(w);
 		} finally {
 			close(conn, pst, null);
 		}
 		return res;
 	}
 	public int[] executeSql(String sql, List<List<Object>> objs) {
+		Watch w = new Watch(sql).put("size", objs.size());
 		int[] res = {};
 		Connection conn = null;
 		PreparedStatement pst = null;
@@ -177,8 +199,11 @@ public class Dao implements BaseDao{
 				pst.addBatch();
 			}
 			res = pst.executeBatch();
+			w.res(res);
 		} catch (Exception e) {
-			log.error(sql + " batch size:"+objs.size(), e);
+			w.exception(e);
+			log.error(w, e);
+			throw new ErrorException(w);
 		} finally {
 			close(conn, pst, null);
 		}
@@ -186,6 +211,7 @@ public class Dao implements BaseDao{
 	}
 	@Override
 	public int count(String sql, Object... objects) {
+		Watch w = new Watch(SqlHelp.makeSql(sql, objects));
 		int res = 0;
 
 		Connection conn = null;
@@ -202,8 +228,12 @@ public class Dao implements BaseDao{
 				res = rs.getInt(1); // 取出count(*) 第一个整数
 				break;
 			}
+			w.res(res);
+			log.debug(w);
 		} catch (Exception e) {
-			log.error(SqlHelp.makeSql(sql, objects), e);
+			w.exception(e);
+			log.error(w, e);
+			throw new ErrorException(w);
 		} finally {
 			close(conn, pst, null);
 		}
@@ -218,6 +248,7 @@ public class Dao implements BaseDao{
 	 */
 	@Override
 	public int execute(String proc, Object...objects) {
+		Watch w = new Watch(proc);
 		int res = 0;
 
 		Connection conn = null;
@@ -235,8 +266,11 @@ public class Dao implements BaseDao{
 			}
 			cst.execute();
 			res = cst.getInt(objects.length);
+			w.res(res);
 		} catch (Exception e) {
-			log.error(proc, e);
+			w.exception(e);
+			log.error(w, e);
+			throw new ErrorException(w);
 		} finally {
 			close(conn, cst, null);
 		}

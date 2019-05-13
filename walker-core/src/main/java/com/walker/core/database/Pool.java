@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import com.walker.common.util.ClassUtil;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
+import com.walker.core.exception.ErrorException;
 
 /**
  * 连接接口
@@ -52,7 +53,7 @@ abstract class Pool {
 		Cache<String> cache = CacheMgr.getInstance();
 		Map<String, Object> jdbc = cache.get("jdbc");
 		if(jdbc == null || jdbc.size() == 0){
-			throw new RuntimeException("jdbc数据源配置异常 未配置?");
+			throw new ErrorException("jdbc数据源配置异常 未配置?");
 		}
 		Map<String, String> ds = cache.get("ds");
 		

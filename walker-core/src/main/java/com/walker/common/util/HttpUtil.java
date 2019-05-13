@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.time.StopWatch;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
@@ -23,7 +21,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -33,6 +30,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 
+import com.walker.common.mode.Watch;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.exception.InfoException;
@@ -64,7 +62,6 @@ public class HttpUtil {
 
 	private final static int DEFAULT_BUFFER = 4096;
 	private final static String DEFAULT_BROWSER = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
-	private final static String DEFAULT_ENCODE = "utf-8";
 
 	private static final int FLUSH_SIZE = 1024 * 1024 * 10;
 	/**
@@ -236,39 +233,39 @@ public class HttpUtil {
 
 	public static String executeString(HttpRequestBase request, String url, String encode, String decode, Map<?, ?> headers, RequestConfig timeout)
 			throws InfoException{
-		StopWatch sw = new StopWatch();
-		sw.start();
+		Watch w = new Watch();
 		String res = "";
-		StringBuilder info = new StringBuilder();
 		try {
-			info.append("http " + request.getMethod() + " " + url + " "  + request.getProtocolVersion() + " encode:" + encode + " decode:" + decode + " \nheaders:" + headers);
-			info.append(" \nRequestConfig:");
+			w.put("http " + request.getMethod() + " " + url + " "  + request.getProtocolVersion());
+			w.put("encode", encode);
+			w.put("decode", decode);
+			w.put(" \nheaders", headers);
+			w.put(" \nRequestConfig:");
 			if(timeout == null) {
 				Cache<String> cache = CacheMgr.getInstance();
 				int requestTimeout = cache.get("http_request_timeout", 3000);
 				int connectTimeout = cache.get("http_connect_timeout", 3000);
 				int socketTimeout = cache.get("http_socket_timeout", 6000);
-				info.append("requestTimeout=" + requestTimeout + ",connectTimeout=" + connectTimeout + ",socketTimeout=" + socketTimeout);
+				w.put("requestTimeout=" + requestTimeout + ",connectTimeout=" + connectTimeout + ",socketTimeout=" + socketTimeout);
 			}else {
-				info.append(timeout);
+				w.put(timeout);
 			}
 			HttpResponse response = executeResponse(request, url, headers, timeout);
-			sw.split();
-			info.append(" \nexecute cost:" + sw.getSplitTime());
+			w.cost(" \nexecute");
 
 			StatusLine status = response.getStatusLine();
-			info.append(" \ncode:" + status);
+			w.put(" \ncode", status);
 			HttpEntity entity = response.getEntity();
 			res = parseHttpEntity(entity, decode);
 
-			sw.stop();
-			info.append( " \nparseResponse cost:" + (sw.getTime() - sw.getSplitTime()));
-			info.append(" \ndata:" + res.substring(0, Math.min(res.length(), SHOW_STRING_LEN)));
-			log.info(info);
+			w.cost( " \nparseResponse");
+			w.put(" \ndata", res.substring(0, Math.min(res.length(), SHOW_STRING_LEN)));
+			w.res();
+			log.info(w);
 		} catch (Exception e) {
-			info.append(Tools.toString(e));
-			log.error(info);
-			throw new InfoException(info);
+			w.exception(e);
+			log.error(w, e);
+			throw new InfoException(w);
 		} finally {
 			
 		}
@@ -354,10 +351,8 @@ public class HttpUtil {
 	 * @throws Exception
 	 */
 	public static void download(String url, File file) throws IOException, InfoException{
-		StopWatch sw = new StopWatch();
-		sw.start();
-		StringBuilder info = new StringBuilder("http download " + url + " " + file.getAbsolutePath()   );
-		log.info(info);
+		Watch w = new Watch("http download " + url + " " + file.getAbsolutePath()   );
+		log.info(w);
 		long length = 0;
 		
 		FileOutputStream op = null;
@@ -379,13 +374,13 @@ public class HttpUtil {
 				}
 			}
 			op.flush();
-			sw.stop();
-			info.append(" size:" +Tools.calcSize(length) + " cost:" + sw.toString());
-			log.info(info);
+			w.put("size", Tools.calcSize(length));
+			w.res();
+			log.info(w);
 		} catch(IOException e){
-			info.append(Tools.toString(e));
-			log.error(info);
-			throw new InfoException(info);
+			w.exception(e);
+			log.error(w);
+			throw new InfoException(w);
 		} finally {
 			if (op != null) {
 				op.flush();

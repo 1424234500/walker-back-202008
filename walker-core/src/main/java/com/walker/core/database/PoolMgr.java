@@ -22,7 +22,7 @@ class PoolMgr extends TestAdapter{
 		connMap = new EnumMap<>(Type.class);
 	}
 	public static Pool getInstance() {
-		return getInstance(null);
+		return getInstance(Type.C3P0);
 	}
 
 	public static Pool getInstance(Type type) {
