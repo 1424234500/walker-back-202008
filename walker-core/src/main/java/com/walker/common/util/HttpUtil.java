@@ -260,12 +260,9 @@ public class HttpUtil {
 
 			w.cost( " \nparseResponse");
 			w.put(" \ndata", res.substring(0, Math.min(res.length(), SHOW_STRING_LEN)));
-			w.res();
-			log.info(w);
+			w.res(log);
 		} catch (Exception e) {
-			w.exception(e);
-			log.error(w, e);
-			throw new InfoException(w);
+			w.exceptionWithThrow(e, log);
 		} finally {
 			
 		}
@@ -375,12 +372,9 @@ public class HttpUtil {
 			}
 			op.flush();
 			w.put("size", Tools.calcSize(length));
-			w.res();
-			log.info(w);
+			w.res(log);
 		} catch(IOException e){
-			w.exception(e);
-			log.error(w);
-			throw new InfoException(w);
+			w.exceptionWithThrow(e, log);
 		} finally {
 			if (op != null) {
 				op.flush();

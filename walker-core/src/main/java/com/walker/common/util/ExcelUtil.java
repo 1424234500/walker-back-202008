@@ -11,7 +11,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.junit.Test;
 
-import com.mysql.fabric.xmlrpc.base.Array;
+import com.walker.common.mode.Watch;
+
 
 
 public class ExcelUtil {
@@ -66,9 +67,10 @@ public class ExcelUtil {
             String sheetName,
             OutputStream outputStream
     ) {
+    	Watch w = new Watch("To Excel");
     	titleList = titleList == null ? keyList : titleList;
         if (objList == null || keyList == null) {
-            log.error("参数异常");
+        	w.put("参数异常");
         }
     	
         sheetName = StringUtils.isNotBlank(sheetName) ? sheetName : SHEET_NAME;
@@ -110,13 +112,13 @@ public class ExcelUtil {
  
             try {
                 wb.write(outputStream);
+                w.cost("write");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                w.exceptionWithThrow(e, log);
             }
  
         } catch ( Exception e) {
-            log.error(e.toString(), e);
-            throw new RuntimeException(e);
+            w.exceptionWithThrow(e, log);
         } finally {
  
         }
@@ -135,8 +137,9 @@ public class ExcelUtil {
             String sheetName,
             OutputStream outputStream
     ) {
+    	Watch w = new Watch("To Excel");
         if (objList == null) {
-            log.error("参数异常");
+            w.put("参数异常");
         }
     	
         sheetName = StringUtils.isNotBlank(sheetName) ? sheetName : SHEET_NAME;
@@ -176,13 +179,13 @@ public class ExcelUtil {
  
             try {
                 wb.write(outputStream);
+                w.cost("write");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+            	w.exceptionWithThrow(e, log);
             }
  
         } catch ( Exception e) {
-            log.error(e.toString(), e);
-            throw new RuntimeException(e);
+           w.exceptionWithThrow(e, log);
         } finally {
  
         }

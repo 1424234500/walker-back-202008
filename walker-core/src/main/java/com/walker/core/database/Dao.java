@@ -93,11 +93,9 @@ public class Dao implements BaseDao{
 			for(int i=0; i < columnCount; i++){
 				res.add(md.getColumnName(i+1));
 			}
-			w.res(res);
+			w.res(res, log);
 		} catch (Exception e) {
-			w.exception(e);
-			log.error(w, e);
-			throw new ErrorException(w);
+			w.exceptionWithThrow(e, log);
 		} finally {
 			close(conn, pst, rs);
 		}
@@ -105,10 +103,20 @@ public class Dao implements BaseDao{
 	}
 	@Override
 	public List<String> getColumns(String tableName) {
-		return findColumns("SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID");
+		String sql = "";
+		if(this.dsName.equals("mysql")) {
+//			sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '" + tableName + "' ORDER BY COLUMN_NAME";
+			sql = "select * from  " + tableName + " limit 0,1 ";
+		}else if(this.dsName.equals("oracle")) {
+			sql = "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
+		}else{
+			throw new ErrorException("no implements  " + this.dsName);
+		}
+		return findColumns(sql);
 	}
 	@Override
 	public List<Map<String, Object>> find(String sql, Object... objects) {
+		sql = SqlHelp.filter(sql);
 		Watch w = new Watch(SqlHelp.makeSql(sql, objects));
 		List<Map<String, Object>> res = null;
 		Connection conn = null;
@@ -123,10 +131,9 @@ public class Dao implements BaseDao{
 			}
 			rs = pst.executeQuery();
 			res = rs2list(rs);
+			w.res(res, log);
 		} catch (Exception e) {
-			w.exception(e);
-			log.error(w, e);
-			throw new ErrorException(w);
+			w.exceptionWithThrow(e, log);
 		} finally {
 			close(conn, pst, rs);
 		}
@@ -135,21 +142,45 @@ public class Dao implements BaseDao{
 	}
 	@Override
 	public Map<String, Object> findOne(String sql, Object... objects) {
-		List<Map<String, Object>> list = this.find("select * from " + sql + " where rownum <= 1 ", objects);
+		List<Map<String, Object>> list;
+		if(this.dsName.equals("mysql")) {
+			list = this.find("select * from ( " + sql + " ) t limit 0,1", objects);
+		}else if(this.dsName.equals("oracle")) {
+			list = this.find("select * from " + sql + " where rownum <= 1 ", objects);
+		}else{
+			throw new ErrorException("no implements  " + this.dsName);
+		}
 		Map<String, Object> res = null;
 		if(list.size() >= 1) {
 			res = list.get(0);
 		}
+		
 		return res;
 	}
+	/**
+	 * 获得结果集
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param params
+	 *            参数
+	 * @param page
+	 *            要显示第几页
+	 * @param rows
+	 *            每页显示多少条
+	 * @return 结果集
+	 */
 	@Override
-	public List<Map<String, Object>> findPage(String sql, int start, int rows, Object... objects) {
+	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... objects) {
+		int start = ((page - 1) * rows);
+		
 		if(this.dsName.equals("mysql")) {
-			sql = "select * from ( " + sql + " ) limit " + start + "," + rows;
-		}else if(this.dsName.equals("oracle")) {
+			sql = "select * from ( " + sql + " ) t limit " + start + "," + rows;	//2,5 -> 56789 -> 5,5
+		}else if(this.dsName.equals("oracle")) {										//2,5 -> 67890 -> 5,10
+			int stop = page * rows + 1;
 			sql = " select * from ( select t.*,rownum rowno from ( "
 			        + sql + 
-			 " ) t where rownum <  " + start + " ) where rowno > " + (start+rows);
+			 " ) t where rownum <=  " + stop + " ) where rowno > " + start;
 		}else{
 			throw new ErrorException("no implements  " + this.dsName);
 		}
@@ -163,6 +194,7 @@ public class Dao implements BaseDao{
 	
 	@Override
 	public int executeSql(String sql, Object... objects) {
+		sql = SqlHelp.filter(sql);
 		Watch w = new Watch(SqlHelp.makeSql(sql, objects));
 		int res = 0;
 		Connection conn = null;
@@ -174,17 +206,16 @@ public class Dao implements BaseDao{
 				pst.setObject(i + 1, objects[i]);
 			}
 			res = pst.executeUpdate();
-			w.res(res);
+			w.res(res, log);
 		} catch (Exception e) {
-			w.exception(e);
-			log.error(w, e);
-			throw new ErrorException(w);
+			w.exceptionWithThrow(e, log);
 		} finally {
 			close(conn, pst, null);
 		}
 		return res;
 	}
 	public int[] executeSql(String sql, List<List<Object>> objs) {
+		sql = SqlHelp.filter(sql);
 		Watch w = new Watch(sql).put("size", objs.size());
 		int[] res = {};
 		Connection conn = null;
@@ -199,11 +230,9 @@ public class Dao implements BaseDao{
 				pst.addBatch();
 			}
 			res = pst.executeBatch();
-			w.res(res);
+			w.res(res, log);
 		} catch (Exception e) {
-			w.exception(e);
-			log.error(w, e);
-			throw new ErrorException(w);
+			w.exceptionWithThrow(e, log);
 		} finally {
 			close(conn, pst, null);
 		}
@@ -219,7 +248,7 @@ public class Dao implements BaseDao{
 		ResultSet rs = null;
 		try {
 			conn = this.getConnection();
-			pst = conn.prepareStatement("select count(*) from (" + sql + ")");
+			pst = conn.prepareStatement("select count(*) from (" + sql + ") t");
 			for (int i = 0; i < objects.length; i++) {
 				pst.setObject(i + 1, objects[i]); 
 			}
@@ -228,12 +257,10 @@ public class Dao implements BaseDao{
 				res = rs.getInt(1); // 取出count(*) 第一个整数
 				break;
 			}
-			w.res(res);
+			w.res(res, log);
 			log.debug(w);
 		} catch (Exception e) {
-			w.exception(e);
-			log.error(w, e);
-			throw new ErrorException(w);
+			w.exceptionWithThrow(e, log);
 		} finally {
 			close(conn, pst, null);
 		}
@@ -247,7 +274,7 @@ public class Dao implements BaseDao{
 	 * @return
 	 */
 	@Override
-	public int execute(String proc, Object...objects) {
+	public int executeProc(String proc, Object...objects) {
 		Watch w = new Watch(proc);
 		int res = 0;
 
@@ -266,11 +293,9 @@ public class Dao implements BaseDao{
 			}
 			cst.execute();
 			res = cst.getInt(objects.length);
-			w.res(res);
+			w.res(res, log);
 		} catch (Exception e) {
-			w.exception(e);
-			log.error(w, e);
-			throw new ErrorException(w);
+			w.exceptionWithThrow(e, log);
 		} finally {
 			close(conn, cst, null);
 		}

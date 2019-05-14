@@ -62,6 +62,17 @@ public interface BaseDao {
 	 * @return 结果集
 	 */
 	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... params);
+	/**
+	 * 获得结果集
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param params
+	 *            参数
+	 * @param page 
+	 * 				分页对象
+	 * @return 结果集
+	 */
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... params);
 
 	/**
@@ -90,7 +101,7 @@ public interface BaseDao {
 	 * @param objects
 	 * @return
 	 */
-	public int execute(String proc, Object...objects);	
+	public int executeProc(String proc, Object...objects);	
 	
 	
 	

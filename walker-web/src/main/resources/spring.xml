@@ -42,13 +42,21 @@
 	<!-- 数据源 --> 
 	<!--================================================-->
 	<!-- 配置数据源,dbcp,c3p0 jdbc配置文件 主要针对于一套配置 适配多种连接池工具 映射 -->
-	<!-- com.mchange.v2.c3p0.ComboPooledDataSource org.apache.commons.dbcp.BasicDataSource -->
+	<!-- org.springframework.jdbc.datasource.DriverManagerDataSource -->
+	<!-- com.mchange.v2.c3p0.ComboPooledDataSource  -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"   destroy-method="close">
+		<property name="DriverClass" value="${jdbc.mysql.DriverClass}"/>
+		<property name="JdbcUrl" value="${jdbc.mysql.JdbcUrl}"/>
+		<property name="User" value="${jdbc.mysql.User}"/>
+		<property name="Password" value="${jdbc.mysql.Password}"/>
+	</bean>
+	<!-- org.apache.commons.dbcp.BasicDataSource -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"   destroy-method="close">
-		<!-- 基本属性 url、user、password -->
 		<property name="driverClassName" value="${jdbc.mysql.DriverClass}"/>
 		<property name="url" value="${jdbc.mysql.JdbcUrl}"/>
 		<property name="username" value="${jdbc.mysql.User}"/>
 		<property name="password" value="${jdbc.mysql.Password}"/>
+
 		<!-- 配置初始化大小、最小、最大 -->
 		<property name="initialSize" value="${ds.initialSize}"/>
 		<property name="minIdle" value="${ds.minIdle}"/>

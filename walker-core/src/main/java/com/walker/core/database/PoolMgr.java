@@ -37,6 +37,7 @@ class PoolMgr extends TestAdapter{
 				conn = new PoolC3p0Impl();
 			}
 			connMap.put(type, conn);
+			log.warn("pool new " + type);
 		}
 		return conn;
 	}

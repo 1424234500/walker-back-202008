@@ -2,8 +2,10 @@ package com.walker.common.mode;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
 
 import com.walker.common.util.Tools;
+import com.walker.core.exception.ErrorException;
 
 /**
  * 耗时监控 提示信息工具
@@ -21,17 +23,17 @@ public class Watch {
 	public Watch() {
 		this("");
 	}
-	public Watch(String info) {
+	public Watch(Object...infos) {
 		this.times = new ArrayList<Long>();
 		this.times.add(System.currentTimeMillis());
-		sb = new StringBuilder();
+		sb = new StringBuilder(Tools.objects2string(infos));
 	}
-	public Watch put(Object str) {
+	public Watch put(String str) {
 		this.sb.append(str);
 		return this;
 	}
-	public Watch put(Object key, Object value) {
-		this.sb.append(" " + key + ":" + value);
+	public Watch put(Object key, Object...values) {
+		this.sb.append(" " + key + ":" + Tools.objects2string(values));
 		return this;
 	}
 	/**
@@ -39,11 +41,11 @@ public class Watch {
 	 * @param key
 	 * @return
 	 */
-	public long cost(Object key) {
+	public long cost(Object...keys) {
 		long now = System.currentTimeMillis();
 		long last = times.get(0);
 		long deta = now - last;
-		this.put(key + " cost", deta);
+		this.put( (keys.length > 0 ? Tools.objects2string(keys)+" " : "" )+ "cost", deta);
 		times.add(0, now);
 		return deta;
 	}
@@ -69,14 +71,18 @@ public class Watch {
 	}
 	/**
 	 * 总耗时存入
+	 * 若传入log则记录日志
 	 * @return
 	 */
-	public Watch res() {
-		long now = System.currentTimeMillis();
+	public Watch res( Logger...logs) {
+		long now =  System.currentTimeMillis();
 		long last = times.get(times.size() - 1);
 		long deta = now - last;
-		this.put("cost", deta);
-		times.add(0, now);
+		this.put("total", deta);
+
+		for(Logger log : logs) {
+			log.info(this);
+		}
 		return this;
 	}
 	
@@ -85,9 +91,9 @@ public class Watch {
 	 * @param res
 	 * @return
 	 */
-	public Watch res(Object res) {
+	public Watch res(Object res,  Logger...logs) {
 		this.put("res", res);
-		this.res();
+		this.res(logs);
 		return this;
 	}
 	/**
@@ -95,12 +101,23 @@ public class Watch {
 	 * @param e
 	 * @return
 	 */
-	public Watch exception(Throwable e) {
+	public Watch exceptionWithThrow(Throwable e,  Logger...log) {
 		this.put("exception", Tools.toString(e));
-		this.res();
+		this.res(log);
+		throw new ErrorException(this);
+	}
+
+	/**
+	 * 异常结果 不抛出异常
+	 * @param e
+	 * @return
+	 */
+	public Watch exception(Throwable e,  Logger...log) {
+		this.put("exception", Tools.toString(e));
+		this.res(log);
+//		throw new ErrorException(this);
 		return this;
 	}
-	
 	public String toString() {
 		return this.sb.toString();
 	}

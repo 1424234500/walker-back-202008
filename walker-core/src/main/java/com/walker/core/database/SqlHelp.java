@@ -2,7 +2,10 @@ package com.walker.core.database;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.walker.common.util.Tools;
+import com.walker.core.exception.ErrorException;
 
 /**
  * 数据库sql语句帮助
@@ -171,6 +174,17 @@ public class SqlHelp{
 				sql = sql.substring(0, t) + (params[i]==null?"null":"'" + params[i] + "'") + sql.substring(t+1);
 			}
 		}
+		return sql;
+	}
+	public static String filter(String sql) {
+		if(sql == null || sql.length() == 0) {
+			throw new ErrorException("sql is null ?");
+		}
+		sql = StringUtils.strip(sql);
+		if(sql.endsWith(";")) {
+			sql = sql.substring(0, sql.length() - 1);
+		}
+
 		return sql;
 	}
 	

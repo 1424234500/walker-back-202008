@@ -4,16 +4,13 @@ import java.util.Random;
 
 import com.walker.core.aop.Fun;
 
-import net.sourceforge.pinyin4j.*;
-import net.sourceforge.pinyin4j.format.*;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
-
-/**
- * 中文相关编码
- * @author walker
- *
- */
 public class Pinyin {
 	/**
 	 * 将汉字转换为全拼
@@ -54,7 +51,7 @@ public class Pinyin {
 	}
 
 	/**
-	 * 提取每个汉字的首字母
+	 * 将汉字转首字母
 	 * 
 	 * @param str
 	 * @return String
@@ -92,36 +89,54 @@ public class Pinyin {
 		return strBuf.toString();
 	}
  
-	
-	public static void random(int len, int count, Fun<String> fun) {
+	/**
+	 * 获取指定位数汉字  count个
+	 * @param len
+	 * @param count
+	 * @param fun
+	 */
+	public static void getRandomName(int len, int count, Fun<String> fun) {
 		String res = "";
 		 for(int i = 0; i < count; i++){
-			 res = "";
+			 String name = "";
 			 for(int j = 0; j < len;  j++){
-				 res += getChinese();
+				 name += getChinese();
 			 }
-			 fun.make(res);
-		 }
+			 if(fun != null)
+				 fun.make(name);
+		     res += name + ",";
+			 }
+		 res = count > 0 ? res.substring(0, res.length() - 1) : "";
 	}
-	
-	public static void randomName(int count, Fun<String> fun){
+	/**
+	 * 获取随机名字 count个
+	 * @param count
+	 * @param fun
+	 */
+	public static String getRandomName(int count, Fun<String> fun){
 		 Random random=new Random(System.currentTimeMillis());  
-		 
+		 String res = "";
 		 for(int i = 0; i < count; i++){
-			 int index=random.nextInt(Surname.length-1);       
-	         String name = Surname[index]; //获得一个随机的姓氏  
+			 int index=random.nextInt(NAME_FIRST.length-1);       
+	         String name = NAME_FIRST[index]; //获得一个随机的姓氏  
 	          
 	         /* 从常用字中选取一个或两个字作为名 */  
 	         if(random.nextBoolean()){  
 	             name+=getChinese()+getChinese();  
 	         }else {  
 	             name+=getChinese();  
-	         }  
-	         fun.make(name);
+	         } 
+	         if(fun != null)
+	        	 fun.make(name);
+	         res += name + ",";
 		 }
-	
+		 res = count > 0 ? res.substring(0, res.length() - 1) : "";
+		 return res;
 	}
-
+	/**
+	 * 获取随机汉字
+	 * @return
+	 */
 	 public static String getChinese() {  
 	        String str = null;  
 	        int highPos, lowPos;  
@@ -144,7 +159,7 @@ public class Pinyin {
 	 
 	 
     /* 598 百家姓 */  
-     static String[] Surname= {"赵","钱","孙","李","周","吴","郑","王","冯","陈","褚","卫","蒋","沈","韩","杨","朱","秦","尤","许",  
+    final public static String[] NAME_FIRST= {"赵","钱","孙","李","周","吴","郑","王","冯","陈","褚","卫","蒋","沈","韩","杨","朱","秦","尤","许",  
                "何","吕","施","张","孔","曹","严","华","金","魏","陶","姜","戚","谢","邹","喻","柏","水","窦","章","云","苏","潘","葛","奚","范","彭","郎",  
                "鲁","韦","昌","马","苗","凤","花","方","俞","任","袁","柳","酆","鲍","史","唐","费","廉","岑","薛","雷","贺","倪","汤","滕","殷",  
                "罗","毕","郝","邬","安","常","乐","于","时","傅","皮","卞","齐","康","伍","余","元","卜","顾","孟","平","黄","和",  

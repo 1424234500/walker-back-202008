@@ -51,7 +51,7 @@ public class Tools {
 
         try {
             e.printStackTrace(pw);
-			return " \nException:" + e.getMessage() + " \n" +sw.toString();
+			return /* " \nException:" + e.getMessage() + */" \n" +sw.toString();
 //            return sw.toString();
         } finally {
             pw.close();
@@ -159,6 +159,9 @@ public class Tools {
 	}
 
 	public static String objects2string(Object... objects) {
+		if(objects.length == 1) {
+			return String.valueOf(objects[0]);
+		}
 		String[] res = objects2strings(objects);
 //		return strings2string(res);
 		return Arrays.toString(res);
