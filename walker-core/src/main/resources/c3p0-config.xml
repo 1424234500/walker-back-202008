@@ -8,6 +8,7 @@
         <property name="maxPoolSize">16</property>  
         <property name="minPoolSize">4</property>  
         <property name="maxStatements">256</property>  
+         
     </default-config>  
   
    <!--配置连接池mysql 此处配置初始化 或者 通过 jdbc配置 手动初始化连接池 -->

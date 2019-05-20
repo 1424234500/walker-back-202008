@@ -21,7 +21,7 @@
 	  <setting name="jdbcTypeForNull" value="OTHER"/>
 	  <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
 	  
-	  <setting name="callSettersOnNulls" value="true"/>  <!-- 有用(⊙﹏⊙) -->
+	  <setting name="callSettersOnNulls" value="true"/>  <!-- 有用 -->
       <setting name="logImpl" value="LOG4J"/>  
     </settings>  
 	<!-- 全局setting配置 ，根据需要再添加 -->

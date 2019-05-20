@@ -42,46 +42,47 @@
 	<!-- 数据源 --> 
 	<!--================================================-->
 	<!-- 配置数据源,dbcp,c3p0 jdbc配置文件 主要针对于一套配置 适配多种连接池工具 映射 -->
+	
 	<!-- org.springframework.jdbc.datasource.DriverManagerDataSource -->
 	<!-- com.mchange.v2.c3p0.ComboPooledDataSource  -->
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"   destroy-method="close">
+	<bean id="dataSourceC3p0" class="com.mchange.v2.c3p0.ComboPooledDataSource"   destroy-method="close">
 		<property name="DriverClass" value="${jdbc.mysql.DriverClass}"/>
 		<property name="JdbcUrl" value="${jdbc.mysql.JdbcUrl}"/>
 		<property name="User" value="${jdbc.mysql.User}"/>
 		<property name="Password" value="${jdbc.mysql.Password}"/>
+		
+		<property name="initialPoolSize" value="${ds.initialSize}"/>
+		<property name="minPoolSize" value="${ds.minPoolSize}"/>
+		<property name="maxPoolSize" value="${ds.maxPoolSize}"/>
+		<property name="maxIdleTime" value="${ds.maxIdleTime}"/>
+		<property name="maxStatements" value="${ds.maxStatements}"/>
 	</bean>
-	<!-- org.apache.commons.dbcp.BasicDataSource -->
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"   destroy-method="close">
+	
+	<!-- org.apache.commons.dbcp.BasicDataSource  -->
+	<bean id="dataSourceDbcp" class="org.apache.commons.dbcp.BasicDataSource"   destroy-method="close">
 		<property name="driverClassName" value="${jdbc.mysql.DriverClass}"/>
 		<property name="url" value="${jdbc.mysql.JdbcUrl}"/>
 		<property name="username" value="${jdbc.mysql.User}"/>
 		<property name="password" value="${jdbc.mysql.Password}"/>
 
-		<!-- 配置初始化大小、最小、最大 -->
 		<property name="initialSize" value="${ds.initialSize}"/>
 		<property name="minIdle" value="${ds.minIdle}"/>
 		<property name="maxActive" value="${ds.maxActive}"/>
-		<!-- 配置获取连接等待超时的时间 -->
 		<property name="maxWait" value="${ds.maxWait}"/> 
-		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
 		<property name="timeBetweenEvictionRunsMillis" value="${ds.timeBetweenEvictionRunsMillis}"/>
-		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
 		<property name="minEvictableIdleTimeMillis" value="${ds.minEvictableIdleTimeMillis}"/>
 		<property name="testWhileIdle" value="true"/>
 		<property name="testOnBorrow" value="false"/>
 		<property name="testOnReturn" value="false"/>
 		<property name="validationQuery" value="select 1 from dual"  />
- 
 	</bean>
- 
- 
+
+  
 	<!-- mybatis --> 
 	<!--================================================-->
 	<!-- myBatis 引入配置文件 配置dao实现mapper路径 配置MyBatis数据源 sqlSessionFactory-->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"    > 
-		<!-- <bean id="sqlSessionFactory" class="com.frame.MySqlSessionFactoryBean"    >-->
-		<property name="dataSource" ref="dataSource" />
-		<!-- 指定配置文件 -->
+		<property name="dataSource" ref="dataSourceDbcp" />
 		<property name="configLocation" value="classpath:mybatis-config.xml"/> 
 		<!-- 配置扫描  dao接口实现的 配置文件mapper.xml -->
 		<property name="mapperLocations" value="classpath:com/walker/web/dao/mybatis/mapper/*.xml" />
@@ -93,34 +94,12 @@
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
  
- 
 	<!-- Hibernate --> 
 	<!--================================================-->
-   
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<!--   <property name="packagesToScan">
-				<list>
-					<value>com.mode</value>
-				</list>
-			</property> -->
-		<property name="mappingLocations">
-			<list>
-				<value>classpath*:com/**/*.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
-				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
-				<prop key="hibernate.use_sql_comments">${hibernate.use_sql_comments}</prop>
-				<prop key="hibernate.max_fetch_depth">${hibernate.max_fetch_depth}</prop>
-				<prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
-				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
-			</props>
-		</property>
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceDbcp" />
+		<property name="mappingLocations"> <list> <value>classpath*:com/**/*.hbm.xml</value> </list> </property>
+        <property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
 	</bean>
  
 	<!-- 事务管理  --> 
