@@ -1,0 +1,111 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h3>
+                {{mName}}管理
+            </h3>  
+      
+  
+<div class="panel panel-info"> 
+
+    <div class="navbar-form navbar-left" >
+        <input  style="width:16%; margin-right: 5px;" class="form-control"
+                ng-repeat="item in cols track by $index"
+                ng-model="search[item]"
+                ng-keydown="keydown($event);"
+                placeholder="{{item}}"
+        >
+        <button class="btn" ng-click="make()" >构造参数</button>
+
+    </div>
+    <div class="clear"/>
+
+    <div class="panel-body">
+        <div style="width:100%;margin-bottom: 4px;">
+            <input style="width:70%;float:left;" ng-model="urlGet" class="form-control"/>
+            <button class="btn" ng-click="get()" >get by id</button>
+        </div>
+        <div style="width:100%;margin-bottom: 4px;">
+            <input style="width:70%;float:left;" ng-model="urlPost" class="form-control"/>
+            <button class="btn" ng-click="post()" >post add</button>
+        </div>
+        <div style="width:100%;margin-bottom: 4px;">
+            <input style="width:70%;float:left;" ng-model="urlPut" class="form-control"/>
+            <button class="btn" ng-click="put()" >put update</button>
+        </div>
+        <div style="width:100%;margin-bottom: 4px;">
+            <input style="width:70%;float:left;" ng-model="urlDelete" class="form-control"/>
+            <button class="btn" ng-click="delete()" >delete by id</button>
+        </div>
+
+
+        <div style="width:48%;float:left;">
+            参数
+            <textarea style="height:100px;width:100%" ng-model="argsStr"></textarea>
+        </div>
+
+        <div style="width:48%;float:right;">
+            调用结果
+            <textarea style="height:100px;width:100%" ng-model="res"></textarea>
+        </div>
+
+
+
+        <table class="table table-hover">
+            <thead>
+            <tr class="colorChromeTitle">
+                <th> No. </th>
+                <th class="hand" ng-repeat="item in showCols track by $index" ng-click="changeOrder(item)" ng-class="{dropup:order === ''}">
+                    {{item}}
+                    <span ng-show="orderType==item" ng-class="{orderColor:orderType === item}" class="caret"></span>
+                </th>
+
+                <th class="hand" ng-click="changeOrder('MTIME')" ng-class="{dropup:order === ''}">
+                    {{"MTIME"}}
+                    <span ng-show="orderType=='MTIME'" ng-class="{orderColor:orderType === 'MTIME'}" class="caret"></span>
+                </th>
+                <th> UPDATE </th>
+                <th> DELETE </th>
+            </tr>
+            </thead>
+
+            <tbody>
+                <tr class="" ng-click="back()">
+                    <td></td>
+                    <td colspan="{{showCols.length + 3}}">上级目录</td>
+                </tr>
+
+                <!-- filter:search  | mapSearch:search  -->
+                <tr ng-class="{'colorLevel2':item['TYPE']==2,'colorLevel1':item['TYPE']==1,}"
+                    ng-repeat="item in listCache | orderBy:order + orderType"
+                    ng-click="detail(item)"
+                >
+                    <td class="colorChromeTitle">{{$index + 1}}</td>
+                    <td ng-class="{colorChromeTitle:orderType === name}" style="max-width: 30%;"
+                        ng-repeat="name in showCols track by $index"
+                        title="{{item[name]}}">{{item[name]}}</td>
+                    <td ng-class="{colorChromeTitle:orderType == 'MTIME'}" >{{item["MTIME"] | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td style="max-width: 10%;">
+                        <a ng-click="update(item, $event)" class="abtn" > 修改</a>
+                    </td>
+                    <td style="max-width: 10%;">
+                        <a ng-click="delete(item, $event)" class="abtn" > 删除</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!--table foot ppp-->
+        <ng-include  src="'common/template/list_table_foot.html'"></ng-include>
+    </div>
+
+
+
+
+
+
+
+
+
+</div>
+
+

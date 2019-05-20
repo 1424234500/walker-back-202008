@@ -7,10 +7,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -20,12 +22,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 
 import com.walker.core.aop.Fun;
 
 public class FileUtil {
-
+	final static int SIZE_BUFFER = 1024 * 4;
+	final static int SIZE_FLUSH = 1024 * 1024;
+	
 	/**
 	 * 文件集合排序
 	 * 
@@ -145,6 +150,79 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * 文件读取到流 原则 谁开启流谁关闭
+	 * @param is
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	public static int readFile(String path, OutputStream os) throws IOException {
+		InputStream is = null;
+		try {
+			is = new FileInputStream(new File(path));
+			return copyStream(is, os);
+		} finally {
+			if(is != null) {
+				is.close();
+			}
+		}
+	}
+	public static int saveFile(InputStream is, String path, Boolean append) throws IOException {
+		return saveFile(is, new File(path), append);
+	}
+	/**
+	 * 流存入文件 原则 谁开启流谁关闭
+	 * @param is
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	public static int saveFile(InputStream is, File file, Boolean append) throws IOException {
+		OutputStream os = null;
+		try {
+			os = new FileOutputStream(file, append);
+			return copyStream(is, os);
+		} finally {
+			if(os != null) {
+				os.close();
+			}
+		}
+	}
+	/**
+	 * 流写入写出 不关闭！
+	 * @throws IOException 
+	 * @return 读取长度
+	 */
+	public static int copyStream(InputStream is, OutputStream os) throws IOException {
+		return copyStream(is, os, FileUtil.SIZE_BUFFER, FileUtil.SIZE_FLUSH);
+	}
+	/**
+	 * 流写入写出 不关闭
+	 * IOUtils.copy(is, os);
+	 * @throws IOException 
+	 * @return 读取长度
+	 */
+	public static int copyStream(InputStream is, OutputStream os, int bufferSize, int flushSize) throws IOException {
+//		return IOUtils.copy(is, os);
+		int count = 0;
+		int size = 0;
+		int length = 0;
+		byte[] buffer = new byte[bufferSize];
+		while ((size = is.read(buffer)) != -1) {
+			os.write(buffer, 0, size);
+			count += size;
+			length += size;
+			if (count > flushSize) {
+				os.flush();
+				count = 0;
+			}
+		}
+		if(count > 0)
+			os.flush();
+		return length;
+	}
+	
 	/**
 	 * 以字节为单位读取文件，通常用于读取二进制文件，如图片
 	 * 若不分批回调处理 则积压结果集返回

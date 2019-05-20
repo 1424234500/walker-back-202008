@@ -1,0 +1,138 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h3>
+                {{mName}}管理
+            </h3>  
+      
+  
+<div class="panel panel-info"> 
+
+    <ul class="nav nav-tabs">
+        <li class="">
+            <a ng-click="list()" href="javascript:;">列表</a>
+        </li>
+        <li class="">
+                <a ng-click="show()" href="javascript:;">代码嵌入</a>
+        </li>
+        <li class="dropdown pull-right">
+             <a href="#" data-toggle="dropdown" class="dropdown-toggle">更多<strong class="caret"></strong></a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#">操作</a>
+                </li> 
+                <li class="divider">
+                </li>
+                <li>
+                    <a href="#">分割线</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+
+
+
+    <div class="navbar-form navbar-left" style="width:100%;">
+
+
+        <input type="text" ng-model="search.PACKAGE" class="form-control" style="width:20%;" ng-keydown="keydown($event)" placeholder="PACKAGE">
+
+        <input  style="width:12%; margin-right: 5px;" class="form-control"
+        ng-if="args.length > 0"
+        ng-repeat="item in nowMethod.PARAMETERTYPES track by $index"
+        ng-model="args[$index]"
+        placeholder="{{item}}"
+        >
+
+        <button class="btn" ng-click="list()" >查询</button>
+        <button class="btn" ng-click="clear()" >清空</button>
+        <button class="btn" ng-click="doClass()" >调用选中函数</button>
+    </div>
+    <div class="clear"/>
+
+    <div class="panel-body">
+        <div style="width:34%;border:solid #1b6d85 2px;float:left;position: relative;">
+            <div jquery-scrollbar="" style="height:100%;width:100%;">
+                <table class="table table-hover">
+                    <thead>
+                    <tr class="colorChromeTitle">
+                        <th> No. </th>
+                        <th class="hand" ng-repeat="item in showCols track by $index" ng-click="changeOrder(item)" ng-class="{dropup:order === ''}">
+                            {{item}}
+                            <span ng-show="orderType==item" ng-class="{orderColor:orderType === item}" class="caret"></span>
+                        </th>
+
+                        <!--<th> UPDATE </th>-->
+                        <!--<th> DELETE </th>-->
+                    </tr>
+                    </thead>
+
+                    <tbody><!--
+                    <tr class="" ng-click="back()">
+                        <td></td>
+                        <td colspan="{{showCols.length + 1}}">上级目录</td>
+                    </tr>-->
+                        <!-- filter:search  | mapSearch:search  -->
+                        <tr ng-class="{'colorLevel4':item['PACKAGE']==now['PACKAGE'],'colorLevel1':item['TYPE']==1,}"
+                            ng-repeat="item in listItem | mapSearch:search|orderBy:order + orderType"
+                            ng-click="detail(item)"
+                        >
+                            <td class="colorChromeTitle">{{$index + 1}}</td>
+                            <td ng-class="{colorChromeTitle:orderType === name}" style="max-width: 30%;"
+                                ng-repeat="name in showCols track by $index"
+                                title="{{item[name]}}">{{item[name]}}</td>
+                            <!--<td style="max-width: 10%;">-->
+                            <!--<a ng-click="update(item, $event)" class="abtn" > 修改</a>-->
+                            <!--</td>-->
+                            <!--<td style="max-width: 10%;">-->
+                            <!--<a ng-click="delete(item, $event)" class="abtn" > 删除</a>-->
+                            <!--</td>-->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--table foot ppp-->
+            <!--<ng-include  src="'common/template/list_table_foot.html'"></ng-include>-->
+        </div>
+        <div  style="width:65%;border:solid #f0ad4e 2px;float:right;">
+
+            <div ng-show="showCode">
+                <textarea style="height:100px;width:100%" ng-model="code"></textarea>
+                <button class="btn" ng-click="doCode()" >执行代码段</button>
+                <textarea style="height:60px;width:100%" ng-model="codeRes"></textarea>
+            </div>
+
+            <table class="table table-hover">
+                <thead>
+                <tr class="colorChromeTitle">
+                    <th class="hand" ng-repeat="item in showCols2 track by $index">
+                        {{item}}
+                    </th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <!-- filter:search  | mapSearch:search  -->
+                <tr ng-class="{'colorLevel4':item['NAME']==nowMethod['NAME'],'colorLevel3':(item['BASE']=='base'&&item['TYPE']=='method'),'colorLevel2':(item['BASE']=='base'&&item['TYPE']!='method'),'colorLevel1':(item['BASE']!='base'&&item['TYPE']=='method'),}"
+                    ng-repeat="item in listMethod |orderBy:order + orderType"
+                    ng-click="detail2(item)"
+
+                >
+                    <!--<td class="colorChromeTitle">{{$index + 1}}</td>-->
+                    <td ng-class="{colorChromeTitle:orderType === name}" style="max-width: 30%;"
+                        ng-repeat="name in showCols2 track by $index"
+                        title="{{item[name]}}">{{item[name]}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+
+
+</div>
+
+            </div></div></div>

@@ -28,14 +28,14 @@
 
 	<!-- 配置别名 -->
 	<typeAliases> 
-		<package name="com.mode" />
+		<package name="com.walker.web.mode" />
 	</typeAliases>
 
 	<!-- 配置mapper 由于使用spring和mybatis的整合包进行整合，这了无需配置 但必须遵循：mapper.xml和mapper.xml文件同名且在同一目录 -->
 
 	<!-- 以下内容不再需要手动配置 已经自动映射 -->
 	<mappers>
-		<!-- <mapper resource="com/gfan/api/framework/model/sqlMapper/TestuserMapper.xml"  /> -->
+		<!-- <mapper resource="com/walker/web/dao/mybatis/mapper/BaseMapper.xml"  /> -->
 	</mappers>
 
 	

@@ -60,10 +60,8 @@ import com.walker.core.exception.InfoException;
 public class HttpUtil {
 	private static Logger log = Logger.getLogger("Http");
 
-	private final static int DEFAULT_BUFFER = 4096;
 	private final static String DEFAULT_BROWSER = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
 
-	private static final int FLUSH_SIZE = 1024 * 1024 * 10;
 	/**
 	 * 打印结果长度
 	 */
@@ -290,26 +288,21 @@ public class HttpUtil {
 	 */
 	public static String parseHttpEntity(HttpEntity entity, String decode) throws IllegalStateException, IOException {
 		String res = "";
-		ByteArrayOutputStream os = new ByteArrayOutputStream(DEFAULT_BUFFER);
+		ByteArrayOutputStream os = new ByteArrayOutputStream(FileUtil.SIZE_BUFFER);
 		if (entity != null) {
 			// getResponse
 			InputStream is = null;
 			try {
 				is = entity.getContent();
-				int len = 0;
-				byte[] buffer = new byte[DEFAULT_BUFFER];
-				while ((len = is.read(buffer)) != -1) {
-					os.write(buffer, 0, len);
-				}
-				/**
-				 * 显示指定解码
-				 */
+				FileUtil.copyStream(is, os);
 				if(decode != null && decode.length() > 0)
 					res = os.toString(decode);
 				else
 					res = os.toString();
-				
 			}finally {
+				if(os != null) {
+					os.close();
+				}
 				if(is != null)
 					is.close();
 			}
@@ -352,34 +345,16 @@ public class HttpUtil {
 		log.info(w);
 		long length = 0;
 		
-		FileOutputStream op = null;
 		InputStream is = null;
 		try {
-			op = new FileOutputStream(file);
 			URL ur = new URL(url);
 			is = ur.openStream();
-			int count = 0;
-			int size = 0;
-			byte[] buffer = new byte[DEFAULT_BUFFER];
-			while ((size = is.read(buffer)) != -1) {
-				op.write(buffer, 0, size);
-				count += size;
-				length += size;
-				if (count > FLUSH_SIZE) {
-					op.flush();
-					count = 0;
-				}
-			}
-			op.flush();
+			length = FileUtil.saveFile(is, file, false);
 			w.put("size", Tools.calcSize(length));
 			w.res(log);
 		} catch(IOException e){
 			w.exceptionWithThrow(e, log);
 		} finally {
-			if (op != null) {
-				op.flush();
-				op.close();
-			}
 			if (is != null) {
 				is.close();
 			}

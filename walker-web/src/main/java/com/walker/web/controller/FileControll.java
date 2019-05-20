@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.walker.common.mode.Watch;
 import com.walker.common.util.FileUtil;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
@@ -173,12 +175,9 @@ public class FileControll extends BaseControll{
      */  
     @RequestMapping("/download.do")  
     public void download(HttpServletRequest request,HttpServletResponse response) throws Exception{  
-    	StopWatch sw = new StopWatch(); 	//耗时监控分析工具
-    	sw.start();
-    	long starttime = sw.getStartTime();//System.currentTimeMillis();
+    	Watch w = new Watch("download");
     	String path = getValue(request, "path");
     	String key = getValue(request, "key");
-    	
 //		String path1 = new String(path.getBytes("iso-8859-1"), "gbk");
 //		String path3 = URLDecoder.decode(path, "utf-8");
 //		String path4 = URLDecoder.decode(path);
@@ -202,49 +201,21 @@ public class FileControll extends BaseControll{
 		}
 		if(!res){
 			echo(res, info);
-			sw.stop();
-			return;
+		}else {
+			String name = FileUtil.getFileName(path);
+	        RequestUtil.setHeaderDownFile(request, response, name);
+	        OutputStream os = null;
+	        try{
+	        	os = response.getOutputStream();
+	        	 int length = FileUtil.readFile(path, os);
+	 	        echo (length > 0, ""+length, w.toString());
+	        }catch(Exception e) {
+	        	w.exceptionWithThrow(e, log);
+	        }  finally {
+	        	if(os != null)
+	        		os.close();
+	        }
 		}
-		
-		String name = FileUtil.getFileName(path);
-        RequestUtil.setDownFileName(request, response, name);
-        
-        BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());  
-        InputStream in = null;
-        try {    
-            // 一次读多个字节  
-            byte[] tempbytes = new byte[cacheSize];  
-            long size = 0;
-            int len = 0;   
-            in = new FileInputStream(new File(path));   
-            // 读入多个字节到字节数组中，len为一次读入的字节数  
-            while ((len = in.read(tempbytes)) != -1) {  
-            	out.write(tempbytes, 0, len);
-            	size += len;
-            	out.flush();
-            }  
-            sw.stop();
-            log.warn(sw.toString());
-            long endtime = System.currentTimeMillis();
-            long deta = endtime - starttime;//下载写入耗时deta 大小size 名字name 路径path
-            //记录文件上传下载情况 并打印
-            // id,fileid,type(up/down),costtime(ms),time
-            log("down file", name, path, Tools.calcTime(deta),Tools.calcSize(size) );
-//            fileService.fileUpDown(path, "down", deta+"" ); 
-
-        } catch (Exception e1) {  
-            e1.printStackTrace();  
-        } finally {  
-            if (in != null) { 
-            	try {  in.close(); }
-            	catch (Exception e1) { e1.printStackTrace();  } 
-            }  
-            if (out != null) { 
-            	try {  out.close();   }
-            	catch (Exception e1) { e1.printStackTrace(); } 
-            }  
-        }  
-       
     }  
     
     /**
@@ -257,8 +228,6 @@ public class FileControll extends BaseControll{
      */
 	@RequestMapping(value="/upload.do",method=RequestMethod.POST)
     public void upload(HttpServletRequest request,  PrintWriter pw) throws IOException{
-		long starttime = System.currentTimeMillis();
-
         MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
         MultipartFile file = mreq.getFile("file");
         String uppath = request.getParameter("path");
@@ -268,50 +237,28 @@ public class FileControll extends BaseControll{
 			return;
 		}
         
+		Watch w = new Watch("upload");
         String name = file.getOriginalFilename();
         String newName = name; // Tools.getTimeSequence() + "-" + 
         String dir = Tools.notNull(uppath) ? uppath : Context.getUploadDir();
         String path = dir + File.separator + newName;
-        FileOutputStream out = new FileOutputStream(path);
         boolean res = false; 
-        String key = "";
-//      fos.write(file.getBytes());
-        InputStream in = null;
-        try {    
-            // 一次读多个字节  
-            byte[] tempbytes = new byte[cacheSize];  
-            long size = 0;
-            int len = 0;  
-            in = file.getInputStream();  
-            // 读入多个字节到字节数组中，len为一次读入的字节数  
-            while ((len = in.read(tempbytes)) != -1) {  
-            	out.write(tempbytes, 0, len);
-            	size += len;
-            	out.flush();
-            }  
-            long endtime = System.currentTimeMillis();
-            long deta = endtime - starttime;//下载写入耗时deta 大小size 名字name 路径path
+        InputStream is = null;
+        try{
+        	is = request.getInputStream();
+            FileUtil.saveFile(is, path, false);
             //记录文件上传下载情况 并打印
             // id,fileid,type(up/down),costtime(ms),time
-            key = fileService.upload(getUser().getId(), name, path, ""); 
+            String key = fileService.upload(getUser().getId(), name, path, ""); 
             res = key.equals("0");
-
-            log("up file", name, path, Tools.calcTime(deta) , Tools.calcSize(size));
-            fileService.fileUpDown(key, "up", deta+""); 
-        } catch (Exception e1) {  
-            e1.printStackTrace();  
-        } finally {  
-            if (in != null) { 
-            	try {  in.close(); }
-            	catch (Exception e1) {  } 
-            }  
-            if (out != null) { 
-            	try {  out.close();   }
-            	catch (Exception e1) {  } 
-            }  
-        }  
-        
-        echo(res, key, path);
+            fileService.fileUpDown(key, "up", w.getTimeAll()+""); 
+            echo(res, key, path);
+        }catch (Exception e) {
+        	w.exceptionWithThrow(e, log);
+        } finally {
+        	if(is != null)
+        		is.close();	
+        }
     }
 	
 	

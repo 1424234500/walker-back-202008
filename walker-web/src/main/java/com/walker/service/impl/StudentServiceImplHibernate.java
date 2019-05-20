@@ -12,6 +12,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.MakeMap;
 import com.walker.common.util.Page;
 import com.walker.common.util.Tools;
@@ -36,7 +37,7 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 	public List<Map<String, Object>> list(String id, String name, String timefrom, String timeto, Page page) {
 		String sql = "";
 		List<String> params = new ArrayList<String>();
-		sql += "select id,name,to_char(time,'yyyy-mm-dd hh24:mi:ss') time from student where 1=1 ";
+		sql += "select id,name,time from student where 1=1 ";
 		if(Tools.notNull(id)){
 			sql += " and id like ? ";
 			params.add("%" + id + "%");
@@ -46,11 +47,11 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 			params.add("%" + name + "%");
 		}
 		if(Tools.notNull(timefrom)){
-			sql += " and time >= " + SqlHelp.to_dateL();
+			sql += " and time >= ?";
 			params.add(timefrom);
 		}
 		if(Tools.notNull(timeto)){
-			sql += " and time <= " + SqlHelp.to_dateL();
+			sql += " and time < ?";
 			params.add( timeto);
 		} 
 		
@@ -61,14 +62,14 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 	@Override
 	public int update(String id, String name, String time) {
 		int res = baseDao.executeSql(
-				"update student set name=?,time=to_date(?,'yyyy-mm-dd hh24:mi:ss') where id=?",
+				"update student set name=?,time=? where id=?",
 				name,time,id  );
 		return res;
 	}
 	@Override
 	public int add(String name, String time) {
 		int res = 0;
-		res = baseDao.executeSql("insert into student values(lpad(SEQ_STUDENT.nextval,4, '0'),?," + SqlHelp.to_dateL() + ")", name, time);
+		res = baseDao.executeSql("insert into student values(?,?,?)",LangUtil.getGenerateId(), name, time);
  		return res;
 	}
 	@Override
@@ -79,7 +80,7 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 	}
 	@Override
 	public Map get(String id) {
- 		return  baseDao.findOne("select id,name,to_char(time,'yyyy-mm-dd hh24:mi:ss') time from student where id=? ", id);
+ 		return  baseDao.findOne("select id,name,time from student where id=? ", id);
 	}
 
 }

@@ -1,0 +1,144 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h3>
+                {{mName}}管理
+            </h3>
+
+
+
+            <div class="panel panel-success" style="min-height: 400px;">
+
+                <div class="navbar-form navbar-left" style="width:100%;">
+                    <input type="text" ng-model="dir" id="path" class="form-control" style="width:40%;" ng-keydown="keydown($event)" placeholder="dir">
+                    <input type="text" ng-model="search.NAME" class="form-control" placeholder="name" ng-keydown="keydown($event)">
+                    <button class="btn" ng-click="list()">查询</button>
+                    <button class="btn" ng-click="list(true)">新建</button>
+
+                    <div   style="float:right;">
+                        <form id="myform" name="myform"  method="post" style="float:right;" >
+                            <fieldset>
+                                <input style="width:250px;float:left;"  class="btn" type="file" id="file" name="file" width="120px">
+                                <div id="son" style="background: #FF00FF;margin:0 auto;text-align:center;float:left;"></div>
+                                <button onclick="uploadFile();"  class="btn">上传</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+                <div class="clear"/>
+
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr class="colorChromeTitle">
+                            <th> No. </th>
+                            <th class="hand" ng-repeat="item in cols track by $index" ng-click="changeOrder(item)" ng-class="{dropup:order === ''}">
+                                {{item}}
+                                <span ng-show="orderType==item" ng-class="{orderColor:orderType === item}" class="caret"></span>
+                            </th>
+
+                            <th class="hand" ng-click="changeOrder('MTIME')" ng-class="{dropup:order === ''}">
+                                {{"MTIME"}}
+                                <span ng-show="orderType=='MTIME'" ng-class="{orderColor:orderType === 'MTIME'}" class="caret"></span>
+                            </th>
+                            <th> UPDATE </th>
+                            <th> DELETE </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <!--
+                                        res.add("PATH");
+                                        res.add("NAME");
+                                        res.add("SIZE");
+                                        res.add("LENGTH");
+                                        res.add("TIME");
+                                        res.add("TYPE");
+                                        res.add("CHILDS")-->
+                        <tr class="" ng-click="back()">
+                            <td></td>
+                            <td colspan="{{showCols.length + 3}}">上级目录</td>
+                        </tr>
+                        <!-- filter:search  | mapSearch:search  -->
+                        <tr ng-class="{'colorLevel2':(item['TYPE']=='dir' && item['CHILDS'] > 0),'colorLevel1':item['TYPE']=='dir',}"
+                            ng-repeat="item in httplist | orderBy:order + orderType"
+                            ng-click="detail(item)"
+                        >
+                            <td class="colorChromeTitle">{{$index + 1}}</td>
+                            <td class="abtn" >{{item["NAME"]}}</td>
+                            <td>
+                                <div ng-show="item['LENGTH'] > 0">{{item["SIZE"]}}</div>
+                            </td>
+                            <td>{{item["TIME"] | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td style="max-width: 10%;">
+                                <a ng-click="update(item, $event)" class="abtn" > 修改</a>
+                            </td>
+                            <td style="max-width: 10%;">
+                                <a ng-click="delete(item, $event)" class="abtn" > 删除</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    function uploadFile(){
+        var url = "/BaseSSM/file/upload.do";
+        var pic = $("#file").get(0).files[0];
+        var formData = new FormData();
+        $("#son").html( 0 +"%" );
+        $("#son").css("width", 0 +"%" );
+//        $("#son").css("height","100%" );
+        formData.append("file" , pic);
+        formData.append("path" , $("#path").val());
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: formData ,
+            processData : false,
+            contentType : false , //必须false才会自动加上正确的Content-Type
+            xhr: function(){
+                var xhr = $.ajaxSettings.xhr();
+                if(onprogress && xhr.upload) {
+                    xhr.upload.addEventListener("progress" , onprogress, false);
+                    return xhr;
+                }
+            },
+            error: function(request) {
+                alert("操作异常");
+            },
+            success: function(data) {
+                data = JSON.parse(data);
+                var res = parseInt(data.data);
+                if(res >= 1){
+                    info("操作成功！");
+                    //goBack();
+                }else{
+                    info("操作失败!");
+                    info(data);
+                }
+            }
+        });
+    }
+    // 侦查附件上传情况 ,这个方法大概0.05-0.1秒执行一次
+    function onprogress(evt){
+        var loaded = evt.loaded;     //已经上传大小情况
+        var tot = evt.total;           //附件总大小
+        var per = Math.floor(100*loaded/tot);  //已经上传的百分比
+        $("#son").html( per +"%" );
+        $("#son").css("width", per +"%" );
+
+    }
+
+</script>

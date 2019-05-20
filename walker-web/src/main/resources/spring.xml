@@ -26,7 +26,7 @@
 <!-- <import resource="dubbo-provider.xml" />  -->	
 
 	<!-- 自动扫描 包 ,将带有注解的类 纳入spring容器管理 -->
-	<context:component-scan base-package="com.dao,com.mode,com.service,com.event"></context:component-scan>
+	<context:component-scan base-package="com.walker.web.dao,com.walker.web.mode,com.walker.service,com.walker.web.event"></context:component-scan>
 
 	<!-- 引入配置文件 -->
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -86,7 +86,7 @@
 		<property name="configLocation" value="classpath:mybatis-config.xml"/> 
 		<!-- 配置扫描  dao接口实现的 配置文件mapper.xml -->
 		<property name="mapperLocations" value="classpath:com/walker/web/dao/mybatis/mapper/*.xml" />
-		<property name="typeAliasesPackage" value="com.dao.mode"></property>
+		<property name="typeAliasesPackage" value="com.walker.web.mode"></property>
 	</bean>
 	<!-- 配置mybatis dao 接口 java文件 路径 , 另外必须让mapper.xml文件中接口路径对应接口类 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">

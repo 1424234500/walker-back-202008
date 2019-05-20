@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.walker.common.util.Bean;
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;
@@ -71,7 +72,7 @@ public class LogServiceImpl implements LogService,Serializable {
 		Bean bean = cache.get(CACHE_KEY, new Bean());
 //		Redis redis = Redis.getInstance();
 		//redis.show();
-		Set keys = bean.keySet();
+		Set<Object> keys = bean.keySet();
 		if(keys != null)
 			for(Object key : keys){
 				if(bean.containsKey(key)){ 
@@ -79,8 +80,8 @@ public class LogServiceImpl implements LogService,Serializable {
 					int res = baseDao.executeSql("insert into log_time"
 							+ "(id, url, count, time, costtime) "
 							+ "values"
-							+ "(seq_log_time.nextval, ?, ?, sysdate, ?) "
-							,map.get("url") + ".do", map.get("count"), map.get("costtime") 
+							+ "(?, ?, ?, sysdate, ?) "
+							, LangUtil.getGenerateId(), map.get("url") + ".do", map.get("count"), map.get("costtime") 
 						); 
 				}
 			}

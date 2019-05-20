@@ -147,7 +147,14 @@ public class LangUtil {
 		uuid = hexTo64(uuid);
 		return uuid;
 	}
-
+	/**
+	 * 递增id生成
+	 */
+	public static String getGenerateId() {
+		long time = System.nanoTime();
+		String str =  getUUID();
+		return time + "_" + str.substring(0, Math.min(6, str.length()));
+	}
 	/**
 	 *  下面代码用于将36位的UUID字符串转为22位的字符串，提升系统运行效率
 	 */

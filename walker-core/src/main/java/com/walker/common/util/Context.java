@@ -1,6 +1,9 @@
 package com.walker.common.util;
 
+import java.io.File;
 import java.net.URL;
+
+import com.walker.core.cache.CacheMgr;
 
 /**
  * 运行上下文 
@@ -31,7 +34,14 @@ public class Context {
 		}
 		return "/root";
 	}
-	
+	/**
+	 * 相对路径
+	 * @param file
+	 * @return
+	 */
+	public static String getPathRoot(String file) {
+		return getPathRoot() + File.separator + file;
+	}
 	
 	
 	
@@ -64,6 +74,19 @@ public class Context {
 	
 	
 	
-	
+
+	/**
+	 * 默认数据库操作一次大小
+	 */
+	public static int getDbOnce() {
+		return CacheMgr.getInstance().get("DB_ONCE", 500);
+	}
+	/**
+	 * 默认分页每页数量
+	 */
+	public static int getShowNum() {
+		return CacheMgr.getInstance().get("SHOW_NUM", 5);
+	}
+
 	
 }

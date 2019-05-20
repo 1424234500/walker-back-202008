@@ -13,11 +13,19 @@
 						http://www.springframework.org/schema/task/spring-task-3.2.xsd   
                         http://www.springframework.org/schema/mvc    
                         http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
-	<!-- 开启注解 -->
-	<mvc:annotation-driven />
-	<!-- 设置定时任务 -->
- 	<task:annotation-driven/> 
 	
+	<!-- 启动SpringMVC的注解功能，完成请求和注解P 的映射 --> 
+	<!-- 代替注解映射器和注解适配器配置 mvc:annotation-driven默认加载很多的参数绑定方法， 比如json转换解析器就默认加载 -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+	
+	<!-- 设置定时任务 -->
+    <task:annotation-driven executor="executor" scheduler="scheduler" />
+	 <!-- executor线程池，含义和java.util.concurrent.Executor是一样的,pool-size的大小官方推荐为5~10 -->
+    <task:executor id="executor" pool-size="5" />
+    <!-- scheduler的pool-size是ScheduledExecutorService线程池，默认为1 -->
+    <task:scheduler id="scheduler" pool-size="5" />
+    
+    
 	<!-- 拦截器已采用url过滤.do模式只拦截controller，此处无效？ -->
 	<!-- 装配拦截器  实现aop 事务 日志 权限 限流 -->  
     <mvc:interceptors>  
@@ -42,11 +50,8 @@
 	<mvc:resources location="/jsp/" 	mapping="/jsp/**"/>		<!-- 直接访问jsp目录下 -->
 	<mvc:resources location="/test/"	mapping="/test/**"/> 	<!--  直接访问test目录下 -->
 	<!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
-	<context:component-scan base-package="com.controller,com.walker.web.event" />
+	<context:component-scan base-package="com.walker.web.controller" />
 
-	<!-- 启动SpringMVC的注解功能，完成请求和注解P 的映射 --> 
-	<!-- 代替注解映射器和注解适配器配置 mvc:annotation-driven默认加载很多的参数绑定方法， 比如json转换解析器就默认加载 -->
-	<mvc:annotation-driven></mvc:annotation-driven>
 
 	<!-- 视图解析器配置 跳转文件的前后缀 ，视图模式配置 -->
 	<bean

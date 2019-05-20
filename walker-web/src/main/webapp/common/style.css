@@ -1,0 +1,156 @@
+.clear{ clear:both} 
+ 
+
+
+[html] view plain copy 
+*{     
+    -webkit-touch-callout:none;  /*系统默认菜单被禁用*/     
+    -webkit-user-select:none; /*webkit浏览器*/     
+    -khtml-user-select:none; /*早期浏览器*/     
+    -moz-user-select:none;/*火狐*/     
+    -ms-user-select:none; /*IE10*/     
+    user-select:none;     
+}    
+input {        
+     -webkit-user-select:auto; /*webkit浏览器*/       
+} 
+
+
+.page-true{
+    background-color: #d23bff;
+    border:none;
+}
+
+.page-false{
+    background-color: #DDDDDD;
+    border:none; 
+}
+.page{
+    border:none;  
+}
+
+.abtn{
+    display: block;   
+    margin-top: 0px;
+} 
+.abtn:hover { 
+    color: #515151; 
+    cursor:pointer
+} 
+
+
+.panel{
+    padding-bottom: 1px;
+}
+.echart-small{
+    width: 28em;
+    height:16em; 
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.echart-big-small{
+    width: 100%;
+    height:16em; 
+    margin-left: 1em;
+    margin-right: 1em;
+}
+.echart-big{
+    width: 100%;
+    height:24em; 
+    margin-left: 1em;
+    margin-right: 1em;
+}
+.thumbnail{
+    margin: 5px;
+    float:left;
+    width:300px;
+}
+.thumbnail img{
+    float:left;
+    width:80px;
+}
+
+.img-small{ 
+    width:80px;
+}
+
+.hand{
+}
+.hand:hover{
+    cursor: row-resize;
+
+}
+/*高亮背景 */
+.colorLevel{
+    background-color: #F1F8FF;
+}
+.colorLevel0{
+    background-color: #fff6f2;
+}
+.colorLevel1{
+    background-color: #ddfff8;
+}
+.colorLevel2{
+    background-color: #afc1ff;
+}
+.colorLevel3{
+    background-color: #e3bcff;
+}
+.colorLevel4{
+    background-color: #f0a9ff;
+}
+.colorGitHeader{
+    background-color: #F1F8FF;
+}
+.colorChromeTitle{
+    background-color: #F6F6F6;
+}
+
+
+
+
+
+
+
+
+/**
+* 提示框
+*/
+.top-tips {
+    top: 0;
+    position: fixed;
+    color: white;
+    height: 35px;
+    line-height: 35px;
+    padding-left: 10px;
+    padding-right: 10px;
+    left: 50%;
+    width: 400px;
+    margin-left: -200px;
+    font-weight: 100;
+}
+.top-tips.normal {
+    background-color: #44b549;
+}
+
+.top-tips.error {
+    background-color: red;
+}
+.top-tips.warning {
+    background-color: #eaa024;
+}
+
+
+/**
+* 加载框
+*/
+.load-progress {
+    top: 0;
+    position: fixed;
+    background: #fe2d0d;
+    height: 12px;
+    left: 0;
+    width: 0%;
+}
+

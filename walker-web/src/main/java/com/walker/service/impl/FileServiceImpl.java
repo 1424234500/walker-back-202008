@@ -107,7 +107,7 @@ public class FileServiceImpl implements FileService,Serializable {
 		String changetime = Tools.formatL(new Date(file.lastModified()));
 		about = Tools.cutString(about, 500);
 //		String key = baseDao.getString("select SEQ_fileinfo.Nextval from dual");
-		String key = LangUtil.getUUID();
+		String key = LangUtil.getGenerateId();
 		int res = baseDao.executeSql("insert into fileinfo"
 				+ "(id,                   uptime, name,filesize,  type,path,changetime               ,about,upuserid ) values "
 				+ "(?, sysdate,?    ,?      ,  ?   ,?    ,"+ SqlHelp.to_dateL() +",?, ?   ) "

@@ -201,7 +201,7 @@ public class RequestUtil {
 	/**
 	 * 设置下载 文件 头
 	 */
-	public static void setDownFileName(HttpServletRequest request, HttpServletResponse response, String fileName)
+	public static void setHeaderDownFile(HttpServletRequest request, HttpServletResponse response, String fileName)
 			throws UnsupportedEncodingException {
 		
 //		name = URLEncoder.encode(name,"UTF-8");      //转码，免得文件名中文乱码  
