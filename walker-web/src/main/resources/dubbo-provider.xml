@@ -41,11 +41,11 @@
      -->
      
 	<!-- 配置暴露服务接口 alias="hello-dubbo"  -->
-	<dubbo:service ref="serviceDubbo" interface="util.service.service.ServiceDubbo" timeout="30000" version="1.0" />
+	<dubbo:service ref="serviceDubbo" interface="com.walker.core.service.service.ServiceDubbo" timeout="30000" version="1.0" />
     <!-- 配置暴露服务接口 实现类 -->
 	<bean id="serviceDubbo" class="util.service.serviceImpl.ServiceDubboImpl" />
 	
-	<dubbo:service ref="serviceClass" interface="util.service.service.ServiceClass" timeout="30000" version="1.0"  />
+	<dubbo:service ref="serviceClass" interface="com.walker.core.service.service.ServiceClass" timeout="30000" version="1.0"  />
 	<bean id="serviceClass" class="util.service.serviceImpl.ServiceClassImpl" />
 
 
@@ -53,8 +53,8 @@
 	
     <!-- 指向远程服务代理,和provider中相同-->
 <!--     
-	<dubbo:reference id="serviceClassConsumer" interface="util.service.service.ServiceClass" version="1.0" check="false" />
-   	<dubbo:reference id="serviceDubboConsumer" interface="util.service.service.ServiceDubbo" version="1.0" check="false" />
+	<dubbo:reference id="serviceClassConsumer" interface="com.walker.core.service.service.ServiceClass" version="1.0" check="false" />
+   	<dubbo:reference id="serviceDubboConsumer" interface="com.walker.core.service.service.ServiceDubbo" version="1.0" check="false" />
 -->
 	
 

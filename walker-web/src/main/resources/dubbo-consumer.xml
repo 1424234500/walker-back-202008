@@ -36,8 +36,8 @@
 	<!-- 服务消费 2 -->
 	
     <!-- 指向远程服务代理,和provider中相同-->
-	<dubbo:reference id="serviceClass" interface="util.service.service.ServiceClass" version="1.0" check="false" />
-   	<dubbo:reference id="serviceDubbo" interface="util.service.service.ServiceDubbo" version="1.0" check="false" />
+	<dubbo:reference id="serviceClass" interface="com.walker.core.service.service.ServiceClass" version="1.0" check="false" />
+   	<dubbo:reference id="serviceDubbo" interface="com.walker.core.service.service.ServiceDubbo" version="1.0" check="false" />
 	
 
 </beans>

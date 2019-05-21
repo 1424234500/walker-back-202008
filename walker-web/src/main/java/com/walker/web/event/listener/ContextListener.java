@@ -107,9 +107,9 @@ public class ContextListener implements ServletContextListener {
 			ThreadUtil.execute(Type.SingleThread, new Runnable(){
 				public void run(){
 					log.info("*******************************************");
-					log.info("********** step." + ii + "\t " + clz + ".call()");
+					log.info("********** step." + ii + "\t " + clz + ".init()");
 					log.info("*******************************************");
-					ClassUtil.doClassMethod(clz, "test");
+					ClassUtil.doClassMethod(clz, "init");
 				}
 			});
 		}

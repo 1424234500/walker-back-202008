@@ -12,9 +12,19 @@ package com.walker.core.aop;
 
 public interface Test{ 
 	/**
-	 * 测试功能
+	 * 初始化
+	 */
+	public void init();
+	
+	/**
+	 * 测试是否正常
 	 */
 	public void test(); 
+	
+	/**
+	 * 反初始化
+	 */
+	public void uninit();
 	
 }
 

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.walker.common.util.Call;
+import com.walker.core.aop.TestAdapter;
 
 /**
  * service provider
@@ -18,7 +19,7 @@ import com.walker.common.util.Call;
  * dubbo-provider.xml <dubbo.properties>
  * 
  */
-public class Provider implements Call{
+public class Provider extends TestAdapter{
 	private static Logger log = Logger.getLogger(Provider.class); 
 	
 	/**
@@ -55,8 +56,7 @@ public class Provider implements Call{
     	return SingletonFactory.context;
     }
 	
-	@Override
-	public void call() {
+	public boolean doInit() {
 		log.info("***初始化开始---------------------- ");
 		getContext();
 //		独立启动
@@ -69,18 +69,11 @@ public class Provider implements Call{
 //			  ServiceDubbo service = (ServiceDubbo)context.getBean("serviceDubbo");
 //			  log.warn(service.sayHello("in args[]" ));
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("test dubbo service error !" + e.toString());
+			return false;
 		}
 		
 		log.info("测试完毕 ------------------- ");
+		return true;
 	}
 
-	
-	public static void main(String[] argv) {
-		new Provider().call();
-		while(true) {
-			
-		}
-	}
 }

@@ -56,6 +56,11 @@ public class CacheMgr extends TestAdapter{
 		}
 		return cache;
 	}
+	
+	@Override
+	public boolean doInit() {
+		return doTest();
+	}
 
 	/**
 	 * 初始化cache 系统级数据 环境设置读取 词典加载 额外配置项

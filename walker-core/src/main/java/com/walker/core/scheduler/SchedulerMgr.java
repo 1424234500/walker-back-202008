@@ -51,9 +51,11 @@ public class SchedulerMgr extends TestAdapter{
 			e.printStackTrace();
 		}
 	}
-	
+	public boolean doInit() {
+		return getInstance() != null;
+	}
 	public boolean doTest() {
-		return getInstance() == null;
+		return getInstance() != null;
 	}
 
 

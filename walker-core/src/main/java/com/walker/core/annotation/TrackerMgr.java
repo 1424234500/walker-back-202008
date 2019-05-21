@@ -2,6 +2,7 @@ package com.walker.core.annotation;
 import org.apache.log4j.Logger;
 
 import com.walker.common.util.Call;
+import com.walker.core.aop.TestAdapter;
 
 /**
  *	注解处理工厂 
@@ -9,12 +10,11 @@ import com.walker.common.util.Call;
  *
  */
 
-public class TrackerMgr implements Call{
+public class TrackerMgr extends TestAdapter{
 	static public Logger log = Logger.getLogger("Annotation"); 
 
-	@Override
-	public void call() {
-		start();
+	public boolean doInit() {
+		return start();
 	} 
 	
 	/**

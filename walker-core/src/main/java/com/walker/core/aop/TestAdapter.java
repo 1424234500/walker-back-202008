@@ -35,10 +35,38 @@ public abstract class TestAdapter implements Test{
 
 	/**
 	 * 返回false则抛出异常
-	 * @return
 	 */
-	public abstract boolean doTest() ;
+	public boolean doTest() {return true;};
+	public boolean doInit() {return true;};
+	public boolean doUninit() {return true;};
 
+	@Override
+	public void init() {
+		log.warn(Context.beginTip(getClass()));
+		
+		if(doInit()) {
+			log.warn(Context.okTip(getClass()));
+		}else {
+			throw new ErrorException(Context.errorTip(getClass()));
+		}
+
+		log.warn(Context.endTip(getClass()));		
+	}
+
+	@Override
+	public void uninit() {
+		log.warn(Context.beginTip(getClass()));
+		
+		if(doUninit()) {
+			log.warn(Context.okTip(getClass()));
+		}else {
+			throw new ErrorException(Context.errorTip(getClass()));
+		}
+
+		log.warn(Context.endTip(getClass()));		
+	}
+
+	
 }
 
 
