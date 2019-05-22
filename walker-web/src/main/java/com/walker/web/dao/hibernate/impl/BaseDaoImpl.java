@@ -1,17 +1,9 @@
 package com.walker.web.dao.hibernate.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
 import org.hibernate.jdbc.Work;
 import org.hibernate.transform.Transformers;
 import org.apache.log4j.Logger;
@@ -19,17 +11,30 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.walker.core.database.SqlHelp;
+import com.walker.common.util.MapListUtil;
+import com.walker.common.util.Page;
+import com.walker.core.cache.CacheMgr;
+import com.walker.core.database.SqlUtil;
 import com.walker.web.dao.hibernate.BaseDao;
 
  
 @Repository("baseDao")
 public class BaseDaoImpl implements BaseDao  {
 	static public Logger log = Logger.getLogger("Hibernate"); 
+	String dsName = CacheMgr.getInstance().get("jdbcdefault", "mysql");
 	public void out(String str){
-		log.debug(str);
+		log.info(str);
 	}
-	
+
+	@Override
+	public String getDs() {
+		return this.dsName;
+	}
+	@Override
+	public void setDs(String ds) {
+		this.dsName = ds;
+	}
+
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -44,18 +49,15 @@ public class BaseDaoImpl implements BaseDao  {
 	/**
 	 * 获取列名集合的第一种方式
 	 */
-	public List<String> findColumns(String sql){
+	public List<String> getColumnsBySql(String sql){
 		final String sqlStr=sql;
 		final List<String> list=new ArrayList<String>();
 		getCurrentSession().doWork( new Work() {  
 		    public void execute(Connection connection) {
 		    	try{
 		    	PreparedStatement pstm=connection.prepareStatement(sqlStr);
-		    	ResultSet rst  = pstm.executeQuery(); 
-		    	ResultSetMetaData rsmd=rst.getMetaData();
-		    	 for(int i=0;i<rsmd.getColumnCount();i++){
-		    		 list.add(rsmd.getColumnName(i+1));
-		    	 }
+		    	ResultSet rs  = pstm.executeQuery(); 
+		    	list.addAll(SqlUtil.toKeys(rs));
 		      }catch(Exception e){
 		    	e.printStackTrace();
 		    }
@@ -66,81 +68,93 @@ public class BaseDaoImpl implements BaseDao  {
 	  
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Map<String, Object>> find(String sql, Object... params) {
+	public List<Map<String, Object>> find(String sql, Object... objects) {
 		SQLQuery q = getCurrentSession().createSQLQuery(sql);
-		setParams(q, params);
+		setObjectsToSql(q, objects);
 		return q.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 	}
-	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> findOne(String sql, Object... params) {
-		SQLQuery q = getCurrentSession().createSQLQuery("select * from (" + sql + ") where rownum <= 1 ");
-		setParams(q, params);
-		List<Map<String, Object>> list = q.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+	public Map<String, Object> findOne(String sql, Object... objects) {
+		List<Map<String, Object>> list = this.findPage(sql, 1, 1, objects);
 		Map<String, Object> res = null;
 		if(list != null && list.size() > 0){
 			res = list.get(0);
-		}else{
-			res = new HashMap<String, Object>();
-		}
+		} 
 		return res;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... params) {
+	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... objects) {
 		page = page <= 0 ? 1 : page;
 		rows = rows <= 0 ? 2 : rows;
 		SQLQuery q = getCurrentSession().createSQLQuery(sql);
-		setParams(q, params);
+		setObjectsToSql(q, objects);
 		return q.setFirstResult((page - 1) * rows).setMaxResults(rows).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 	}
  
 	@Override
-	public int executeSql(String sql, Object... params) {
+	public int executeSql(String sql, Object... objects) {
 		SQLQuery q = getCurrentSession().createSQLQuery(sql);
-		setParams(q, params);
+		setObjectsToSql(q, objects);
 		return q.executeUpdate();
 	}
  
 	@Override
-	public Long count(String sql, Object... params) {
-		SQLQuery q = getCurrentSession().createSQLQuery("select count(*) from ("+sql+") ");
-		setParams(q, params);
-		return ((Number) q.uniqueResult()).longValue();
+	public int count(String sql, Object... objects) {
+		SQLQuery q = getCurrentSession().createSQLQuery(SqlUtil.makeCount(sql));
+		setObjectsToSql(q, objects);
+		return ((Number) q.uniqueResult()).intValue();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<String> getColumns(String tableName){
-		String sql = "";
-		//oracle
-		sql = "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
-		//sqlserver
-		//select name from syscolumns where id=object_id('表名');
-		//mysql
-		//select COLUMN_NAME from information_schema.columns where table_name='tablename'
-		
-		SQLQuery q = getCurrentSession().createSQLQuery(sql);
-		setParams(q);
-		List<Map<String, Object>> list = q.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
-		List<String> res = new ArrayList<String>();
-		
-		if(list != null){
-			for(Map<String, Object> map : list){
-				res.add(map.get("COLUMN_NAME").toString());
-			}
+	public List<String> getColumnsByTableName(String tableName){
+		String sql = SqlUtil.makeColumnSql(getDs(), tableName);
+		List<Map<String, Object>> list = this.find(sql);
+		List<String> res = null;
+		//[
+		//		{id : 1, name : n1}
+		//		{id : 2, name : n2}
+		//]
+		// -> [1, 2]
+		List<List<String>> listValue = MapListUtil.toArrayAndTurn(list);
+		if (list.size() > 0) {
+			res = listValue.get(0);
+		} else {
+			res = new ArrayList<String>();
 		}
+//		for(Map<String, Object> map : list){
+//			res.add(String.valueOf(map.get("COLUMN_NAME")));
+//		}
 		
 		return res;
 	}
 
 	
-	public void setParams(SQLQuery q, Object...params){
-		if (params != null &&  params.length > 0) {
-			for (int i = 0; i < params.length; i++) {
-				q.setParameter(i, params[i]);
+	public void setObjectsToSql(SQLQuery q, Object...objects){
+		if (objects != null &&  objects.length > 0) {
+			for (int i = 0; i < objects.length; i++) {
+				q.setParameter(i, objects[i]);
 			}
 		}
-		out(SqlHelp.makeSql(q.getQueryString(), params)); 
+		out(SqlUtil.makeSql(q.getQueryString(), objects)); 
 	}
+
+	@Override
+	public List<Map<String, Object>> findPage(Page page, String sql, Object... objects) {
+		page.setNUM(this.count(sql, objects ));
+		return this.findPage(sql,page.getNOWPAGE(), page.getSHOWNUM(), objects );
+	}
+
+	@Override
+	public int[] executeSql(String sql, List<List<Object>> objs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int executeProc(String proc, Object... objects) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

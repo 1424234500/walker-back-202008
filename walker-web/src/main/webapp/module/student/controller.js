@@ -50,7 +50,7 @@ angular.module('com.student')
     $('#time').datetimepicker();
     $scope.ajaxSubmit = function(){ 
         var params =  $scope.httpget;
-        studentService.update(params).then(
+        studentService.add(params).then(
             function (data) {
                 info("操作数据:" + data + "条");
                 $scope.goHome();

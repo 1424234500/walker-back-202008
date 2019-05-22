@@ -3,64 +3,71 @@
 
 
 angular.module('com.system')
-.service('systemService',['baseService', 'Socket', function(baseService, Socket){ 
-    this.name = 'this.name';  
-    this.type = 0;  //0web  1socket
-    this.list = function(params){ 
-        return baseService.post("/BaseSSM/angular/list.do", params);
-    };   
-    this.get = function(params){ 
-        return baseService.post("/BaseSSM/angular/get.do", params);
-    }; 
-    this.del = function(params){ 
-        return baseService.post("/BaseSSM/angular/delete.do", params);
+.service('systemService',['$PROJECT','baseService','cacheService', function($PROJECT,baseService,cacheService){
+
+    //表名
+    var mName = 'system';
+
+     var service = {};
+    //操作表名
+    service.table = mName;
+
+    service.setTable = function(tableName){
+        service.table = tableName;
     };
-    this.update = function(params){ 
-        return baseService.post("/BaseSSM/angular/update.do", params);
+    service.getTable = function(){
+        return service.table;
+    };
+
+    service.make = function(params){
+        if( ! params){ 
+            params = {};
+        }
+        //params['TABLE_NAME'] = service.table;
+        return params;
+    }
+
+    //获取表字段列表
+    service.cols = function(params){ 
+        params = service.make(params);
+        return cacheService.post('/' + $PROJECT + '/' + mName + '/cols.do', params);
+    };   
+
+    service.list = function(params){ 
+        params = service.make(params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/list.do', params);
+    };   
+    service.listRecent = function(params){ 
+        params = service.make(params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/listrecent.do', params);
     }; 
-    this.do = function(url, params){ 
+    service.get = function(params){ 
+        params = service.make(params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/get.do', params);
+    }; 
+    service.del = function(params){ 
+        params = service.make(params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/delete.do', params);
+    };
+    service.update = function(params){ 
+        params = service.make(params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/update.do', params);
+    };
+    service.add = function(params){
+        params = service.make(params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/add.do', params);
+    };
+    service.statis  = function(params){
+        params = service.make(params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/statis.do', params);
+    }; 
+
+    
+    service.do = function(url, params){ 
         return baseService.post(url, params);
     }; 
 
-    this.statis = function(params){ 
-        return baseService.post("/do/system/home/tocken", params);
-    };
-
-    this.getports = function(params){
-        return baseService.post("/do/system/getports/tocken", params);
-    };
-    this.setports = function(params){ 
-        return baseService.post("/do/system/setports/" + params.port + "-" + (1-params.value));
-    };
-    this.turnCamera = function(params){
-        if(this.type == 1){
-            var soc = SocketMake(SOCKET_SYSTEM);
-            soc["method"] = "cameraTurn";
-            soc["params"] = params.value;
-            return systemService.sendSocketMsg(soc); 
-        } else{
-            return baseService.post("/do/system/cameraTurn/" + params.value);
-        }
-    };
-    this.move = function(params){ 
-        if(this.type == 1){
-            var soc = SocketMake(SOCKET_SYSTEM);
-            soc["method"] = "move";
-            soc["params"] = params.value;
-            return systemService.sendSocketMsg(soc); 
-        } else{
-            return baseService.post("/do/system/move/" + params.value);
-        }
-    };
-
-
-
-    this.sendSocketMsg = function(params){ 
-        return baseService.sendSocketMsg(params);
-    };
-    this.sendSocketEvent = function(params){ 
-        return baseService.sendSocketEvent(params);
-    };
-
+    return service;
+    
 }]);
 

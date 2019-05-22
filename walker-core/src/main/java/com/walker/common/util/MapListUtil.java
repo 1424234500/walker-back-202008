@@ -1,5 +1,8 @@
 package com.walker.common.util;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -115,9 +118,6 @@ public class MapListUtil {
 	}
 	public static MakeMap map(){
 		return new MakeMap();
-	}
-	public static MakeLinkMap getLinkMap(){
-		return new MakeLinkMap();
 	}
 	/**
 	 * 获取ArrayList
@@ -270,6 +270,20 @@ public class MapListUtil {
 		res += " ]";
 		return res;
 	}
+	/**
+	 * map转值数组
+	 * @param map
+	 * @return
+	 */
+	public static List<String> toValues(Map<String, Object> map) {
+		List<String> res = new ArrayList<String>();
+		if(map != null) {
+			for(Object value : map.values()) {
+				res.add(String.valueOf(value));
+			}
+		}
+		return res;
+	}
 
 	/**
 	 * 有序合并List
@@ -292,16 +306,26 @@ public class MapListUtil {
 		return list1;
 	}
 
+	/**
+	 * 读取键值行列并转置
+	 * @param list
+	 * @return
+	 */
 	public static List<List<String>> toArrayAndTurn(List<Map<String, Object>> list){
-		return turnListString(toArray(list));
+		return turnRerix(toArray(list));
 	}
 
+	/**
+	 * 键值结果 行列值读取
+	 * @param list
+	 * @return
+	 */
 	public static List<List<String>> toArray(List<Map<String, Object>> list){
 		List<List<String>> res = new ArrayList<List<String>>();
 
 		if(list != null && list.size() > 0){
-			Set set = list.get(0).keySet();
-			int colSize = set.size();
+			Set<?> set = list.get(0).keySet();
+//			int colSize = set.size();
 			int rowSize = list.size();
 
 			for(int i = 0; i < rowSize; i++){
@@ -315,7 +339,12 @@ public class MapListUtil {
 
 		return res;
 	}
-	public static List<List<String>> turnListString(List<List<String>> list){
+	/**
+	 * 二维数组行列转换
+	 * @param list
+	 * @return
+	 */
+	public static List<List<String>> turnRerix(List<List<String>> list){
 
 		List<List<String>> res = new ArrayList<List<String>>();
 
@@ -350,13 +379,13 @@ public class MapListUtil {
 		List<Map<String, Object>> res = new ArrayList<Map<String, Object>>();
 
 		if(list != null && list.size() > 0){
-			Set set = list.get(0).keySet();
+			Set<?> set = list.get(0).keySet();
 			int colSize = set.size();
 			int rowSize = list.size();
 			int cc = 0;
 			for (Object key : set) {
 //				Tools.out(key);
-				Map<String, Object> col = getLinkMap().build();
+				Map<String, Object> col = new LinkedHashMap<String, Object>();
 				for(int i = 0; i < rowSize; i++){
 					col.put("col"+i, getList(list, i, ""+key));
 				}

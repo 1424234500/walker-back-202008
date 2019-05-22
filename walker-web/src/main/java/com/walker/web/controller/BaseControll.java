@@ -22,7 +22,7 @@ import com.walker.common.util.Tools;
 import com.walker.common.util.XmlUtil;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
-import com.walker.core.database.SqlHelp;
+import com.walker.core.database.SqlUtil;
 import com.walker.service.BaseService;
 import com.walker.web.RequestUtil;
 import com.walker.web.mode.LoginUser;
@@ -180,8 +180,8 @@ public abstract class BaseControll {
 		String tableName = getTableName();
 		if(!Tools.notNull(tableName))
 			throw new Exception("没有配置表");
-		List<String> res = baseService.getColumns(tableName); 
-		return RequestUtil.getParam(request, res);
+		List<String> res = baseService.getColumnsByTableName(tableName); 
+		return RequestUtil.getParam(request, res.toArray());
 	}
 	/**
 	 * 获取request key 兼容大小写
@@ -211,7 +211,7 @@ public abstract class BaseControll {
 
 		if(!Tools.notNull(tableName))
 			throw new Exception("没有配置表");
-		List<String> res = baseService.getColumns(tableName); 
+		List<String> res = baseService.getColumnsByTableName(tableName); 
 		if(res.size() <= 0)
 			throw new Exception("该表 " + tableName + " 没有列 ");
 		return (String)res.get(0);
@@ -240,7 +240,6 @@ public abstract class BaseControll {
 		echo(res, page);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping("/delete.do")
 	public void delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
@@ -252,13 +251,12 @@ public abstract class BaseControll {
 		echo(count);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping("/add.do")
 	public void add(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
 		Map<?, ?> map = this.getTableParam(request);
-		int count = baseService.executeSql("insert into " + getTableName() + "(" + SqlHelp.makeMapKeys(map) + ") values(" + SqlHelp.makeMapPosis(map) + ")  ", map.values().toArray());
+		int count = baseService.executeSql("insert into " + getTableName() + "(" + SqlUtil.makeMapKeys(map) + ") values(" + SqlUtil.makeMapPosis(map) + ")  ", map.values().toArray());
 		echo(count);
 	}
 
@@ -270,14 +268,13 @@ public abstract class BaseControll {
 		Map map = this.getTableParam(request);
 		String key = this.getTableKeyName(request);
 		String value = this.getValue(request, key); 
-		String cols = SqlHelp.makeMapKeyPosis(map);
+		String cols = SqlUtil.makeMapKeyPosis(map);
 		List<String> params = new ArrayList<String>(map.values());
 		params.add(value);
 		int count = baseService.executeSql("update " + getTableName() + " set " + cols + " where " + key + "=?", params.toArray());
 		echo(count);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping("/get.do")
 	public void get(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
@@ -298,7 +295,7 @@ public abstract class BaseControll {
 			echo(false, "未闻表名");
 			return;
 		}
-		List<String> res = baseService.getColumns(tableName);
+		List<String> res = baseService.getColumnsByTableName(tableName);
 		echo(res);
 	}
 	String getTableName(){

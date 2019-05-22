@@ -23,14 +23,19 @@ public abstract class TestAdapter implements Test{
 	@Override
 	public void test() {
 		log.warn(Context.beginTip(getClass()));
-		
-		if(doTest()) {
+		boolean res = false;
+		try {
+			res = doTest();
+		}catch(Exception e) {
+			res = false;
+			log.error(e);
+		} 
+		if(res) {
 			log.warn(Context.okTip(getClass()));
 		}else {
 			throw new ErrorException(Context.errorTip(getClass()));
 		}
-
-		log.warn(Context.endTip(getClass()));
+		log.warn(Context.endTip(getClass()));		
 	}
 
 	/**
@@ -43,30 +48,38 @@ public abstract class TestAdapter implements Test{
 	@Override
 	public void init() {
 		log.warn(Context.beginTip(getClass()));
-		
-		if(doInit()) {
+		boolean res = false;
+		try {
+			res = doInit();
+		}catch(Exception e) {
+			res = false;
+			log.error(e);
+		} 
+		if(res) {
 			log.warn(Context.okTip(getClass()));
 		}else {
 			throw new ErrorException(Context.errorTip(getClass()));
 		}
-
 		log.warn(Context.endTip(getClass()));		
 	}
 
 	@Override
 	public void uninit() {
 		log.warn(Context.beginTip(getClass()));
-		
-		if(doUninit()) {
+		boolean res = false;
+		try {
+			res = doUninit();
+		}catch(Exception e) {
+			res = false;
+			log.error(e);
+		} 
+		if(res) {
 			log.warn(Context.okTip(getClass()));
 		}else {
 			throw new ErrorException(Context.errorTip(getClass()));
 		}
-
 		log.warn(Context.endTip(getClass()));		
 	}
-
-	
 }
 
 

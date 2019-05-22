@@ -31,7 +31,7 @@ import com.walker.common.util.FileUtil;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
 import com.walker.common.util.Tools;
-import com.walker.core.database.SqlHelp;
+import com.walker.core.database.SqlUtil;
 import com.walker.service.FileService;
 import com.walker.web.RequestUtil; 
 
@@ -86,7 +86,7 @@ public class FileControll extends BaseControll{
 		Page page = Page.getPage(request);
 
 		List<String> params = new ArrayList<String>();
-		String sql = "select id,(select count(*) from file_down_up where fileid=f.id and type='down') count,name,upuserid,type,file_size(filesize) filesize,to_char(uptime," + SqlHelp.getTimeFormatL() + ") uptime, to_char(changetime," + SqlHelp.getTimeFormatL() + ") changetime,about from fileinfo f where 1=1 ";
+		String sql = "select id,(select count(*) from file_down_up where fileid=f.id and type='down') count,name,upuserid,type,file_size(filesize) filesize,to_char(uptime," + SqlUtil.getTimeFormatL() + ") uptime, to_char(changetime," + SqlUtil.getTimeFormatL() + ") changetime,about from fileinfo f where 1=1 ";
 		if(Tools.notNull(id)){
 			sql += " and id like ? ";
 			params.add("%" + id + "%");
@@ -96,11 +96,11 @@ public class FileControll extends BaseControll{
 			params.add("%" + name + "%");
 		}
 		if(Tools.notNull(timefrom)){
-			sql += " and uptime >= " + SqlHelp.to_dateL();
+			sql += " and uptime >= " + SqlUtil.to_dateL();
 			params.add(timefrom);
 		}
 		if(Tools.notNull(timeto)){
-			sql += " and uptime <= " + SqlHelp.to_dateL();
+			sql += " and uptime <= " + SqlUtil.to_dateL();
 			params.add( timeto);
 		} 
 	    List<Map<String, Object>> res = baseService.findPage(page, sql, params.toArray() );

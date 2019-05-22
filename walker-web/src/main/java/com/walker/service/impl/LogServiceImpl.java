@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.walker.common.util.Bean;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.MapListUtil;
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
@@ -36,11 +38,11 @@ public class LogServiceImpl implements LogService,Serializable {
 	public void userMake(String userid, String url, String ip, String host, int port, String params) {
 		int res = 0;
 		params = Tools.cutString(params, 180);
-		res = baseDao.executeSql("insert into info"
+		res = baseDao.executeSql("insert into log_info"
 				+ "(id,time,userid,url,ip,mac,port,about) "
 				+ "values"
-				+ "(seq_info.nextval,sysdate,?,?,?,?,?,?) "
-				,userid,url,ip,host,port,params
+				+ "(?,?,?,?,?,?,?,?) "
+				,LangUtil.getGenerateId(),TimeUtil.getTimeYmdHmss(),userid,url,ip,host,port,params
 			);
 	}
 	

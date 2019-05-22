@@ -16,7 +16,7 @@ import com.walker.common.util.LangUtil;
 import com.walker.common.util.MakeMap;
 import com.walker.common.util.Page;
 import com.walker.common.util.Tools;
-import com.walker.core.database.SqlHelp;
+import com.walker.core.database.SqlUtil;
 import com.walker.service.StudentService;
 import com.walker.web.dao.hibernate.BaseDao;
 

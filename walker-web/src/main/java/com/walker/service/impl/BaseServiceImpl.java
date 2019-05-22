@@ -1,24 +1,14 @@
 package com.walker.service.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.walker.common.util.MakeMap;
 import com.walker.common.util.Page;
-import com.walker.common.util.Tools;
-import com.walker.core.database.SqlHelp;
 import com.walker.service.BaseService;
-import com.walker.service.StudentService;
 import com.walker.web.dao.hibernate.BaseDao;
 
 @Service("baseService")
@@ -28,20 +18,10 @@ public class BaseServiceImpl implements BaseService,Serializable {
 	/**
      * hibernate入口
      */
-	@Autowired
-	private SessionFactory sessionFactory;
     
     @Autowired
     protected BaseDao baseDao;
-
-	@Override
-	public List findColumns(String sql) {
-		return baseDao.findColumns(sql);
-	}
-	@Override
-	public List<String> getColumns(String tableName) {
-		return baseDao.getColumns(tableName);
-	}
+ 
 
 
 	@Override
@@ -66,8 +46,43 @@ public class BaseServiceImpl implements BaseService,Serializable {
 	}
 
 	@Override
-	public Long count(String sql, Object... params) {
+	public int count(String sql, Object... params) {
 		return baseDao.count(sql, params);
+	}
+
+	@Override
+	public void setDs(String ds) {
+		baseDao.setDs(ds);
+	}
+
+	@Override
+	public String getDs() {
+		return baseDao.getDs();
+	}
+
+	@Override
+	public List<String> getColumnsBySql(String sql) {
+		return baseDao.getColumnsBySql(sql);
+	}
+
+	@Override
+	public List<String> getColumnsByTableName(String tableName) {
+		return baseDao.getColumnsByTableName(tableName);
+	}
+
+	@Override
+	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... params) {
+		return baseDao.findPage(sql, page, rows, params);
+	}
+
+	@Override
+	public int[] executeSql(String sql, List<List<Object>> objs) {
+		return baseDao.executeSql(sql, objs);
+	}
+
+	@Override
+	public int executeProc(String proc, Object... objects) {
+		return baseDao.executeProc(proc, objects);
 	}
 
  

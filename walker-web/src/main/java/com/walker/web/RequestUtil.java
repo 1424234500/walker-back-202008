@@ -320,8 +320,8 @@ public class RequestUtil {
 		if (colNames.length <= 0) {
 			res = getRequestBean(request);
 		} else {
-			for (Object key : colNames) {
-				res.put(key, RequestUtil.getKey(request, (String)key));
+ 			for (Object key : colNames) {
+				res.put(key, RequestUtil.getKey(request, String.valueOf(key)));
 			}
 		}
 		return res;

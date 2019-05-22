@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
 import com.walker.common.util.Tools;
-import com.walker.core.database.SqlHelp;
+import com.walker.core.database.SqlUtil;
 import com.walker.service.StudentService;
 import com.walker.web.dao.mybatis.BaseMapper;
 
@@ -36,9 +36,9 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 	@Override
 	public List<Map<String, Object>> list(String id, String name, String timefrom, String timeto, Page page) {
 		if(!Tools.notNull(name)) name = "";
-		else name = SqlHelp.like(name);
+		else name = SqlUtil.like(name);
 		if(!Tools.notNull(id)) id = "";
-		else  id = SqlHelp.like(id);
+		else  id = SqlUtil.like(id);
 		
 		Map map = MapListUtil.getMap()
 				.put("name", name)

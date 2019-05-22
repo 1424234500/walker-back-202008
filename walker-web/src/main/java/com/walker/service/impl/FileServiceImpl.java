@@ -15,7 +15,7 @@ import com.walker.common.util.LangUtil;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
 import com.walker.common.util.Tools;
-import com.walker.core.database.SqlHelp;
+import com.walker.core.database.SqlUtil;
 import com.walker.service.FileService;
 import com.walker.web.controller.Context;
 import com.walker.web.dao.hibernate.BaseDao;
@@ -44,7 +44,7 @@ public class FileServiceImpl implements FileService,Serializable {
 		//删除表中中不存在文件的记录 删除失效文件
 		//添加分页循环处理
 		
-		Long count = baseDao.count("select * from fileinfo");
+		int count = baseDao.count("select * from fileinfo");
 		int once = Context.getDbOnce();
 		Page pageBean = new Page(once, count);
 		int page = pageBean.getPAGENUM();
@@ -110,7 +110,7 @@ public class FileServiceImpl implements FileService,Serializable {
 		String key = LangUtil.getGenerateId();
 		int res = baseDao.executeSql("insert into fileinfo"
 				+ "(id,                   uptime, name,filesize,  type,path,changetime               ,about,upuserid ) values "
-				+ "(?, sysdate,?    ,?      ,  ?   ,?    ,"+ SqlHelp.to_dateL() +",?, ?   ) "
+				+ "(?, sysdate,?    ,?      ,  ?   ,?    ,"+ SqlUtil.to_dateL() +",?, ?   ) "
 				                                 , key, name ,filesize ,type,path,changetime               ,about, id   );
 		if(res == 1){
 			return key;

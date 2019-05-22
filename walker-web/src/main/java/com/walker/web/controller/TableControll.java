@@ -17,6 +17,7 @@ import com.walker.web.RequestUtil;
 @Controller
 @RequestMapping("/table")
 public class TableControll extends BaseControll {
+
 	
 	public TableControll() {
 		super(TableControll.class, "");

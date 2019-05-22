@@ -63,7 +63,7 @@ public class ContextListener implements ServletContextListener {
         log.info("系统服务路径: " + contextPath);
 
         startComp();
-//        startTestSelf();
+        startTestSelf();
 
         addShutdownHook();	//添加java程序关闭监听
         log.info("系统初始化完毕，开始接收请求！");
@@ -127,7 +127,7 @@ public class ContextListener implements ServletContextListener {
 			public void run() { 
 				log.info("######################开启延时测试初始化springMvc#######################");
 				try {
-					log.info(HttpUtil.doPost("http://localhost:8088/BaseSSM/tomcat/listCacheMap.do", new Page().toBean(), null, null));
+					log.info(HttpUtil.doPost("http://localhost:8080/walker-web/tomcat/listCacheMap.do", new Page().toBean(), null, null));
 					log.info("######################测试地址完毕#######################");
 				} catch (Exception e) {
 					log.info("地址测试异常 等会儿重新测试");
