@@ -51,7 +51,7 @@ public class FileControll extends BaseControll{
 	static int cacheSize = 4096;
 	
 	@RequestMapping("/fileCols.do")
-	public void fileCols(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void fileCols(HttpServletRequest request, HttpServletResponse response){
 		echo(FileUtil.getFileMap());
 	}
 	@RequestMapping("/fileDir.do")
@@ -77,7 +77,7 @@ public class FileControll extends BaseControll{
 	
 	
 	@RequestMapping("/list.do")
-	public void list(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+	public void list(HttpServletRequest request, HttpServletResponse response){ 
 		String id = request.getParameter("ID");
 		String name = request.getParameter("NAME");
 		String timefrom = request.getParameter("TIMEFROM");
@@ -111,7 +111,7 @@ public class FileControll extends BaseControll{
 
 	
 	@RequestMapping("/delete.do")
-	public void delete(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+	public void delete(HttpServletRequest request, HttpServletResponse response){ 
 		String path = request.getParameter("PATH");  
 		int count = 0;
 		String info = "";
@@ -129,7 +129,7 @@ public class FileControll extends BaseControll{
 		echo(info.length()==0, info, count);
 	}
 	@RequestMapping("/update.do")
-	public void update(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+	public void update(HttpServletRequest request, HttpServletResponse response){ 
 		String path = request.getParameter("PATH");  //新路径 
 		String oldPath = request.getParameter("OLDPATH");   //全路径 path/file
 		String oldName = request.getParameter("OLDNAME");  
@@ -152,7 +152,7 @@ public class FileControll extends BaseControll{
 	}
 	
 	@RequestMapping("/updatetable.do")
-	public void updateTable(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+	public void updateTable(HttpServletRequest request, HttpServletResponse response){ 
 		String id = request.getParameter("PATH"); 
 		String about = request.getParameter("ABOUT"); 
 	    
@@ -162,7 +162,7 @@ public class FileControll extends BaseControll{
 	}
 
 	@RequestMapping("/get.do")
-	public void get(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+	public void get(HttpServletRequest request, HttpServletResponse response){ 
 		String path = request.getParameter("PATH");  
 		Map map = FileUtil.getFileMap(path);
 		echo( map);	

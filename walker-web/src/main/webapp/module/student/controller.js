@@ -1,95 +1,20 @@
  
 angular.module('com.student')
 
-.controller('com.student.pageCtrl', ['$scope', '$rootScope', '$state', 'studentService', function ($scope, $rootScope, $state, studentService) {
-    //嵌套路由 scope可访问 <任意module> 的上层html的 ctrl/scope
-     
-  
-    $scope.goHome = function(){ 
-        $state.go('main.student.list');
-    }
-    $scope.goAdd = function(){ 
-        $state.go('main.student.add');
-    }
-    $scope.goUpdate = function(id){
-        var params = {"id":id};
-        $state.go('main.student.update', params);
-    }
-   
-
-    $('#charttimefrom').datetimepicker();
-    $('#charttimeto').datetimepicker(); 
-    $scope.chart = {}; //查询 
-    $scope.chart.TIMEFROM = "2015";
-    $scope.chart.TIMETO = "2017";
-    $scope.statis = function(){ 
-        //debugger; 
-        var params = $scope.chart;  
-          //按月统计，每月注册人数 
-        studentService.statis(params).then(
-        function (data) { 
-            // debugger;
-            info(data);
-            //data.option = $.extend({"yAxis":{}}, data.option )
-            toolSetChart("echarts", data.option);
-        }, function(error){
-            alert("eeeeeeeeeeeee");
-        });  
-    };
-    $scope.statis();
- 
-  
-
-
-
-
-}])
-.controller('com.student.addCtrl', ['$scope', '$rootScope', 'studentService', function ($scope, $rootScope, studentService) {
-    
-
-    $('#time').datetimepicker();
-    $scope.ajaxSubmit = function(){ 
-        var params =  $scope.httpget;
-        studentService.add(params).then(
-            function (data) {
-                info("操作数据:" + data + "条");
-                $scope.goHome();
-        }, error); 
-    };
-}])
-.controller('com.student.updateCtrl', ['$scope', '$rootScope', '$stateParams', 'studentService', function ($scope, $rootScope, $stateParams, studentService) {
-    
-
-    $scope.params = $stateParams;
-    info("stateParams"); 
-    info($scope.params); 
-    var params = $scope.params;
-    studentService.get(params).then(        
+.controller('com.student', ['$scope', '$rootScope', '$state', '$stateParams', 'studentService', function ($scope, $rootScope, $state, $stateParams, studentService) {
+    //父级路由ctrl 可被子路由ctrl使用 基类?	将公用函数 数据放在父类
+	
+	//初始化表 主键 列信息 
+    studentService.cols().then(
         function (data) {
-            $scope.httpget = data; 
-        }, error); 
- 
+            $rootScope.cols = data;
+            $scope.orderType = $rootScope.cols[0];
+    }, error);
 
-    $('#time').datetimepicker();
-    $scope.ajaxSubmit = function(){  
-        var params = $scope.httpget;
-        studentService.update(params).then(
-            function (data) {
-                info("操作数据:" + data + "条");
-                $scope.goHome(); 
-            }, error);  
-
-    };
-}])
-.controller('com.student.listCtrl', ['$scope', '$rootScope', '$state', 'studentService', function ($scope, $rootScope, $state, studentService) { 
-    
-
-    //bootstrap日期插件使用方式 
-    $('#timefrom').datetimepicker();
-    $('#timeto').datetimepicker(); 
-    
+    //初始化分页查询 排序参数
+    $scope.page = {};
     $scope.search = {}; //查询
-    $scope.orderType = 'id'; 
+    $scope.orderType = '';
     $scope.order = '-';
     $scope.changeOrder = function(type){
         $scope.orderType = type;
@@ -99,30 +24,81 @@ angular.module('com.student')
             $scope.order = '';
         }
     };
+    
+    //列表查询
     $scope.list = function(){ 
-        //debugger;
-        var PAGE = $scope.PAGE;
+        var page = $scope.page;
         var search = $scope.search;
-        var params = $.extend({}, PAGE, search);
+        var params = $.extend({}, page, search);
         studentService.list(params).then(
             function (data) {
                 $scope.httplist = data.list;
                 $scope.page = data.page;
                 $scope.ppp = calcPage($scope.page);
-        }, error);  
 
+                $scope.sums =  listSums($scope.httplist, $rootScope.cols);
+
+        }, error);   
     };
-    $scope.list();
-
-    $scope.ajaxDelete = function(id){ 
-        var params = {"ID":id};
+    //回车事件触发
+    $scope.keydown = function(event){
+        if (event.keyCode == 13) {
+            $scope.list();
+        }   
+    };
+    $scope.delete = function(id){
+        var params = {};
+        params[$rootScope.cols[0]] = id;
         studentService.del(params).then(
             function (data) { 
                 info("操作数据:" + data + "条");
                 $scope.list(); 
         }, error);  
+    };
+    $state.go('main.student.list');
 
-    }  
+}])
+.controller('com.student.addCtrl', ['$scope', '$rootScope', 'studentService', function ($scope, $rootScope, studentService) {
+    $scope.httpget = {};
+
+    $scope.add = function(){
+        var params =  $scope.httpget;
+        studentService.add(params).then(
+            function (data) {
+                info("操作数据:" + data + "条");
+                $scope.list();
+        }, error); 
+    };
+    
+}])
+.controller('com.student.updateCtrl', ['$scope', '$rootScope', '$stateParams', 'studentService', function ($scope, $rootScope, $stateParams, studentService) {
+
+    $scope.httpget = {};
+    $scope.params= $stateParams;
+    info("stateParams:" + JSON.stringify($scope.params));
+
+    var params = {};
+    params[$rootScope.cols[0]] = $scope.params.id;
+    studentService.get(params).then(
+        function (data) {
+            $scope.httpget = data; 
+    }, error);
+
+    $scope.update = function(){
+        var params = $scope.httpget;
+        studentService.update(params).then(
+            function (data) {
+                info("操作数据:" + data + "条");
+                $scope.list(); 
+            }, error);  
+
+    };
+}])
+.controller('com.student.listCtrl', ['$scope', '$rootScope', '$state', 'studentService', function ($scope, $rootScope, $state, studentService) { 
+
+    //默认查询第一页
+    $scope.list();
+
 }])
 
 

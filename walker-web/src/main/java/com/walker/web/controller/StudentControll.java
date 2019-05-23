@@ -1,10 +1,12 @@
 package com.walker.web.controller;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.walker.common.util.JsonUtil;
 import com.walker.common.util.Page;
+import com.walker.common.util.Tools;
+import com.walker.service.BaseService;
 import com.walker.service.StudentService;
 import com.walker.web.RequestUtil;
 
@@ -26,84 +30,81 @@ import com.walker.web.RequestUtil;
  */  
 @Controller
 @RequestMapping("/student")
-public class StudentControll {
-	
-	static public Logger logger = Logger.getLogger(StudentControll.class); 
+public class StudentControll extends BaseControll{
+	public StudentControll() {
+		super(StudentControll.class, "student");
+	}
 
+
+	@Autowired
+	@Qualifier("baseService") 
+	protected BaseService baseService;
 	@Autowired
 	@Qualifier("studentServiceHibernate") 
 	StudentService studentServiceHibernate;
-
 	@Autowired
 	@Qualifier("studentServiceMybatis") 
 	StudentService studentServiceMybatis;
 	
-
-	@RequestMapping("/listh.do")
-	public String listh(HttpServletRequest request, Map<Object,Object> map) {
+	@RequestMapping("/cols.do")
+	public void cols(HttpServletRequest request, HttpServletResponse response)  {
+		String tableName = request.getParameter("TABLE_NAME");
+		List<String> res = baseService.getColumnsByTableName(tableName);
+		echo(res);
+	}
+	@RequestMapping("/list.do")
+	public void listh(HttpServletRequest request, HttpServletResponse response)  {
 		String id = request.getParameter("id");
 		String name = request.getParameter("name");
 		String timefrom = request.getParameter("timefrom");
 		String timeto = request.getParameter("timeto");
 		Page page = Page.getPage(request);
-		map.putAll(RequestUtil.getRequestBean(request));
+		
 		
 	    List<Map<String, Object>> res = studentServiceHibernate.list(id, name, timefrom, timeto, page);
 	   // logger.info(MapListHelp.list2string(res));
-		map.put("res", res);
-		map.put("PAGE", page);
-		return "student/list";
+		echo(res, page);
 	}
-	@RequestMapping("/updateh.do")
-	public void updateh(HttpServletRequest request,  PrintWriter pw){
-		 
-		 
-		
+	@RequestMapping("/update.do")
+	public void updateh(HttpServletRequest request,  PrintWriter pw) {
 		String id = request.getParameter("id"); 
 		String name = request.getParameter("name");
 		String time = request.getParameter("time");
 	    log(request); 
 	    
 		int res = studentServiceHibernate.update(id, name, time);
-		pw.write("" + res);
+		echo(res);
 	}
-	@RequestMapping("/deleteh.do")
-	public void deleteh(HttpServletRequest request,  PrintWriter pw){
+	@RequestMapping("/delete.do")
+	public void deleteh(HttpServletRequest request,  PrintWriter pw) {
 		String id = request.getParameter("id");  
 	    log(request);
 
 		int res = studentServiceHibernate.delete(id );
-	    pw.write("" + res);
+	   echo(res);
 	}
-	@RequestMapping("/addh.do")
-	public void addh(HttpServletRequest request,  PrintWriter pw){
-		 
-		 
-
+	@RequestMapping("/add.do")
+	public void addh(HttpServletRequest request,  PrintWriter pw) {
 		String name = request.getParameter("name");
 		String time = request.getParameter("time");
 	    log(request);
 
 		int res = studentServiceHibernate.add(name, time);
-	    pw.write("" + res);
-	
+	    echo(res);
 	}
-	@RequestMapping("/geth.do")
-	public void geth(HttpServletRequest request,  PrintWriter pw){
-		 
-		 
-
+	@RequestMapping("/get.do")
+	public void geth(HttpServletRequest request,  PrintWriter pw) {
 		String id = request.getParameter("id");  
 	    log(request);
 
 		Map map = studentServiceHibernate.get(id );
 		
-	    pw.write("" + JsonUtil.makeJson(map));
+	    echo(map);
 	}
 	   
 	 
 	@RequestMapping("/listm.do") 
-	public String listm(HttpServletRequest request, Map<Object,Object> map) {
+	public void listm(HttpServletRequest request, Map<Object,Object> map)  {
 		String id = request.getParameter("id");
 		String name = request.getParameter("name");
 		String timefrom = request.getParameter("timefrom");
@@ -118,56 +119,42 @@ public class StudentControll {
 	   // logger.info(MapListHelp.list2string(res));
 		map.put("res", res );
  
-		return "student/list";
+		echo(map);
 	}
 	@RequestMapping("/updatem.do")
-	public void updatem(HttpServletRequest request,  PrintWriter pw){
-		 
-		 
-		
+	public void updatem(HttpServletRequest request,  PrintWriter pw) {
 		String id = request.getParameter("id"); 
 		String name = request.getParameter("name");
 		String time = request.getParameter("time");
 	    log(request);
 
 		int res = studentServiceMybatis.update(id, name, time);
-		pw.write("" + res);
+		echo(res);
 	}
 	@RequestMapping("/deletem.do")
 	public void deletem(HttpServletRequest request,  PrintWriter pw){
-		 
-		 
-		
 		String id = request.getParameter("id");  
 	    log(request);
 
 		int res = studentServiceMybatis.delete(id );
-	    pw.write("" + res);
+	    echo(res);
 	}
 	@RequestMapping("/addm.do")
 	public void addm(HttpServletRequest request,  PrintWriter pw){
-		 
-		 
-
 		String name = request.getParameter("name");
 		String time = request.getParameter("time");
 	    log(request); 
 	    
 		int res = studentServiceMybatis.add(name, time);
-	    pw.write("" + res);
-	
+	    echo(res);
 	}
 	@RequestMapping("/getm.do")
 	public void getm(HttpServletRequest request,  PrintWriter pw){
-		 
-		 
-
 		String id = request.getParameter("id");  
 	    log(request);
 
 		Map map = studentServiceMybatis.get(id );
-		
-	    pw.write("" + JsonUtil.makeJson(map));
+		echo(map);
 	}
 	    
 	 

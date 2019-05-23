@@ -27,7 +27,10 @@ public class InfoException extends Exception{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
+	public InfoException(Exception e) {
+		super(e);
+	}
 	public InfoException(Object object) {
 		super(String.valueOf(object));
 	}

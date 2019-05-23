@@ -63,7 +63,7 @@ public class ContextListener implements ServletContextListener {
         log.info("系统服务路径: " + contextPath);
 
         startComp();
-        startTestSelf();
+//        startTestSelf();
 
         addShutdownHook();	//添加java程序关闭监听
         log.info("系统初始化完毕，开始接收请求！");

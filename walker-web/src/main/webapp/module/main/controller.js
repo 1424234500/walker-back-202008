@@ -7,9 +7,6 @@ angular.module('com.main')
     $scope.goHome = function(){ 
         $state.go('main.home');
     }
-    $scope.goMoreStudent = function(){ 
-        $state.go('main.student.list');  
-    }
 
     var logined = $rootScope.isLogined ;
     if (logined == true) { // 已经登录 
@@ -38,13 +35,8 @@ angular.module('com.main')
 }]) 
 .controller('com.main.homeCtrl', ['$scope', '$rootScope', '$state', 'studentService', function ($scope, $rootScope, $state, studentService) {
  
-    var params = {"count":3};
-    studentService.listRecent(params).then(
-        function (data) {  
-            info(data)
-           // debugger;
-            $scope.httplist = data; 
-    });
+
+
 
 
 

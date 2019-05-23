@@ -1,60 +1,51 @@
-<div class="panel-heading">  
-    <div class="navbar-form navbar-left" >
-            <input type="text" ng-model="search.ID" class="form-control" placeholder="search.ID">
-            <input type="text" ng-model="search.NAME" class="form-control" placeholder="search.NAME">
-            <input type="text" ng-model="search.TIMEFROM" id="timefrom" data-date-format="yyyy-mm-dd hh:ii" class="form-control" placeholder="search.TIMEFROM">
-            <input type="text" ng-model="search.TIMETO" id="timeto" data-date-format="yyyy-mm-dd hh:ii" class="form-control" placeholder="search.TIMETO">
 
-            <button class="btn" ng-click="list()" >查询</button> 
-    </div>   
-    <div class="clear"></div>           
-    <a ui-sref="main.student.add" class="btn" >添加</a>  
-</div>  
+<div class="navbar-form navbar-left" > 
+    <input ng-repeat="item in cols track by $index" ng-model="search[item]" ng-keydown="keydown($event);" placeholder="{{item}}" style="width:140px; margin-right: 5px;" class="form-control">        
+    <button class="btn" ng-click="list()" >查询</button> 
+    <button class="btn" ng-click="add()" >添加</button> 
+</div> 
+<div class="clear"/>
 
 <div class="panel-body">
     <table class="table table-hover"> 
         <thead>
-                    <tr>
-                        <th> No. </th>
-                        <th ng-click="changeOrder('ID')" ng-class="{dropup:order === ''}">
-                            id
-                            <span ng-class="{orderColor:orderType === 'ID'}" class="caret"></span>
-                        </th>
-                        <th ng-click="changeOrder('NAME')" ng-class="{dropup:order === ''}">
-                            name
-                            <span ng-class="{orderColor:orderType === 'NAME'}" class="caret"></span>
-                        </th>
-                        <th ng-click="changeOrder('TIME')" ng-class="{dropup:order === ''}">
-                            time
-                            <span ng-class="{orderColor:orderType === 'TIME'}" class="caret"></span>
-                        </th> 
-                        <th> update </th>
-                        <th> delete </th>
-                    </tr> 
+            <tr>
+                <th> No. </th>
+                <th ng-repeat="item in cols track by $index" ng-click="changeOrder(item)" ng-class="{dropup:order === ''}">
+                    {{item}}
+                    <span ng-class="{orderColor:orderType === item}" class="caret"></span>
+                </th>
+                <th> UPDATE </th>
+                <th> DELETE </th>
+            </tr>
         </thead>
 
-        <tbody>
-  <!-- | filter:search 查询功能 默认 filterQuery自定义过滤器 --> 
-<tr ng-repeat="item in httplist | filter:search | filterQuery:search  |    orderBy:order + orderType"    >   
-            <td class="info">{{$index + 1}}</td>   <!--  $index 在表格中显示出行号， -->
-            <td >{{item.ID}}</td>  
-            <td  >{{item.NAME }}</td>
-            <td class="error">{{item.TIME | date:'medium'}}</td>
-            <td> 
-                 <a ng-click="goUpdate(item.ID)" class="abtn" > 修改</a>  
-            </td>
-            <td>
-                 <a ng-click="ajaxDelete(item.ID)" class="abtn" > 删除</a>  
-            </td>
-</tr>   
+        <tbody> 
+        <!-- filter:search -->
+            <tr ng-repeat="item in httplist | mapSearch:search | orderBy:order + orderType"    >
+                <td class="info">{{$index + 1}}</td>
+                <td  ng-repeat="name in cols track by $index">{{item[name]}}</td>
+                <td>
+                    <a ng-click="update(item[cols[0]])" class="abtn" > 修改</a>
+                </td>
+                <td>
+                    <a ng-click="delete(item[cols[0]])" class="abtn" > 删除</a>
+                </td>
+            </tr>
+            <tr>
+                <td class="info">总计</td>
+                <td  ng-repeat="key in cols track by $index">{{sums[key]}}</td>
+                <td></td>
+                <td></td>
+            </tr>
         </tbody>
- 
- 
     </table>  
 
        <ng-include  src="'common/template/list_table_foot.html'"></ng-include>
 
-
-    data.res={{httplist}}<br>
-    data.PAGE={{PAGE}}<br> 
+ 
 </div>
+
+
+
+

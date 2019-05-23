@@ -23,6 +23,7 @@ import com.walker.common.util.XmlUtil;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.database.SqlUtil;
+import com.walker.core.exception.ErrorException;
 import com.walker.service.BaseService;
 import com.walker.web.RequestUtil;
 import com.walker.web.mode.LoginUser;
@@ -89,16 +90,16 @@ public abstract class BaseControll {
 * 	"time":"耗时10020020292s",
 * 	"data":{}/[]
 * }
- * @throws IOException 
+ * @ 
 */
-	public void echo(Object data) throws IOException{
+	public void echo(Object data) {
 		echo(true, "", data);
 	}
-	public void echo(List<?> list, Page page) throws IOException{
+	public void echo(List<?> list, Page page) {
 		Bean data = new Bean().put("list", list).put("page", page);
 		echo(true, "", data);
 	}
-	public void echo(boolean flag, String info) throws IOException{
+	public void echo(boolean flag, String info) {
 		echo(flag, info, "");
 	}
 	public static char[] asciiNo = null;
@@ -108,32 +109,36 @@ public abstract class BaseControll {
 			asciiNo[i] = (char)i;
 		}
 	}
-	public void echo(boolean flag, String info, Object data) throws IOException{
-		HttpServletRequest request = Context.getRequest();
-		HttpServletResponse response = Context.getResponse();
-		
-		long timestart = Context.getTimeStart();
-		long timestop = System.currentTimeMillis();
-		long time = timestop - timestart;
-		Bean bean = new Bean()
-				.put("flag", flag)
-				.put("info", info)
-				.put("timestart", timestart)
-				.put("timestop", timestop)
-				.put("time", time)
-				.put("data", data);
-		
-		String res = "";
-		String resType = getValue(request, RES_TYPE).toUpperCase();
-		if(resType.equals(TYPE_XML)){
-			res = XmlUtil.toFullXml(bean);
-		}else{
-			res = (JsonUtil.makeJson(bean));
-			//过滤特殊字符避免ie解析json异常
-			res = res.replace("[\\x00-\\x1f]+", "");
+	public void echo(boolean flag, String info, Object data) {
+		try {
+			HttpServletRequest request = Context.getRequest();
+			HttpServletResponse response = Context.getResponse();
+			
+			long timestart = Context.getTimeStart();
+			long timestop = System.currentTimeMillis();
+			long time = timestop - timestart;
+			Bean bean = new Bean()
+					.put("flag", flag)
+					.put("info", info)
+					.put("timestart", timestart)
+					.put("timestop", timestop)
+					.put("time", time)
+					.put("data", data);
+			
+			String res = "";
+			String resType = getValue(request, RES_TYPE).toUpperCase();
+			if(resType.equals(TYPE_XML)){
+				res = XmlUtil.toFullXml(bean);
+			}else{
+				res = (JsonUtil.makeJson(bean));
+				//过滤特殊字符避免ie解析json异常
+				res = res.replace("[\\x00-\\x1f]+", "");
+			}
+			
+			response.getWriter().write( res );
+		}catch(Exception e) {
+			throw new ErrorException(e);
 		}
-		
-		response.getWriter().write( res );
 	}
 	
 	/**
@@ -145,6 +150,9 @@ public abstract class BaseControll {
 		LoginUser lu = (LoginUser) request.getSession().getAttribute("SY_LOGINUSER");
 		return lu == null? LoginUser.getUser().setId("").setUsername("none") : lu;
 	}
+	public BaseControll() {
+		log = Logger.getLogger(BaseControll.class);
+	}
 	/**
 	 * 设置默认操作表 实现默认增删查改 单主键
 	 * 设置子类日志系统
@@ -153,18 +161,18 @@ public abstract class BaseControll {
 	 */ 
 	public BaseControll(Class<?> clazz, String tableName){
 		this.tableName = tableName;
-		this.logger = Logger.getLogger(clazz);
+		this.log = Logger.getLogger(clazz);
 	}
 	
 	private String tableName = ""; //成员变量 单例 公用 于 每个并发线程
-	private Logger logger = Logger.getLogger(BaseControll.class); //成员变量 单例 公用 于 每个并发线程
+	private Logger log; //成员变量 单例 公用 于 每个并发线程
 
 	/**
 	 * 实现日志打印工具
 	 * @param str
 	 */
 	public void log(Object...objs){
-		Logger log = Context.get("LOGGER", this.logger);
+		Logger log = Context.get("LOGGER", this.log);
 		log.info(Tools.objects2string(objs));
 	}
 	
@@ -173,13 +181,12 @@ public abstract class BaseControll {
 	 * 获取list add update 时的 需要的 传过来的所有 该表的字段param map 表字段列名 大写为准
 	 * @param request
 	 * @return
-	 * @throws Exception 
 	 */
 	@SuppressWarnings("rawtypes")
-	public Map getTableParam(HttpServletRequest request) throws Exception{
+	public Map getTableParam(HttpServletRequest request){
 		String tableName = getTableName();
 		if(!Tools.notNull(tableName))
-			throw new Exception("没有配置表");
+			log.error("没有配置表");
 		List<String> res = baseService.getColumnsByTableName(tableName); 
 		return RequestUtil.getParam(request, res.toArray());
 	}
@@ -199,8 +206,9 @@ public abstract class BaseControll {
 	/**
 	 * 重定向
 	 * @throws IOException 
+	 * @ 
 	 */
-	public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+	public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException  {
 		RequestUtil.sendRedirect(response, url);
 	}
 	/**
@@ -216,17 +224,13 @@ public abstract class BaseControll {
 			throw new Exception("该表 " + tableName + " 没有列 ");
 		return (String)res.get(0);
 	}
-	@RequestMapping("/list.do")
-	public void list(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping("/blist.do")
+	public void list(HttpServletRequest request, HttpServletResponse response){
 		this.beforeDo(request, response);
-		
 		Map<String, Object> map = this.getTableParam(request);
 		Page page = Page.getPage(request);
-
 		List<String> params = new ArrayList<String>();
-		
 		String sql = "select * from " + getTableName() + " where 1=1 ";
-		
 		for(String key : map.keySet()){
 			String value = MapListUtil.getMap(map, key);
 			if (Tools.notNull(value)) {
@@ -240,7 +244,7 @@ public abstract class BaseControll {
 		echo(res, page);
 	}
 
-	@RequestMapping("/delete.do")
+	@RequestMapping("/bdelete.do")
 	public void delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
@@ -251,7 +255,7 @@ public abstract class BaseControll {
 		echo(count);
 	}
 
-	@RequestMapping("/add.do")
+	@RequestMapping("/badd.do")
 	public void add(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
@@ -261,7 +265,7 @@ public abstract class BaseControll {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@RequestMapping("/update.do")
+	@RequestMapping("/bupdate.do")
 	public void update(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
@@ -275,7 +279,7 @@ public abstract class BaseControll {
 		echo(count);
 	}
 
-	@RequestMapping("/get.do")
+	@RequestMapping("/bget.do")
 	public void get(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
@@ -287,8 +291,8 @@ public abstract class BaseControll {
 	}
 	
 	
-	@RequestMapping("/cols.do")
-	public void cols(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	@RequestMapping("/bcols.do")
+	public void cols(HttpServletRequest request, HttpServletResponse response)  {
 		this.beforeDo(request, response);
 		String tableName = getTableName();
 		if(!Tools.notNull(tableName)){

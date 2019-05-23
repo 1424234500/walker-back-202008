@@ -7,9 +7,9 @@
 
 
     新增模块
-    1.复制文件夹
+    1.复制文件夹 
     2.配置launch.js子模块
-    3.配置index.html导入js
+    3.配置index.html导入js	按需导入/删除 filter directive
 */
  
 var easyuiTheme = "metro-blue";//指定如果用户未选择样式，那么初始化一个默认样式 
@@ -28,16 +28,19 @@ var subModules = [ // 需要加载的子模块集合
     'com.class',
     'com.http',
 
-    'com.student', 
     'com.main',
     'com.file',
+
+ 
+
     'com.table', 
-    'com.lunch',
-    'com.dinner',
-
-
+    'com.student', 
+    
+    
     'com.system'
     //'com.config',
+    
+    
 ]; 
 
 
@@ -49,6 +52,7 @@ app
 .constant('$SOCKET_ADDR', '127.0.0.1:8087')  
 .constant('$ADDR_LOCAL', 'http://127.0.0.1:8088/app')  
 .constant('$PROJECT', 'walker-web')  
+.constant('$SPACE', 'com')  
 
 
 /* 注入$stateProvider，$urlRouterProvider */

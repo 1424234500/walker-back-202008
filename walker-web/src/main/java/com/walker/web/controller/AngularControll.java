@@ -41,7 +41,7 @@ public class AngularControll extends BaseControll{
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping("/statis.do") 
-	public void statis(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+	public void statis(HttpServletRequest request, HttpServletResponse response) { 
 //		        legend: {      data: ['线条1', '线条2']   },
 //		        xAxis: {  data: xNames  }, 
 //		        series: [   
@@ -99,14 +99,14 @@ public class AngularControll extends BaseControll{
 	
 	
 	@RequestMapping("/login.do") 
-	public void login(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+	public void login(HttpServletRequest request, HttpServletResponse response) { 
 		Map res = MapListUtil.getMap().put("res", "true").put("info",RequestUtil.getRequestBean(request)).build(); 
 		log(res);
 		echo(res);
 	}	
 	 
 	@RequestMapping("/update.do")
-	public void update(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void update(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("ID"); 
 		String name = request.getParameter("NAME");
 		String time = request.getParameter("TIME");
@@ -120,14 +120,14 @@ public class AngularControll extends BaseControll{
 		echo(res);
 	}
 	@RequestMapping("/delete.do")
-	public void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void delete(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("ID");
 	    
 	    Map res = MapListUtil.getMap().put("res",studentServiceHibernate.delete(id)).build();
 		echo(res);
 	}	
 	@RequestMapping("/get.do")
-	public void get(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void get(HttpServletRequest request, HttpServletResponse response) {
 		//Map res = MapListHelp.getMap().put("id", "id-001").put("key", "key-001").put("username", "username-001").build();
 		String id = request.getParameter("id");   
 		Map res = studentServiceHibernate.get(id );
@@ -135,7 +135,7 @@ public class AngularControll extends BaseControll{
 		echo(res);
 	}	
 	@RequestMapping("/list.do")
-	public void list(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void list(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("ID");
 		String name = request.getParameter("NAME");
 		String timefrom = request.getParameter("TIMEFORM");
@@ -147,7 +147,7 @@ public class AngularControll extends BaseControll{
 		echo(list, page);
 	}
 	@RequestMapping("/listrecent.do")
-	public void listRecent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void listRecent(HttpServletRequest request, HttpServletResponse response) {
 		String count = request.getParameter("count"); 
 		 
 		List<Map<String, Object>> list = baseService.find("select * from (select s.*, rownum num from student s) where num < ? order by time desc ", count);

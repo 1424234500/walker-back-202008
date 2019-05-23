@@ -3,27 +3,27 @@
 
 
 angular.module('com.student')
-.service('studentService',['$PROJECT','baseService','cacheService', function($PROJECT,baseService,cacheService){
+.factory('studentService',['$PROJECT','baseService','cacheService', function($PROJECT,baseService,cacheService){
 
-    //表名
+    //管理表的服务名
     var mName = 'student';
 
     var service = {};
     //操作表名
-    service.table = mName;
+    var tableName = mName;
 
-    service.setTable = function(tableName){
-        service.table = tableName;
+    service.setTable = function(name){
+        tableName = name;
     };
     service.getTable = function(){
-        return service.table;
+        return tableName;   
     };
 
     service.make = function(params){
         if( ! params){ 
             params = {};
         }
-        //params['TABLE_NAME'] = service.table;
+        params['TABLE_NAME'] = tableName;
         return params;
     }
 
@@ -35,33 +35,28 @@ angular.module('com.student')
 
     service.list = function(params){ 
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/listh.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/list.do', params);
     };   
-    service.listRecent = function(params){ 
-        params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/listrecenth.do', params);
-    }; 
     service.get = function(params){ 
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/geth.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/get.do', params);
     }; 
     service.del = function(params){ 
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/deleteh.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/delete.do', params);
     };
     service.update = function(params){ 
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/updateh.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/update.do', params);
     };
     service.add = function(params){
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/addh.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/add.do', params);
     };
     service.statis  = function(params){
         params = service.make(params);
         return baseService.post('/' + $PROJECT + '/' + mName + '/statis.do', params);
     }; 
-
     
     service.do = function(url, params){ 
         return baseService.post(url, params);

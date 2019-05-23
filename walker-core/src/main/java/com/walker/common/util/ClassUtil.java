@@ -21,7 +21,28 @@ import java.util.jar.JarFile;
 
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
-
+class ObjectClassEntry{
+	List<Object> objs = new ArrayList<Object>();
+	List<Class<?>> clss = new ArrayList<Class<?>>();
+	public ObjectClassEntry add(ObjectClass oc) {
+		return add(oc.obj, oc.cls);
+	}
+	public ObjectClassEntry add(Object obj, Class<?> cls) {
+		this.objs.add(obj);
+		this.clss.add(cls);
+		return this;
+	}
+	public Class<?>[] getClsArray() {
+		return this.clss.toArray(new Class<?>[]{});
+	}	
+	public Object[] getObjArray() {
+		return this.objs.toArray(new Object[]{});
+	}
+}
+class ObjectClass{
+	Object obj;
+	Class<?> cls;
+}
 /**
  * 
  * 类控制 反转 缓存<?类加载机制自带缓存>
@@ -29,9 +50,11 @@ import com.walker.core.cache.CacheMgr;
  * 策略 所有方法 可抛出 RuntimeException
  * 
  */
+
 public class ClassUtil {
 	public static Cache<String> cache = CacheMgr.getInstance();
 	final static String CACHE_KEY = "class-load-cache";
+	
 	/**
 	 * 加载类
 	 * @param className
@@ -93,11 +116,20 @@ public class ClassUtil {
 		for (int i = 0; i < methodArgs.length; ++i) {
 			args[i] = methodArgs[i].getClass();
 		}
+		Method method = newMethod(cls, methodName, args);
+		return method;
+	}
+	/**
+	 * 实例化方法 指定类型 处理 简单类型 int.class 
+	 * @param cls
+	 * @param methodName
+	 */
+	public static Method newMethod(Class<?> cls, String methodName, Class<?>...args){
 		Method method = null;
 		try{
 			method = cls.getMethod(methodName, args); //查询非自己private函数
 		}catch(Exception noPrivateNsme){ 
-//			out("反射 非私有private函数域没有这个方法 即将查找private区域  " + noPrivateNsme.toString());
+			out("反射 非私有private函数域没有这个方法 即将查找private区域  " + noPrivateNsme.toString());
 			try {
 				//查询自己private函数
 				method = cls.getDeclaredMethod(methodName, args);
@@ -114,6 +146,19 @@ public class ClassUtil {
 	public static Object doClassMethod(String className, String methodName, Object... methodArgs) {
 		return doClassMethod(className, new Object[]{}, methodName, methodArgs);
 	}
+	/**
+	 * 指定方法参数类型
+	 * @param className
+	 * @param methodName
+	 * @param oce
+	 * @return
+	 */
+	public static Object doClassMethod(String className, String methodName, ObjectClassEntry oce) {
+		Class<?> cls = loadClass(className);
+		Method method = newMethod(cls, methodName, oce.getClsArray());
+		return doClassMethod(cls, method, oce.getObjArray());
+	}
+	
 	/**
 	 * 简单构造 com.util.Tools.out
 	 */
@@ -153,7 +198,7 @@ public class ClassUtil {
 		return doClassMethod(cls, new Object[]{}, method, methodArgs);
 	}
 	/**
-	 * method特定构造
+	 * 调用指定类的 某个构造 的 某个方法 某个参数
 	 */
 	public static Object doClassMethod(Class<?> cls, Object[] constructorArgs, Method method, Object... methodArgs) {
 		return doClassMethod(newInstance(cls, constructorArgs), method, methodArgs);
@@ -215,8 +260,8 @@ public class ClassUtil {
 				index.put(param[1], ClassUtil.newInstance(param[4], argsObj));
 			}else if(line.indexOf("=") >= 0){ 
 				//Object res = bean.get
-				//Object res = util.ClassUtil.do
-				String key = param[3].substring(0, param[3].lastIndexOf("."));				// bean util.ClassUtil
+				//Object res = com.walker.common.util.ClassUtil.do
+				String key = param[3].substring(0, param[3].lastIndexOf("."));				// bean com.walker.common.util.ClassUtil
 				String method = param[3].substring(param[3].lastIndexOf(".") + 1);//get do
 				Object obj = null;
 				if(index.containsKey(key)){
@@ -227,8 +272,8 @@ public class ClassUtil {
 				}
 			}else{//bean.set
 				//bean.get
-				//util.ClassUtil.do
-				String key = line.substring(0, line.lastIndexOf("."));// bean util.ClassUtil
+				//com.walker.common.util.ClassUtil.do
+				String key = line.substring(0, line.lastIndexOf("."));// bean com.walker.common.util.ClassUtil
 				String method = line.substring(line.lastIndexOf(".") + 1);//get do
 				Object obj = null;
 				if(index.containsKey(key)){
@@ -303,15 +348,15 @@ public class ClassUtil {
 	 * @param splitArg : -
 	 * return [String(sss), Bean(k,v), Integer(111), Boolean(true)
 	 */
-	public static Object[] parseObject(String args, String splitArr, String splitArg){
-		List<Object> res = new ArrayList<>();
+	public static ObjectClassEntry parseObject(String args, String splitArr, String splitArg){
+		ObjectClassEntry res = new ObjectClassEntry();
 		splitArr = splitArr == null ? "@" : splitArr;
 		splitArg = splitArg == null ? "-" : splitArg;
 		
 		if(splitArr == null || splitArr.length() == 0){
 			res.add(parseObject(defaultType, args));
 		}else if(args == null){
-			res.add(null);
+			res.objs.add(null);
 		}else{
 			String[] arr = args.split(splitArr);
 			if(splitArg == null || splitArg.length() == 0){
@@ -330,50 +375,83 @@ public class ClassUtil {
 			}
 		}
 		
-		return res.toArray();
+		return res;
 	}
-	public static Object parseObject(String type, String value){
-		Object res = null;
+	public static ObjectClass parseObject(String type, String value){
+		ObjectClass res = new ObjectClass();
 		if(type == null || type.length() == 0){
 			type = defaultType;
 		}
-		type = type.toLowerCase();
+		String typeL = type.toLowerCase();
 		if(value != null){
 			try{
-				if(type.equals("string")){
-					res = new String(value);
-				}else if(type.equals("int") || type.equals("integer")){
-					res = new Integer(value);
+				if(typeL.equals("string")){
+					res.obj = new String(value);
+				}
+				//包装类型
+				else if(typeL.equals("integer")){
+					res.obj = new Integer(value);
+				}else if(type.equals("Long")){
+					res.obj = Long.valueOf(value);
+				}else if(type.equals("Double")){
+					res.obj = Double.valueOf(value);
+				}else if(type.equals("Float")){
+					res.obj = Float.valueOf(value);
+				}else if(type.equals("Boolean")){
+					res.obj = Boolean.valueOf(value);
+				}else if(type.equals("Short")){
+					res.obj = Short.valueOf(value);
+				}else if(type.equals("Byte")){
+					res.obj = Byte.valueOf(value);
+				}
+				//基本类型
+				else if(typeL.equals("int")){
+					res.obj = new Integer(value).intValue();
+					res.cls = int.class;
 				}else if(type.equals("long")){
-					res = new Long(value);
+					res.obj = Long.valueOf(value).longValue();
+					res.cls = long.class;
 				}else if(type.equals("double")){
-					res = new Double(value);
+					res.obj = Double.valueOf(value).doubleValue();
+					res.cls = double.class;
 				}else if(type.equals("float")){
-					res = new Float(value);
-				}else if(type.equals("boolean") || type.equals("bool")){
-					res = new Boolean(value);
+					res.obj = Float.valueOf(value).floatValue();
+					res.cls = float.class;
+				}else if(type.equals("boolean")){
+					res.obj = Boolean.valueOf(value).booleanValue();
+					res.cls = boolean.class;
 				}else if(type.equals("short")){
-					res = new Short(value);
+					res.obj = Short.valueOf(value).shortValue();
+					res.cls = short.class;
 				}else if(type.equals("byte")){
-					res = new Byte(value);
-				} 
+					res.obj = Byte.valueOf(value).byteValue();
+					res.cls = byte.class;
+				}
 				//常用对象类型
-				else if(type.equals("hashmap")){ //无法实例化原生Map 
-					res = (HashMap<?,?>)(JsonUtil.get(value));
-				}else if(type.equals("arraylist")){ //无法实例化原生List
-					res = (ArrayList<?>)(JsonUtil.get(value));
-				}else if(type.equals("bean")){
-					res = new Bean((Map<?, ?>) JsonUtil.get(value));
+				else if(typeL.equals("hashmap")){ //无法实例化原生Map 
+					res.obj = new HashMap( (HashMap<?,?>)(JsonUtil.get(value)));
+				}else if(typeL.equals("map")){ //无法实例化原生Map ?
+					res.obj = new HashMap( (HashMap<?,?>)(JsonUtil.get(value)));
+					res.cls = Map.class;
+				}else if(typeL.equals("arraylist")){ //无法实例化原生List
+					res.obj = new ArrayList( (ArrayList<?>)(JsonUtil.get(value)) );
+				}else if(typeL.equals("list")){ //无法实例化原生List
+					res.obj = new ArrayList( (ArrayList<?>)(JsonUtil.get(value)) );
+					res.cls = List.class;
+				}else if(typeL.equals("bean")) {
+					res.obj = new Bean((Map<?, ?>) JsonUtil.get(value));
 				}
 				//序列化传输 必须使用序列化 完整的str byte[]的数据  注意!!此处序列化会执行构造函数
 				else if(type.equals("seria") || type.equals("serializeUtil")){
-					res = SerializeUtil.deserialize(com.walker.core.encode.Base64.decode(value));
+					res.obj = SerializeUtil.deserialize(com.walker.core.encode.Base64.decode(value));
 				}
 				//反射 生成构造类对象 全路径 com.controller.Page-arg1,arg2 默认构造
 				else {
-					res = newInstance(type);
+					res.obj = newInstance(type);
 				}
-			
+				if(res.cls == null) {
+					res.cls = res.obj.getClass();
+				}
 			}catch(Exception e){
 				e.printStackTrace();
 				res = null;
@@ -657,8 +735,8 @@ public class ClassUtil {
 		out("private constructor str");
 	}
 
-	public String test(String str, Bean bean, Integer in, Boolean bool){
-		return Arrays.toString(new Object[]{str, bean, in, bool});
+	public String test(String str, Bean bean, Integer in, int int2, Boolean bool){
+		return Arrays.toString(new Object[]{"String", str,"bean",  bean, "integer", in, "int", int2, "Boolean", bool});
 	}
 	public String testNoArgs(){
 		out();
@@ -735,27 +813,27 @@ public class ClassUtil {
 		return (T[]) Array.newInstance(cls, 10);
 	}
 	public static void main(String argc[]){
-		out(ClassUtil.doClassMethod("util.ClassUtil", "testNoArgs"));
-		out(ClassUtil.doClassMethod("util.ClassUtil", "testInt", (int)1));
-		out(ClassUtil.doClassMethod("util.ClassUtil", "testInteger", 1));
-		out(ClassUtil.doClassMethod("util.ClassUtil", new Object[]{"str"}, "testStr", "str"));
-		out(ClassUtil.doClassMethod("util.ClassUtil", new Object[]{"str", 111}, "testBean", new Bean().put("key", "vvv")));
-//		out(ClassUtil.doClassMethod("util.ClassUtil", "testObjects", new String[]{"str", "str2"}));
-		out(ClassUtil.doClassMethod("util.ClassUtil", "testNoReturn"));
-		out("testDocode", ClassUtil.doClassMethod("util.ClassUtil", "testDocode"));
+		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "testNoArgs"));
+		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "testInt", new ObjectClassEntry().add(1, int.class)));
+		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "testInteger", new Integer(1)));
+		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", new Object[]{"str"}, "testStr", "str"));
+		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", new Object[]{"str", 111}, "testBean", new Bean().put("key", "vvv")));
+//		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "testObjects", new String[]{"str", "str2"}));
+		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "testNoReturn"));
 		
-		out(ClassUtil.doClassMethod("util.ClassUtil", "test", ClassUtil.parseObject("String-sss@Bean-{\"k\":\"v\"}@Integer-111@Boolean-true", "@", "-")));
+		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "test", ClassUtil.parseObject("String-sss@Bean-{\"k\":\"v\"}@Integer-111@int-222@Boolean-true", "@", "-")));
 		byte[] bb = SerializeUtil.serialize(new Bean().set("key", "value").set("key2", "value2"));
 		String strSeria = new String(com.walker.core.encode.Base64.encode(bb));
 		byte[] bt = com.walker.core.encode.Base64.decode(strSeria);
 		out("seria", bb, strSeria);
 		out("dseria byte", SerializeUtil.deserialize(bb));
 		out("dseria str ", SerializeUtil.deserialize(bt));
-		out(ClassUtil.doClassMethod("util.ClassUtil", "test", ClassUtil.parseObject("String-sss@seria-"
+		out(ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "test", ClassUtil.parseObject("String-sss@seria-"
 				+ strSeria + 
 				"@Integer-111@Boolean-true", "@", "-")));
 
-		
+		out("testDocode", ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "testDocode"));
+
 //		Tools.formatOut(ClassUtil.getPackageClassBean("", true));
 //		Tools.formatOut(ClassUtil.getMethod("com.mode.User"));
 		

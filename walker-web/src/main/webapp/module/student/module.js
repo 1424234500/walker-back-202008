@@ -1,33 +1,31 @@
- 
-
- 
 angular.module('com.student', [])
 .config(['$urlRouterProvider', '$stateProvider',  function ($urlRouterProvider, $stateProvider) {
-        //$urlRouterProvider.when('', '/main/student');
+   
+    var mName = 'student';
 
-        //定义层级路由 url路径 参数 绑定controller
-        $stateProvider
-        .state('main.student', {
-            url: '/student',
-            templateUrl: 'module/student/template/page.html',
-            controller: 'com.student.pageCtrl'
+    //定义层级路由 url路径 参数 绑定controller
+    $stateProvider
+        .state('main.' + mName, {
+            url: '/' + mName,
+            templateUrl: 'module/' + mName + '/template/page.html',
+            controller: 'com.' + mName
         })
-        .state('main.student.list', {
+        .state('main.' + mName + '.list', {
             url: '/list',
-            templateUrl: 'module/student/template/list.html',
-            controller: 'com.student.listCtrl' 
+            templateUrl: 'module/' + mName + '/template/list.html',
+            controller: 'com.' + mName + '.listCtrl' 
         })
-        .state('main.student.add', {
+        .state('main.' + mName + '.add', { 
             url: '/add',
-            templateUrl: 'module/student/template/add.html',
-            controller: 'com.student.addCtrl' 
+            templateUrl: 'module/' + mName + '/template/add.html',
+            controller: 'com.' + mName + '.addCtrl' 
         })
-        .state('main.student.update', {
-            url: '/update/:id',
-            templateUrl: 'module/student/template/update.html',
-            controller: 'com.student.updateCtrl' 
+        .state('main.' + mName + '.update', {
+            url: '/update:id',
+            templateUrl: 'module/' + mName + '/template/update.html',
+            controller: 'com.' + mName + '.updateCtrl' 
         })  
-         ; 
+    ; 
 
 }]);
 

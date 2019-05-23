@@ -24,7 +24,7 @@ public class ClassControll extends BaseControll{
 	}
 	
 	@RequestMapping("/list.do")
-	public void list(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void list(HttpServletRequest request, HttpServletResponse response){
 		//page, package -> page, list
 		String packageName = getValue(request, "package");
 		String keyName = "/class/list/" + packageName;
@@ -41,7 +41,7 @@ public class ClassControll extends BaseControll{
 		echo(list, page);
 	}
 	@RequestMapping("/detail.do")
-	public void fileDir(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void fileDir(HttpServletRequest request, HttpServletResponse response){
 		String className = getValue(request, "PACKAGE");
 		List<?> list = null;
 		
@@ -61,7 +61,7 @@ public class ClassControll extends BaseControll{
 	}
 	
 	@RequestMapping("/do.do")
-	public void doMethod(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void doMethod(HttpServletRequest request, HttpServletResponse response){
 		String className = getValue(request, "do_class");
 		String methodName = getValue(request, "do_method");
 		String args = getValue(request, "do_args");//String-sss@Bean-{"k":"v"}@Integer-111@Boolean-true, *
@@ -86,7 +86,7 @@ public class ClassControll extends BaseControll{
 	 * 连续 反射 多注入 执行链 builder模式  代码注入？
 	 */
 	@RequestMapping("/docode.do")
-	public void doCode(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void doCode(HttpServletRequest request, HttpServletResponse response){
 		String args = getValue(request, "do_args");//int i = 0; Bean bean = new Bean(); bean.set("key",i); return bean;
 		String splitArr = getValue(request, "do_split_arr");
 		splitArr = splitArr.length()==0 ? ";" : splitArr;

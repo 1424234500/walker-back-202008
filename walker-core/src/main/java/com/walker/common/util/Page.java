@@ -16,7 +16,9 @@ public class Page implements Serializable{
 	int PAGENUM = 0;	//总页数
 	String ORDER;	//排序
 	String DESC;	//倒序 有值则倒序
-	
+	public String toString() {
+		return new Bean().put("NUM", NUM).put("SHOWNUM", SHOWNUM).put("NOWPAGE", NOWPAGE).put("ORDER", ORDER).put("DESC", DESC).toString();
+	}
 	public Page(){
 		SHOWNUM = 10;
 	}
