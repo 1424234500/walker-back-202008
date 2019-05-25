@@ -49,16 +49,45 @@ public class AngularControll extends BaseControll{
 //		                 { name: lineName,    type: 'line',   data: lineValues,  }, 
 		
 		//x1, x2, x3, x4
-		List listXs = MapListUtil.toArrayAndTurn(baseService.find("select lpad(level, 2, '0') lev from dual connect by level <=12")).get(0);
+		
+		List listXs = null;
+ 		if(baseService.getDs().equals("oracle")) {
+ 			listXs = MapListUtil.toArrayAndTurn(baseService.find("select lpad(level, 2, '0') lev from dual connect by level <=12")).get(0);
+ 		}else {
+ 			listXs = MapListUtil.toArrayAndTurn(baseService.find(" select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12  ")).get(0) ;
+ 		}
+		
 		List listLineNames = MapListUtil.array().build();
 		int yearFrom = Tools.parseInt(request.getParameter("TIMEFROM"));
 		int yearTo = Tools.parseInt(request.getParameter("TIMETO")); 
 		List listSeries = MapListUtil.array().build(); 
 		for(int i = yearFrom; i <= yearTo; i++){
-			//yi-1, yi-2, yi-3, yi-4 只查询y轴序列
-			listSeries = MapListUtil.listAdd(listSeries,  MapListUtil.toArrayAndTurn(baseService.find(
-					"SELECT nvl(t1.y, '0') y FROM ( SELECT t.xs x,count(*) y FROM ( SELECT s.*,to_char(s.time, 'MM') xs FROM student s where to_char(s.time, 'yyyy')=?  ) t group by t.xs ) t1,(select lpad(level, 2, '0') lev from dual connect by level <=12   ) t2 where t1.x(+) = t2.lev order by t2.lev  "
-					, i)) ); 
+			
+			if(baseService.getDs().equals("oracle")) {
+				//yi-1, yi-2, yi-3, yi-4 只查询y轴序列
+				listSeries = MapListUtil.listAdd(listSeries,  MapListUtil.toArrayAndTurn(baseService.find(
+						"SELECT nvl(t1.y, '0') y FROM ( SELECT t.xs x,count(*) y FROM ( SELECT s.*,to_char(s.time, 'MM') xs FROM student s where to_char(s.time, 'yyyy')=?  ) t group by t.xs ) t1,( select lpad(level, 2, '0') lev from dual connect by level <=12   ) t2 where t1.x(+) = t2.lev order by t2.lev  "
+						, i)) ); 
+			}else {
+				//yi-1, yi-2, yi-3, yi-4 只查询y轴序列
+				listSeries = MapListUtil.listAdd(listSeries,  MapListUtil.toArrayAndTurn(baseService.find(
+						"SELECT ifnull(t2.y, '0') y FROM "
+						+" ( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12   ) t1"
+						+" left join "
+						+" ( SELECT t.mon x,count(*) y FROM ( SELECT s.*,substr(s.s_mtime, 6,2) mon FROM student s where substr(s.s_mtime,1,4)=?  ) t group by t.mon ) t2"
+						+" on"
+						+" t1.lev=t2.x order by t1.lev" 
+						, i)) ); 
+//SELECT ifnull(t2.y, '0') y FROM 
+//( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12   ) t1
+//left join 
+//( SELECT t.mon x,count(*) y FROM ( SELECT s.*,substr(s.s_mtime, 6,2) mon FROM student s where substr(s.s_mtime,1,4)='2019'  ) t group by t.mon ) t2
+//on
+//t1.lev=t2.x order by t1.lev 
+				
+	 		}
+			
+			
 			listLineNames.add(i + ""); 
 		}
 		//共x轴 多线数据 
@@ -142,16 +171,12 @@ public class AngularControll extends BaseControll{
 		String timeto = request.getParameter("TIMETO");
 		
 		Page page = Page.getPage(request);
-		List<Map<String, Object>> list = studentServiceHibernate.list(id, name, timefrom, timeto, page);
+		List<Map<String, Object>> list = studentServiceHibernate.list(id, name, Context.YES, timefrom, timeto, page);
 		log(list, page);
 		echo(list, page);
 	}
 	@RequestMapping("/listrecent.do")
 	public void listRecent(HttpServletRequest request, HttpServletResponse response) {
-		String count = request.getParameter("count"); 
-		 
-		List<Map<String, Object>> list = baseService.find("select * from (select s.*, rownum num from student s) where num < ? order by time desc ", count);
-		echo(list);
 	} 
 	
 	static public Logger logger = Logger.getLogger(AngularControll.class); 

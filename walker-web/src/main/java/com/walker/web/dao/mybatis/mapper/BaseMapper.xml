@@ -6,14 +6,14 @@
  
     
     <sql id="selectWords">
-         id,  name, time
+         id, name, s_mtime, s_flag
     </sql>
     
 	<insert id="add" parameterType="java.util.Map">
         insert into student 
-        (id, name, time)
+        (id, name, s_mtime, s_flag)
         values 
-        ( #{id},#{name},#{time} )
+        ( #{id},#{name},#{s_mtime},#{s_flag} )
     </insert>
 
 	<select id="find" resultType="java.util.Map" parameterType="java.util.Map" >
@@ -34,6 +34,9 @@
         </if> 
         <if test="name != null and name != '' ">
             and  name like  #{name}
+        </if>
+        <if test="s_flag != null and s_flag != '' ">
+            and  s_flag like  #{s_flag}
         </if>
         <if test="timefrom != null and timefrom != '' ">
             and time >= #{timefrom}
@@ -64,6 +67,9 @@
         <if test="name != null and name != '' ">
             and  name like  #{name}
         </if>
+        <if test="s_flag != null and s_flag != '' ">
+            and  s_flag like  #{s_flag}
+        </if>
          <if test="timefrom != null and timefrom != '' ">
             and time >= #{timefrom}
         </if>
@@ -83,6 +89,9 @@
         <trim prefix="set" suffixOverrides=",">
             <if test="name != null">
            		name=#{name},
+            </if>
+            <if test="s_flag != null">
+           		s_flag=#{s_flag},
             </if>
             <if test="time != null">
             	time=#{time}

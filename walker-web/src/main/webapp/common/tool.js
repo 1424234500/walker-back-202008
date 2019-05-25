@@ -259,7 +259,12 @@ function getDateByTime(fmt, date)
 //列求和统计汇总
 function listSums(httplist, cols){
         var sums = {};
-
+        if(!httplist){
+        	httplist=[ ];
+        }
+        if(!cols){
+        	cols=[ ];
+        }
         for(var j = 0; j < cols.length; j++){
             sums[cols[j]] = 0;
         }

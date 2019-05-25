@@ -1,37 +1,44 @@
  
 angular.module('com.cache')
 
-.controller('com.cache.pageCtrl', ['$PROJECT','$scope', '$rootScope', '$state', 'baseService','tools', function ($PROJECT, $scope, $rootScope, $state, baseService, tools) {
-    //嵌套路由 scope可访问 <任意module> 的上层html的 ctrl/scope
-    var mName = 'cache';
-    $scope.mName = mName;
-    $scope.search = {}; //查询
-    $scope.orderType = 'TYPE'; //排序
-    $scope.order = '-';
+.controller('com.cache', ['$PROJECT','$scope', '$rootScope', '$state', 'baseService','tools', function ($PROJECT, $scope, $rootScope, $state, baseService, tools) {
+	//此处的成员变量 和 函数都能被子类ctrl使用和访问
+	//若是对象类型 可修改对象成员					//可用于多 子路由共享数据 
+	//若是基本类型或更改引用 则新内存隔离	//注意不会修改父类的数据
+	var mName = 'cache';
+    var routeDir = 'main.' + mName;		//	main.simple
+	$scope.mName = mName;
+	
+	 //初始化分页
+    $scope.page = {};
+    //初始化排序
+    $scope.sort = {'orderCol': '', 'order': ''};
     $scope.changeOrder = function(type){
-        $scope.orderType = type;
-        if($scope.order === ''){
-            $scope.order = '-';
+        $scope.sort.orderCol = type;
+        if($scope.sort.order == ''){
+            $scope.sort.order = '-';
         }else{
-            $scope.order = '';
+            $scope.sort.order = '';
         }
     };
-    $scope.keydown = function(event){ //回车搜索
+   //初始化查询
+    $scope.search = {}; //查询
+    $scope.clear = function(){
+    	for(var key in $scope.search){
+    		delete $scope.search[key];
+		}
+    }
+    //回车事件触发
+    $scope.keydown = function(event){
         if (event.keyCode == 13) {
             $scope.list();
-        }
+        }   
     };
-
+	
     $scope.cols = ["URL", "KEY", "VALUE", "EXPIRE", "TYPE"]; //搜索<添加/修改>列
     $scope.showCols = ["KEY", "VALUE", "HASHCODE", "EXPIRE", "COUNT", "TYPE"]; //展示列
     $scope.page = {"NOWPAGE":1, "SHOWNUM":50, "ORDER":"","DESC":""}; //分页参数
 
-    //long NUM = 0;	//总数据条数
-    //int SHOWNUM = defaultEachPageNum;//每页数量
-    //int NOWPAGE = 1;	//当前页码
-    //int PAGENUM = 0;	//总页数
-    //String ORDER;	//排序
-    //String DESC;	//倒序
     //查询列表
     $scope.list = function(){
         var PAGE = $scope.page;
@@ -53,13 +60,9 @@ angular.module('com.cache')
         var url = '/' + $PROJECT + '/tomcat/addCacheMap.do';
         baseService.post(url, params).then(
             function (data) {
-                $scope.clear();
-                $scope.list();
+//                $scope.clear();
+//                $scope.list();
             }, error);
-    };
-    //清空查询条件
-    $scope.clear = function(){
-        $scope.search = {};//保留字段
     };
     //上级目录
     $scope.back = function(){
@@ -127,7 +130,7 @@ angular.module('com.cache')
         var url = '/' + $PROJECT + '/tomcat/addCacheMap.do';
         baseService.post(url, params).then(
             function (data) {
-                $scope.clear();
+//                $scope.clear();
                 $scope.list();
             }, error);
     };

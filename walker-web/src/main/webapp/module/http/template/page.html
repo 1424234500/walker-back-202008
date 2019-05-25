@@ -49,62 +49,11 @@
             <textarea style="height:100px;width:100%" ng-model="res"></textarea>
         </div>
 
+ 
 
 
-        <table class="table table-hover">
-            <thead>
-            <tr class="colorChromeTitle">
-                <th> No. </th>
-                <th class="hand" ng-repeat="item in showCols track by $index" ng-click="changeOrder(item)" ng-class="{dropup:order === ''}">
-                    {{item}}
-                    <span ng-show="orderType==item" ng-class="{orderColor:orderType === item}" class="caret"></span>
-                </th>
-
-                <th class="hand" ng-click="changeOrder('MTIME')" ng-class="{dropup:order === ''}">
-                    {{"MTIME"}}
-                    <span ng-show="orderType=='MTIME'" ng-class="{orderColor:orderType === 'MTIME'}" class="caret"></span>
-                </th>
-                <th> UPDATE </th>
-                <th> DELETE </th>
-            </tr>
-            </thead>
-
-            <tbody>
-                <tr class="" ng-click="back()">
-                    <td></td>
-                    <td colspan="{{showCols.length + 3}}">上级目录</td>
-                </tr>
-
-                <!-- filter:search  | mapSearch:search  -->
-                <tr ng-class="{'colorLevel2':item['TYPE']==2,'colorLevel1':item['TYPE']==1,}"
-                    ng-repeat="item in listCache | orderBy:order + orderType"
-                    ng-click="detail(item)"
-                >
-                    <td class="colorChromeTitle">{{$index + 1}}</td>
-                    <td ng-class="{colorChromeTitle:orderType === name}" style="max-width: 30%;"
-                        ng-repeat="name in showCols track by $index"
-                        title="{{item[name]}}">{{item[name]}}</td>
-                    <td ng-class="{colorChromeTitle:orderType == 'MTIME'}" >{{item["MTIME"] | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                    <td style="max-width: 10%;">
-                        <a ng-click="update(item, $event)" class="abtn" > 修改</a>
-                    </td>
-                    <td style="max-width: 10%;">
-                        <a ng-click="delete(item, $event)" class="abtn" > 删除</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <!--table foot ppp-->
-        <ng-include  src="'common/template/list_table_foot.html'"></ng-include>
-    </div>
-
-
-
-
-
-
-
-
+<div ui-view="">aaaaaaaaaa
+</div>
 
 </div>
 

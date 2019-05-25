@@ -29,13 +29,15 @@ public class ClassControll extends BaseControll{
 		String packageName = getValue(request, "package");
 		String keyName = "/class/list/" + packageName;
 		List<?> list = null;
-		if(cache.containsKey(keyName)){
-			list = (List<?>) cache.get(keyName);
-		}else{
-			list = ClassUtil.getPackageClassBean(packageName, true);
-			if(list != null && list.size() > 0)
-				cache.put(keyName, list, 120 * 1000);
-		}
+//		if(cache.containsKey(keyName)){
+//			list = (List<?>) cache.get(keyName);
+//		}else{
+//			list = ClassUtil.getPackageClassBean(packageName, true);
+//			if(list != null && list.size() > 0)
+//				cache.put(keyName, list, 120 * 1000);
+//		}
+		list = ClassUtil.getPackageClassBean(packageName, true);
+
 		Page page = Page.getPage(request);
 		page.setNUM(list==null?-1:list.size());
 		echo(list, page);

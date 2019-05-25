@@ -1,7 +1,7 @@
  
 angular.module('com.file')
 
-.controller('com.file.pageCtrl', ['$scope', '$rootScope', '$state', 'fileService','$PROJECT','baseService', function ($scope, $rootScope, $state, fileService,$PROJECT,baseService) {
+.controller('com.file', ['$scope', '$rootScope', '$state', 'fileService','$PROJECT','baseService', function ($scope, $rootScope, $state, fileService,$PROJECT,baseService) {
     //嵌套路由 scope可访问 <任意module> 的上层html的 ctrl/scope
     var mName = 'file';
     $scope.mName = mName;
@@ -23,6 +23,8 @@ angular.module('com.file')
     $scope.page = {"NOWPAGE":1, "SHOWNUM":50, "ORDER":"","DESC":""}; //分页参数
 
     $scope.search = {}; //查询
+    $scope.search={};
+    $scope.search['NAME'] = "";
     $scope.orderType = 'TYPE'; //排序
     $scope.order = '-';
     $scope.changeOrder = function(type){
@@ -60,9 +62,7 @@ angular.module('com.file')
     };
     //$scope.statis();
 
-    $scope.dir = "C:\\tomcat\\download";
-    $scope.search={};
-    $scope.search['NAME'] = "";
+    $scope.dir = "";
     $scope.back = function(){
         var path = $scope.dir;
         var ps = path.split('\\');
@@ -70,6 +70,10 @@ angular.module('com.file')
         if(ps.length > 0){
             path = path.substr(0, path.length - ps[ps.length - 1].length - 1)
         }
+        if(!path){
+        	path = $scope.defaultDir;
+        }
+        
         $scope.dir = path;
         $scope.name = "";
         $scope.list();
@@ -133,10 +137,22 @@ angular.module('com.file')
                 $scope.list();
             }, error);
     };
+
+    $scope.download = function(id){
+        var params = {"id":id};
+        var url = "/BaseSSM/file/download.do?id=" + id;
+        openUrl(url);
+    };
     //加载表信息
     fileService.fileCols().then(
         function (data) {
             $scope.colss = data;
+        }, error);
+    //加载表信息
+    fileService.fileDirUpload().then(
+        function (data) {
+            $scope.defaultDir = data;
+            $scope.dir = data;
         }, error);
 
 
@@ -187,48 +203,8 @@ angular.module('com.file')
     //bootstrap日期插件使用方式
     $('#timefrom').datetimepicker();
     $('#timeto').datetimepicker();
-
-    $scope.search = {}; //查询
-    $scope.orderType = 'id';
-    $scope.order = '-';
-    $scope.changeOrder = function(type){
-        $scope.orderType = type;
-        if($scope.order === ''){
-            $scope.order = '-';
-        }else{
-            $scope.order = '';
-        }
-    };
-    $scope.list = function(){
-        //debugger;
-        var page = $scope.page;
-        var search = $scope.search;
-        var params = $.extend({}, page, search);
-        fileService.list(params).then(
-            function (data) {
-                $scope.httplist = data.list;
-                $scope.page = data.page;
-                $scope.ppp = calcPage($scope.page);
-        }, error);
-    };
     $scope.list();
-
-    $scope.ajaxDelete = function(id){
-        var params = {"id":id};
-        fileService.del(params).then(
-            function (data) { 
-                info("操作数据:" + data + "条");
-                $scope.list(); 
-        }, error);  
-
-    };
-
-    $scope.download = function(id){
-        var params = {"id":id};
-        var url = "/BaseSSM/file/download.do?id=" + id;
-        openUrl(url);
-    };
-
+ 
 }])
 
 

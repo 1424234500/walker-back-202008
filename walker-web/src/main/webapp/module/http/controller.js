@@ -1,7 +1,7 @@
  
 angular.module('com.http')
 
-.controller('com.http.pageCtrl', ['$PROJECT','$scope', '$rootScope', '$state', 'baseService','tools', function ($PROJECT, $scope, $rootScope, $state, baseService, tools) {
+.controller('com.http', ['$PROJECT','$scope', '$rootScope', '$state', 'baseService','tools', function ($PROJECT, $scope, $rootScope, $state, baseService, tools) {
     //嵌套路由 scope可访问 <任意module> 的上层html的 ctrl/scope
     var mName = 'http-rest';
     $scope.mName = mName;
@@ -66,7 +66,7 @@ angular.module('com.http')
     $scope.urlDelete = '/' + $PROJECT + '/restful/2204/make.do';
 
 
-
+//    $state.go("main.http.simple");
 
 }])
 

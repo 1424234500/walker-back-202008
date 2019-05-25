@@ -7,9 +7,10 @@
 
 
     新增模块
-    1.复制文件夹 
+    1.复制文件夹 student / simple
     2.配置launch.js子模块
     3.配置index.html导入js	按需导入/删除 filter directive
+    4.main.controller 导入菜单
 */
  
 var easyuiTheme = "metro-blue";//指定如果用户未选择样式，那么初始化一个默认样式 
@@ -35,7 +36,7 @@ var subModules = [ // 需要加载的子模块集合
 
     'com.table', 
     'com.student', 
-    
+    'com.simple',
     
     'com.system'
     //'com.config',

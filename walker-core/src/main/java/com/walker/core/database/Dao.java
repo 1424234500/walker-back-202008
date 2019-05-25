@@ -67,7 +67,7 @@ public class Dao implements BaseDao {
 	@Override
 	public List<String> getColumnsByTableName(String tableName) {
 		List<String> res = null;
-		List<List<String>> list = MapListUtil.toArrayAndTurn(this.find(SqlUtil.makeColumnSql(getDs(), tableName)));
+		List<List<String>> list = MapListUtil.toArrayAndTurn(this.find(SqlUtil.makeSqlColumn(getDs(), tableName)));
 		list = MapListUtil.turnRerix(list);
 		if (list.size() > 0) {
 			res = list.get(0);
@@ -100,20 +100,21 @@ public class Dao implements BaseDao {
 	 */
 	@Override
 	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... objects) {
-		sql = SqlUtil.makePage(getDs(), sql, page, rows);
+		sql = SqlUtil.makeSqlPage(getDs(), sql, page, rows);
 		return this.find(sql, objects);
 	}
 
 	@Override
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... objects) {
 		page.setNUM(this.count(sql, objects));
+		sql = SqlUtil.makeSqlOrder(sql, page.getORDER());
 		return this.findPage(sql, page.getNOWPAGE(), page.getSHOWNUM(), objects);
 	}
 
 	@Override
 	public int count(String sql, Object... objects) {
 		int res = 0;
-		sql = SqlUtil.makeCount(sql);
+		sql = SqlUtil.makeSqlCount(sql);
 		List<List<String>> list = MapListUtil.toArray(this.find(sql, objects));
 		if(list != null && list.size() > 0) {
 			List<String> row = list.get(0);

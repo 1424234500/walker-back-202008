@@ -165,7 +165,7 @@ public abstract class BaseControll {
 	}
 	
 	private String tableName = ""; //成员变量 单例 公用 于 每个并发线程
-	private Logger log; //成员变量 单例 公用 于 每个并发线程
+	public Logger log; //成员变量 单例 公用 于 每个并发线程
 
 	/**
 	 * 实现日志打印工具
@@ -224,7 +224,7 @@ public abstract class BaseControll {
 			throw new Exception("该表 " + tableName + " 没有列 ");
 		return (String)res.get(0);
 	}
-	@RequestMapping("/blist.do")
+	@RequestMapping("/list.do")
 	public void list(HttpServletRequest request, HttpServletResponse response){
 		this.beforeDo(request, response);
 		Map<String, Object> map = this.getTableParam(request);
@@ -244,7 +244,7 @@ public abstract class BaseControll {
 		echo(res, page);
 	}
 
-	@RequestMapping("/bdelete.do")
+	@RequestMapping("/delete.do")
 	public void delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
@@ -255,7 +255,7 @@ public abstract class BaseControll {
 		echo(count);
 	}
 
-	@RequestMapping("/badd.do")
+	@RequestMapping("/add.do")
 	public void add(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
@@ -265,7 +265,7 @@ public abstract class BaseControll {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@RequestMapping("/bupdate.do")
+	@RequestMapping("/update.do")
 	public void update(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
@@ -279,7 +279,7 @@ public abstract class BaseControll {
 		echo(count);
 	}
 
-	@RequestMapping("/bget.do")
+	@RequestMapping("/get.do")
 	public void get(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.beforeDo(request, response);
 
@@ -291,7 +291,7 @@ public abstract class BaseControll {
 	}
 	
 	
-	@RequestMapping("/bcols.do")
+	@RequestMapping("/cols.do")
 	public void cols(HttpServletRequest request, HttpServletResponse response)  {
 		this.beforeDo(request, response);
 		String tableName = getTableName();
@@ -300,6 +300,14 @@ public abstract class BaseControll {
 			return;
 		}
 		List<String> res = baseService.getColumnsByTableName(tableName);
+		if(res.contains("id")) {
+			res.remove("id");
+			res.add(0, "id");
+		}
+		if(res.contains("ID")) {
+			res.remove("ID");
+			res.add(0, "ID");
+		}
 		echo(res);
 	}
 	String getTableName(){

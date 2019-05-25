@@ -1,6 +1,7 @@
 package com.walker.web.event.listener;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContext;
@@ -19,6 +20,7 @@ import com.walker.common.util.ThreadUtil.Type;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.service.impl.FileServiceImpl;
+import com.walker.web.event.task.TimerTask;
 
 /**
  * 启动listener类，用于系统环境总体初始化
@@ -73,15 +75,22 @@ public class ContextListener implements ServletContextListener {
 
         
     }
+    
     private void addShutdownHook() {
     	Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
+
+                log.info("........................................................");
+                log.info("........................................................");
             	log.warn("----------销毁 执行ShutdownHook----------");
             	String nowTime = Tools.getNowTimeL();
             	String str = RobotUtil.getRuntime();
             	log.warn(nowTime);
             	log.warn(str);
             	log.warn("----------销毁 执行ShutdownHook 完毕----------");
+
+                log.info("........................................................");
+                log.info("........................................................");
             }
         });
 		

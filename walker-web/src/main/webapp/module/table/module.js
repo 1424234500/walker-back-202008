@@ -9,9 +9,10 @@ angular.module('com.table', [])
     //定义层级路由 url路径 参数 绑定controller
     $stateProvider
         .state('main.' + mName, {
-            url: '/' + mName + '/:id',  //传递待管理的表名
+//            url: '/' + mName + '/:id',  //传递待管理的表名
+            url: '/' + mName,
             templateUrl: 'module/' + mName + '/template/page.html',
-            controller: 'com.' + mName + '.pageCtrl'
+            controller: 'com.' + mName 
         })
         .state('main.' + mName + '.list', {
             url: '/list',

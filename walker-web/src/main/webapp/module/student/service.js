@@ -30,32 +30,32 @@ angular.module('com.student')
     //获取表字段列表
     service.cols = function(params){ 
         params = service.make(params);
-        return cacheService.post('/' + $PROJECT + '/' + mName + '/cols.do', params);
+        return cacheService.post('/' + $PROJECT + '/' + mName + '/student_cols.do', params);
     };   
 
     service.list = function(params){ 
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/list.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/student_list.do', params);
     };   
     service.get = function(params){ 
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/get.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/student_get.do', params);
     }; 
     service.del = function(params){ 
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/delete.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/student_delete.do', params);
     };
     service.update = function(params){ 
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/update.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/student_update.do', params);
     };
     service.add = function(params){
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/add.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/student_add.do', params);
     };
     service.statis  = function(params){
         params = service.make(params);
-        return baseService.post('/' + $PROJECT + '/' + mName + '/statis.do', params);
+        return baseService.post('/' + $PROJECT + '/' + mName + '/student_statis.do', params);
     }; 
     
     service.do = function(url, params){ 

@@ -46,13 +46,13 @@ public class StudentControll extends BaseControll{
 	@Qualifier("studentServiceMybatis") 
 	StudentService studentServiceMybatis;
 	
-	@RequestMapping("/cols.do")
+	@RequestMapping("/student_cols.do")
 	public void cols(HttpServletRequest request, HttpServletResponse response)  {
 		String tableName = request.getParameter("TABLE_NAME");
 		List<String> res = baseService.getColumnsByTableName(tableName);
 		echo(res);
 	}
-	@RequestMapping("/list.do")
+	@RequestMapping("/student_list.do")
 	public void listh(HttpServletRequest request, HttpServletResponse response)  {
 		String id = request.getParameter("id");
 		String name = request.getParameter("name");
@@ -61,11 +61,11 @@ public class StudentControll extends BaseControll{
 		Page page = Page.getPage(request);
 		
 		
-	    List<Map<String, Object>> res = studentServiceHibernate.list(id, name, timefrom, timeto, page);
+	    List<Map<String, Object>> res = studentServiceHibernate.list(id, name, Context.YES, timefrom, timeto, page);
 	   // logger.info(MapListHelp.list2string(res));
 		echo(res, page);
 	}
-	@RequestMapping("/update.do")
+	@RequestMapping("/student_update.do")
 	public void updateh(HttpServletRequest request,  PrintWriter pw) {
 		String id = request.getParameter("id"); 
 		String name = request.getParameter("name");
@@ -75,7 +75,7 @@ public class StudentControll extends BaseControll{
 		int res = studentServiceHibernate.update(id, name, time);
 		echo(res);
 	}
-	@RequestMapping("/delete.do")
+	@RequestMapping("/student_delete.do")
 	public void deleteh(HttpServletRequest request,  PrintWriter pw) {
 		String id = request.getParameter("id");  
 	    log(request);
@@ -83,7 +83,7 @@ public class StudentControll extends BaseControll{
 		int res = studentServiceHibernate.delete(id );
 	   echo(res);
 	}
-	@RequestMapping("/add.do")
+	@RequestMapping("/student_add.do")
 	public void addh(HttpServletRequest request,  PrintWriter pw) {
 		String name = request.getParameter("name");
 		String time = request.getParameter("time");
@@ -92,7 +92,7 @@ public class StudentControll extends BaseControll{
 		int res = studentServiceHibernate.add(name, time);
 	    echo(res);
 	}
-	@RequestMapping("/get.do")
+	@RequestMapping("/student_get.do")
 	public void geth(HttpServletRequest request,  PrintWriter pw) {
 		String id = request.getParameter("id");  
 	    log(request);
@@ -113,7 +113,7 @@ public class StudentControll extends BaseControll{
 		Page page = Page.getPage(request);
 		map.putAll(RequestUtil.getRequestBean(request));
 
-	    List<Map<String, Object>> res = studentServiceMybatis.list(id, name, timefrom, timeto, page);
+	    List<Map<String, Object>> res = studentServiceMybatis.list(id, name, Context.YES, timefrom, timeto, page);
 		map.put("PAGE", page);
 
 	   // logger.info(MapListHelp.list2string(res));

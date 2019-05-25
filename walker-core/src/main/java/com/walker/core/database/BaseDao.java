@@ -56,7 +56,7 @@ public interface BaseDao {
 	 * 
 	 * @param sql    SQL语句
 	 * @param params 参数
-	 * @param page   分页对象
+	 * @param page   分页对象 排序
 	 * @return 结果集
 	 */
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... params);

@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.MakeMap;
 import com.walker.common.util.Page;
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.database.SqlUtil;
 import com.walker.service.StudentService;
+import com.walker.web.controller.Context;
 import com.walker.web.dao.hibernate.BaseDao;
 
 @Service("studentServiceHibernate")
@@ -34,10 +36,10 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
     protected BaseDao baseDao;
 
 	@Override
-	public List<Map<String, Object>> list(String id, String name, String timefrom, String timeto, Page page) {
+	public List<Map<String, Object>> list(String id, String name, String sFlag, String timefrom, String timeto, Page page) {
 		String sql = "";
 		List<String> params = new ArrayList<String>();
-		sql += "select id,name,time from student where 1=1 ";
+		sql += "select * from student where 1=1";
 		if(Tools.notNull(id)){
 			sql += " and id like ? ";
 			params.add("%" + id + "%");
@@ -46,41 +48,48 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 			sql += " and name like ? ";
 			params.add("%" + name + "%");
 		}
+		if(Tools.notNull(sFlag)){
+			sql += " and s_flag = ?  ";
+			params.add(Context.valueFlag(sFlag));
+		}
 		if(Tools.notNull(timefrom)){
-			sql += " and time >= ?";
+			sql += " and s_mtime >= ?";
 			params.add(timefrom);
 		}
 		if(Tools.notNull(timeto)){
-			sql += " and time < ?";
+			sql += " and s_mtime < ?";
 			params.add( timeto);
 		} 
 		
-		page.setNUM(baseDao.count(sql, params.toArray()));
-		return baseDao.findPage(sql,page.getNOWPAGE(),page.getPAGENUM(), params.toArray());
+		return baseDao.findPage(page, sql, params.toArray());
 	}
 
 	@Override
 	public int update(String id, String name, String time) {
 		int res = baseDao.executeSql(
-				"update student set name=?,time=? where id=?",
-				name,time,id  );
+				"update student set name=?,s_mtime=? where id=?",
+				name,TimeUtil.getTimeYmdHmss(),id  );
 		return res;
 	}
 	@Override
 	public int add(String name, String time) {
 		int res = 0;
-		res = baseDao.executeSql("insert into student values(?,?,?)",LangUtil.getGenerateId(), name, time);
+		res = baseDao.executeSql("insert into student values(?,?,?,?)",LangUtil.getGenerateId(), name, TimeUtil.getTimeYmdHmss(), Context.YES);
  		return res;
 	}
 	@Override
 	public int delete(String id) {
-		int res = 0;
-		res = baseDao.executeSql("delete from student where id=? ", id);
- 		return res;
+//		int res = 0;
+//		res = baseDao.executeSql("delete from student where id=? ", id);
+// 		return res;
+ 		int res = baseDao.executeSql(
+				"update student set s_flag=?,s_mtime=? where id=?",
+				Context.NO, TimeUtil.getTimeYmdHmss(), id  );
+		return res;
 	}
 	@Override
 	public Map get(String id) {
- 		return  baseDao.findOne("select id,name,time from student where id=? ", id);
+ 		return  baseDao.findOne("select * from student where id=? ", id);
 	}
 
 }

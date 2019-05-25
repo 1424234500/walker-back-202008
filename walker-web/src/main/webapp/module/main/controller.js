@@ -27,8 +27,7 @@ angular.module('com.main')
 
     $scope.itemList.push({"route":"main.table", "name":"Table"});
     $scope.itemList.push({"route":"main.student", "name":"Student"});
-    $scope.itemList.push({"route":"main.lunch.list", "name":"Lunch"});
-    $scope.itemList.push({"route":"main.dinner.list", "name":"Dinner"});
+    $scope.itemList.push({"route":"main.simple", "name":"Simple"});
     $scope.itemList.push({"route":"main.system", "name":"RaspberryPi"});
 
     $scope.goHome();

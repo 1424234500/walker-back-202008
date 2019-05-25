@@ -9,7 +9,7 @@ angular.module('com.file', [])
         .state('main.file', {
             url: '/file',
             templateUrl: 'module/file/template/page.html',
-            controller: 'com.file.pageCtrl'
+            controller: 'com.file'
         })
         .state('main.file.list', {
             url: '/list',

@@ -210,7 +210,7 @@ public class SqlUtil{
 	 * @param rows
 	 * @return
 	 */
-	public static String makePage(String dsName, String sql, int page, int rows) {
+	public static String makeSqlPage(String dsName, String sql, int page, int rows) {
 		dsName = String.valueOf(dsName);
 		int start = ((page - 1) * rows);
 		if(dsName.equals("mysql")) {
@@ -231,7 +231,7 @@ public class SqlUtil{
 	 * @param tableName
 	 * @return
 	 */
-	public static String makeColumnSql(String dsName, String tableName) {
+	public static String makeSqlColumn(String dsName, String tableName) {
 		dsName = String.valueOf(dsName);
 //oracle
 //SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
@@ -251,16 +251,6 @@ public class SqlUtil{
 			}		
 			return sql;
 	}
-	/**
-	 * 计数sql
-	 * @param sql
-	 * @return
-	 */
-	public static String makeCount(String sql) {
-		return "select count(*) from ("+sql+") t ";
-	}
-	 
-	
 	
 	/**
 	 * 结果集转换 列 值
@@ -340,5 +330,28 @@ public class SqlUtil{
 				return null;
 			}
 		}, null);		
+	}
+
+	/**
+	 * 计数sql
+	 * @param sql
+	 * @return
+	 */
+	public static String makeSqlCount(String sql) {
+		return "select count(*) from ("+sql+") t ";
+	}
+	 
+	
+	/**
+	 * 排序sql
+	 * @param sql
+	 * @param order
+	 * @return
+	 */
+	public static String makeSqlOrder(String sql, String order) {
+		if(order != null && order.length() > 0) {
+			return "select * from ("+sql+") t order by " + order;
+		}
+		return sql;
 	}
 }

@@ -15,7 +15,14 @@ import com.walker.core.cache.CacheMgr;
  */
 public class Context {
 	
-	
+	public final static String YES = "1";
+	public final static String NO = "0";
+	public static String valueFlag(String str) {
+		if(str.equals(YES)) {
+			return YES;
+		}
+		return NO;
+	}
 	
 	
 	/**

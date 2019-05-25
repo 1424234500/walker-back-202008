@@ -11,7 +11,7 @@ angular.module('com.cache', [])
         .state('main.' + mName, {
             url: '/' + mName,
             templateUrl: 'module/' + mName + '/template/page.html',
-            controller: 'com.' + mName + '.pageCtrl'
+            controller: 'com.' + mName + ''
         })
 
 

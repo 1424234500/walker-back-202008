@@ -36,6 +36,9 @@ angular.module('com.table')
     service.list = function(params){ 
         params = service.make(params);
         return baseService.post('/' + $PROJECT + '/' + mName + '/list.do', params);
+    };  
+    service.find = function(params){ 
+        return baseService.post('/' + $PROJECT + '/' + mName + '/find.do', params);
     };   
     service.listRecent = function(params){ 
         params = service.make(params);

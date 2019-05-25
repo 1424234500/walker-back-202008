@@ -526,7 +526,8 @@ public class ClassUtil {
             } else {  
                 String childFilePath = childFile.getPath();  
                 if (childFilePath.endsWith(".class")) {  
-                    childFilePath = childFilePath.substring(childFilePath.indexOf("\\classes") + 9, childFilePath.lastIndexOf("."));  
+                    childFilePath = childFilePath.substring(childFilePath.indexOf("classes") + "classes/".length());  
+                    childFilePath = childFilePath.substring(0, childFilePath.lastIndexOf("."));
                     childFilePath = childFilePath.replace("\\", ".");  
                     myClassName.add(FileUtil.fileToMap(childFile).set("PACKAGE", childFilePath));  
                 }  
@@ -669,7 +670,7 @@ public class ClassUtil {
 				}
 			}
 		}
-		SortUtil.sort(res, false, "BASE");
+		SortUtil.sort(res, "BASE");
 		
 		return res;
 	}

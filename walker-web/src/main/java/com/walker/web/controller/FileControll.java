@@ -54,6 +54,10 @@ public class FileControll extends BaseControll{
 	public void fileCols(HttpServletRequest request, HttpServletResponse response){
 		echo(FileUtil.getFileMap());
 	}
+	@RequestMapping("/fileDirUpload.do")
+	public void fileDirUpload(HttpServletRequest request, HttpServletResponse response){
+		echo(Context.getUploadDir());
+	}
 	@RequestMapping("/fileDir.do")
 	public void fileDir(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String dir = request.getParameter("dir");
@@ -134,7 +138,9 @@ public class FileControll extends BaseControll{
 		String oldPath = request.getParameter("OLDPATH");   //全路径 path/file
 		String oldName = request.getParameter("OLDNAME");  
 		String name = request.getParameter("NAME");  //新名字
-		
+		if(name== null || name.length() == 0) {
+			echo(false, "重命名不能为空");
+		}
 		int count = 0;
 		String info = "";
 		if(Tools.notNull(path)){
@@ -231,7 +237,9 @@ public class FileControll extends BaseControll{
         MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
         MultipartFile file = mreq.getFile("file");
         String uppath = request.getParameter("path");
-
+        if(uppath == null || uppath.length() == 0) {
+        	uppath = Context.getUploadDir();
+        }
 		if(uppath.indexOf(Context.getUploadDir()) != 0){
 			echo(false, "无修改权限" + uppath);
 			return;

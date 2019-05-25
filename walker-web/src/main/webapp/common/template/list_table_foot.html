@@ -1,3 +1,14 @@
+ <!--      
+ 
+ 使用时嵌入html
+	<ng-include  src="'common/template/list_table_foot.html'"></ng-include>
+	
+依赖
+	$scope.page		分页参数
+	$scope.list			翻页时调用
+	
+ -->
+
 <tfoot>
     <tr>
         <td colspan="998" >
@@ -6,8 +17,7 @@
     int SHOWNUM = defaultSHOWNUM;//每页数量
     int NOWPAGE = 1;    //当前页码
     int PAGENUM = 0;    //总页数
-    String ORDER;   //排序
-    String DESC;    //倒序 
+    String ORDER;   //排序 id desc
     -->
      
 <button class="btn page" ng-click="page.NOWPAGE=1;  list();"><<</button> 

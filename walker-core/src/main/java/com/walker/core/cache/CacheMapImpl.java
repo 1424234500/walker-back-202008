@@ -22,6 +22,7 @@ import com.walker.common.util.Tools;
  * 缓存时间支持
  */
 class CacheMapImpl implements Cache<String> {
+	private static final String SPLIT = ".";
 	static int ALL_COUNT = 0; //所有缓存访问get次数
 
 	/**
@@ -70,7 +71,7 @@ class CacheMapImpl implements Cache<String> {
 		if(map.containsKey(key) && mapIndex.containsKey(key)){
 			Index index = mapIndex.get(key);
 			if(index.isExpire()){
-				log.info("expire." + key + "." + map.get(key) + "." + index.expire);
+				log.info("expire." + key + SPLIT + map.get(key) + SPLIT + index.expire);
 				remove(key);
 				return false;
 			}
@@ -166,7 +167,7 @@ class CacheMapImpl implements Cache<String> {
 		Object obj = MapListUtil.getMapUrl(map, url);
 		if(obj == null){
 //			res = "寻址失败" + url;
-			key =  url + "." + key;
+			key =  url + SPLIT + key;
 			key = MapListUtil.putMapUrl(map, key, value);
 			Index index = new Index();
 			index.mtime = System.currentTimeMillis();
@@ -328,7 +329,7 @@ class CacheMapImpl implements Cache<String> {
 				}else{ //已经是基本类型则 不再继续子层级查询 理应不存在访问此
 					break;
 				}
-				toUrl += itemCopy + ".";
+				toUrl += itemCopy + SPLIT;
 				if(rootKey.length() <= 0)
 					rootKey = item;
 			}
@@ -346,7 +347,7 @@ class CacheMapImpl implements Cache<String> {
 		}else{
 			res = new ArrayList<>();
 		}
-		SortUtil.sort(res, page.getDESC().length()==0, page.getORDER(), "TYPE", "COUNT", "KEY", "EXPIRE");
+		SortUtil.sort(res, page.getORDER("TYPE"));
 		return new Bean().put("ok", toUrl==urls).put("urls", toUrl).put("list", res).put("oftype", oftype).put("size", size);
 	}
 	public List<Map<?,?>> mapToList(Map<?, ?> theMap, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){

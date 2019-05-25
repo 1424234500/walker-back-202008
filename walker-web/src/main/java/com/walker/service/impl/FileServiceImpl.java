@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import com.walker.common.util.FileUtil;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.database.SqlUtil;
 import com.walker.service.FileService;
@@ -110,8 +112,8 @@ public class FileServiceImpl implements FileService,Serializable {
 		String key = LangUtil.getGenerateId();
 		int res = baseDao.executeSql("insert into fileinfo"
 				+ "(id,                   uptime, name,filesize,  type,path,changetime               ,about,upuserid ) values "
-				+ "(?, sysdate,?    ,?      ,  ?   ,?    ,"+ SqlUtil.to_dateL() +",?, ?   ) "
-				                                 , key, name ,filesize ,type,path,changetime               ,about, id   );
+				+ "(?, ?,?    ,?      ,  ?   ,?    ,?,?, ?   ) "
+				                                 , key, name, TimeUtil.getTimeYmdHmss(),filesize ,type,path,TimeUtil.getTimeYmdHmss()               ,about, id   );
 		if(res == 1){
 			return key;
 		}
@@ -124,8 +126,8 @@ public class FileServiceImpl implements FileService,Serializable {
 		return baseDao.executeSql("insert into file_down_up"
 				+ "(id, fileid, type, costtime, time)"
 				+" values "
-				+" (SEQ_file_down_up.Nextval, ?, ?, ?, sysdate) "
-				,fileId, type, detaTime);
+				+" (?, ?, ?, ?, ?) "
+				,LangUtil.getGenerateId(), fileId, type, detaTime, TimeUtil.getTimeYmdHmss());
 		
 		
 		

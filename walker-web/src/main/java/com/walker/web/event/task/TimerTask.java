@@ -1,13 +1,18 @@
 package com.walker.web.event.task;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.walker.common.util.ThreadUtil;
 import com.walker.service.FileService;
 import com.walker.service.LogService;
+import com.walker.service.impl.LogServiceImpl;
+import com.walker.service.impl.LoginServiceImpl;
 
 /**
  * 定时器任务
@@ -42,13 +47,13 @@ public class TimerTask {
 	}
 
 	
-	@Scheduled(cron = "0/60 * * * * ?") //每分钟
+	@Scheduled(cron = "0/10 * * * * ?") //每分钟
 	public void eachMinute() {
-//	    log.info("[eachMinute 0/60 * * * * ?][每分钟任务]");
-//		log.info("Redis操作记录持久化"); 
+	    log.info("[eachMinute 0/60 * * * * ?][每分钟任务]");
+		log.info("Redis操作记录持久化"); 
 	    //刷新redis到oracle
 	    logService.saveStatis();
-	    fileService.scan();
+//	    fileService.scan();
 
 	}
 
@@ -56,6 +61,8 @@ public class TimerTask {
 	public void eachMake() {
 //	    log.info(count++);
 	}
+
+
 	
 	/*
 	cronExpression的配置说明，具体使用以及参数请百度google

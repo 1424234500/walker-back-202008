@@ -1,69 +1,93 @@
  
 angular.module('com.table')
 
-.controller('com.table.pageCtrl', ['$scope', '$rootScope', '$state', '$stateParams', 'tableService', function ($scope, $rootScope, $state, $stateParams, tableService) {
-    //嵌套路由 scope可访问 <任意module> 的上层html的 ctrl/scope
-    var mName = 'table';
-    $scope.mName = mName;
-
-    //$scope.table = $stateParams.id;
-    //tableService.setTable($scope.table);
-
-  
-    $scope.goHome = function(){ 
-        $state.go('main.' + mName + '.list');
+.controller('com.table', ['$scope', '$rootScope', '$state', '$stateParams', 'tableService', function ($scope, $rootScope, $state, $stateParams, tableService) {
+    //此处的成员变量 和 函数都能被子类ctrl使用和访问
+	//若是对象类型 可修改对象成员					//可用于多 子路由共享数据 
+	//若是基本类型或更改引用 则新内存隔离	//注意不会修改父类的数据
+	var mName = 'table';
+    var routeDir = 'main.' + mName;		//	main.simple
+	$scope.mName = mName;
+	
+	 //初始化分页
+    $scope.page = {};
+    //初始化排序
+    $scope.sort = {'orderCol': '', 'order': ''};
+    $scope.changeOrder = function(type){
+        $scope.sort.orderCol = type;
+        if($scope.sort.order == ''){
+            $scope.sort.order = '-';
+        }else{
+            $scope.sort.order = '';
+        }
+    };
+   //初始化查询
+    $scope.search = {}; //查询
+    $scope.clear = function(){
+    	for(var key in $scope.search){
+    		delete $scope.search[key];
+		}
     }
-    $scope.goAdd = function(){ 
-        $state.go('main.' + mName + '.add');
-    }
+    //回车事件触发
+    $scope.keydown = function(event){
+        if (event.keyCode == 13) {
+            $scope.list();
+        }   
+    };
+    $scope.table = 'student';
+    //初始化路由页面跳转
+    $scope.goHome = function(){
+    	tableService.setTable($scope.table);
+        $state.go(routeDir + '.list');
+    };
+    $scope.goAdd = function(){
+        $state.go(routeDir + '.add');
+    };
     $scope.goUpdate = function(id){
         var params = {"id":id};
-        $state.go('main.' + mName + '.update', params);
-    }
-    $scope.show = function(){
-        tableService.setTable($scope.table);
-        var params = {"id" : $scope.table};
-        $state.go('main.' + mName + '.list', params);  
-        //跳转某子级 却传递父级的参数 如下 有用url: /#/main/tablelunch/list  会执行 父级和子级ctrl 且父级能收到参数 
+        $state.go(routeDir + '.update', params);
     };
 
-    $('#charttimefrom').datetimepicker();
-    $('#charttimeto').datetimepicker();
-    var yyyymm = getDate('yyyy-MM-dd');
-    $scope.chart = {}; //查询
-    $scope.chart.TIMEFROM = yyyymm;
-    $scope.chart.TIMETO = yyyymm;
-    $scope.statis = function(){ 
-        var params = $scope.chart;
-        tableService.statis(params).then(
-        function (data) { 
-            info(data);
-            //data.option = $.extend({"yAxis":{}}, data.option )
-            toolSetChart("echarts", data.option);
-        },error);  
+    
+    $scope.page = {};
+//    $scope.search = {}; //查询
+    $scope.sort = {'orderCol': '', 'order': ''};
+    $scope.changeOrder = function(type){
+        $scope.sort.orderCol = type;
+        if($scope.sort.order == ''){
+            $scope.sort.order = '-';
+        }else{
+            $scope.sort.order = '';
+        }
     };
-    //$scope.statis();
-
+    $scope.sql = 'select * from student';
+    $scope.list = function(){ 
+        var page = $scope.page;
+        page["ORDER"] = $scope.sort.orderCol ? $scope.sort.orderCol + ($scope.sort.order ? ' DESC': '') : ''
+        var params = $.extend({"sql":$scope.sql}, page);
+        tableService.find(params).then(
+            function (data) {
+            	$scope.showCols = data.cols;
+                $scope.httplist = data.list;
+                $scope.page = data.page;
+//                $scope.ppp = calcPage($scope.page);
+                $scope.sums =  listSums($scope.httplist, $scope.showCols);
+                $scope.err = data["info"];
+        }, function(error){
+        	$scope.err = error["info"];
+        });   
+    };
+    
+    
 }])
 .controller('com.table.addCtrl', ['$scope', '$rootScope', 'tableService', function ($scope, $rootScope, tableService) {
     $scope.httpget = {};
-
-    $scope.httpget[$rootScope.cols[0]] = getDate('yyyy-MM-dd');
-
-    var params = {};
-    params[$rootScope.cols[0]] = getTheDay('yyyy-MM-dd', -1);
-    tableService.get(params).then(
-        function (data) {
-            $scope.httpget = data;
-            $scope.httpget[$rootScope.cols[0]] = getDate('yyyy-MM-dd');
-    }, error);
-
-    $scope.ajaxSubmit = function(){
+    $scope.add = function(){
         var params =  $scope.httpget;
         tableService.add(params).then(
             function (data) {
                 info("操作数据:" + data + "条");
-                $scope.goHome();
+//                $scope.goHome();
         }, error); 
     };
 }])
@@ -82,7 +106,7 @@ angular.module('com.table')
     }, error);
  
 
-    $scope.ajaxSubmit = function(){
+    $scope.update = function(){
         var params = $scope.httpget;
         tableService.update(params).then(
             function (data) {
@@ -93,13 +117,6 @@ angular.module('com.table')
     };
 }])
 .controller('com.table.listCtrl', ['$scope', '$rootScope', '$state', 'tableService', function ($scope, $rootScope, $state, tableService) { 
-    $scope.refresh = true;
-    var openLoading = function(){
-        $scope.refresh = true;
-    };
-    var closeLoading = function(){
-        $scope.refresh = false;
-    };
 
     //加载页面
     var loadPage = function(){
@@ -135,7 +152,7 @@ angular.module('com.table')
                 $scope.list();
             }   
         };
-        $scope.ajaxDelete = function(id){
+        $scope.delete = function(id){
             var params = {};
             params[$rootScope.cols[0]] = id;
             tableService.del(params).then(
@@ -151,7 +168,8 @@ angular.module('com.table')
     tableService.cols().then(
         function (data) {
             $rootScope.cols = data;
-            closeLoading();
+            $scope.showCols = data;
+            
             loadPage();
     }, error);
 

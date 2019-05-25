@@ -12,8 +12,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.walker.common.util.Context;
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.database.SqlUtil;
 import com.walker.service.StudentService;
@@ -34,7 +37,7 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 	protected BaseMapper baseMapper;
 
 	@Override
-	public List<Map<String, Object>> list(String id, String name, String timefrom, String timeto, Page page) {
+	public List<Map<String, Object>> list(String id, String name, String sFlag, String timefrom, String timeto, Page page) {
 		if(!Tools.notNull(name)) name = "";
 		else name = SqlUtil.like(name);
 		if(!Tools.notNull(id)) id = "";
@@ -43,6 +46,7 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 		Map map = MapListUtil.getMap()
 				.put("name", name)
 				.put("id", id)
+				.put("s_flag", sFlag)
 				.put("timefrom", timefrom)
 				.put("timeto", timeto)
 				.put("pagestart", page.start())
@@ -54,19 +58,27 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 
 	@Override
 	public int update(String id, String name, String time) {
-		Map map = MapListUtil.getMap().put("name", name)
+		Map map = MapListUtil.getMap()
 				.put("id", id)
-				.put("time", time)
+				.put("name", name)
+				.put("s_mtime", time)
 				.build(); 
 		return baseMapper.update(map);
 	}
 
 	@Override
 	public int delete(String id) {
-		Map map = MapListUtil.getMap() 
+//		Map map = MapListUtil.getMap() 
+//				.put("id", id)
+//				.build();
+//		return baseMapper.delete(map);
+		
+		Map map = MapListUtil.getMap()
 				.put("id", id)
-				.build();
-		return baseMapper.delete(map);
+				.put("s_flag", Context.NO)
+				.put("s_mtime", TimeUtil.getTimeYmdHmss())
+				.build(); 
+		return baseMapper.update(map);
 	}
 
 	@Override
@@ -87,8 +99,10 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 	@Override
 	public int add(String name, String time) {
 		Map map = MapListUtil.getMap() 
+				.put("id", LangUtil.getGenerateId())
 				.put("name", name)
-				.put("time", time)
+				.put("s_mtime", TimeUtil.getTimeYmdHmss())
+				.put("s_flag", Context.YES)
 				.build();
 		return baseMapper.add(map);
 	}

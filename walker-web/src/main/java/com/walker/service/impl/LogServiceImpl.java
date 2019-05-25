@@ -65,7 +65,7 @@ public class LogServiceImpl implements LogService,Serializable {
 		
 		bean.put(url, beanUrl);
 		cache.put(CACHE_KEY, bean);
-
+		saveStatis();
 	}
 
 
@@ -82,8 +82,8 @@ public class LogServiceImpl implements LogService,Serializable {
 					int res = baseDao.executeSql("insert into log_time"
 							+ "(id, url, count, time, costtime) "
 							+ "values"
-							+ "(?, ?, ?, sysdate, ?) "
-							, LangUtil.getGenerateId(), map.get("url") + ".do", map.get("count"), map.get("costtime") 
+							+ "(?, ?, ?, ?, ?) "
+							, LangUtil.getGenerateId(), map.get("url") + ".do", map.get("count"), TimeUtil.getTimeYmdHmss(), map.get("costtime") 
 						); 
 				}
 			}

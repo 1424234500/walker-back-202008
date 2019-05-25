@@ -28,7 +28,7 @@
 					ng-repeat="item in httplist | mapSearch:search | orderBy:sort.order + sort.orderCol"  
                     ng-click="detail(item)"
              > 
-	                <td class="colorChromeTitle">{{$index + 1}}</td>
+	                <td class="colorChromeTitle sizeNum">{{$index + 1}}</td>
 	                <td ng-class="{colorChromeTitle:sort.orderCol === name}" style="max-width: 30%;"
 	                        ng-repeat="name in showCols track by $index"
 	                        title="{{item[name]}}">{{item[name]}}</td>

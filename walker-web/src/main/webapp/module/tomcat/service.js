@@ -6,7 +6,7 @@ angular.module('com.tomcat')
 .service('tomcatService',['$PROJECT','baseService','cacheService', function($PROJECT,baseService,cacheService){
 
     //表名
-    var mName = 'angular';
+    var mName = 'tomcat';
 
      var service = {};
     //操作表名
@@ -61,7 +61,7 @@ angular.module('com.tomcat')
         params = service.make(params);
         return baseService.post('/' + $PROJECT + '/' + mName + '/statis.do', params);
     }; 
-    this.statisCount = function(params){ 
+    service.statisCount = function(params){ 
         return baseService.post('/' + $PROJECT + '/' + mName + '/statiscount.do', params);
     }; 
     

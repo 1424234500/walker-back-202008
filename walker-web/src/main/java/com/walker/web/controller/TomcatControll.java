@@ -88,9 +88,32 @@ public class TomcatControll extends BaseControll{
 		
 	 	List list = null;
 	 	if(Tools.notNull(url) && !url.toLowerCase().equals("undefined") && !url.toLowerCase().equals("null")){
-	 		list = MapListUtil.toArrayAndTurn(baseService.find(" SELECT lev, nvl(time, '0') time FROM  ( SELECT hour, cast(sum(costtime)/sum(count)/1000 as number(8, 3)) time FROM (  SELECT  to_char(lt.time, 'hh24') hour, lt.count, lt.costtime FROM log_time lt where 1=1 and lt.url=?  )group by hour   ) t1,  ( select lpad(level, 2, '0') lev from dual connect by level <= 24    ) t2 where t1.hour(+) = t2.lev  ORDER BY lev ", url)) ;
+	 		if(baseService.getDs().equals("oracle")) {
+		 		list = MapListUtil.toArrayAndTurn(baseService.find(" SELECT lev, nvl(time, '0') time FROM  ( SELECT hour, cast(sum(costtime)/sum(count)/1000 as number(8, 3)) time FROM (  SELECT  to_char(lt.time, 'hh24') hour, lt.count, lt.costtime FROM log_time lt where 1=1 and lt.url=?  )group by hour   ) t1,  ( select lpad(level, 2, '0') lev from dual connect by level <= 24    ) t2 where t1.hour(+) = t2.lev  ORDER BY lev ", url)) ;
+	 		}else {
+		 		list = MapListUtil.toArrayAndTurn(baseService.find(
+		 				" SELECT t2.lev, ifnull(t1.time, '0') time FROM  "
+		 				+" ( SELECT hour, (0 + sum(costtime)/sum(count)/1000) time FROM (  SELECT  substr(lt.time,12,2) hour, lt.count, lt.costtime FROM log_time lt where 1=1 and lt.url=?  ) t group by hour   ) t1"
+		 				+" right join "
+		 				+" ( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=24  ) t2" 
+		 				+" on"
+		 				+" t1.hour=t2.lev ORDER BY lev	"
+		 				
+		 				, url)) ;
+		 		
+//		 		SELECT t2.lev, ifnull(t1.time, '0') time FROM  
+//		 		( SELECT hour, (0 + sum(costtime)/sum(count)/1000) time FROM (  SELECT  substr(lt.time,12,2) hour, lt.count, lt.costtime FROM log_time lt where 1=1 and lt.url='/table/list.do'  ) t group by hour   ) t1
+//		 		right join 
+//		 		( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=24  ) t2 
+//		 		on
+//		 		t1.hour=t2.lev ORDER BY t2.lev
+	 		}
 	 	}else{
-	 		list = MapListUtil.toArrayAndTurn(baseService.find("SELECT url,cast(sum(costtime)/sum(count)/1000 as number(8, 3)) time FROM log_time where 1=1 group by url order by url ")) ;
+	 		if(baseService.getDs().equals("oracle")) {
+		 		list = MapListUtil.toArrayAndTurn(baseService.find("SELECT url,cast(sum(costtime)/sum(count)/1000 as number(8, 3)) time FROM log_time where 1=1 group by url order by url ")) ;
+	 		}else {
+		 		list = MapListUtil.toArrayAndTurn(baseService.find("SELECT url,(0 + sum(costtime)/sum(count)/1000) time FROM log_time where 1=1 group by url order by url ")) ;
+	 		}
 	 	} 
 		 
 	 	 
@@ -135,10 +158,31 @@ public class TomcatControll extends BaseControll{
 		
 	 	List list = null;
 	 	if(Tools.notNull(url) && !url.toLowerCase().equals("undefined") && !url.toLowerCase().equals("null")){
-	 		list = MapListUtil.toArrayAndTurn(baseService.find("  SELECT lev, nvl(count, '0') sumcount FROM  ( SELECT hour, sum(count) count FROM (  SELECT  to_char(lt.time, 'hh24') hour, lt.url, lt.count FROM log_time lt where 1=1 and lt.url=?  )group by hour ) t1,  ( select lpad(level, 2, '0') lev from dual connect by level <= 24    ) t2 where t1.hour(+) = t2.lev  ORDER BY lev ", url)) ;
-	 	}else{
-	 		list = MapListUtil.toArrayAndTurn(baseService.find(" SELECT url,sum(count) sumcount FROM log_time where 1=1 group by url order by url ")) ;
-	 	}  
+	 		if(baseService.getDs().equals("oracle")) {
+	 			list = MapListUtil.toArrayAndTurn(baseService.find("  SELECT lev, nvl(count, '0') sumcount FROM  ( SELECT hour, sum(count) count FROM (  SELECT  to_char(lt.time, 'hh24') hour, lt.url, lt.count FROM log_time lt where 1=1 and lt.url=?  )group by hour ) t1,  ( select lpad(level, 2, '0') lev from dual connect by level <= 24    ) t2 where t1.hour(+) = t2.lev  ORDER BY lev ", url)) ;
+	 		}else {
+	 			list = MapListUtil.toArrayAndTurn(baseService.find("  "
+	 					+" SELECT t2.lev, ifnull(t1.count, '0') sumcount FROM  "
+	 					+" ( SELECT hour, sum(count) count FROM (  SELECT  substr(lt.time,6,2) hour, lt.url, lt.count FROM log_time lt where 1=1 and lt.url=?  ) t group by hour ) t1"
+	 					+" right join" 
+	 					+" ( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12  ) t2" 
+	 					+" on"
+	 					+" t1.hour = t2.lev  ORDER BY t2.lev"
+	 					+ "", url)) ;
+	 		}
+//	 		SELECT t2.lev, ifnull(t1.count, '0') sumcount FROM  
+//	 		( SELECT hour, sum(count) count FROM (  SELECT  substr(lt.time,6,2) hour, lt.url, lt.count FROM log_time lt where 1=1 and lt.url='/table/list.do'  ) t group by hour ) t1
+//	 		right join 
+//	 		( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12  ) t2 
+//	 		on
+//	 		t1.hour = t2.lev  ORDER BY t2.lev
+ 		}else{
+	 		if(baseService.getDs().equals("oracle")) {
+	 			list = MapListUtil.toArrayAndTurn(baseService.find(" SELECT url,sum(count) sumcount FROM log_time where 1=1 group by url order by url ")) ;
+	 		}else {
+	 			list = MapListUtil.toArrayAndTurn(baseService.find(" SELECT url,sum(count) sumcount FROM log_time where 1=1 group by url order by url ")) ;
+	 		}
+ 		}  
 		
 	 	 
 	 	List listLineNames = MapListUtil.array().add("action").build();

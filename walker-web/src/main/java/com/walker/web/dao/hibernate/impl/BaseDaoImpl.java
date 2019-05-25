@@ -83,14 +83,9 @@ public class BaseDaoImpl implements BaseDao  {
 		return res;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... objects) {
-		page = page <= 0 ? 1 : page;
-		rows = rows <= 0 ? 2 : rows;
-		SQLQuery q = getCurrentSession().createSQLQuery(sql);
-		setObjectsToSql(q, objects);
-		return q.setFirstResult((page - 1) * rows).setMaxResults(rows).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+		return this.find(SqlUtil.makeSqlPage(getDs(), sql, page, rows), objects);
 	}
  
 	@Override
@@ -102,13 +97,13 @@ public class BaseDaoImpl implements BaseDao  {
  
 	@Override
 	public int count(String sql, Object... objects) {
-		SQLQuery q = getCurrentSession().createSQLQuery(SqlUtil.makeCount(sql));
+		SQLQuery q = getCurrentSession().createSQLQuery(SqlUtil.makeSqlCount(sql));
 		setObjectsToSql(q, objects);
 		return ((Number) q.uniqueResult()).intValue();
 	}
 	
 	public List<String> getColumnsByTableName(String tableName){
-		String sql = SqlUtil.makeColumnSql(getDs(), tableName);
+		String sql = SqlUtil.makeSqlColumn(getDs(), tableName);
 		List<Map<String, Object>> list = this.find(sql);
 		List<String> res = null;
 		//[
@@ -142,6 +137,7 @@ public class BaseDaoImpl implements BaseDao  {
 	@Override
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... objects) {
 		page.setNUM(this.count(sql, objects ));
+		sql = SqlUtil.makeSqlOrder(sql, page.getORDER());
 		return this.findPage(sql,page.getNOWPAGE(), page.getSHOWNUM(), objects );
 	}
 

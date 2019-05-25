@@ -106,7 +106,9 @@ input {
 .colorChromeTitle{
     background-color: #F6F6F6;
 }
-
+.sizeNum{
+    max-width: 60px;
+}
 
 
 

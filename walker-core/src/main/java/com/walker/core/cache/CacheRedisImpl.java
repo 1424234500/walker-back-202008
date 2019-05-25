@@ -24,6 +24,7 @@ import redis.clients.jedis.Jedis;
  */
 class CacheRedisImpl implements Cache<String> {
 	
+	private static final String SPLIT = ":";
 	public CacheRedisImpl(){
 		out("CacheRedisImpl init");
 	}
@@ -182,7 +183,9 @@ class CacheRedisImpl implements Cache<String> {
 	}
 	@Override
 	public <V> String put(String url, String key, V value, long expire) {
-		return "false";
+		String newKey = url + SPLIT + key;
+		put(newKey, value, expire);
+		return newKey;
 	}
 	/**
 	 * 根据url 来移除key
@@ -306,7 +309,7 @@ class CacheRedisImpl implements Cache<String> {
 		}else{
 			res = new ArrayList<>();
 		}
-		SortUtil.sort(res, page.getDESC().length()==0, page.getORDER(), "TYPE", "COUNT", "KEY", "EXPIRE");
+		SortUtil.sort(res, page.getORDER("TYPE"));
 		return new Bean().put("ok", toUrl==urls).put("urls", toUrl).put("list", res).put("oftype", oftype).put("size", size);
 	}
 	public List<Map<?,?>> mapToList(Map<?, ?> theMap, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){

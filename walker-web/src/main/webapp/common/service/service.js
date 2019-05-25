@@ -21,12 +21,12 @@ angular.module('com.common')
         var info = "";
         if(result && result.data){ //网络访问正常
             var data = result.data;
-            if(data.flag){ //操作一切正常
+            if(data.flag){ //操作一切正常 向上传递data信息 而提示信息只做拦截使用
                 type = "normal";
                 deferred.resolve(data.data);
-            }else{ //操作数据异常
+            }else{ //操作数据异常	向上传递所有信息 提示信息也上传 可能要用
                 type = "warning";
-                deferred.reject(data.data);
+                deferred.reject(data);
             }
             info = data.info + " cost:" + data.time + "ms";
         }else{ //网络异常
@@ -37,6 +37,7 @@ angular.module('com.common')
         tools.closeLoad();
         tools.tip(info, type);
     }
+    //网络异常或401 之类
     function onError(error, deferred){
         deferred.reject(error);
         tools.closeLoad();

@@ -19,8 +19,10 @@
 	<mvc:annotation-driven></mvc:annotation-driven>
 	
 	<!-- 设置定时任务 -->
-    <task:annotation-driven executor="executor" scheduler="scheduler" />
-	 <!-- executor线程池，含义和java.util.concurrent.Executor是一样的,pool-size的大小官方推荐为5~10 -->
+	 <task:annotation-driven />
+	
+<!--     <task:annotation-driven executor="executor" scheduler="scheduler" /> -->	 
+<!-- executor线程池，含义和java.util.concurrent.Executor是一样的,pool-size的大小官方推荐为5~10 -->
     <task:executor id="executor" pool-size="5" />
     <!-- scheduler的pool-size是ScheduledExecutorService线程池，默认为1 -->
     <task:scheduler id="scheduler" pool-size="5" />

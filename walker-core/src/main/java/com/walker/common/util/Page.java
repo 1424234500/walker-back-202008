@@ -14,10 +14,9 @@ public class Page implements Serializable{
 	int SHOWNUM = 5;//每页数量
 	int NOWPAGE = 1;	//当前页码
 	int PAGENUM = 0;	//总页数
-	String ORDER;	//排序
-	String DESC;	//倒序 有值则倒序
+	String ORDER = "";	//排序	id, name desc, time asc 空则不排序
 	public String toString() {
-		return new Bean().put("NUM", NUM).put("SHOWNUM", SHOWNUM).put("NOWPAGE", NOWPAGE).put("ORDER", ORDER).put("DESC", DESC).toString();
+		return this.toBean().toString();
 	}
 	public Page(){
 		SHOWNUM = 10;
@@ -29,7 +28,7 @@ public class Page implements Serializable{
 	}
 	
 	public Bean toBean(){
-		return new Bean().put("NUM", NUM).put("SHOWNUM", SHOWNUM).put("NOWPAGE", NOWPAGE).put("ORDER", ORDER).put("DESC", DESC);
+		return new Bean().put("NUM", NUM).put("SHOWNUM", SHOWNUM).put("NOWPAGE", NOWPAGE).put("ORDER", ORDER);
 	}
 	
 	/**
@@ -40,7 +39,6 @@ public class Page implements Serializable{
 		res.setNOWPAGE(request.getParameter("NOWPAGE"));
 		res.setSHOWNUM(request.getParameter("SHOWNUM"));
 		res.setORDER(request.getParameter("ORDER"));
-		res.setDESC(request.getParameter("DESC"));
 		return res;
 	}
 	/**
@@ -51,7 +49,6 @@ public class Page implements Serializable{
 		res.setNOWPAGE(bean.get("NOWPAGE", "0"));
 		res.setSHOWNUM(bean.get("SHOWNUM", "0"));
 		res.setORDER(bean.get("ORDER", ""));
-		res.setDESC(bean.get("DESC", ""));
 		return res;
 	}
 	
@@ -103,7 +100,13 @@ public class Page implements Serializable{
 	public void setPAGENUM(Object pageNum) {
 		this.PAGENUM = LangUtil.turn(pageNum, 0);
 	}
-
+	public String getORDER(String defaultValue) {
+		String res = this.getORDER();
+		if(res.length() <= 0) {
+			res = defaultValue;
+		}
+		return res;
+	}
 	public String getORDER() {
 		return ORDER;
 	}
@@ -112,14 +115,5 @@ public class Page implements Serializable{
 		this.ORDER = order;
 	}
 
-	public String getDESC() {
-		return DESC;
-	}
-
-	public void setDESC(String desc) {
-		this.DESC = desc;
-	}
-	
-	
 	
 }
