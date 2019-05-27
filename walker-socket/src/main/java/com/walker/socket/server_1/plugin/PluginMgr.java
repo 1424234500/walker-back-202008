@@ -137,9 +137,7 @@ public class PluginMgr {
 					@SuppressWarnings("unchecked")
 					Aop<T> aop = (Aop<T>) ClassUtil.newInstance(clz, params);
 
-					if(!aop.doAop(msg)) { //有一个拦截器没通过返回异常
-						return false;
-					}
+					aop.doAop(msg);  //有一个拦截器没通过返回异常 捕获并提示
 				}
 			}
 			

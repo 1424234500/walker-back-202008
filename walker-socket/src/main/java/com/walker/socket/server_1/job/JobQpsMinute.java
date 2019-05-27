@@ -69,7 +69,7 @@ public class JobQpsMinute extends TaskJob{
 						Long count = after - before;
 						mapLastCountDetaItem.set(plugin, count);
 						detaTime = detaTime <= 0 ? 1 : detaTime;
-						Long qps = count / detaTime;	//message	*net:qps:232    
+						Long qps = (long) Math.ceil( 1.0 * count / detaTime);	//message	*net:qps:232    
 						typeBean.put(plugin, typeBean.get(plugin, "")+ " " + type + " " + fill("qps " + qps));
 						mapLastCountItem.set(plugin, after);
 					}
@@ -84,7 +84,7 @@ public class JobQpsMinute extends TaskJob{
 						Long cost = after - before;
 						Long count = mapLastCountDetaItem.get(plugin, 0L);
 						count = count <= 0 ? 1 : count;
-						Long ave = cost / count;	//*net:ave:322ms  
+						Long ave = (long) Math.ceil(1.0 * cost / count);	//*net:ave:322ms  
 						typeBean.put(plugin, typeBean.get(plugin, "") + " " + fill("ave " + ave));
 
 						mapLastTimeItem.set(plugin, after);

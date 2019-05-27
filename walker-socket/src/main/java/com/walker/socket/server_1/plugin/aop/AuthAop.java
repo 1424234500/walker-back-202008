@@ -2,6 +2,7 @@ package com.walker.socket.server_1.plugin.aop;
 
 import com.walker.common.util.Bean;
 import com.walker.socket.server_1.Msg;
+import com.walker.socket.server_1.SocketException;
 
 public class AuthAop<T> extends Aop<T>{
 
@@ -10,13 +11,14 @@ public class AuthAop<T> extends Aop<T>{
 	}
 
 	@Override
-	public Boolean doAop(Msg msg) {
-		Boolean res = true;
+	public void doAop(Msg msg) throws SocketException {
 		if(msg.getUserFrom().length() == 0) {
-			log.warn(this.params.get("tip", "") + msg.getData());
-			res = false;
+			String tip = this.params.get("tip", "") + msg.getData();
+			log.warn(tip);
+			throw new SocketException(tip);
+		}else {
+			log.warn("已经登录");
 		}
-		return res;
 	}
 
 }

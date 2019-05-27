@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import com.walker.common.util.Bean;
 import com.walker.socket.server_1.Msg;
+import com.walker.socket.server_1.SocketException;
 
 public abstract class Aop<T> {
 	protected static Logger log = Logger.getLogger(Aop.class); 
@@ -12,5 +13,5 @@ public abstract class Aop<T> {
 	Aop(Bean params){
 		this.params = params;
 	}
-	public abstract Boolean doAop(final Msg msg);
+	public abstract void doAop(final Msg msg) throws SocketException;
 }
