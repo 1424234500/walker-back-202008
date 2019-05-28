@@ -10,10 +10,43 @@
 	<artifactId>walker-socket</artifactId>
 	<name>socket</name>
 	<description>netty socket active mq</description>
-	
-	
-	
-	
+
+<build>
+<plugins>
+	<plugin>  
+        <groupId>org.apache.maven.plugins</groupId>  
+        <artifactId>maven-jar-plugin</artifactId>  
+        <version>2.6</version>  
+        <configuration>  
+        <archive>  
+            <manifest>  
+            <addClasspath>true</addClasspath> 
+            <classpathPrefix>lib/</classpathPrefix>  
+            <mainClass>com.walker.socket.Launcher</mainClass>  <!-- 指定启动类 -->
+            </manifest>  
+        </archive>  
+        </configuration>  
+    </plugin>  
+    <plugin>  
+        <groupId>org.apache.maven.plugins</groupId>  
+        <artifactId>maven-dependency-plugin</artifactId>  
+        <version>2.10</version>  
+        <executions>  
+        <execution>  
+            <id>copy-dependencies</id>  
+            <phase>package</phase>  
+            <goals>  
+            <goal>copy-dependencies</goal>  
+            </goals>  
+            <configuration>  
+            <outputDirectory>${project.build.directory}/lib</outputDirectory>  	<!-- copy lib目录 -->
+            </configuration>  
+        </execution>  
+        </executions>  
+    </plugin>  
+</plugins>
+</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.walker</groupId>

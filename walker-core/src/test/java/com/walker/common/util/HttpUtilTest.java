@@ -11,13 +11,12 @@ public class HttpUtilTest {
 
 	@Test
 	public void test() throws UnsupportedEncodingException, InfoException {
+		try {
 		String url = "https://mvnrepository.com/search?q=wsspi";
 		String str = new HttpBuilder(url, Type.POST).buildString();
-	}
-	@Test
-	public void teste() throws UnsupportedEncodingException, InfoException {
-		String url = "https://11spi";
-		String str = new HttpBuilder(url, Type.POST).buildString();
+		}catch(Exception e) {
+			
+		}
 	}
 
 }

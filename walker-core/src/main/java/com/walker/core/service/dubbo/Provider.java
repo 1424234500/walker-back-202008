@@ -1,7 +1,6 @@
 package com.walker.core.service.dubbo;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.walker.common.util.Call;
 import com.walker.core.aop.TestAdapter;
@@ -42,23 +41,23 @@ public class Provider extends TestAdapter{
 	
 
 	private static class SingletonFactory{           
-        private static  ClassPathXmlApplicationContext context;
-        static {
-        	System.out.println("静态内部类初始化" + SingletonFactory.class);
-
-        	//测试用 单独初始化spring容器启动
-    		System.setProperty("java.net.preferIPv4Stack", "true");
-    		context = new ClassPathXmlApplicationContext(new String[] { "dubbo-provider.xml" });
-    		context.start(); 
-        }
+//        private static  ClassPathXmlApplicationContext context;
+//        static {
+//        	System.out.println("静态内部类初始化" + SingletonFactory.class);
+//
+//        	//测试用 单独初始化spring容器启动
+//    		System.setProperty("java.net.preferIPv4Stack", "true");
+//    		context = new ClassPathXmlApplicationContext(new String[] { "dubbo-provider.xml" });
+//    		context.start(); 
+//        }
     }
-    public ClassPathXmlApplicationContext getContext() {
-    	return SingletonFactory.context;
-    }
+//    public ClassPathXmlApplicationContext getContext() {
+//    	return SingletonFactory.context;
+//    }
 	
 	public boolean doInit() {
 		log.info("***初始化开始---------------------- ");
-		getContext();
+//		getContext();
 //		独立启动
 //		com.alibaba.dubbo.container.Main.main(new String[] {"dubbo-provider.xml"});
 		

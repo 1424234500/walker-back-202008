@@ -1,4 +1,4 @@
-package com.walker.common.util;
+package com.walker.web;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

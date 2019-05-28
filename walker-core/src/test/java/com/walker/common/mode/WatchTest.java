@@ -19,7 +19,11 @@ public class WatchTest {
 		ThreadUtil.sleep(1000);
 		w.cost();
 		ThreadUtil.sleep(1000);
-		w.exceptionWithThrow(new Exception("aaaaaaaaaaa"), log);
+		try {
+			w.exceptionWithThrow(new Exception("aaaaaaaaaaa"), log);
+		}catch(Exception e) {
+			
+		}
 		Tools.out(w);
 	}
 	@Test

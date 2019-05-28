@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class Page implements Serializable{
 	private static final long serialVersionUID = 1L;
 	static int showNumDefault = 10;

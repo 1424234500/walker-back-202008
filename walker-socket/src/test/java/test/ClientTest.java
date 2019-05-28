@@ -2,7 +2,6 @@ package test;
 
 import org.junit.Test;
 
-import com.walker.common.util.ThreadUtil;
 import com.walker.socket.client.ClientNetty;
 import com.walker.socket.client.ClientUI;
 

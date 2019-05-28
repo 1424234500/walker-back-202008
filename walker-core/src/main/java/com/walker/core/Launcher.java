@@ -1,18 +1,18 @@
-package com.walker.common;
+package com.walker.core;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.walker.common.util.Tools;
 
-public class Main {
-	
+public class Launcher {
+
 	public static void main(String[] args) {
-		new Main();
+		new Launcher();
 	}
 
 	
-	public Main() {
+	public Launcher() {
 		
 //		test1();
 //		testAnd();
@@ -55,5 +55,5 @@ public class Main {
 		
 	
 	}
-	
+
 }

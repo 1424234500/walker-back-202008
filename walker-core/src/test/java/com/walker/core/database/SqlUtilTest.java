@@ -11,9 +11,6 @@ public class SqlUtilTest {
 
 	@Test
 	public void test() {
-
-		String path = (Context.getPathRoot("sql/table_" + CacheMgr.getInstance().get("jdbcdefault", "mysql") + ".sql"));
-		SqlUtil.executeSqlFile(new Dao(), path);
 	
 	}
 
