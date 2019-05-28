@@ -1,6 +1,5 @@
-
-*/target/
-*/release/
+target
+release
 .settings
 *.jar
 *.class

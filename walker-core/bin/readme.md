@@ -6,8 +6,9 @@
 mvn clean package -Dmaven.test.skip=true
 
 ###部署 复制
-/walker-socket/target/walker-socket-0.0.1-SNAPSHOT.jar
+/walker-socket/target/*
 /walker-socket/target/lib/*
+/walker-socket/target/bin/*
 /walker-socket/target/conf/*
 
 ###启动

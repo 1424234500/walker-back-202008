@@ -3,6 +3,7 @@ package com.walker.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.walker.common.util.Context;
 import com.walker.common.util.Tools;
 
 public class Launcher {
@@ -13,7 +14,8 @@ public class Launcher {
 
 	
 	public Launcher() {
-		
+		Tools.out(Context.getPathRoot());
+
 //		test1();
 //		testAnd();
 		testSplit();

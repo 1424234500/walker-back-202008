@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Properties;
 
+import com.walker.common.util.Context;
 import com.walker.common.util.FileUtil;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.Tools;
@@ -34,7 +35,7 @@ public class Setting {
 	
 	
 	
-	public static String settingFileName = ClassLoader.getSystemResource("").getPath() + "make.properties";
+	public static String settingFileName = Context.getPathRoot( "make.properties" );
 	private static Properties proper ;
 	static  {
 		proper = new Properties();     
