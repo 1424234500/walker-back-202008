@@ -15,7 +15,7 @@ public class EchoPlugin<T> extends Plugin<T>{
 //				.set("time", TimeUtil.getTimeYmdHmss()));
 		msg.setType("echo");
 		msg.setInfo("from echo");
-		pub.publish(msg.getFrom(), msg);
+		publish(msg.getFrom(), msg);
 	}
 
 }

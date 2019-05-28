@@ -6,6 +6,7 @@ import com.walker.common.util.Bean;
 import com.walker.core.route.SubPub;
 import com.walker.core.route.SubPubMgr;
 import com.walker.core.route.SubPub.OnSubscribe;
+import com.walker.core.route.SubPub.Res;
 import com.walker.socket.server_1.Msg;
 import com.walker.socket.server_1.MsgBuilder;
 
@@ -21,7 +22,7 @@ import com.walker.socket.server_1.MsgBuilder;
  * 断开连接 取消订阅socket
  * 
  */
-public class Session<T> implements OnSubscribe<Msg> {
+public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	private static Logger log = Logger.getLogger(Session.class); 
 
 	/**
@@ -36,7 +37,7 @@ public class Session<T> implements OnSubscribe<Msg> {
     /**
      * 路由 发布订阅
      */
-    SubPub<Msg> sub = SubPubMgr.getSubPub("msg_route", 0);
+    SubPub<Msg, Session<T>> sub = SubPubMgr.getSubPub("msg_route", 0);
 	
 	/**
 	 * socket实体以及 key send实现回调
@@ -73,7 +74,7 @@ public class Session<T> implements OnSubscribe<Msg> {
 
 	@Override
 	public String toString() {
-		return "Session[" + getKey() + " " + getUser() + "]";
+		return "Session[" + getKey() + " ." + getUser() + "]";
 	}
 	
 	 
@@ -110,12 +111,15 @@ public class Session<T> implements OnSubscribe<Msg> {
 //		send(MsgBuilder.makeOnUnLogin(this, bean));
 		log.info("unlogin ok " + this.toString() );
 	}
+
+	public void send(Object obj) {
+		this.socket.send(obj.toString());
+	}
 	/**
  	 * session负责自己处理业务
 	 */
 	@Override
-	public Type onSubscribe(Msg msg) {
-
+	public Res<Session<T>> onSubscribe(Msg msg) {
 //		log.debug("onSubscribe " + msg);
 		if(msg.getType().equals("login")) {
 			this.onLogin((Bean) msg.getData());
@@ -128,10 +132,7 @@ public class Session<T> implements OnSubscribe<Msg> {
 		//模拟写入socket耗时
 //		ThreadUtil.sleep(20);
 		
-		return Type.DEFAULT;
-	}
-	public void send(Object obj) {
-		this.socket.send(obj.toString());
+		return new Res<Session<T>>(Type.DONE, this);
 	}
 	
 	

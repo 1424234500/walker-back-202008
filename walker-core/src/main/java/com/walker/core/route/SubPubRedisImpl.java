@@ -5,10 +5,10 @@ import java.util.concurrent.*;
 
 import org.apache.log4j.Logger;
 
-public class SubPubMapImpl<T, V> implements SubPub<T, V>{
+public class SubPubRedisImpl<T, V> implements SubPub<T, V>{
 //	private ExecutorService pool;
 	private Map<String, Set<OnSubscribe<T, V>>> subscribeTable;
-	private static Logger log = Logger.getLogger(SubPubMapImpl.class); 
+	private static Logger log = Logger.getLogger(SubPubRedisImpl.class); 
 
 	
 	@Override

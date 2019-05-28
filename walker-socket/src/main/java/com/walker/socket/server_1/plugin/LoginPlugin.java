@@ -19,7 +19,7 @@ public class LoginPlugin<T> extends Plugin<T>{
 		String pwd = data.get("pwd", "");
 		log.info(userId);
 		log.info(pwd);
-		pub.publish(msg.getFrom(), msg);
+		publish(msg.getFrom(), msg);
 		
 	}
 

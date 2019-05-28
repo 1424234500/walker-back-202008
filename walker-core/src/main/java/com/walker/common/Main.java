@@ -15,7 +15,11 @@ public class Main {
 	public Main() {
 		
 //		test1();
-		testAnd();
+//		testAnd();
+		testSplit();
+	}
+	public void testSplit() {
+		Tools.out(",a,b".split(",")[1]);
 	}
 	public void testAnd() {
 		int max = 10;

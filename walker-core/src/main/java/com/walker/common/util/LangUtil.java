@@ -10,6 +10,8 @@ import java.util.UUID;
 import org.apache.http.client.utils.CloneUtils;
 import org.apache.log4j.Logger;
 
+import com.walker.core.exception.ErrorException;
+
 /**
  * 对象类型转换工具
  *
@@ -335,7 +337,11 @@ public class LangUtil {
 		}
 	}
 	
-    public static <T> T cloneObject(final T obj) throws CloneNotSupportedException {
-    	return CloneUtils.cloneObject(obj);
+    public static <T> T cloneObject(final T obj) {
+    	try {
+    		return CloneUtils.cloneObject(obj);
+    	}catch(CloneNotSupportedException e) {
+    		throw new ErrorException(e);
+    	}
     }
 }

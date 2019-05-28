@@ -20,11 +20,8 @@ public  class MessagePlugin<T> extends Plugin<T>{
 //		 *						data.type	具体消息类型	text,image,voice,video,map
 //		 *						data.body
 		//发送方设置去向 接收方只看到发送给自己
-		String[] tos = msg.getUserTo();
-		for(String to : tos) {
-			msg.setUserTo(to);
-			pub.publish(to, msg);
-		}
+		
+		publish(msg);
 
 	}
      

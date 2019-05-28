@@ -34,7 +34,7 @@ public class MonitorPlugin<T> extends Plugin<T>{
 			e.printStackTrace();
 		}
 		
-		pub.publish(msg.getFrom(), msg);
+		publish(msg.getFrom(), msg);
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -223,9 +224,27 @@ public class ArraysUtil {
 		return (int) (Math.random() * size);
 	}
    
-	
-	
-	
+	public static <T> Set<T> asSet(T...arr){
+		Set<T> res = new HashSet<T>();
+		for(T item : arr) {
+			res.add(item);
+		}
+		return res;
+	}
+	/**
+	 * 字符串连接
+	 * @param arr
+	 * @param split
+	 * @return
+	 */
+	public static <T> String join(Collection<T> arr, String split){
+		String res = split;
+		for(T item : arr) {
+			res += String.valueOf(item);
+		}
+		res = res.substring(split.length());
+		return res;
+	}
 	
 	
 }

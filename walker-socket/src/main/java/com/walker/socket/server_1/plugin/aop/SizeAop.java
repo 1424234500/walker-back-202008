@@ -17,7 +17,7 @@ public class SizeAop<T> extends Aop<T>{
 		if(maxSize > 0 && length > maxSize ) {
 			String tip = this.params.get("tip", "") + " " + maxSize + " " + msg.getData().toString().substring(0, 20);
 			log.warn(tip);
-			throw new SocketException(tip);
+			error(tip);
 		}
 	}
 

@@ -1,5 +1,11 @@
 package com.walker.socket.server_1;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.walker.common.util.ArraysUtil;
 import com.walker.common.util.Bean;
 import com.walker.common.util.JsonUtil;
 import com.walker.socket.server_1.session.Session;
@@ -20,7 +26,7 @@ import com.walker.socket.server_1.session.Session;
  * 		
  */
 @SuppressWarnings("unchecked")
-public class Msg extends Bean{
+public class Msg extends Bean implements Cloneable{
 	private static final long serialVersionUID = 1L;
 	final public static String SPLIT = ",";
 	
@@ -46,6 +52,7 @@ public class Msg extends Bean{
 	final private static String KEY_USER_TO = "to";		//user to
 	
 	final private static String KEY_DATA = "data";	//msg data bean
+	
 	
 	public Msg() {}
 	public Msg(String json) {
@@ -116,7 +123,28 @@ public class Msg extends Bean{
 		return this;
 	}
 	public Msg setUserTo(String to) {
-		this.set(KEY_USER_TO, to);
+		List<String> list = Arrays.asList(to.split(SPLIT));
+		Set<String> set = ArraysUtil.asSet(list.toArray(new String[0]));
+		String res = ArraysUtil.join(set, ",");
+		this.set(KEY_USER_TO, res);
+		return this;
+	}
+	public Msg addUserTo(String to) {
+		List<String> list = Arrays.asList(this.get(KEY_USER_TO, "").split(SPLIT));
+		List<String> add = Arrays.asList(to.split(SPLIT));
+		list.addAll(add);
+		Set<String> set = ArraysUtil.asSet(list.toArray(new String[0]));
+		String res = ArraysUtil.join(set, ",");
+		this.set(KEY_USER_TO, res);
+		return this;
+	}
+	public Msg removeUserTo(String...tos) {
+		List<String> list = Arrays.asList(this.get(KEY_USER_TO, "").split(SPLIT));
+		List<String> add = Arrays.asList(tos);
+		list.removeAll(add);
+		Set<String> set = ArraysUtil.asSet(list.toArray(new String[0]));
+		String res = ArraysUtil.join(set, ",");
+		this.set(KEY_USER_TO, res);
 		return this;
 	}
 	public String[] getUserTo() {

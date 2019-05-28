@@ -124,19 +124,22 @@ public class Tools {
 	}
 
 	private static Logger log = Logger.getLogger("Tools"); 
-	public static void out(String str) {
+	public static String out(String str) {
 //		System.out.println(getNowTimeS() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
-		log.info(str);;
+		log.info(str);
+		return str;
 	}
-	public static void out(Object object) {
-		out(String.valueOf(object));
+	public static String out(Object object) {
+		return out(String.valueOf(object));
 	}
-	public static void out(Object... objects) {
+	public static String out(Object... objects) {
 //		out(Arrays.toString(objects));
-		out(objects2string(objects));
+		return out(objects2string(objects));
 	}
-	public static void out(Logger log, Object...objects) {
-		log.info(objects2string(objects));
+	public static String out(Logger log, Object...objects) {
+		String str = objects2string(objects);
+		log.info(str);
+		return str;
 	}
 	public static <T> void formatOut(Collection<T> list){
 		int i = 0;

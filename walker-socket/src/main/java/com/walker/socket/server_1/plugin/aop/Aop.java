@@ -13,5 +13,8 @@ public abstract class Aop<T> {
 	Aop(Bean params){
 		this.params = params;
 	}
+	public void error(final Object...objects) throws SocketException {
+		throw new SocketException(objects);
+	}
 	public abstract void doAop(final Msg msg) throws SocketException;
 }

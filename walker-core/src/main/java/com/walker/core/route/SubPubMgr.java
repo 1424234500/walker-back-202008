@@ -13,7 +13,7 @@ import com.walker.core.aop.TestAdapter;
 public class SubPubMgr extends TestAdapter{
 	private static Logger log = Logger.getLogger("subpub"); 
 
-	private static ConcurrentHashMap<String, SubPub<?>> index = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<String, SubPub<?,?>> index = new ConcurrentHashMap<>();
 	
 	private SubPubMgr() {}
  
@@ -23,11 +23,11 @@ public class SubPubMgr extends TestAdapter{
 	 * @param threadCoreSize
 	 * @return
 	 */
-	public static <T> SubPub<T> getSubPub(String key, Integer threadCoreSize) {
+	public static <T,V> SubPub<T,V> getSubPub(String key, Integer threadCoreSize) {
 		@SuppressWarnings("unchecked")
-		SubPub<T> subPub =  (SubPub<T>) index.get(key);
+		SubPub<T,V> subPub =  (SubPub<T,V>) index.get(key);
 		if(subPub == null) {
-			subPub = new SubPubMapImpl<T>();
+			subPub = new SubPubMapImpl<T,V>();
 			index.put(key, subPub);
 			subPub.init(threadCoreSize);
 		}
@@ -39,8 +39,8 @@ public class SubPubMgr extends TestAdapter{
 	 * @param threadCoreSize
 	 * @return
 	 */
-	public static <T> SubPub<T> getSubPub(Integer threadCoreSize) {
-		SubPub<T> subPub =  new SubPubMapImpl<T>();
+	public static <T,V> SubPub<T,V> getSubPub(Integer threadCoreSize) {
+		SubPub<T,V> subPub =  new SubPubMapImpl<T,V>();
 		subPub.init(threadCoreSize);
 		return subPub;
 	}

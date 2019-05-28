@@ -15,7 +15,7 @@ public class AuthAop<T> extends Aop<T>{
 		if(msg.getUserFrom().length() == 0) {
 			String tip = this.params.get("tip", "") + msg.getData();
 			log.warn(tip);
-			throw new SocketException(tip);
+			error(tip);
 		}else {
 			log.warn("已经登录");
 		}
