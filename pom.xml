@@ -35,12 +35,12 @@ ${project.xxx} 当前pom文件的任意节点的内容
         <dir_release>${basedir}/release</dir_release>
         
         
-        
-        
     </properties>
 	
 
 	<build>
+	
+	
 		<plugins>
 		<!-- 配置jdk编译版本 -->
 			<plugin>
@@ -68,9 +68,7 @@ ${project.xxx} 当前pom文件的任意节点的内容
 				</configuration>
 			</plugin>
 <!-- 
-目的：将打包后生成的jar复制到指定路径
-阻碍：命令mvn package后，才生成jar的包，如果单纯的用resources方法复制文件，是无法在package时复制一个还未存在的东西到某地的。
-解决：添加antrun plugin，达到更改打包和复制的顺序的目的，使打包之后再复制成为可能。
+将打包后生成的jar复制到指定路径 命令mvn package后，才生成jar的包，如果单纯的用resources方法复制文件，是无法在package时复制一个还未存在的东西到某地的
  -->
 			<plugin>  
 	            <artifactId>maven-antrun-plugin</artifactId>  
@@ -83,7 +81,7 @@ ${project.xxx} 当前pom文件的任意节点的内容
 	                           <!-- <delete dir="src/main/webapp/WEB-INF/lib" />-->  
 	                            <copy todir="${dir_release}">  
 	                                <fileset dir="${project.build.directory}">  
-	                                    <include name="*.jar" />  
+	                                    <include name="*.*ar" />  
 	                                </fileset>  
 	                            </copy>  
 	                        </tasks>  

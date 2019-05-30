@@ -16,6 +16,30 @@
 		<spring.version>4.3.0.RELEASE</spring.version>
 	</properties>
 
+<build>
+<plugins>
+<!-- 复制依赖jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>  
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+</plugins>
+</build>
+
 	<dependencies>
 
 		<dependency>
@@ -98,12 +122,13 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-
-		<!-- <dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency> -->
+		<!-- tomcat冲突 运行时？ -->
+		<dependency> 
+		   <groupId>javax.servlet</groupId> 
+		   <artifactId>servlet-api</artifactId> 
+		   <version>2.5</version> 
+		   <scope>provided</scope> 
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>

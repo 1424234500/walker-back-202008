@@ -4,14 +4,23 @@
 #一些常用简单功能脚本
 #配置启动脚本命令cmd
 #配置日志文件路径logfile
-#./do start <help><stop><show><log><restart>
+#配置pid grep参数greparg
+#配置说明about
+
+#部署路径
+dir_proj=`pwd -LP`     #/walker/walker-socket
+#项目名
+name_proj=${dir_proj##*/}  #walker-socket
+echo "部署路径 dir_proj ${dir_proj}"
+echo "项目名 name_proj ${name_proj}"
 
 ##-----------------------------------------
-cmd='java -jar walker-core-0.0.1-SNAPSHOT.jar '
-logfile='log/system.log'
-mkdir log
+jarf="${name_proj}-0.0.1-SNAPSHOT.jar"
+echo "jar file $jarf"
+cmd="java -jar ${jarf}"
+logfile='log/base.log'
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
-greparg='walker-core-0.0.1-SNAPSHOT.jar'
+greparg=${jarf}
 about="
 Ctrl the server start/stop/log/pid/help.    \n
 Usage: 
@@ -23,6 +32,11 @@ Usage:
     \t  pid \t  ps -elf | grep server   \n
     \t  help    \t  show this   \n
 "
+
+
+var=${logfile%/*} 
+[ ! -d ${var} ] && mkdir -p ${var}
+
 taillog='tail -n 200 -f '"$logfile"
 #如何将变量中的值取出来作为绝对字符串'' 所以暂用直接获取pids
 pids="ps -ef | grep "$greparg" | grep -v grep | cut -c 9-15"
@@ -41,6 +55,7 @@ function start(){
         echo $tcmd
         eval $tcmd
         pid
+        log
     fi
 }
 function stop(){    
