@@ -1,5 +1,6 @@
 package com.walker.core.cache;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.walker.common.util.Bean;
+import com.walker.common.util.Context;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.Page;
 import com.walker.common.util.SortUtil;
@@ -33,8 +35,8 @@ class CacheEhcacheImpl implements Cache<String> {
 	 */
 	private final static String TYPE = "CACHE_EHCACHE_IMPL_TYPE";
 	public CacheEhcacheImpl(){
-//		cacheMgr = CacheManager.create("ehcache.xml");
-		cacheMgr = CacheManager.create();
+		cacheMgr = CacheManager.create(Context.getPathRoot("conf" + File.separator + "ehcache.xml"));
+//		cacheMgr = CacheManager.create();
 		cacheMgr.addCache(TYPE);
 		cache = cacheMgr.getCache(TYPE);
 		out("CacheEhcacheImpl init");

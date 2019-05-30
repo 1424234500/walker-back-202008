@@ -47,22 +47,13 @@ public class ContextListener implements ServletContextListener {
         String systemPath = sc.getRealPath("/");
         if (!systemPath.endsWith(File.separator)) {
             systemPath += ",";
-        }
-//        String contextPath = sce.getContextPath();
-        String contextPath = "/";
-        if (contextPath.equals("/")) {
-            contextPath = "/";
-        } else if (contextPath.endsWith("/")) {
-            contextPath = contextPath.substring(0, contextPath.length() - 1);
-        }
+        } 
         
         Cache<String> cache = CacheMgr.getInstance();
         cache.put("系统工作目录", systemPath);
-        cache.put("系统服务路径", contextPath);
         cache.put("系统启动时间", Tools.getNowTimeLS());
         
         log.info("系统工作目录: " + systemPath);
-        log.info("系统服务路径: " + contextPath);
 
         startComp();
 //        startTestSelf();

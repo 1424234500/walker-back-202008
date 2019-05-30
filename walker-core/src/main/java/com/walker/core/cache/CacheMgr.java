@@ -69,20 +69,13 @@ public class CacheMgr extends TestAdapter{
 	 */
 	public static void reload(Cache<String> cache){
 		log.warn("初始化缓存");
-		
-		String classRoot = Context.getPathRoot();
-		File dir = new File(classRoot);
-//		log.info(dir.getPath());
-//		log.info(dir.getAbsolutePath());
-//		log.info(dir.getName());
-//		log.info(Arrays.toString(dir.list()));
-		cache.put("cache_dir_getPath", dir.getPath());
-		cache.put("cache_dir_getAbsolutePath", dir.getAbsolutePath());
-		cache.put("cache_dir_getName", dir.getName());
+		File dir = new File(Context.getPathConf());
+		cache.put("cache:dir:project", Context.getPathRoot());
+		cache.put("cache:dir:conf", Context.getPathConf());
 		cache.put("files", Arrays.asList(dir.list()));
 		
 		for (String item : dir.list()) {
-			String path = classRoot + item;
+			String path = dir.getAbsolutePath() + File.separator + item;
 			if (FileUtil.check(path) == 0 && path.endsWith(".properties")) {
 				cache.putAll(SettingUtil.getSetting(path));
 			}

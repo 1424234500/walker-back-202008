@@ -125,8 +125,11 @@ public class Tools {
 
 	private static Logger log = Logger.getLogger("Tools"); 
 	public static String out(String str) {
-//		System.out.println(getNowTimeS() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
-		log.info(str);
+		if(log.getAllAppenders() == null) {
+			System.out.println(getNowTimeS() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
+		}else {
+			log.info(str);
+		}
 		return str;
 	}
 	public static String out(Object object) {
@@ -140,6 +143,12 @@ public class Tools {
 		String str = objects2string(objects);
 		log.info(str);
 		return str;
+	}
+	public static <T> void formatOut(T[] list){
+		int i = 0;
+		for(T obj : list){
+			out(i++, obj);
+		}
 	}
 	public static <T> void formatOut(Collection<T> list){
 		int i = 0;

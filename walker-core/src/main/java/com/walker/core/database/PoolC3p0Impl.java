@@ -45,6 +45,7 @@ class PoolC3p0Impl extends Pool {
 				w.put("map", map);
 				map.putAll(MapListUtil.copy(dsConfig));//"InitialPoolSize", "MaxPoolSize"
 				w.put("dsConfig", dsConfig);
+				System.setProperty("com.mchange.v2.c3p0.cfg.xml", Context.getPathConf("c3p0-config.xml")); 
 				ComboPooledDataSource ds = new ComboPooledDataSource(name);
 				//针对c3p0配置的键值  若是其他连接池需要对这些键 做映射 map 之后才能反射初始化
 	//			ds.setDataSourceName(name);

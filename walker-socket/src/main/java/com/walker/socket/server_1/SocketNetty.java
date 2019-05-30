@@ -3,6 +3,7 @@ package com.walker.socket.server_1;
 import java.util.concurrent.TimeUnit;
 
 import com.walker.common.setting.Setting;
+import com.walker.common.util.Tools;
 import com.walker.socket.server_1.netty.handler.NettyDecoder;
 import com.walker.socket.server_1.netty.handler.NettyEncoder;
 import com.walker.socket.server_1.netty.handler.SessionHandler;
@@ -38,6 +39,9 @@ public class SocketNetty {
  
 
 	public void start() throws Exception{
+		Tools.out(Setting.showString());
+		Tools.out("port", serverPort);
+
 		int t = Setting.get("netty_thread", 1);
 		bossGroup = new NioEventLoopGroup(t); // (1)
         workerGroup = new NioEventLoopGroup();

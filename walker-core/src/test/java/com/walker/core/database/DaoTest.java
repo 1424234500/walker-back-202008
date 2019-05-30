@@ -11,10 +11,11 @@ import com.walker.common.util.Tools;
 import com.walker.core.encode.Pinyin;
 
 public class DaoTest {
-	BaseDao dao = new Dao();
 
 	@Test
 	public void testFind() {
+		BaseDao dao = new Dao();
+
 		Tools.out(dao.executeSql("CREATE TABLE  IF NOT EXISTS  junit (code VARCHAR(20), name VARCHAR(20)); "));
 		Tools.out(dao.getColumnsByTableName("junit"));
 		Tools.out(dao.getColumnsBySql("select t.*, 'addCol' from junit t "));
@@ -29,7 +30,10 @@ public class DaoTest {
 		Tools.out(dao.executeSql("delete from junit  where code like ?", "%2%"));
 		
 	}
-
+	@Test
+	public void test() {
+		
+	}
 	
 	
 

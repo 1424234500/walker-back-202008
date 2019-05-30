@@ -18,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.walker.common.util.FileUtil;
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
@@ -194,14 +195,14 @@ public class ClientUI extends JFrame implements UiCall {
 	}
 
 	public void out(Object...objects) {
-		String s = Tools.objects2string(objects);
+		String s = TimeUtil.getTimeSequence() + "." + Tools.objects2string(objects);
 		if (s != null) {// 输出当服务端的界面上去显示
 			if (s.length() > 60000)
 				s = Tools.tooLongCut(s); // 太长的数据 
-			if (this.taShow.getText().length() >= 140000) {
+			if (this.taShow.getText().length() >= 200000) {
 				this.taShow.setText("");
 			}
-			this.taShow.append(this.client.getClass().getName() + " " + s + "\n");
+			this.taShow.append(FileUtil.getFileType(this.client.getClass().getName()) + " " + s + "\n");
 			
 			if(this.jcbscroll.isSelected())
 				this.taShow.setCaretPosition(this.taShow.getText().length()); // 锁定最底滚动

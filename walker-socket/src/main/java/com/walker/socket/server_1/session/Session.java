@@ -74,7 +74,7 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 
 	@Override
 	public String toString() {
-		return "Session[" + getKey() + " ." + getUser() + "]";
+		return "Session[" + getKey() + "." + getUser() + "]";
 	}
 	
 	 

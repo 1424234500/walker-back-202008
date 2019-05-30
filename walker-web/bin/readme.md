@@ -1,3 +1,6 @@
+
+
+
 ###mvn 指令依赖环境变量 需要和 配置的pom里面的相同  否则使用eclipse自带install也可
 ###打包
 mvn clean package -Dmaven.test.skip=true
@@ -13,7 +16,7 @@ mvn clean package -Dmaven.test.skip=true
 方案2 git钩子的方式云端自动打包部署？
 
 ###启动
-./server.sh
+./server.sh [ start | stop | restart | log | pid | help ]  [ other args ]  
 
-###打包&上传
-./do [ socket | core ]
+
+

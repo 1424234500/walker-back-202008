@@ -8,34 +8,14 @@
   
 <div class="panel panel-info"> 
 
-    <ul class="nav nav-tabs">
-        <li class="">
-            <a ng-click="goHome()" href="javascript:;">列表</a>
-        </li>
-        <li class="">
-                <a ng-click="goAdd()" href="javascript:;">管理</a>
-        </li>
-        <li class="dropdown pull-right">
-             <a href="#" data-toggle="dropdown" class="dropdown-toggle">更多<strong class="caret"></strong></a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="#">操作</a>
-                </li> 
-                <li class="divider">
-                </li>
-                <li>
-                    <a href="#">分割线</a>
-                </li>
-            </ul>
-        </li>
-    </ul>
-
-
-
-
     <div class="navbar-form navbar-left" >
+    <input  style="width:16%; margin-right: 5px;" class="form-control"
+                ng-model="search['URL']"
+                ng-keydown="keydown($event);"
+                placeholder="URL"
+        >
         <input  style="width:16%; margin-right: 5px;" class="form-control"
-                ng-repeat="item in cols track by $index"
+                ng-repeat="item in showCols track by $index"
                 ng-model="search[item]"
                 ng-keydown="keydown($event);"
                 placeholder="{{item}}"
@@ -56,10 +36,6 @@
                     <span ng-show="orderType==item" ng-class="{orderColor:orderType === item}" class="caret"></span>
                 </th>
 
-                <th class="hand" ng-click="changeOrder('MTIME')" ng-class="{dropup:order === ''}">
-                    {{"MTIME"}}
-                    <span ng-show="orderType=='MTIME'" ng-class="{orderColor:orderType === 'MTIME'}" class="caret"></span>
-                </th>
                 <th> UPDATE </th>
                 <th> DELETE </th>
             </tr>
@@ -67,27 +43,31 @@
 
             <tbody>
                 <tr class="" ng-click="back()">
-                    <td></td>
+                    <td>丄</td>
                     <td colspan="{{showCols.length + 3}}">上级目录</td>
                 </tr>
-
-                <!-- filter:search  | mapSearch:search  -->
-                <tr ng-class="{'colorLevel2':item['TYPE']==2,'colorLevel1':item['TYPE']==1,}"
-                    ng-repeat="item in listCache | orderBy:order + orderType"
+<!-- filter:search -->
+	        <tr ng-class="{'colorLevel2':item['TYPE']==2,'colorLevel1':item['TYPE']==1,}"
+					ng-repeat="item in httplist | mapSearch:search | orderBy:sort.order + sort.orderCol"  
                     ng-click="detail(item)"
-                >
-                    <td class="colorChromeTitle">{{$index + 1}}</td>
-                    <td ng-class="{colorChromeTitle:orderType === name}" style="max-width: 30%;"
-                        ng-repeat="name in showCols track by $index"
-                        title="{{item[name]}}">{{item[name]}}</td>
-                    <td ng-class="{colorChromeTitle:orderType == 'MTIME'}" >{{item["MTIME"] | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                    <td style="max-width: 10%;">
-                        <a ng-click="update(item, $event)" class="abtn" > 修改</a>
-                    </td>
-                    <td style="max-width: 10%;">
-                        <a ng-click="delete(item, $event)" class="abtn" > 删除</a>
-                    </td>
-                </tr>
+             > 
+	                <td class="colorChromeTitle sizeNum">{{$index + 1}}</td>
+	                <td ng-class="{colorChromeTitle:sort.orderCol === name}" style="max-width: 30%;"
+	                        ng-repeat="name in showCols track by $index"
+	                        title="{{item[name]}}">{{item[name]}}</td>
+	                <td style="max-width: 10%;">
+	                    <a ng-click="update(item, $event)" class="abtn" > 修改</a>
+	                </td>
+	                <td style="max-width: 10%;">
+	                    <a ng-click="delete(item[cols[0]])" class="abtn" > 删除</a>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td class="info">Statics</td>
+	                <td  ng-repeat="key in showCols track by $index">{{sums[key]}}</td>
+	                <td></td>
+	                <td></td>
+	            </tr>
             </tbody>
         </table>
         <!--table foot ppp-->

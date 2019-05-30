@@ -35,7 +35,7 @@ public class Setting {
 	
 	
 	
-	public static String settingFileName = Context.getPathRoot( "make.properties" );
+	public static String settingFileName = Context.getPathConf( "make.properties" );
 	private static Properties proper ;
 	static  {
 		proper = new Properties();     

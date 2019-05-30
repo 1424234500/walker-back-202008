@@ -1,4 +1,4 @@
-package com.walker.core;
+package com.walker.common.util;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,10 +18,7 @@ public class Launcher {
 
 	
 	public Launcher() {
-//		web项目需要配置于WEB-INF/classes 	spring.xml	 web.xml寻址classpath:   ? 
-		System.setProperty("path_conf", "conf");
-		PropertyConfigurator.configure(Context.getPathConf("log4j.properties"));
-		
+		PropertyConfigurator.configure(Context.getPathRoot("conf" + File.separator + "log4j.properties"));
 		
 		Tools.out("-----------------launcher-------------------");
 		String root = Context.getPathRoot();

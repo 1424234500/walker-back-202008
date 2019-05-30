@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.ClassUtil;
+import com.walker.common.util.Context;
 import com.walker.common.util.FileUtil;
 import com.walker.common.util.JsonUtil;
 import com.walker.core.scheduler.Scheduler;
@@ -47,7 +48,7 @@ public class PluginMgr {
 //	},
 	
 	void init() {
-		String path = ClassLoader.getSystemResource("").getPath() + "plugin.json";
+		String path = Context.getPathConf("plugin.json");
     	String str = FileUtil.readByLines(path, null, "utf-8");
     	log.warn("plugin mgr init file: " + path);
     	log.warn(str);

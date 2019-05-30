@@ -1,5 +1,12 @@
+build
 target
 release
+log
+
 .settings
+.idea
+
 *.jar
 *.class
+*.out
+*.log
