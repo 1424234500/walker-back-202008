@@ -33,9 +33,9 @@ about="
 Ctrl deploy all || just src jar.    \n
 Usage: 
 ./deploy.sh [ all | default ] [other args]   \n
-    \t  just    \t  WEB-INF without lib/*    \n
+    \t  just    \t  WEB-INF without WEB-INF/lib/*    \n
     \t  walker    \t  only upload walker-* jar    \n
-    \t  conf \t  upload all except lib/*  \n
+    \t  conf \t  upload all except WEB-INF/lib/*  \n
     \t  all   \t  upload all jar lib conf    \n
     \t  help    \t  show this   \n
 "

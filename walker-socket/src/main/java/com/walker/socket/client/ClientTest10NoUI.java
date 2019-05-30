@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.walker.common.setting.Setting;
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
 import com.walker.socket.server_1.Msg;
@@ -118,7 +119,8 @@ public class ClientTest10NoUI implements UiCall{
 	}
 
 	private Client newConnect() throws Exception {
-		Client res = new ClientNetty("127.0.0.1", 8092);
+//		Client res = new ClientNetty("127.0.0.1", Setting.get("socket_port_netty", 8093));
+		Client res = new ClientNetty("39.106.111.11", Setting.get("socket_port_netty", 8093));
 		res.setUI(this);
 		res.start();
 		Tools.out("创建新连接", res.toString());
