@@ -25,6 +25,7 @@ var subModules = [ // 需要加载的子模块集合
     'com.common', 
     'com.login',
     'com.tomcat',
+    'com.socket',
     'com.cache',
     'com.class',
     'com.http',

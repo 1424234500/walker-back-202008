@@ -49,7 +49,7 @@ public class JobQpsMinute extends TaskJob{
 //stat:net:message	2019-12-12 n-qps 320  n-ave 29   w-qps 32  w-ave 32  d-qps 31 d-ave
 				
 				Long temp = System.currentTimeMillis();
-				Long detaTime = (temp - timeLast + 1) / 1000;
+				Double detaTime = 1.0 * (temp - timeLast + 1) / 1000;
 				String timeStr = TimeUtil.getTime("yyyy-MM-dd HH:mm:ss");
 				
 				Bean typeBean = new Bean();
@@ -68,7 +68,6 @@ public class JobQpsMinute extends TaskJob{
 						Long after = Long.parseLong(jedis.get(key));
 						Long count = after - before;
 						mapLastCountDetaItem.set(plugin, count);
-						detaTime = detaTime <= 0 ? 1 : detaTime;
 						Long qps = (long) Math.ceil( 1.0 * count / detaTime);	//message	*net:qps:232    
 						typeBean.put(plugin, typeBean.get(plugin, "")+ " " + type + " " + fill("qps " + qps));
 						mapLastCountItem.set(plugin, after);
@@ -96,8 +95,10 @@ public class JobQpsMinute extends TaskJob{
 				for(Object obj : typeBean.keySet()) {
 					String plugin = obj.toString();
 					String value = typeBean.get(plugin, "");
-					jedis.lpush("stat:" + plugin, timeStr + " " + value);
-					log.warn("stat:" + plugin + " " + timeStr + " " + value);
+//					jedis.lpush("stat:" + plugin, timeStr + " " + value);	
+//					选择zset 时间戳为score分数 便于区间分页查询
+					jedis.zadd("stat:statis:" + plugin, temp, timeStr + " " + value);
+					log.warn("stat:statis:" + plugin + " " + timeStr + " " + value);
 				}
 				
 				timeLast = temp;

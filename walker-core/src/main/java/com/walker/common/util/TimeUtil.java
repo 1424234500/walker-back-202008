@@ -112,7 +112,46 @@ public class TimeUtil {
 		return res;
 	}
 
-
+	/**
+	 * 2342342342, yyyy-MM-dd
+	 * @param time 11231213123
+	 * @param format yyyy-MM-dd HH:mm:ss
+	 * @return
+	 */
+	public static String format(long time, String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		String res = sdf.format(new Date(time));
+		return res;
+	}
+	/**
+	 * 根据时间差 决定格式化到 分钟 还是 小时 天
+	 * 2342342342 yyyy-MM-dd HH:mm:ss:SSS
+	 * @param time 11231213123
+	 * @param deta 60 * 1000
+	 * @return
+	 */
+	public static String formatAuto(long time, long deta) {
+		String format = "";
+		if(deta < 1000) {
+			format = "SSS";	//:123
+		}else if(deta < 1000 * 60) {
+			format = "ss:SSS";
+		}else if(deta < 1000 * 60 * 60) {
+			format = "mm:ss";
+		}else if(deta < 1000 * 60 * 60 * 24) {
+			format = "HH:mm";
+		}else if(deta < 1000 * 60 * 60 * 24 * 30) {
+			format = "dd HH";
+		}else if(deta < 1000 * 60 * 60 * 24 * 30) {
+			format = "MM-dd";
+		}else {
+			format = "yyyy-MM";
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		String res = sdf.format(new Date(time));
+		return res;
+	}
 	/**
 	 * 取得当月天数
 	 * */

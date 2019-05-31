@@ -21,6 +21,7 @@ angular.module('com.main')
     $scope.itemList = [];
     $scope.itemList.push({"route":"main.http", "name":"Http-Rest"});
     $scope.itemList.push({"route":"main.tomcat", "name":"Tomcat"});
+    $scope.itemList.push({"route":"main.socket", "name":"Socket"});
     $scope.itemList.push({"route":"main.cache", "name":"Cache"});
     $scope.itemList.push({"route":"main.file.list", "name":"File"});
     $scope.itemList.push({"route":"main.class", "name":"Class"});
