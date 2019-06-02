@@ -3,10 +3,27 @@ target
 release
 log
 
-.settings
+
+captures
+
+
 .idea
+.gradle
+
+
+.settings
+
+
+local.properties
+
 
 *.jar
+*.bak
 *.class
-*.out
 *.log
+*.pyc
+*.o
+*.apk
+*.db
+*.~sql
+*.out
