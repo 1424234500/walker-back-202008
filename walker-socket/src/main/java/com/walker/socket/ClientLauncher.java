@@ -11,6 +11,7 @@ import com.walker.socket.client.ClientUI;
 public class ClientLauncher {
 
 	public static void main(String[] args) throws Exception {
+		System.setProperty("path_conf", "conf");
 		PropertyConfigurator.configure(Context.getPathConf("log4j.properties"));
 
 //		new ClientUI(new ClientIO("127.0.0.1", 8090), "io-io");
