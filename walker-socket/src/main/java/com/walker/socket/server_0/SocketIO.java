@@ -59,7 +59,7 @@ public  class SocketIO extends SocketFrame<Socket>  {
 	 */
 	@Override
 	public String readImpl(Socket socket) throws Exception{
-		return SocketUtil.readImpl(socket, this);
+		return SocketUtil.readImpl(socket);
 	}
 	/**
 	 * io阻塞方式 对应的行发送模式  添加长度头
@@ -67,7 +67,7 @@ public  class SocketIO extends SocketFrame<Socket>  {
 	 */
 	@Override
 	public void sendImpl(Socket socket, String jsonstr) throws Exception {
-		SocketUtil.sendImpl(socket, jsonstr, this);
+		SocketUtil.sendImpl(socket, jsonstr);
 	}
 
 	@Override

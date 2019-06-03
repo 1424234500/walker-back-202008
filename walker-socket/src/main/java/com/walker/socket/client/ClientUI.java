@@ -24,7 +24,12 @@ import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.socket.server_1.Msg;
 
-public class ClientUI extends JFrame implements UiCall {
+/**
+ * 简易图形化控制模拟客户端 连理连接 收发消息 断开连接
+ * @author walker
+ *
+ */
+public class ClientUI extends JFrame {
 	/**
 	 * 
 	 */
@@ -115,11 +120,10 @@ public class ClientUI extends JFrame implements UiCall {
 		});
 		jbshowrooms.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				out(client.show());
+				out(client);
 				try {
 					client.send("{type:monitor,data:{type:show} }");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -155,7 +159,7 @@ public class ClientUI extends JFrame implements UiCall {
 		});
 		jbshowusers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				out(client.show());
+				out(client);
 			}
 		});
 		this.addWindowListener(new WindowAdapter() {
@@ -190,11 +194,35 @@ public class ClientUI extends JFrame implements UiCall {
 	//	test();
 
 		this.client = cc;
-		this.client.setUI(this);
+		this.client.setOnSocket(new OnSocket() {
+			@Override
+			public void onRead(String socketId, String str) {
+				out("收到", str);
+			}
+			@Override
+			public void onSend(String socketId, String str) {
+				out("发送", str);
+			}
+
+			@Override
+			public void onConnect(String socketId) {
+				out("建立长连接成功", socketId);
+			}
+
+			@Override
+			public void onDisconnect(String socketId) {
+				out("断开长连接", socketId);
+			}
+			@Override
+			public String out(Object... objects) {
+				return ClientUI.this.out(objects);
+			}
+		});
+
 		this.client.start(); 
 	}
 
-	public void out(Object...objects) {
+	public String out(Object...objects) {
 		String s = TimeUtil.getTimeSequence() + "." + Tools.objects2string(objects);
 		if (s != null) {// 输出当服务端的界面上去显示
 			if (s.length() > 60000)
@@ -207,12 +235,8 @@ public class ClientUI extends JFrame implements UiCall {
 			if(this.jcbscroll.isSelected())
 				this.taShow.setCaretPosition(this.taShow.getText().length()); // 锁定最底滚动
 
-//			Tools.out(s);
 		}
-	}
-
-	public void onReceive(String readLine) {
-		out("读取", readLine);
+		return s;
 	}
 
 }

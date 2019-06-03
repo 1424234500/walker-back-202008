@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 import com.walker.common.util.Tools;
+import com.walker.socket.client.OnSocket;
 
 public class SocketUtil {
 	
@@ -22,7 +23,7 @@ public class SocketUtil {
 	/**
 	 * socket io 阻塞模式读取
 	 */
-	public static String readImpl(Socket socket, InterfaceOut interfaceOut) throws Exception {
+	public static String readImpl(Socket socket) throws Exception {
 		String res = "";
 		InputStream is = socket.getInputStream();
 		InputStreamReader isr = new InputStreamReader(is);
@@ -43,7 +44,6 @@ public class SocketUtil {
 	                }
 	            }
 	            res = sb.toString();
-	            interfaceOut.out("size", size, "res", res);
 	        } 
 		}
 		return res;
@@ -52,7 +52,7 @@ public class SocketUtil {
 	/**
 	 * socket io 阻塞模式发送
 	 */
-	public static void sendImpl(Socket socket, String jsonstr, InterfaceOut socketIO) throws Exception {
+	public static void sendImpl(Socket socket, String jsonstr) throws Exception {
 		if(!Tools.notNull(jsonstr))return;
 		byte[] bytes = jsonstr.getBytes();
 		OutputStream os = socket.getOutputStream();
@@ -69,7 +69,7 @@ public class SocketUtil {
 	/**
 	 * socket nio 非阻塞模式发送字节包
 	 */
-	public static void sendImpl(SocketChannel socket, String jsonstr, InterfaceOut socketIO) throws Exception {
+	public static void sendImpl(SocketChannel socket, String jsonstr) throws Exception {
 		if(!Tools.notNull(jsonstr))return;
 		
 		byte[] bytes = jsonstr.getBytes("UTF-8");
@@ -91,7 +91,7 @@ public class SocketUtil {
 	/**
 	 * socket nio 非阻塞模式读取字节包
 	 */
-	public static String readImpl(SocketChannel socket, InterfaceOut interfaceOut) throws Exception {
+	public static String readImpl(SocketChannel socket) throws Exception {
 		String res = "";
 		
         ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
@@ -125,7 +125,6 @@ public class SocketUtil {
                 }
             }
             res = sb.toString();
-//            interfaceOut.out("size", size, "res", res);
         } 
 		return res;		
 	}

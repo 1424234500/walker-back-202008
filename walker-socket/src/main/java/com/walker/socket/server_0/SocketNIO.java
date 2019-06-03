@@ -63,12 +63,12 @@ public  class SocketNIO extends SocketFrame<SocketChannel>  {
 
 	@Override
 	protected String readImpl(SocketChannel socket) throws Exception {
-		return SocketUtil.readImpl(socket, this);
+		return SocketUtil.readImpl(socket);
 	}
 
 	@Override
 	protected void sendImpl(SocketChannel socket, String jsonstr) throws Exception {
-		SocketUtil.sendImpl(socket, jsonstr, this);
+		SocketUtil.sendImpl(socket, jsonstr);
 	}
 
 	@Override

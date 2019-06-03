@@ -1,78 +1,107 @@
 package com.walker.socket.client;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
+import java.net.Socket;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.TimeUnit;
 
-import com.walker.common.setting.Setting;
+import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
+import com.walker.core.exception.ErrorException;
 import com.walker.socket.server_0.SocketUtil;
 
-public class ClientNIO extends ClientFrame {
+public class ClientNIO extends ClientAdapter {
  
 	SocketChannel socket = null;
 	String serverIp = "127.0.0.1";
-	int serverPort = 8091; 
-	
-	ClientNIO(){
-		serverPort = Setting.get("socket_port_nio", 8091);
-		try {
-			serverIp = Setting.get("socket_ip", Tools.getServerIp(InetAddress.getLocalHost().getHostAddress()));
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		serverIp = Setting.get("socket_ip", "127.0.0.1");
-	}
+	int serverPort = 8090;
+	//回调
+	private OnSocket onSocket; 
 	ClientNIO(String ip, int port){
 		this.serverIp = ip;
 		this.serverPort = port;
 	}
-	
-	
-	public String show() {
-		return socket.toString();
-	}
-
+	  
 	@Override
-	protected void startRead() throws Exception {
-		read();
-	}
-
-	@Override
-	protected String readImpl() throws Exception {
-		return SocketUtil.readImpl(socket, this);
-	}
-
-	@Override
-	protected void sendImpl(String jsonstr) throws Exception {
-		SocketUtil.sendImpl(socket, jsonstr, this);
-	}
-
-	@Override
-	protected void startImpl() throws Exception {
-		out("NIO", serverIp, serverPort);
-		socket = SocketChannel.open();
-		socket.connect(new InetSocketAddress(serverIp, serverPort));
-        if(this.socket == null){
-			throw new Exception("socket连接失败");
-		}
-	}
-
-	@Override
-	protected void stopImpl() {
-		try {
-			if(this.socket != null){
-				this.socket.close();
-				this.socket = null;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	public boolean isStart() {
-		return socket != null && socket.isConnected();
+		return socket != null && socket.isConnected() && !socket.isConnected();
+	}
+	@Override
+	public void setOnSocket(OnSocket socket) {
+		this.onSocket = socket;
+	}
+	@Override
+	public void start() {
+		if(! this.isStart()) {
+			out("start IO", serverIp, serverPort);
+			try {
+				
+				socket = SocketChannel.open();
+				socket.connect(new InetSocketAddress(serverIp, serverPort));
+				if(this.onSocket != null) {
+					this.onSocket.onConnect(this.socket.toString());
+				}
+				
+				ThreadUtil.schedule(new Runnable() {
+					@Override
+					public void run() {
+						String line = "";
+						try {
+							line = SocketUtil.readImpl(socket);
+						} catch (Exception e) {
+							throw new ErrorException(e);
+						}
+						if(line.length() > 0 && onSocket != null) {
+							onSocket.onRead(socket.toString(), line);
+						}
+					}
+				}, 50, TimeUnit.MILLISECONDS);
+				
+
+				
+			} catch (Exception e) {
+				throw new ErrorException("socket连接失败");
+			}
+		}else {
+			out("have started", serverIp, serverPort);
+		}
+	}
+	@Override
+	public void stop() {
+		if(this.isStart()) {
+			out("stop IO", serverIp, serverPort);
+			try {
+				if(this.socket != null){
+					this.socket.close();
+					this.socket = null;
+					if(this.onSocket != null) {
+						this.onSocket.onDisconnect(socket.toString());
+					}
+				}
+			} catch (Exception e) {
+				throw new ErrorException("socket关闭失败");
+			}
+		}else {
+			out("have stoped", serverIp, serverPort);
+		}		
+	}
+	@Override
+	public void send(String str) {
+		try {
+			SocketUtil.sendImpl(socket, str);
+			if(this.onSocket != null) {
+				this.onSocket.onSend(socket.toString(), str);
+			}
+		} catch (Exception e) {
+			throw new ErrorException(e);
+		}
 	} 
- 
+	@Override
+	public String out(Object... objects) {
+		if(this.onSocket != null) {
+			return this.onSocket.out(objects);
+		}else {
+			return super.out(objects);
+		}
+	} 
 }

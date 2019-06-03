@@ -1,7 +1,12 @@
 package com.walker.socket.client;
  
+import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
+import com.walker.common.util.ThreadUtil;
+import com.walker.common.util.Tools;
+import com.walker.core.exception.ErrorException;
+import com.walker.socket.server_0.SocketUtil;
 import com.walker.socket.server_1.netty.handler.NettyDecoder;
 import com.walker.socket.server_1.netty.handler.NettyEncoder;
 
@@ -20,105 +25,17 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
-public class ClientNetty extends ClientFrame {
+public class ClientNetty extends ClientAdapter {
 	EventLoopGroup group;
 	Bootstrap b;
 	ChannelHandlerContext socket;
 	String serverIp = "127.0.0.1";
-	int serverPort = 8091; 
-	
-	ClientNetty(){
-		
-  
-//        
-//		serverPort = Setting.get("socket_port_netty", 8092);
-//		try {
-//			serverIp = Setting.get("socket_ip", Tools.getServerIp(InetAddress.getLocalHost().getHostAddress()));
-//		} catch (UnknownHostException e) {
-//			e.printStackTrace();
-//		}
-//		serverIp = Setting.get("socket_ip", "127.0.0.1");
-	}
+	int serverPort = 8091;
+	private OnSocket onSocket; 
 	public ClientNetty(String ip, int port){
-		this();
 		this.serverIp = ip;
 		this.serverPort = port;
 	}
-	
-	
-	@Override
-	public String show() {
-		return socket.toString();
-	}
-
-	@Override
-	protected void startRead() throws Exception {
-		read();
-	}
-
-	@Override
-	protected String readImpl() throws Exception {
-//		return SocketUtil.readImpl(socket, this);
-		return "";
-	}
-
-	@Override
-	protected void sendImpl(String jsonstr) throws Exception {
-		socket.writeAndFlush(jsonstr);
-	}
-
-	@Override
-	protected void startImpl() throws Exception {
-		out("Netty", serverIp, serverPort);
-		 // Configure the client.  
-        group = new NioEventLoopGroup();
-        b = new Bootstrap();  
-        b.group(group)
-        .channel(NioSocketChannel.class) // (3)
-        .option(ChannelOption.SO_KEEPALIVE, true) // (4)
-        .option(ChannelOption.TCP_NODELAY, true)  
-        .handler(new ChannelInitializer<SocketChannel>() {  
-            @Override  
-            public void initChannel(SocketChannel ch) throws Exception {  
-				ChannelPipeline p = ch.pipeline();
-				p.addLast("ping", new IdleStateHandler(10, 0, 0, TimeUnit.SECONDS)); 	//5s心跳包 
-//						p.addLast(new LoggingHandler(LogLevel.INFO));
-//						p.addLast( new ObjectEncoder(),  new ObjectDecoder(ClassResolvers.cacheDisabled(null)))
-			    p.addLast(new NettyEncoder(), new NettyDecoder());  
-				p.addLast(new HandlerNetty());
-            }  
-        });  
-        // Start the client.  
-        ChannelFuture f = b.connect(serverIp, serverPort).sync();  
-        f.addListener(new GenericFutureListener<Future<Object>>() {
-			@Override
-			public void operationComplete(Future<Object> arg0) throws Exception {
-				out("Netty operationComplete", serverIp, serverPort);
-			}
-        });
-        f.get();
-        // Wait until the connection is closed.  
-//        f.channel().closeFuture().sync();  
-	}
-	@Override
-	protected void stopImpl() {
-		if(this.socket != null)
-			this.socket.close();
-
-        // Shut down the event loop to terminate all threads.  
-		if(group != null) {
-			group.shutdownGracefully(); 
-		}
-	} 
-	
-	
-	
-	
-	
-	
-	
-	
-
 	
 	/**
 	 * netty的handler
@@ -135,21 +52,26 @@ public class ClientNetty extends ClientFrame {
 			super.handlerAdded(ctx);
 			socket = ctx;
 //			out("handlerAdded", ctx);
-			out("连接成功", ctx.toString());
+			if(onSocket != null) {
+				onSocket.onConnect(ctx.toString());
+			}
 		}
 	
 		@Override
 		public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 			super.handlerRemoved(ctx);
 //			out("handlerRemoved", ctx);
-			out("断开连接", ctx);
+			if(onSocket != null) {
+				onSocket.onDisconnect(ctx.toString());
+			}
 		}
 	
 		@Override
 		public void channelRead(ChannelHandlerContext ctx, Object msg) {
-//			onReceive(ctx, msg.toString());
+			if(onSocket != null) {
+				onSocket.onRead(ctx.toString(), String.valueOf(msg));
+			}
 //			out("channelRead", msg);
-			out("收到", msg);
 		}
 	
 		@Override
@@ -179,12 +101,95 @@ public class ClientNetty extends ClientFrame {
 	public boolean isStart() {
 		return b != null && !group.isShutdown();
 	}
-
 	@Override
-	public String toString() {
-		return socket != null? socket.toString():"aaaaaaaa";
+	public void setOnSocket(OnSocket socket) {
+		this.onSocket = socket;
 	}
-	
+	@Override
+	public void start() {
+		if(! this.isStart()) {
+			out("start Netty", serverIp, serverPort);
+			try {
+				 // Configure the client.  
+		        group = new NioEventLoopGroup();
+		        b = new Bootstrap();  
+		        b.group(group)
+		        .channel(NioSocketChannel.class) // (3)
+		        .option(ChannelOption.SO_KEEPALIVE, true) // (4)
+		        .option(ChannelOption.TCP_NODELAY, true)  
+		        .handler(new ChannelInitializer<SocketChannel>() {  
+		            @Override  
+		            public void initChannel(SocketChannel ch) throws Exception {  
+						ChannelPipeline p = ch.pipeline();
+						p.addLast("ping", new IdleStateHandler(10, 0, 0, TimeUnit.SECONDS)); 	//5s心跳包 
+	//							p.addLast(new LoggingHandler(LogLevel.INFO));
+	//							p.addLast( new ObjectEncoder(),  new ObjectDecoder(ClassResolvers.cacheDisabled(null)))
+					    p.addLast(new NettyEncoder(), new NettyDecoder());  
+						p.addLast(new HandlerNetty());
+		            }  
+		        });  
+		        // Start the client.  
+		        ChannelFuture f = b.connect(serverIp, serverPort).sync();  
+		        f.addListener(new GenericFutureListener<Future<Object>>() {
+					@Override
+					public void operationComplete(Future<Object> arg0) throws Exception {
+						out("Netty operationComplete", serverIp, serverPort);
+					}
+		        });
+		        f.get();
+		        // Wait until the connection is closed.  
+	//	        f.channel().closeFuture().sync();  
+		        
+		        if(this.onSocket != null) {
+					this.onSocket.onConnect(socket.toString());
+				}
+			} catch (Exception e) {
+				throw new ErrorException("socket连接失败");
+			}
+		}else {
+			out("have started", serverIp, serverPort);
+		}
+	}
+	@Override
+	public void stop() {
+		if(this.isStart()) {
+			out("stop IO", serverIp, serverPort);
+			try {
+				if(this.socket != null) {
+					this.socket.close();
+				}
+				if(group != null) {
+					group.shutdownGracefully(); 
+				}
+				if(this.onSocket != null) {
+					this.onSocket.onDisconnect(socket.toString());
+				}
+			} catch (Exception e) {
+				throw new ErrorException("socket关闭失败");
+			}
+		}else {
+			out("have stoped", serverIp, serverPort);
+		}		
+	}
+	@Override
+	public void send(String str) {
+		try {
+			socket.writeAndFlush(str);
+			if(this.onSocket != null) {
+				this.onSocket.onSend(socket.toString(), str);
+			}
+		} catch (Exception e) {
+			throw new ErrorException(e);
+		}
+	} 
 		
+	@Override
+	public String out(Object... objects) {
+		if(this.onSocket != null) {
+			return this.onSocket.out(objects);
+		}else {
+			return super.out(objects);
+		}
+	} 
   
 }

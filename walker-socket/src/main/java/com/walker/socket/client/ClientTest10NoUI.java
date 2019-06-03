@@ -16,7 +16,7 @@ import com.walker.socket.server_1.Msg;
  * @author walker
  *
  */
-public class ClientTest10NoUI implements UiCall{
+public class ClientTest10NoUI{
 	int dtime = 100;	//每次连接 登录间隔延时
 	int dtimesend = 100;	//每批次发送间隔
 	int dtimesendMax = 1000;
@@ -69,7 +69,7 @@ public class ClientTest10NoUI implements UiCall{
 	int before = 0;	//上次添加完连接后的数量 若有减少
 	public void startMakeClient() {
 		//开启增长一个批次的连接
-		ThreadUtilClient.scheduleWithFixedDelay(new Thread() {
+		ThreadUtil.scheduleWithFixedDelay(new Thread() {
 			public void run() {
 				Tools.out("当前连接数" + cc.size(), countFalse);
 //				if(countFalse > countFalseMax)return;
@@ -103,7 +103,7 @@ public class ClientTest10NoUI implements UiCall{
 	}
 	public void startMakeSend() {
 		//开启增长一个批次的连接
-		ThreadUtilClient.scheduleWithFixedDelay(new Thread() {
+		ThreadUtil.scheduleWithFixedDelay(new Thread() {
 			public void run() {
 				int to = dtimesend + flag * dtimesendDeta;
 
@@ -121,7 +121,30 @@ public class ClientTest10NoUI implements UiCall{
 	private Client newConnect() throws Exception {
 //		Client res = new ClientNetty("127.0.0.1", Setting.get("socket_port_netty", 8093));
 		Client res = new ClientNetty("39.106.111.11", Setting.get("socket_port_netty", 8093));
-		res.setUI(this);
+		res.setOnSocket(new OnSocket() {
+			@Override
+			public void onSend(String socketId, String str) {
+			}
+			
+			@Override
+			public void onRead(String socketId, String str) {
+				Tools.out("收到", str);
+			}
+			
+			@Override
+			public void onDisconnect(String socketId) {
+				Tools.out("断开", socketId);
+			}
+			
+			@Override
+			public void onConnect(String socketId) {
+				Tools.out("连接", socketId);
+			}
+			@Override
+			public String out(Object... objects) {
+				return Tools.out(objects);
+			}
+		});
 		res.start();
 		Tools.out("创建新连接", res.toString());
 		return res;
@@ -148,13 +171,6 @@ public class ClientTest10NoUI implements UiCall{
 		while(true) {}
 	}
 
-	public void onReceive(String readLine) {
-		Tools.out(readLine);
-	}
-
-	public void out(Object... objects) {
-//		Tools.out(objects);
-	}
 	
 
 }
