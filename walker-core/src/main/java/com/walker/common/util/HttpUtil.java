@@ -2,7 +2,6 @@ package com.walker.common.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -30,10 +29,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 
-import com.walker.common.mode.Watch;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.exception.InfoException;
+import com.walker.core.mode.Watch;
 
 /**
  * Http工具类

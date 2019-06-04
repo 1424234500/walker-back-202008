@@ -66,7 +66,7 @@ public class LangUtil {
              call.onString(String.valueOf(obj));
          } else{//按照基本类型 key-value转化
         	 if(obj != null){
-            	 Map<String, Object> map = LangUtil.turnObj2Map(obj, new HashMap<String, Object>());
+            	 Map<String, Object> map = LangUtil.turnObj2Map(obj);
 	        	 call.onMap(map);
         	 }else{
         		 call.onString("null");
@@ -81,7 +81,7 @@ public class LangUtil {
 	 * @param hashMap
 	 * @return
 	 */
-	public static Map<String, Object> turnObj2Map(Object obj, HashMap<String, Object> hashMap) {
+	public static Map<String, Object> turnObj2Map(Object obj) {
 		Map<String, Object> map = new HashMap<>();
 		Field[] fields = obj.getClass().getDeclaredFields();
 		for (Field item : fields) {

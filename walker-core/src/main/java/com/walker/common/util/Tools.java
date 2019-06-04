@@ -125,7 +125,7 @@ public class Tools {
 
 	private static Logger log = Logger.getLogger("Tools"); 
 	public static String out(String str) {
-		if(log.getAllAppenders() == null) {
+		if(log.getAllAppenders() == null || System.getProperty("path_conf") == null) {
 			System.out.println(getNowTimeS() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
 		}else {
 			log.info(str);
@@ -176,7 +176,13 @@ public class Tools {
 		}
 		String[] res = objects2strings(objects);
 //		return strings2string(res);
-		return Arrays.toString(res);
+//		return Arrays.toString(res);
+		String ress = "[";
+		for(String str : res) {
+			ress += "," + str;
+		}
+		ress += "]";
+		return ress;
 	}
 
 	//传入数组 作为动态参数 则也会 变为动参 除非手动上转为Object

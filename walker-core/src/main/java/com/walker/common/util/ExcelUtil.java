@@ -11,7 +11,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.junit.Test;
 
-import com.walker.common.mode.Watch;
+import com.walker.core.mode.Watch;
 
 
 

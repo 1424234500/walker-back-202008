@@ -1,4 +1,4 @@
-package com.walker.common.mode;
+package com.walker.core.mode;
 
 
 /**

@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.database.Dao;
+import com.walker.core.mode.Watch;
 
 public class WatchTest {
 	private static Logger log = Logger.getLogger(WatchTest.class); 
