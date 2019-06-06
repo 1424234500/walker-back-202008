@@ -24,15 +24,17 @@ public class MonitorPlugin<T> extends Plugin<T>{
 //				.set("time", TimeUtil.getTimeYmdHmss()));
 		if(bean.get("type", "").equals("show")) {
 			res = SessionHandler.sessionService.show();
+		}else if(bean.get("type", "").equals("session")) {
+			res = SessionHandler.sessionService.getSessionList();
 		}
 		msg.setData(res);
 		
 		//模拟存储耗时
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(10);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		
 		publish(msg.getFrom(), msg);
 	}

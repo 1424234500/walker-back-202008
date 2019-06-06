@@ -1,5 +1,7 @@
 package com.walker.socket.server_1.session;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -7,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
 import com.walker.common.setting.Setting;
+import com.walker.common.util.Bean;
 import com.walker.core.aop.Fun;
 import com.walker.core.pipe.Pipe;
 import com.walker.core.pipe.PipeMgr;
@@ -40,8 +43,9 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 	/**
 	 * 会话列表 Arp 	mac:<mac,ip>
 	 * 可通过key session.send定向发送消息
+	 * socket : session
 	 */
-    private Map<String, Session<T>> index = new ConcurrentHashMap<>();
+    public Map<String, Session<T>> index = new ConcurrentHashMap<>();
     
     /**
      * 业务处理队列 
@@ -131,6 +135,16 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 			log.error("receive msg from no user ? " + socket);
 			socket.send("receive msg from no user ? " + socket);
 		}
+	}
+
+	@Override
+	public List<Bean> getSessionList() {
+		List<Bean> res = new ArrayList<Bean>();
+		for(String key : index.keySet()) {
+			Session<T> session = index.get(key);
+			res.add(new Bean().set("ID", session.getUser()).set("KEY", session.getKey()));
+		}
+		return res;
 	}
 
     

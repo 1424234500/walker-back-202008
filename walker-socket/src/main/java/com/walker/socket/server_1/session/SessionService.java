@@ -1,5 +1,9 @@
 package com.walker.socket.server_1.session;
 
+import java.util.List;
+
+import com.walker.common.util.Bean;
+
 /**
  * 会话管理
  * 
@@ -15,7 +19,10 @@ public interface SessionService<T> {
 	 * 显示会话信息
 	 */
 	String show();
-
+	/**
+	 * 在线列表
+	 */
+	List<Bean> getSessionList();
 	/**
 	 * 添加连接
 	 * @param socket
