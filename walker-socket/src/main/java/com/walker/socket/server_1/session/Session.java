@@ -99,6 +99,7 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	public void onConnect() {
 		sub.subscribe(getKey(), this); 	//订阅当前socket
 		sub.subscribe("all_socket", this);		//订阅所有socket
+		this.id = getKey();
 	}
 	public void onUnConnect() {
 		sub.unSubscribe(getKey(), this); 	//订阅当前socket
