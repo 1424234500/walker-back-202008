@@ -20,7 +20,7 @@ public interface SessionService<T> {
 	 */
 	String show();
 	/**
-	 * 在线列表
+	 * 在线列表 ID KEY TIME
 	 */
 	List<Bean> getSessionList();
 	/**

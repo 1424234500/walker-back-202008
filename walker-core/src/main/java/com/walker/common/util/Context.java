@@ -69,15 +69,19 @@ System.getProperty("user.dir") 	/home/walker/e/workspace_my/walker/walker-socket
 	public static String getPathRoot() {
 //        return new File("").getAbsolutePath(); 
 		URL url = Context.class.getResource("/");///walker/walker-socket/target/classes/
-		File f = new File(url.getFile());
-		try {
-			f = new File(f.getParent());
-			f = new File(f.getParent());
-			Tools.out("proj path", f.getAbsolutePath());
-		}catch (Exception e) {
-			throw new ErrorException("项目根路径异常", url);
+		if(url != null) {
+			File f = new File(url.getFile());
+			try {
+				f = new File(f.getParent());
+				f = new File(f.getParent());
+				Tools.out("proj path", f.getAbsolutePath());
+			}catch (Exception e) {
+				throw new ErrorException("项目根路径异常", url);
+			}
+			return f.getAbsolutePath();
+		}else {
+			return new File("").getAbsolutePath();
 		}
-		return f.getAbsolutePath();
 	}
 	/**
 	 * 根路径root
@@ -96,15 +100,20 @@ System.getProperty("user.dir") 	/home/walker/e/workspace_my/walker/walker-socket
 //		web项目需要配置于WEB-INF/classes 	spring.xml	 web.xml寻址classpath:   ? 
 //		System.setProperty("path_conf", "conf");
 		String res = "";
-		String root = Context.class.getResource("/").getPath();
+		URL url = Context.class.getResource("/");
+		if(url != null) {
+			String root = url.getPath();
+			if(root.contains("WEB-INF")) {
+				res = root;
+			}
+		}
+		if(res.length() == 0) {
+			res = getPathRoot(System.getProperty("path_conf", "conf"));
+		}
 //		/walker/walker-socket/target/classes/
 //		/home/walker/e/workspace_my/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/walker-web/WEB-INF/classes/
 
-		if(root.contains("WEB-INF")) {
-			res = root;
-		}else {
-			res = getPathRoot(System.getProperty("path_conf", "conf"));
-		} 
+		
 		
 		return res;
 	}

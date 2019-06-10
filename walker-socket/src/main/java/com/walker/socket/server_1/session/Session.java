@@ -3,6 +3,7 @@ package com.walker.socket.server_1.session;
 import org.apache.log4j.Logger;
 
 import com.walker.common.util.Bean;
+import com.walker.common.util.TimeUtil;
 import com.walker.core.route.SubPub;
 import com.walker.core.route.SubPubMgr;
 import com.walker.core.route.SubPub.OnSubscribe;
@@ -33,6 +34,10 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	 * mac
 	 */
 	String key = "";
+	/**
+	 * time
+	 */
+	String time = "";
 	
     /**
      * 路由 发布订阅
@@ -53,6 +58,13 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	}
 	public String getKey() {
 		return this.key;
+	}
+	public String getTime() {
+		return this.time;
+	}
+	public Session<T> setTime(String time) {
+		this.time = time;
+		return this;
 	}
 	public String getUser() {
 		return this.id;
@@ -102,6 +114,7 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 		sub.subscribe(getUser(), this);	//订阅当前登录用户userid
 		sub.subscribe("all_user", this);		//订阅所有登录用户
 		send(MsgBuilder.makeOnLogin(this, bean));
+		this.setTime(TimeUtil.getTimeYmdHms());
 		log.info("login ok " + this.toString() );
 	}
 	public void onUnLogin(Bean bean) {

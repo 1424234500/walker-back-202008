@@ -19,13 +19,11 @@ public class MonitorPlugin<T> extends Plugin<T>{
 	@Override
 	public void onData(Msg msg) {
 		Bean bean = (Bean)msg.getData();
-		Object res = msg;
+		Object res = null;
 //		session.send(new Bean().set("plugin", "echo").set("params", params).set("data", msg)
 //				.set("time", TimeUtil.getTimeYmdHmss()));
 		if(bean.get("type", "").equals("show")) {
 			res = SessionHandler.sessionService.show();
-		}else if(bean.get("type", "").equals("session")) {
-			res = SessionHandler.sessionService.getSessionList();
 		}
 		msg.setData(res);
 		

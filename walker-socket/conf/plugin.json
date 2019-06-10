@@ -20,6 +20,10 @@
 			class	:	com.walker.socket.server_1.plugin.MonitorPlugin,
 			on		:	true,
 		},
+		"session"	:	{
+			class	:	com.walker.socket.server_1.plugin.SessionPlugin,
+			on		:	true,
+		},
 		"echo"	:	{
 			class	:	com.walker.socket.server_1.plugin.EchoPlugin,
 			on		:	true,

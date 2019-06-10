@@ -10,12 +10,15 @@ import org.apache.log4j.NDC;
 
 import com.walker.common.setting.Setting;
 import com.walker.common.util.Bean;
+import com.walker.common.util.JsonUtil;
+import com.walker.common.util.Tools;
 import com.walker.core.aop.Fun;
 import com.walker.core.pipe.Pipe;
 import com.walker.core.pipe.PipeMgr;
 import com.walker.core.pipe.PipeMgr.Type;
 import com.walker.socket.server_1.Msg;
 import com.walker.socket.server_1.MsgBuilder;
+import com.walker.socket.server_1.SocketException;
 import com.walker.socket.server_1.plugin.PluginMgr;
 import com.walker.socket.server_1.plugin.aop.CountModel;
 
@@ -142,11 +145,29 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		List<Bean> res = new ArrayList<Bean>();
 		for(String key : index.keySet()) {
 			Session<T> session = index.get(key);
-			res.add(new Bean().set("ID", session.getUser()).set("KEY", session.getKey()));
+			res.add(new Bean().set("ID", session.getUser()).set("KEY", session.getKey()).set("TIME", session.getTime()));
 		}
 		return res;
 	}
 
     
-    
+    public static void main(String[] argv) throws SocketException {
+    	String msg1 = "{\"time_client\":1560161804160,\"data\":{},\"sfrom\":\"223.104.212.51:36052\",\"wait_size\":0,\"from\":\"\",\"to\":\"\",\"time_reveive\":1560161804162,\"type\":\"session\"}";
+    	Msg msg = new Msg(msg1);
+		Tools.out(msg);
+
+		CountModel.getInstance().onWait(msg);
+		Tools.out(msg);
+
+		PluginMgr.getInstance().doMsg(msg);
+		Tools.out(msg);
+
+		CountModel.getInstance().onDone(msg);
+
+		msg.setData(msg);
+		
+		Tools.out(msg);
+		
+		
+    }
 } 

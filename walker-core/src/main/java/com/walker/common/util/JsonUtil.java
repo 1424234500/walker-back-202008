@@ -92,9 +92,8 @@ public class JsonUtil {
         Iterator<?> it = jo.keys();  
         //遍历每个Key值  
         while (it.hasNext()) {  
-            //将key值转换为字符串  
-            String key = it.next().toString();  
-            Object object = jo.get(key);  
+            Object key = it.next();  
+            Object object = jo.get(String.valueOf(key));  
             if (object instanceof JSONArray) {  
                 JSONArray jaa = (JSONArray) object;  
                 map.put(key, toList(jaa));

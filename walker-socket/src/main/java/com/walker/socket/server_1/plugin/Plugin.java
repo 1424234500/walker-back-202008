@@ -60,15 +60,15 @@ public abstract class Plugin<T> {
 	 * 
 	 */
 	public void publish(Msg msg) {
-		String[] tos = msg.getUserTo();
+		Msg msgc = LangUtil.cloneObject(msg);
+
+		String[] tos = msgc.getUserTo();
 		//单端在线 记录未命中目标 向上传递
 		List<String> offUsers = new ArrayList<String>();
 		for(String to : tos) {
-			msg.setUserTo(to);
-
-			Msg msgNew = LangUtil.cloneObject(msg);
+			Msg msgNew = LangUtil.cloneObject(msgc);
 			msgNew.setUserTo(to);
-			List<Session<T>> onUsers = publish(to, msg);
+			List<Session<T>> onUsers = publish(to, msgNew);
 			log.info("publish " + to + " on " + onUsers.size() );
 			Tools.formatOut(onUsers);
 			
@@ -78,7 +78,7 @@ public abstract class Plugin<T> {
 		}
 		//存在未命中的目标 则向上传递
 		if(offUsers.size() > 0) {
-			Tools.out("未命中目标 向上传递", offUsers, msg);
+			Tools.out("未命中目标 向上传递", offUsers, msgc);
 		}
 	
 	}
