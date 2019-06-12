@@ -19,12 +19,12 @@ public class MsgBuilder {
 
 	public static <T> Object makeOnLogin(Session<T> session, Bean bean) {
 //		return new Bean().set(TYPE, TYPE_EVENT).set(DATA, bean.set("type", "onlogin"));
-		return new Msg().setType("onlogin").setData(bean.set("session", session));
+		return new Msg().setType("login").setData(bean.set("session", session).set("action", "login"));
 	}
 
 	public static <T> Object makeOnUnLogin(Session<T> session, Bean bean) {
 //		return new Bean().set(TYPE, TYPE_EVENT).set(DATA, bean.set("type", "onunlogin"));
-		return new Msg().setType("onunlogin").setData(bean.set("session", session));
+		return new Msg().setType("login").setData(bean.set("session", session).set("action", "unlogin"));
 	}
 
 	

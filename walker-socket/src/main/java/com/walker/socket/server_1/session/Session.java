@@ -99,7 +99,7 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	public void onConnect() {
 		sub.subscribe(getKey(), this); 	//订阅当前socket
 		sub.subscribe("all_socket", this);		//订阅所有socket
-		this.id = getKey();
+//		this.id = getKey();
 	}
 	public void onUnConnect() {
 		sub.unSubscribe(getKey(), this); 	//订阅当前socket
@@ -112,10 +112,10 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	public void onLogin(Bean bean) {
 		this.onUnLogin(bean);
 		this.id = bean.get("user", "");
+		this.setTime(TimeUtil.getTimeYmdHms());
 		sub.subscribe(getUser(), this);	//订阅当前登录用户userid
 		sub.subscribe("all_user", this);		//订阅所有登录用户
 		send(MsgBuilder.makeOnLogin(this, bean));
-		this.setTime(TimeUtil.getTimeYmdHms());
 		log.info("login ok " + this.toString() );
 	}
 	public void onUnLogin(Bean bean) {
