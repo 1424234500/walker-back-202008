@@ -23,6 +23,7 @@ import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.socket.server_1.Msg;
+import com.walker.socket.server_1.MsgBuilder;
 
 /**
  * 简易图形化控制模拟客户端 连理连接 收发消息 断开连接
@@ -71,8 +72,7 @@ public class ClientUI extends JFrame {
 		jtfSend2 = new JTextField(6);
 		jtfSend1.setText("server_1");
 		jtfSend2.setText(Tools.getRandomNum(10, 99, 2));
-//		jtfSend.setText("{\"cmd\":12,\"value0\":\"group\",\"value1\":\"100000\",\"value2\":\"text\",\"value3\":\"2017-05-24 00:03:31\",\"value4\":\"消息 "+ Tools.getNowTimeL() +"\"}");
-		jtfSend.setText("{type:message,to:\"all_socket\",from:222,data:{type:txt,body:hello} }");
+		jtfSend.setText(MsgBuilder.testMessageTo("all_socket", "hello").toString());
 
 		taShow = new JTextArea();
 
@@ -111,7 +111,7 @@ public class ClientUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String key = jtfSend2.getText();	//发往用户连接
 				try {
-					client.send("{type:login,data:{user:" + key + ",pwd:123456} }");
+					client.send(MsgBuilder.testLogin(key).toString());
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -122,7 +122,7 @@ public class ClientUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				out(client);
 				try {
-					client.send("{type:monitor,data:{type:show} }");
+					client.send(MsgBuilder.testMonitor().toString());
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -136,17 +136,11 @@ public class ClientUI extends JFrame {
 					future = ThreadUtil.scheduleAtFixedRate(new Runnable() {
 						public void run() {
 							count.addAndGet(1L);
-							Msg msg = new Msg();
-							msg.setType("message");
-							msg.setData("{type:txt,body:" + count.get() + "-up}");
-							msg.setUserTo("all_user");
-							msg.setTimeClient(System.currentTimeMillis());
 							try {
-								client.send(msg.toString());
+								client.send(MsgBuilder.testMessageTo("all_user", "up" + count.get() ).toString());
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-//							client.send("{data:{type:txt,body:" + count.get() + "-up-" + TimeUtil.getTimeSequence() + "},type:message,to:\"all_user\"}");				
 						}
 					}, 1000, 10, TimeUnit.MILLISECONDS);
 				}else {

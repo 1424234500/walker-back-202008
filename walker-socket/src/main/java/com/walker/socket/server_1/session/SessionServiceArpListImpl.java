@@ -16,6 +16,7 @@ import com.walker.core.aop.Fun;
 import com.walker.core.pipe.Pipe;
 import com.walker.core.pipe.PipeMgr;
 import com.walker.core.pipe.PipeMgr.Type;
+import com.walker.socket.server_1.Key;
 import com.walker.socket.server_1.Msg;
 import com.walker.socket.server_1.MsgBuilder;
 import com.walker.socket.server_1.SocketException;
@@ -145,11 +146,27 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		List<Bean> res = new ArrayList<Bean>();
 		for(String key : index.keySet()) {
 			Session<T> session = index.get(key);
-			res.add(new Bean().set("ID", session.getUser()).set("KEY", session.getKey()).set("TIME", session.getTime()));
+			res.add(new Bean().set(Key.USER, session.getUser()).set(Key.ID, session.getKey()).set(Key.TIME, session.getTime()));
 		}
 		return res;
 	}
-
+	@Override
+	public Session<T> isExists(Socket<T> socket, String user) {
+		Session<T> res = null;
+		if(socket != null) {
+			res = index.get(socket.key());
+		}else if(user.length() > 0) {
+			for(String key : index.keySet()) {
+				Session<T> session = index.get(key);
+				if(session.getUser().equals(user)) {
+					res = session;
+					break;
+				}
+			}
+		}
+		
+		return res;
+	}
     
     public static void main(String[] argv) throws SocketException {
     	String msg1 = "{\"time_client\":1560161804160,\"data\":{},\"sfrom\":\"223.104.212.51:36052\",\"wait_size\":0,\"from\":\"\",\"to\":\"\",\"time_reveive\":1560161804162,\"type\":\"session\"}";

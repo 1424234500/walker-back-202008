@@ -20,6 +20,16 @@ import com.walker.socket.server_1.session.Session;
 public abstract class Plugin<T> {
 	protected Logger log = Logger.getLogger(Plugin.class); 
 
+	final public static String KEY_LOGIN = "login";
+	final public static String KEY_MESSAGE = "message";
+	final public static String KEY_ECHO = "echo";
+	final public static String KEY_MONITOR = "monitor";
+	final public static String KEY_SESSION = "session";
+	final public static String KEY_EXCEPTION = "exception";
+
+	
+	
+	
 	/**
      * 路由 发布订阅
      * pub发布 key socket定向消息 或者 发布user频道消息

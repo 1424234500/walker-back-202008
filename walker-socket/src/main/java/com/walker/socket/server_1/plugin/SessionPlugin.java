@@ -23,6 +23,7 @@ public class SessionPlugin<T> extends Plugin<T>{
 		
 		Object res = SessionHandler.sessionService.getSessionList();
 		msg.setData(res);
+		msg.setStatus(1);
 		
 		publish(msg.getFrom(), msg);
 	}

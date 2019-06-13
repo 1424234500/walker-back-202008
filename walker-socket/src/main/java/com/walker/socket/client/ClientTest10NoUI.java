@@ -5,9 +5,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.walker.common.setting.Setting;
+import com.walker.common.util.Bean;
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
 import com.walker.socket.server_1.Msg;
+import com.walker.socket.server_1.MsgBuilder;
 /**
  * 保持每个连接发送频率
  * 逐步扩大连接数,当连接数最大
@@ -153,15 +155,12 @@ public class ClientTest10NoUI{
 
 	}
 	public void login(Client client) throws Exception {
-		client.send("{type:login,data:{user:" + Tools.getRandomNum(10, 99, 2) + ",pwd:123456} }");
+		client.send(MsgBuilder.testLogin(Tools.getRandomNum(10, 99, 2)).toString());
 	}
 	public void sendAllUser(Client client) throws Exception {
 		count.addAndGet(1L);
-		Msg msg = new Msg();
-		msg.setType("message");
-		msg.setData("{type:txt,body:" + count.get() + "-up}");
-		msg.setUserTo("all_user");
-		msg.setTimeClient(System.currentTimeMillis());
+		
+		Msg msg = MsgBuilder.testMessageTo("all_user", "b"+count);
 		client.send(msg.toString());
 	}
 	

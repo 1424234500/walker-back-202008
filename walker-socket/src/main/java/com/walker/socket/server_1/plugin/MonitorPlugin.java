@@ -18,21 +18,8 @@ public class MonitorPlugin<T> extends Plugin<T>{
 
 	@Override
 	public void onData(Msg msg) {
-		Bean bean = (Bean)msg.getData();
-		Object res = null;
-//		session.send(new Bean().set("plugin", "echo").set("params", params).set("data", msg)
-//				.set("time", TimeUtil.getTimeYmdHmss()));
-		if(bean.get("type", "").equals("show")) {
-			res = SessionHandler.sessionService.show();
-		}
+		Object res = SessionHandler.sessionService.show();
 		msg.setData(res);
-		
-		//模拟存储耗时
-//		try {
-//			Thread.sleep(10);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
 		
 		publish(msg.getFrom(), msg);
 	}

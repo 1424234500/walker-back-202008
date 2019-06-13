@@ -17,3 +17,13 @@ mvn clean package -Dmaven.test.skip=true
 
 ###打包&上传
 ./do [ socket | core ]
+
+
+
+###添加插件接口
+修改conf/plugin.json
+1.添加plugin
+2.在com.walker.socket.server_1.plugin.Plugin中添加名称常量
+
+###Map Bean 键值对 键全大写!
+###所有消息键以Msg常量 所有plugin名以Plugin中常量

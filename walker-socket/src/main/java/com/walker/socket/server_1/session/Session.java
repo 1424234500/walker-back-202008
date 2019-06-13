@@ -8,8 +8,10 @@ import com.walker.core.route.SubPub;
 import com.walker.core.route.SubPubMgr;
 import com.walker.core.route.SubPub.OnSubscribe;
 import com.walker.core.route.SubPub.Res;
+import com.walker.socket.server_1.Key;
 import com.walker.socket.server_1.Msg;
 import com.walker.socket.server_1.MsgBuilder;
+import com.walker.socket.server_1.plugin.Plugin;
 
 /**
  * 会话 关联socket user
@@ -105,24 +107,25 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 		sub.unSubscribe(getKey(), this); 	//订阅当前socket
 		sub.unSubscribe("all_socket", this);	//订阅所有socket
 	}
+	
 	/**
 	 * 登录成功后 订阅用户消息 单聊群聊特殊规则
 	 * 注册Rarp ip -> session
 	 */
 	public void onLogin(Bean bean) {
 		this.onUnLogin(bean);
-		this.id = bean.get("user", "");
+		this.id = bean.get(Key.USER, "");
 		this.setTime(TimeUtil.getTimeYmdHms());
 		sub.subscribe(getUser(), this);	//订阅当前登录用户userid
 		sub.subscribe("all_user", this);		//订阅所有登录用户
-		send(MsgBuilder.makeOnLogin(this, bean));
 		log.info("login ok " + this.toString() );
 	}
 	public void onUnLogin(Bean bean) {
+		this.id = "";
+		this.setTime("");
 		sub.unSubscribe(getUser(), this);	//订阅当前登录用户userid
 		sub.unSubscribe("all_user", this);		//订阅所有登录用户
 		setUser("");
-//		send(MsgBuilder.makeOnUnLogin(this, bean));
 		log.info("unlogin ok " + this.toString() );
 	}
 
@@ -135,14 +138,25 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	@Override
 	public Res<Session<T>> onSubscribe(Msg msg) {
 //		log.debug("onSubscribe " + msg);
-		if(msg.getType().equals("login")) {
-			this.onLogin((Bean) msg.getData());
-		}else if(msg.getType().equals("monitor")) {
+		int status = msg.getStatus();
+		msg.setTo(getKey());
+
+		if(msg.getType().equals(Plugin.KEY_LOGIN)) {
+			Bean bean = (Bean) msg.getData();
+			if(status == 0) {
+				this.onLogin(bean);
+				bean.set(Key.USER, getUser());
+				bean.set(Key.ID, getKey());
+			}else {
+				this.onUnLogin(bean);
+			}
+		}
+		if(msg.getType().equals("monitor")) {	//data格式化不能json
 			send(msg.getData());
 		}else {
-			msg.setTo(getKey());
 			send(msg);
 		}
+
 		//模拟写入socket耗时
 //		ThreadUtil.sleep(20);
 		

@@ -15,6 +15,9 @@ import com.walker.socket.server_1.session.Session;
  * 
  * who 发来了一条消息  session:socket:key
  * {type:login,data:{user:walker,pwd:1234,device:xxxxx} }	
+ * 				{type:login,status:0,data:{user:walker,pwd:1234,device:xxxxx} }	
+ * 				{type:login,status:1,info:重复id,data:{user:walker,pwd:1234,device:xxxxx} }	
+ * 
  * {type:message,data:{user:walker,pwd:1234} }		
  * 
  * 客户端写入数据
@@ -27,31 +30,35 @@ import com.walker.socket.server_1.session.Session;
  */
 @SuppressWarnings("unchecked")
 public class Msg extends Bean implements Cloneable{
-	private static final long serialVersionUID = 1L;
+	public static final long serialVersionUID = 1L;
 	final public static String SPLIT = ",";
 	
 	//系统上下文 函数调用控制
 
 	//记录关键时间节点 统计计算
 	//time_client - 网络传输耗时 - time_receive - 队列等待耗时 - time_do - 业务处理耗时 - time_send
-	final private static String KEY_TIME_CLIENT = "time_client";	//client send time
-	final private static String KEY_TIME_RECEIVE = "time_reveive";	//server receive time to pipe
-	final private static String KEY_TIME_DO = "time_do";			//server consumer time
-	final private static String KEY_TIME_SEND = "time_send";		//server send time
+	final public static String KEY_TIME_CLIENT = "TC";	//client send time
+	final public static String KEY_TIME_RECEIVE = "TR";	//server receive time to pipe
+	final public static String KEY_TIME_DO = "TD";			//server consumer time
+	final public static String KEY_TIME_SEND = "TS";		//server send time
 	
-	final private static String KEY_WAIT_SIZE = "wait_size";		//pipe 队列等待深度
-	final private static String KEY_INFO = "info";					//about
+	final public static String KEY_WAIT_SIZE = "WS";		//pipe 队列等待深度
+	final public static String KEY_INFO = "INFO";					//about
 
 	
 	//记录socket收发ip port key
-	final private static String KEY_FROM = "sfrom";	//socket from
-	final private static String KEY_TO = "sto";		//socket to
+	final public static String KEY_FROM = "SF";	//socket from
+	final public static String KEY_TO = "ST";		//socket to
 	//记录业务 类型 参数
-	final private static String KEY_TYPE = "type";	//plugin type
-	final private static String KEY_USER_FROM = "from";	//user from
-	final private static String KEY_USER_TO = "to";		//user to
+	final public static String KEY_TYPE = "TYPE";	//plugin type
+	final public static String KEY_USER_FROM = "FROM";	//user from
+	final public static String KEY_USER_TO = "TO";		//user to
 	
-	final private static String KEY_DATA = "data";	//msg data bean
+	final public static String KEY_STATUS = "STATUS";	//msg res status
+	final public static String KEY_DATA = "DATA";	//msg data bean
+
+	
+	
 	
 	
 	public Msg() {}
@@ -103,6 +110,7 @@ public class Msg extends Bean implements Cloneable{
 		this.set(KEY_DATA, data);
 		return this;
 	}
+	
 	public String getFrom() {
 		return this.get(KEY_FROM, "");
 	}
@@ -115,8 +123,13 @@ public class Msg extends Bean implements Cloneable{
 	public <T> T getData() {
 		return (T)this.get(KEY_DATA);
 	}
-	
-	
+	public Msg setStatus(int status) {
+		this.set(KEY_STATUS, status);
+		return this;
+	}
+	public int getStatus() {
+		return this.get(KEY_STATUS, -1);
+	}
 
 	public Msg setUserFrom(String from) {
 		this.set(KEY_USER_FROM, from);

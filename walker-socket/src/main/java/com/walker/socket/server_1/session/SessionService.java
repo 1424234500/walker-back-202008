@@ -24,6 +24,11 @@ public interface SessionService<T> {
 	 */
 	List<Bean> getSessionList();
 	/**
+	 * 是否已存在 登录校验
+	 */
+	Session<T> isExists(Socket<T> socket, String id);
+	
+	/**
 	 * 添加连接
 	 * @param socket
 	 */

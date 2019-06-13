@@ -13,7 +13,7 @@ public class EchoPlugin<T> extends Plugin<T>{
 	public void onData(Msg msg) {
 //		session.send(new Bean().set("plugin", "echo").set("params", params).set("data", msg)
 //				.set("time", TimeUtil.getTimeYmdHmss()));
-		msg.setType("echo");
+		msg.setStatus(1);
 		msg.setInfo("from echo");
 		publish(msg.getFrom(), msg);
 	}
