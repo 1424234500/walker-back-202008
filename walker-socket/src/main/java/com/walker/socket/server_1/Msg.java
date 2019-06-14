@@ -9,6 +9,7 @@ import com.walker.common.util.ArraysUtil;
 import com.walker.common.util.Bean;
 import com.walker.common.util.JsonUtil;
 import com.walker.socket.server_1.session.Session;
+import com.walker.socket.server_1.session.User;
 
 /**
  * socket 传递 消息结构 
@@ -51,8 +52,8 @@ public class Msg extends Bean implements Cloneable{
 	final public static String KEY_TO = "ST";		//socket to
 	//记录业务 类型 参数
 	final public static String KEY_TYPE = "TYPE";	//plugin type
-	final public static String KEY_USER_FROM = "FROM";	//user from
-	final public static String KEY_USER_TO = "TO";		//user to
+	final public static String KEY_USER_FROM = "FROM";	//user from	user a -> user b
+	final public static String KEY_USER_TO = "TO";		//user to	user a -> group
 	
 	final public static String KEY_STATUS = "STATUS";	//msg res status
 	final public static String KEY_DATA = "DATA";	//msg data bean
@@ -87,9 +88,7 @@ public class Msg extends Bean implements Cloneable{
 		this.setFrom(session.getKey());
 		
 		//设置userFrom当前用户 若消息包含了from 则不设置 允许顶替发消息
-		if(this.getUserFrom().length() == 0) {
-			this.setUserFrom(session.getUser());
-		}
+		this.setUserFrom(session.getUser());
 		
 	}
 	
@@ -130,11 +129,20 @@ public class Msg extends Bean implements Cloneable{
 	public int getStatus() {
 		return this.get(KEY_STATUS, -1);
 	}
-
-	public Msg setUserFrom(String from) {
+	/**
+	 * 来源 User结构体
+	 * @param from
+	 * @return
+	 */
+	public Msg setUserFrom(Bean from) {
 		this.set(KEY_USER_FROM, from);
 		return this;
 	}
+	/**
+	 * 去向 id1,id2,id3 字符串 订阅处自行设置to实体User
+	 * @param to
+	 * @return
+	 */
 	public Msg setUserTo(String to) {
 		List<String> list = Arrays.asList(to.split(SPLIT));
 		Set<String> set = ArraysUtil.asSet(list.toArray(new String[0]));
@@ -163,8 +171,8 @@ public class Msg extends Bean implements Cloneable{
 	public String[] getUserTo() {
 		return this.get(KEY_USER_TO, "").split(SPLIT);
 	}
-	public String getUserFrom() {
-		return this.get(KEY_USER_FROM, "");
+	public User getUserFrom() {
+		return new User(this.get(KEY_USER_FROM, new Bean()));
 	}
 	
 

@@ -26,7 +26,7 @@ public interface SessionService<T> {
 	/**
 	 * 是否已存在 登录校验
 	 */
-	Session<T> isExists(Socket<T> socket, String id);
+	public Session<T> getSession(String socketKey, String userId);
 	
 	/**
 	 * 添加连接

@@ -19,7 +19,7 @@ public class MsgBuilder {
 	 */
 	public static Msg testLogin(Object user) {
 		return new Msg().setType(Plugin.KEY_LOGIN)
-				.setData(new Bean().set(Key.USER, user).set(Key.PWD, "123456"))
+				.setData(new Bean().set(Key.ID, "id:"+user).set(Key.NAME, user).set(Key.PWD, "123456"))
 				.setTimeClient(System.currentTimeMillis());
 	}
 	/**
@@ -36,6 +36,13 @@ public class MsgBuilder {
 		return new Msg().setType(Plugin.KEY_MESSAGE)
 				.setData(new Bean().set(Key.TYPE, Key.TEXT).set(Key.TEXT, body))
 				.setUserTo(to)
+				.setTimeClient(System.currentTimeMillis());
+	}
+	
+
+	public static Msg makeSession( Object data) {
+		return new Msg().setType(Plugin.KEY_SESSION)
+				.setData(data)
 				.setTimeClient(System.currentTimeMillis());
 	}
 	

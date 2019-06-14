@@ -28,12 +28,9 @@ import com.walker.socket.server_1.plugin.Plugin;
 public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	private static Logger log = Logger.getLogger(Session.class); 
 
+	User user = new User();
 	/**
-	 * ip
-	 */
-	String id = "";
-	/**
-	 * mac
+	 * socket ip:port
 	 */
 	String key = "";
 	/**
@@ -68,12 +65,8 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 		this.time = time;
 		return this;
 	}
-	public String getUser() {
-		return this.id;
-	}
-	public Session<T> setUser(String id) {
-		this.id = id;
-		return this;
+	public User getUser() {
+		return this.user;
 	}
 	/**
 	 * 判定session是否相同
@@ -93,7 +86,7 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	
 	 
 	public Boolean isLogin() {
-		return getUser().length() != 0;
+		return getUser().getId().length() != 0;
 	}
 	/**
 	 * 长连接成功后 订阅socket消息
@@ -114,18 +107,23 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	 */
 	public void onLogin(Bean bean) {
 		this.onUnLogin(bean);
-		this.id = bean.get(Key.USER, "");
+		User user = getUser();
+		user.setId(bean.get(Key.ID, ""));
+		user.setName(bean.get(Key.NAME, ""));
+		user.setPwd(bean.get(Key.PWD, ""));
 		this.setTime(TimeUtil.getTimeYmdHms());
-		sub.subscribe(getUser(), this);	//订阅当前登录用户userid
+		sub.subscribe(user.getId(), this);	//订阅当前登录用户userid
 		sub.subscribe("all_user", this);		//订阅所有登录用户
 		log.info("login ok " + this.toString() );
 	}
 	public void onUnLogin(Bean bean) {
-		this.id = "";
-		this.setTime("");
-		sub.unSubscribe(getUser(), this);	//订阅当前登录用户userid
+		User user = getUser();
+		sub.unSubscribe(user.getId(), this);	//订阅当前登录用户userid
 		sub.unSubscribe("all_user", this);		//订阅所有登录用户
-		setUser("");
+		user.setId("");
+		user.setName("");
+		user.setPwd("");
+		this.setTime("");
 		log.info("unlogin ok " + this.toString() );
 	}
 
@@ -139,14 +137,13 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	public Res<Session<T>> onSubscribe(Msg msg) {
 //		log.debug("onSubscribe " + msg);
 		int status = msg.getStatus();
-		msg.setTo(getKey());
+//		msg.setTo(getKey());	//单聊可以替换 但群聊 不能 
 
 		if(msg.getType().equals(Plugin.KEY_LOGIN)) {
 			Bean bean = (Bean) msg.getData();
 			if(status == 0) {
 				this.onLogin(bean);
 				bean.set(Key.USER, getUser());
-				bean.set(Key.ID, getKey());
 			}else {
 				this.onUnLogin(bean);
 			}

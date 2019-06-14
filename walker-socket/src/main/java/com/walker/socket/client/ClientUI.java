@@ -123,6 +123,7 @@ public class ClientUI extends JFrame {
 				out(client);
 				try {
 					client.send(MsgBuilder.testMonitor().toString());
+					client.send(MsgBuilder.makeSession(null).toString());
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}

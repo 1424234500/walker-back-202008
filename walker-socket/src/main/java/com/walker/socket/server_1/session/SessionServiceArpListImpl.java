@@ -129,7 +129,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		String key = socket.key();
 		Session<T> session = index.get(key);
 		if(session != null) {
-			Msg msg = new Msg(obj.toString(), session);
+			Msg msg = new Msg(obj.toString(), session);	//集成发送者的信息  禁止冒名顶替
 			msg.setWaitSize(pipe.size());
 //			pipe.put(msg);
 			CountModel.getInstance().onNet(msg);
@@ -146,19 +146,19 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		List<Bean> res = new ArrayList<Bean>();
 		for(String key : index.keySet()) {
 			Session<T> session = index.get(key);
-			res.add(new Bean().set(Key.USER, session.getUser()).set(Key.ID, session.getKey()).set(Key.TIME, session.getTime()));
+			res.add(new Bean().set(Key.USER, session.getUser()).set(Key.KEY, session.getKey()).set(Key.TIME, session.getTime()));
 		}
 		return res;
 	}
 	@Override
-	public Session<T> isExists(Socket<T> socket, String user) {
+	public Session<T> getSession(String socketKey, String userId) {
 		Session<T> res = null;
-		if(socket != null) {
-			res = index.get(socket.key());
-		}else if(user.length() > 0) {
+		if(socketKey.length() > 0) {
+			res = index.get(socketKey);
+		}else if(userId.length() > 0) {
 			for(String key : index.keySet()) {
 				Session<T> session = index.get(key);
-				if(session.getUser().equals(user)) {
+				if(session.getUser().getId().equals(userId)) {
 					res = session;
 					break;
 				}

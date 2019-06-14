@@ -12,7 +12,7 @@ public class AuthAop<T> extends Aop<T>{
 
 	@Override
 	public void doAop(Msg msg) throws SocketException {
-		if(msg.getUserFrom().length() == 0) {
+		if(msg.getUserFrom().isValid()) {
 			String tip = this.params.get("tip", "") + msg.getData();
 			log.warn(tip);
 			error(tip);
