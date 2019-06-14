@@ -90,6 +90,10 @@ public class Msg extends Bean implements Cloneable{
 		//设置userFrom当前用户 若消息包含了from 则不设置 允许顶替发消息
 		this.setUserFrom(session.getUser());
 		
+		//默认发给自己
+		if(getTo().length() == 0) {
+			setTo(session.getUser().getId());
+		}
 	}
 	
 	

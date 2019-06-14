@@ -39,5 +39,7 @@ public class Key {
 
 	final public static String INFO = "INFO";	
 	final public static String ABOUT = "ABOUT";	
+	
+	final public static String SOCKET = "SOCKET";	
 
 }
