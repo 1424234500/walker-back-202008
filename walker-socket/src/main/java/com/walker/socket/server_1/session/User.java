@@ -67,6 +67,15 @@ public class User extends Bean{
 	public boolean isValid() {
 		return this.getId().length() > 0;
 	}
+	@Override
+	public String toString() {
+		String pwd = getPwd();
+		setPwd("");
+		String res = super.toString();
+		setPwd(pwd);
+		return res;
+	}
+	
 	
 
 
