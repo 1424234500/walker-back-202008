@@ -21,6 +21,8 @@ fromfile_temp=~/temp/${tofile_name}
 #目标服务器路径
 server='walker@39.106.111.11'
 todir="/home/walker/${name_proj}"
+todir="/home/walker/apache-tomcat-8.5.42/webapps/${name_proj}"
+
 
 echo "打包路径 pwd ${root} "
 echo "项目名 name_proj ${name_proj}"
