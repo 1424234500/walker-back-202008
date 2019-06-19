@@ -88,7 +88,7 @@ function do_main(){
 
 function do_init(){
     method=$1
-    if [[ "$method" != "" ]]
+    if [[ "${method}" != "" ]]
     then
         rootParams=($@)
         params=(${rootParams[@]:1})

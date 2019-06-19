@@ -59,7 +59,7 @@ public class Provider extends TestAdapter{
 		log.info("***初始化开始---------------------- ");
 //		getContext();
 //		独立启动
-		com.alibaba.dubbo.container.Main.main(new String[] {"dubbo-provider.xml"});
+//		com.alibaba.dubbo.container.Main.main(new String[] {"dubbo-provider.xml"});
 		
 		log.info("**!初始化完毕------------------- ");
 		

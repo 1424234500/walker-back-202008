@@ -65,7 +65,7 @@ public class JobQpsMinute extends TaskJob{
 					for(String key : keys) {
 						String plugin = key.substring(key.lastIndexOf(":") + 1);	//message
 						Long before = mapLastCountItem.get(plugin, 0L);
-						Long after = Long.parseLong(jedis.get(key));
+						Long after = Long.valueOf(jedis.get(key));
 						Long count = after - before;
 						mapLastCountDetaItem.set(plugin, count);
 						Long qps = (long) Math.ceil( 1.0 * count / detaTime);	//message	*net:qps:232    
@@ -79,7 +79,7 @@ public class JobQpsMinute extends TaskJob{
 					for(String key : keys) {	//stat:time:net:message
 						String plugin = key.substring(key.lastIndexOf(":") + 1);	//message
 						Long before = mapLastTimeItem.get(plugin, 0L);
-						Long after = Long.parseLong(jedis.get(key));
+						Long after = Long.valueOf(jedis.get(key));
 						Long cost = after - before;
 						Long count = mapLastCountDetaItem.get(plugin, 0L);
 						count = count <= 0 ? 1 : count;

@@ -45,30 +45,30 @@ pids="ps -ef | grep "$greparg" | grep -v grep | cut -c 9-15"
   
 ##------------------------------------------
 function start(){
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    if [[ "{$ids}" != "" ]]
     then
         pid
     else
-        tcmd="nohup $cmd  > $logfile &"
+        tcmd="nohup ${cmd}  > ${logfile} &"
         line
-        echo $tcmd
-        eval $tcmd
+        echo ${tcmd}
+        eval ${tcmd}
         pid
         log
     fi
 }
 function stop(){    
-    ids=`eval $pids`
-    tcmd="kill -9 $ids"
+    ids=`eval ${pids}`
+    tcmd="kill -9 ${ids}"
     line
-    echo $tcmd
-    eval $tcmd
+    echo ${tcmd}
+    eval ${tcmd}
     pid
 }
 function restart(){
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    if [[ "${ids}" != "" ]]
     then
         stop
     else
@@ -79,16 +79,16 @@ function restart(){
 
 function log(){
     line
-    echo $taillog
-    eval $taillog
+    echo ${taillog}
+    eval ${taillog}
 }
 function pid(){
     # echo $pids
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    if [[ "${ids}" != "" ]]
     then
         echo 'Have been started, Pids:'
-        echo $ids
+        echo ${ids}
     else
         echo 'Stoped ! '
     fi
@@ -111,7 +111,7 @@ function do_main(){
 
 function do_init(){
     method=$1
-    if [[ "$method" != "" ]]
+    if [[ "${method}" != "" ]]
     then
         rootParams=($@)
         params=(${rootParams[@]:1})

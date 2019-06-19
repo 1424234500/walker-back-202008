@@ -17,10 +17,12 @@ echo "项目名 name_proj ${name_proj}"
 ##-----------------------------------------
 jarf="${name_proj}-0.0.1-SNAPSHOT.jar"
 echo "jar file $jarf"
-cmd="java -jar ${jarf}"
-logfile='log/base.log'
+cmd="./startup.sh"
+tomcat="/home/walker/apache-tomcat-8.5.42"
+
+logfile='log/server.sh.log'
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
-greparg=${jarf}
+greparg='tomcat'
 about="
 Ctrl the server start/stop/log/pid/help.    \n
 Usage: 
@@ -50,7 +52,9 @@ function start(){
     then
         pid
     else
-        tcmd="nohup $cmd  > $logfile &"
+    	echo ${tomcat}
+    	cd ${tomcat}
+        tcmd=" $cmd  > $logfile "
         line
         echo $tcmd
         eval $tcmd
