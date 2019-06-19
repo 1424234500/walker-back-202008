@@ -182,8 +182,8 @@ public class FileControll extends BaseControll{
     @RequestMapping("/download.do")  
     public void download(HttpServletRequest request,HttpServletResponse response) throws Exception{  
     	Watch w = new Watch("download");
-    	String path = getValue(request, "path");
-    	String key = getValue(request, "key");
+    	String path = getValue(request, "PATH");
+    	String key = getValue(request, "KEY");
 //		String path1 = new String(path.getBytes("iso-8859-1"), "gbk");
 //		String path3 = URLDecoder.decode(path, "utf-8");
 //		String path4 = URLDecoder.decode(path);
@@ -213,7 +213,7 @@ public class FileControll extends BaseControll{
 	        OutputStream os = null;
 	        try{
 	        	os = response.getOutputStream();
-	        	 int length = FileUtil.readFile(path, os);
+	        	int length = FileUtil.readFile(path, os);
 	 	        echo (length > 0, ""+length, w.toString());
 	        }catch(Exception e) {
 	        	w.exceptionWithThrow(e, log);
@@ -228,7 +228,7 @@ public class FileControll extends BaseControll{
      * 上传文件
      * 存入文件系统 path路径
      * 
-     * 生产key 存入数据库映射路径和key
+     * 生产key 存入数据库映射路径和key 以md5为key 文件去重
      * 序列 返回key
      * 
      */
@@ -257,7 +257,8 @@ public class FileControll extends BaseControll{
             FileUtil.saveFile(is, path, false);
             //记录文件上传下载情况 并打印
             // id,fileid,type(up/down),costtime(ms),time
-            String key = fileService.upload(getUser().getId(), name, path, ""); 
+            long crc = FileUtil.checksumCrc32(new File(path));
+            String key = fileService.upload("" + crc, getUser().getId(), name, path, ""); 
             res = key.equals("0");
             fileService.fileUpDown(key, "up", w.getTimeAll()+""); 
             echo(res, key, path);

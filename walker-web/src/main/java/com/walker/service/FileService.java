@@ -11,7 +11,7 @@ public interface FileService  {
 	/**
 	 * 上传文件
 	 */ 
-	public String upload(String id, String name, String path, String about);
+	public String upload(String key, String id, String name, String path, String about);
 	
 	/**
 	 * 文件上传或者下载记录 fileId up/down 耗时detaTime

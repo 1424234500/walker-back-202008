@@ -17,10 +17,10 @@ echo "项目名 name_proj ${name_proj}"
 ##-----------------------------------------
 jarf="${name_proj}-0.0.1-SNAPSHOT.jar"
 echo "jar file $jarf"
-cmd="./startup.sh"
+cmd=". startup.sh"
 tomcat="/home/walker/apache-tomcat-8.5.42"
 
-logfile='log/server.sh.log'
+logfile='logs/web.log'
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
 greparg='tomcat'
 about="
@@ -40,6 +40,7 @@ var=${logfile%/*}
 [ ! -d ${var} ] && mkdir -p ${var}
 
 taillog='tail -n 200 -f '"$logfile"
+taillog='tail -n 200 -f '"/home/walker/logs/web.log"
 #如何将变量中的值取出来作为绝对字符串'' 所以暂用直接获取pids
 pids="ps -ef | grep "$greparg" | grep -v grep | cut -c 9-15"
 #通过ps管道删除接收
@@ -52,8 +53,8 @@ function start(){
     then
         pid
     else
-    	echo ${tomcat}
-    	cd ${tomcat}
+    	echo "${tomcat}/bin"
+    	cd ${tomcat}/bin
         tcmd=" $cmd  > $logfile "
         line
         echo $tcmd

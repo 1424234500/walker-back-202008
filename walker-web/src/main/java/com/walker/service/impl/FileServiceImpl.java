@@ -102,18 +102,26 @@ public class FileServiceImpl implements FileService,Serializable {
 	}
 
 	@Override
-	public String upload(String id, String name, String path, String about) {
+	public String upload(String key, String id, String name, String path, String about) {
 		File file = new File(path);
 		String filesize = ""+file.length();
 		String type = FileUtil.getFileType(name);
 		String changetime = Tools.formatL(new Date(file.lastModified()));
 		about = Tools.cutString(about, 500);
 //		String key = baseDao.getString("select SEQ_fileinfo.Nextval from dual");
-		String key = LangUtil.getGenerateId();
-		int res = baseDao.executeSql("insert into fileinfo"
-				+ "(id,                   uptime, name,filesize,  type,path,changetime               ,about,upuserid ) values "
-				+ "(?, ?,?    ,?      ,  ?   ,?    ,?,?, ?   ) "
-				                                 , key, name, TimeUtil.getTimeYmdHmss(),filesize ,type,path,TimeUtil.getTimeYmdHmss()               ,about, id   );
+//		String key = LangUtil.getGenerateId();
+		String parent = new File(path).getPath();
+		Map<String, Object> map = baseDao.findOne("select * from fileinfo where id=? and path like ? ", key, parent + "%");
+		int res = 0;
+
+		if(map != null) {
+			res = baseDao.executeSql("delete from fileinfo where id=? and path like ? ",  key, parent + "%");
+			log.info("该文件已经存在 相同key " + map + " " + path + " delete " + res);
+		}
+		res = baseDao.executeSql("insert into fileinfo"
+			+ "(id,                   uptime, name,filesize,  type,path,changetime               ,about,upuserid ) values "
+			+ "(?, ?,?    ,?      ,  ?   ,?    ,?,?, ?   ) "
+			                                 , key, name, TimeUtil.getTimeYmdHmss(),filesize ,type,path,TimeUtil.getTimeYmdHmss()               ,about, id   );
 		if(res == 1){
 			return key;
 		}

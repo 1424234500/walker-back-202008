@@ -691,7 +691,13 @@ public class FileUtil {
 	static String calcSize(int length) {
 		return calcSize(1L * length);
 	}
-
+	/**
+	 * crc校验文件唯一
+	 * @throws IOException 
+	 */
+	public static long checksumCrc32(File file) throws IOException {
+		return FileUtils.checksumCRC32(file);
+	}
 	/**
 	 * 检查文件类型
 	 * 
