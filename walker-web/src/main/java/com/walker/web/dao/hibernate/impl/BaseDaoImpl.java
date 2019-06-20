@@ -128,7 +128,7 @@ public class BaseDaoImpl implements BaseDao  {
 	public void setObjectsToSql(SQLQuery q, Object...objects){
 		if (objects != null &&  objects.length > 0) {
 			for (int i = 0; i < objects.length; i++) {
-				q.setParameter(i, objects[i]);
+				q.setParameter(i+1, objects[i]);
 			}
 		}
 		out(SqlUtil.makeSql(q.getQueryString(), objects)); 

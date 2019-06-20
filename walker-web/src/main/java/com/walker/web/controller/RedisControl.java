@@ -34,7 +34,6 @@ public class RedisControl extends BaseControll {
 	} 
 	
 	
-	
 	@RequestMapping("/statics.do") 
 	public void statis(HttpServletRequest request, HttpServletResponse response){ 
 		  
@@ -45,17 +44,21 @@ public class RedisControl extends BaseControll {
 //		                 { name: '线条2',    type: 'line',   data: [y1, y2, y3, y4],  }, 
 //				]
 
-		String from = getValue(request, "from");
-		String to = getValue(request, "to");
+		String from = getValue(request, "FROM");
+		String to = getValue(request, "TO");
 		String format = "yyyy-MM-dd mm";
-		
 		List<String> listXs = new ArrayList<>();
 		List<Bean> series = new ArrayList<>();
-		Redis.doJedis(new Fun<Object>() {
+		Bean newArg = Redis.doJedis(new Fun<Bean>() {
 			@Override
-			public Object make(Jedis jedis) {
-				Set<String> keys = jedis.keys("stat:statis:*");
-				if(keys.size() <= 0) return false;
+			public Bean make(Jedis jedis) {
+				String fromNew = from;
+				String toNew = to;
+				
+				String start = "stat:statis:";
+				
+				Set<String> keys = jedis.keys(start + "*");
+				if(keys.size() <= 0) return null;
 				double min = 0, max = 0;
 				double deta = 10 * 60 * 1000;
 				if(from.length() == 0 && to.length() == 0) {//取redis存储的最近deta
@@ -63,17 +66,20 @@ public class RedisControl extends BaseControll {
 					Set<Tuple> set = jedis.zrevrangeWithScores(String.valueOf(keys.toArray()[0]), 0, 0);
 					max = set.toArray(new Tuple[0])[0].getScore();
 					min = max - deta;
+					fromNew = TimeUtil.format((long)min, format);
+					toNew = TimeUtil.format((long)max, format);
 				}else if(from.length() == 0) {//取to之前的deta
 					max = TimeUtil.format(to, format).getTime();
 					min = max - deta;
+					fromNew = TimeUtil.format((long)min, format);
 				}else if(to.length() == 0) {//取from到from + deta
 					min = TimeUtil.format(from, format).getTime();
 					max = min + deta;
+					toNew = TimeUtil.format((long)max, format);		
 				}
 				deta = max - min;
 				
 				for(String key : keys) {
-					String name = key;
 					String type = "bar";
 					if(listXs.size() == 0) {
 						Set<Tuple> rowWithScore = jedis.zrangeByScoreWithScores(key, min, max);
@@ -94,20 +100,27 @@ public class RedisControl extends BaseControll {
 					line.add(lineQpsWait);
 					line.add(lineQpsDone);
 					
+					List<List<String>> lineAve = new ArrayList<>();
 					List<String> lineAveNet = new ArrayList<>();
 					List<String> lineAveWait = new ArrayList<>();
 					List<String> lineAveDone = new ArrayList<>();
+					lineAve.add(lineAveNet);
+					lineAve.add(lineAveWait);
+					lineAve.add(lineAveDone);
+					
 					Set<String> row = jedis.zrangeByScore(key, min, max);
 					for(String col : row) {
-						lineQpsNet.add(col.split(" ")[5]);
-						lineQpsWait.add(col.split(" ")[10]);
-						lineQpsDone.add(col.split(" ")[15]);
+						String[] cc = col.split(" +");
+						lineQpsNet.add(cc[4]);
+						lineQpsWait.add(cc[9]);
+						lineQpsDone.add(cc[14]);
 
-						lineAveNet.add(col.split(" ")[7]);
-						lineAveWait.add(col.split(" ")[12]);
-						lineAveDone.add(col.split(" ")[17]);
+						lineAveNet.add(cc[6]);
+						lineAveWait.add(cc[11]);
+						lineAveDone.add(cc[16]);
 					}
 					
+					String name = key.substring(start.length());
 					series.add(new Bean()
 							.put("name", name +":net")	//该线条的名字
 							.put("type", type)	//该线条的显示方式line bar pie
@@ -127,7 +140,7 @@ public class RedisControl extends BaseControll {
 							.put("data", line.get(2))	//该线条的y值集合
 					);
 				}
-				return true;
+				return new Bean().put("FROM", fromNew).put("TO", toNew);
 			}
 		});
 		
@@ -153,7 +166,9 @@ public class RedisControl extends BaseControll {
 				;
 		 
 		Bean res = new Bean()
-				.put("res", "true")
+				.put("format", format)
+				.put("arg", newArg)
+				.put("res", newArg == null)
 				.put("option", option) 
 				.put("info", RequestUtil.getRequestBean(request)); 
 		log(res);

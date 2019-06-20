@@ -59,6 +59,7 @@
 	</bean>
 	
 	<!-- org.apache.commons.dbcp.BasicDataSource  -->
+	<!-- 
 	<bean id="dataSourceDbcp" class="org.apache.commons.dbcp.BasicDataSource"   destroy-method="close">
 		<property name="driverClassName" value="${jdbc.mysql.DriverClass}"/>
 		<property name="url" value="${jdbc.mysql.JdbcUrl}"/>
@@ -76,17 +77,14 @@
 		<property name="testOnReturn" value="false"/>
 		<property name="validationQuery" value="select 1 from dual"  />
 	</bean>
-
+ 	-->
   
 	<!-- mybatis --> 
 	<!--================================================-->
 	<!-- myBatis 引入配置文件 配置dao实现mapper路径 配置MyBatis数据源 sqlSessionFactory-->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"    > 
-		<property name="dataSource" ref="dataSourceDbcp" />
+		<property name="dataSource" ref="dataSourceC3p0" />
 		<property name="configLocation" value="classpath:mybatis-config.xml"/> 
-		<!-- 配置扫描  dao接口实现的 配置文件mapper.xml -->
-		<property name="mapperLocations" value="classpath:com/walker/web/dao/mybatis/mapper/*.xml" />
-		<property name="typeAliasesPackage" value="com.walker.web.mode"></property>
 	</bean>
 	<!-- 配置mybatis dao 接口 java文件 路径 , 另外必须让mapper.xml文件中接口路径对应接口类 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
@@ -94,10 +92,10 @@
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
  
-	<!-- Hibernate --> 
+	<!-- Hibernate  *看清楚hibernate的版本  --> 
 	<!--================================================-->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSourceDbcp" />
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceC3p0" />
 		<property name="mappingLocations"> <list> <value>classpath*:com/**/*.hbm.xml</value> </list> </property>
         <property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
 	</bean>
@@ -105,41 +103,46 @@
 	<!-- 事务管理  --> 
 	<!--================================================-->
 	<!-- 对dataSource 数据源进行事务管理  共用数据源 共用事务管理 -->
-	<!--  <bean id="transactionManager" 
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-		p:dataSource-ref="dataSource"/> -->
-	<!-- Hibernate事务管理器的配置，Mybatis也依托该管理器进行事务管理 -->
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory"></property>
-	</bean>
-    
-	<!-- 事务管理 通知 -->
-	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-		<tx:attributes>
-			<!-- 对insert,update,delete 开头的方法进行事务管理,只要有异常就回滚 -->
-			<tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
-			<tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
-			<tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
-			<!-- select,count开头的方法,开启只读,提高数据库访问性能 -->
-			<tx:method name="select*" read-only="true"/>
-			<tx:method name="count*" read-only="true"/>
-			<!-- 对其他方法 使用默认的事务管理 -->
-			<tx:method name="*"/>
-		</tx:attributes>
-	</tx:advice>
-
-	<!-- 事务 aop 配置 -->
-	<aop:config>
-		<aop:pointcut id="serviceMethods" expression="execution(* com.walker.service..*(..))"/>
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
-	</aop:config>
+        <!-- 1.配置事务管理器.  只用spring-->
+<!-- 	    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+			<property name="dataSource" ref="dataSourceC3p0" />
+	    </bean> -->
+	    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+            <property name="sessionFactory" ref="sessionFactory"></property>
+        </bean>
+        <!-- 2.配置事务属性,需要事务管理器-->
+        
+		<!-- 启用对事务注解的支持 -->
+<!-- <tx:annotation-driven transaction-manager="transactionManager"/>  -->	        
+<!-- 对insert,update,delete 开头的方法进行事务管理,只要有异常就回滚 -->
+<!-- select,count开头的方法,开启只读,提高数据库访问性能 -->
+        <tx:advice id="txAdvice" transaction-manager="transactionManager">
+			<tx:attributes>
+				
+				<tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+				<tx:method name="save*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+				<tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+				<tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+				<tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+				<tx:method name="find*" read-only="true"/>
+				<tx:method name="get*" read-only="true"/>
+				<tx:method name="select*" read-only="true"/>
+				<tx:method name="count*" read-only="true"/>
+				<!-- 对其他方法 使用默认的事务管理 所有开启事务！！！-->
+				<tx:method name="*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			</tx:attributes>
+        </tx:advice>
+        <!-- 3.配置事务切点,并把切点和事务管理器关联起来 -->
+      	<aop:config>
+			<aop:pointcut id="serviceMethods" expression="execution(* com.walker.service.impl..*.*(..))"/>
+			<aop:pointcut id="otherMethods" expression="execution(* com.walker.web.event.start..*(..))"/>
+			<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
+			<aop:advisor advice-ref="txAdvice" pointcut-ref="otherMethods"/>
+		</aop:config>
+	
 
 	<!-- 配置使Spring采用CGLIB代理 -->
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-
-	<!-- 启用对事务注解的支持 -->
-	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<aop:aspectj-autoproxy proxy-target-class="true"/>	
 
 	<!-- Cache配置 -->
 	<!--

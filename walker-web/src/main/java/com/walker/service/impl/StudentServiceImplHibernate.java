@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.MakeMap;
@@ -21,7 +22,7 @@ import com.walker.core.database.SqlUtil;
 import com.walker.service.StudentService;
 import com.walker.web.controller.Context;
 import com.walker.web.dao.hibernate.BaseDao;
-
+@Transactional
 @Service("studentServiceHibernate")
 public class StudentServiceImplHibernate implements StudentService,Serializable {
  
@@ -36,7 +37,7 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
     protected BaseDao baseDao;
 
 	@Override
-	public List<Map<String, Object>> list(String id, String name, String sFlag, String timefrom, String timeto, Page page) {
+	public List<Map<String, Object>> finds(String id, String name, String sFlag, String timefrom, String timeto, Page page) {
 		String sql = "";
 		List<String> params = new ArrayList<String>();
 		sql += "select * from student where 1=1";
@@ -88,7 +89,7 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 		return res;
 	}
 	@Override
-	public Map get(String id) {
+	public Map find(String id) {
  		return  baseDao.findOne("select * from student where id=? ", id);
 	}
 

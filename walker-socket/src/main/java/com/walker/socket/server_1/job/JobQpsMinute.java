@@ -49,7 +49,7 @@ public class JobQpsMinute extends TaskJob{
 //stat:net:message	2019-12-12 n-qps 320  n-ave 29   w-qps 32  w-ave 32  d-qps 31 d-ave
 				
 				Long temp = System.currentTimeMillis();
-				Double detaTime = 1.0 * (temp - timeLast + 1) / 1000;
+				Double detaTime = 1.0 * (temp - timeLast + 1) / 1000 + 1;	//避免0.001s中1个则1000？ 至少配置1s存储间隔
 				String timeStr = TimeUtil.getTime("yyyy-MM-dd HH:mm:ss");
 				
 				Bean typeBean = new Bean();

@@ -20,7 +20,7 @@ echo "jar file $jarf"
 cmd=". startup.sh"
 tomcat="/home/walker/apache-tomcat-8.5.42"
 
-logfile='logs/web.log'
+logfile='logs/start.log'
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
 greparg='tomcat'
 about="
@@ -55,7 +55,7 @@ function start(){
     else
     	echo "${tomcat}/bin"
     	cd ${tomcat}/bin
-        tcmd=" $cmd  > $logfile "
+        tcmd=" $cmd "
         line
         echo $tcmd
         eval $tcmd

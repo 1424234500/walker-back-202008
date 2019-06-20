@@ -88,7 +88,7 @@ public class LoginInterceptors implements HandlerInterceptor{
 		        String host=request.getRemoteHost();//返回发出请求的客户机的主机名
 		        int port =request.getRemotePort();//返回发出请求的客户机的端口号。
 		        
-		        logService.userMake(id, url, ip, host, port, params);
+		        logService.saveControl(id, url, ip, host, port, params);
 	    	}
     	}else{
 	    	logger.info("token:" + tokenObj + " 无效 未登录：跳转到login页面！");

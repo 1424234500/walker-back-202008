@@ -11,6 +11,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.walker.common.util.Context;
 import com.walker.common.util.LangUtil;
@@ -21,7 +22,7 @@ import com.walker.common.util.Tools;
 import com.walker.core.database.SqlUtil;
 import com.walker.service.StudentService;
 import com.walker.web.dao.mybatis.BaseMapper;
-
+@Transactional
 @Service("studentServiceMybatis")
 public class StudentServiceImplMybatis implements StudentService, Serializable {
 
@@ -37,7 +38,7 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 	protected BaseMapper baseMapper;
 
 	@Override
-	public List<Map<String, Object>> list(String id, String name, String sFlag, String timefrom, String timeto, Page page) {
+	public List<Map<String, Object>> finds(String id, String name, String sFlag, String timefrom, String timeto, Page page) {
 		if(!Tools.notNull(name)) name = "";
 		else name = SqlUtil.like(name);
 		if(!Tools.notNull(id)) id = "";
@@ -82,7 +83,7 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 	}
 
 	@Override
-	public Map<String, Object> get(String id) {
+	public Map<String, Object> find(String id) {
 		Map<String, Object> map = MapListUtil.getMap() 
 				.put("id", id)
 				.build();

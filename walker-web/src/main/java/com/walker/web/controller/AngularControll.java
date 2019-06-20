@@ -141,7 +141,7 @@ public class AngularControll extends BaseControll{
 		String time = request.getParameter("TIME");
 	    
 	    Map res = null;
-	    if(studentServiceHibernate.get(id).isEmpty()){
+	    if(studentServiceHibernate.find(id).isEmpty()){
 	    	res = MapListUtil.getMap().put("res",studentServiceHibernate.add(name, time)).build();
 	    }else{
 	    	res = MapListUtil.getMap().put("res",studentServiceHibernate.update(id, name, time)).build();
@@ -159,7 +159,7 @@ public class AngularControll extends BaseControll{
 	public void get(HttpServletRequest request, HttpServletResponse response) {
 		//Map res = MapListHelp.getMap().put("id", "id-001").put("key", "key-001").put("username", "username-001").build();
 		String id = request.getParameter("id");   
-		Map res = studentServiceHibernate.get(id );
+		Map res = studentServiceHibernate.find(id );
 		log(res); 
 		echo(res);
 	}	
@@ -171,7 +171,7 @@ public class AngularControll extends BaseControll{
 		String timeto = request.getParameter("TIMETO");
 		
 		Page page = Page.getPage(request);
-		List<Map<String, Object>> list = studentServiceHibernate.list(id, name, Context.YES, timefrom, timeto, page);
+		List<Map<String, Object>> list = studentServiceHibernate.finds(id, name, Context.YES, timefrom, timeto, page);
 		log(list, page);
 		echo(list, page);
 	}

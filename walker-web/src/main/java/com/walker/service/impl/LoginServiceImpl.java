@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.MD5;
@@ -23,7 +24,7 @@ import com.walker.web.controller.Context;
 import com.walker.web.dao.Redis;
 import com.walker.web.dao.hibernate.BaseDao;
 import com.walker.web.mode.LoginUser;
-
+@Transactional
 @Service("loginService")
 @Scope("prototype") 
 public class LoginServiceImpl implements LoginService,Serializable {
@@ -35,11 +36,11 @@ public class LoginServiceImpl implements LoginService,Serializable {
 
 	@Override
 	public Boolean login() {
-		return login("test", "");
+		return saveLogin("test", "");
 	}
 
 	@Override
-	public Boolean login(String id, String pwd) {
+	public Boolean saveLogin(String id, String pwd) {
 		String token = MD5.makeKey(id, System.currentTimeMillis());
 		Map map = cache.get(CACHE_KEY, new LinkedHashMap<String, Object>());
 		Bean bean = new Bean().put("token", token).put("id", id).put("time", System.currentTimeMillis()).put("expire", 60L * 1000);

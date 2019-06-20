@@ -25,6 +25,8 @@ angular.module('com.socket', [])
     var routeDir = 'main.' + mName;		//	main.simple
 	$scope.mName = mName;
 	 
+	
+	$scope.showCols = ['FROM', 'TO'];	//URL
    //初始化查询
     $scope.search = {}; //查询
     $scope.clear = function(){
@@ -35,7 +37,7 @@ angular.module('com.socket', [])
     //回车事件触发
     $scope.keydown = function(event){
         if (event.keyCode == 13) {
-            $scope.list();
+            $scope.statis();
         }   
     };
 
@@ -52,6 +54,8 @@ angular.module('com.socket', [])
                 data.option.xAxis.data.push("");
                 $scope.items =  data.option.xAxis.data;
             }
+            $scope.search = data.arg;
+
             toolSetChart("echarts", data.option);
         }, error);  
 

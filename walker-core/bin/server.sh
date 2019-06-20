@@ -18,7 +18,7 @@ echo "项目名 name_proj ${name_proj}"
 jarf="${name_proj}-0.0.1-SNAPSHOT.jar"
 echo "jar file $jarf"
 cmd="java -jar ${jarf}"
-logfile='log/base.log'
+logfile='logs/server.log'
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
 greparg=${jarf}
 about="
@@ -50,7 +50,7 @@ function start(){
     then
         pid
     else
-        tcmd="nohup ${cmd}  > ${logfile} &"
+        tcmd="nohup $cmd  &"	# > $logfile 启动日志不存储 交由log4j自动存入文件
         line
         echo ${tcmd}
         eval ${tcmd}

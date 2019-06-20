@@ -4,11 +4,19 @@
          
             <div class="panel panel-primary"  > 
                     <div class=panel-body>
-                        <div class="navbar-form navbar-left" >  
+                        <div class="navbar-form navbar-left" > 
+                        aaa
+						     <input  style="width:16%; margin-right: 5px;" class="form-control"
+						                ng-repeat="item in showCols track by $index"
+						                ng-model="search[item]"
+						                ng-keydown="keydown($event);"
+						                placeholder="{{item}}"
+						        >
+         
                             <select class="form-control" ng-model="search['URL']" ng-change="itemSelect()" > 
                                 <option ng-repeat="item in items track by $index">{{item}}</option>
                             </select>
-                            <button class="btn" ng-click="statis()" >查询</button> 
+                            <button class="btn" ng-click="statis()" >查a询</button> 
                         </div> 
                     </div>
 

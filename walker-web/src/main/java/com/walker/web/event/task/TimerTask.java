@@ -43,7 +43,7 @@ public class TimerTask {
 	    
 	    log.info("扫描同步上传文件"); 
 	    //刷新上传文件集合的 文件数据到 内存数据库？ 文件管理系统 展示文件 介绍（图片），
-	    fileService.scan();
+	    fileService.saveScan();
 	}
 
 	

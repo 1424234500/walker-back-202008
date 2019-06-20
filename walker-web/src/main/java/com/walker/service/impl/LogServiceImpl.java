@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.LangUtil;
@@ -21,7 +22,7 @@ import com.walker.core.cache.CacheMgr;
 import com.walker.service.LogService;
 import com.walker.web.dao.Redis;
 import com.walker.web.dao.hibernate.BaseDao;
-
+@Transactional
 @Service("logService")
 @Scope("prototype") 
 public class LogServiceImpl implements LogService,Serializable {
@@ -35,7 +36,7 @@ public class LogServiceImpl implements LogService,Serializable {
     //info:
     //id,userid,time,url,ip,mac,port,about
 	@Override
-	public void userMake(String userid, String url, String ip, String host, int port, String params) {
+	public void saveControl(String userid, String url, String ip, String host, int port, String params) {
 		int res = 0;
 		params = Tools.cutString(params, 180);
 		res = baseDao.executeSql("insert into log_info"
@@ -51,7 +52,7 @@ public class LogServiceImpl implements LogService,Serializable {
 	 * 切换 线程安全的计数方案
 	 */
 	@Override
-	public void exeStatis(String url, String params, long costtime) {
+	public void saveStatis(String url, String params, long costtime) {
 		url = url.split("\\.")[0]; //url编码
 		Bean bean = cache.get(CACHE_KEY);
 		if(bean != null){
@@ -67,8 +68,6 @@ public class LogServiceImpl implements LogService,Serializable {
 		cache.put(CACHE_KEY, bean);
 		saveStatis();
 	}
-
-
 	@Override
 	public void saveStatis() { 
 		Bean bean = cache.get(CACHE_KEY, new Bean());

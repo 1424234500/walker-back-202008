@@ -95,7 +95,7 @@ public class TomcatControll extends BaseControll{
 		 				" SELECT t2.lev, ifnull(t1.time, '0') time FROM  "
 		 				+" ( SELECT hour, (0 + sum(costtime)/sum(count)/1000) time FROM (  SELECT  substr(lt.time,12,2) hour, lt.count, lt.costtime FROM log_time lt where 1=1 and lt.url=?  ) t group by hour   ) t1"
 		 				+" right join "
-		 				+" ( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=24  ) t2" 
+		 				+" ( select lpad(level, 2, '0') lev from (select  (@i/*'*/\\:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/\\:=/*'*/0) it ) t  where level<=24  ) t2" 
 		 				+" on"
 		 				+" t1.hour=t2.lev ORDER BY lev	"
 		 				
@@ -165,7 +165,7 @@ public class TomcatControll extends BaseControll{
 	 					+" SELECT t2.lev, ifnull(t1.count, '0') sumcount FROM  "
 	 					+" ( SELECT hour, sum(count) count FROM (  SELECT  substr(lt.time,6,2) hour, lt.url, lt.count FROM log_time lt where 1=1 and lt.url=?  ) t group by hour ) t1"
 	 					+" right join" 
-	 					+" ( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12  ) t2" 
+	 					+" ( select lpad(level, 2, '0') lev from (select  (@i/*'*/\\:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/\\:=/*'*/0) it ) t  where level<=12  ) t2" 
 	 					+" on"
 	 					+" t1.hour = t2.lev  ORDER BY t2.lev"
 	 					+ "", url)) ;
@@ -173,7 +173,7 @@ public class TomcatControll extends BaseControll{
 //	 		SELECT t2.lev, ifnull(t1.count, '0') sumcount FROM  
 //	 		( SELECT hour, sum(count) count FROM (  SELECT  substr(lt.time,6,2) hour, lt.url, lt.count FROM log_time lt where 1=1 and lt.url='/table/list.do'  ) t group by hour ) t1
 //	 		right join 
-//	 		( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12  ) t2 
+//	 		( select lpad(level, 2, '0') lev from (select  (@i/*'*/\\:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/\\:=/*'*/0) it ) t  where level<=12  ) t2 
 //	 		on
 //	 		t1.hour = t2.lev  ORDER BY t2.lev
  		}else{

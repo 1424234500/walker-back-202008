@@ -213,7 +213,7 @@ public class SqlUtil{
 	public static String makeSqlPage(String dsName, String sql, int page, int rows) {
 		dsName = String.valueOf(dsName);
 		int start = ((page - 1) * rows);
-		if(dsName.equals("mysql")) {
+		if(dsName.equals("mysql") || dsName.equals("sqlite")) {
 			sql = "select * from ( " + sql + " ) t limit " + start + "," + rows;	//2,5 -> 56789 -> 5,5
 		}else if(dsName.equals("oracle")) {										//2,5 -> 67890 -> 5,10
 			int stop = page * rows + 1;
@@ -321,7 +321,7 @@ public class SqlUtil{
 				try {
 					obj = StringUtils.strip(obj);
 					if(!obj.startsWith("--") && obj.length() > 0) {
-//						log.info(obj);
+						log.info(obj);
 						baseDao.executeSql(obj);
 					}
 				}catch(Exception e) {

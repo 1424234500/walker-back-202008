@@ -1,6 +1,7 @@
 package com.walker.service;
 
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 登录服务
@@ -15,6 +16,6 @@ public interface LoginService  {
 	/**
 	 * 指定id pwd登录
 	 */
-	Boolean login(String id, String pwd);
+	Boolean saveLogin(String id, String pwd);
 		
 }

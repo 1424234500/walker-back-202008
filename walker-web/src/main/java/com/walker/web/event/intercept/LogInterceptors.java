@@ -56,7 +56,7 @@ public class LogInterceptors implements HandlerInterceptor{
         String url = requestUri.substring(contextPath.length());  //[/student/listm]
         String params = RequestUtil.getRequestBean(request).toString();
         
-        logService.exeStatis(url, params, time);
+        logService.saveStatis(url, params, time);
 
         
         NDC.pop();

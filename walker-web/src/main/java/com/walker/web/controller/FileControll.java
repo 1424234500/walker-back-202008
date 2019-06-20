@@ -258,9 +258,9 @@ public class FileControll extends BaseControll{
             //记录文件上传下载情况 并打印
             // id,fileid,type(up/down),costtime(ms),time
             long crc = FileUtil.checksumCrc32(new File(path));
-            String key = fileService.upload("" + crc, getUser().getId(), name, path, ""); 
+            String key = fileService.saveUpload("" + crc, getUser().getId(), name, path, ""); 
             res = key.equals("0");
-            fileService.fileUpDown(key, "up", w.getTimeAll()+""); 
+            fileService.saveUpOrDown(key, "up", w.getTimeAll()+""); 
             echo(res, key, path);
         }catch (Exception e) {
         	w.exceptionWithThrow(e, log);

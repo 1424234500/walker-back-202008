@@ -3,6 +3,8 @@ package com.walker.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.walker.common.util.Page;
 import com.walker.web.dao.hibernate.BaseDao;
 

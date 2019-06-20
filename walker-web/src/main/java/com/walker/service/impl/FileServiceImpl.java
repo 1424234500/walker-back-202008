@@ -10,6 +10,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.walker.common.util.FileUtil;
 import com.walker.common.util.LangUtil;
@@ -21,7 +22,7 @@ import com.walker.core.database.SqlUtil;
 import com.walker.service.FileService;
 import com.walker.web.controller.Context;
 import com.walker.web.dao.hibernate.BaseDao;
-
+@Transactional
 @Service("fileService")
 public class FileServiceImpl implements FileService,Serializable {
 	private static final long serialVersionUID = 8304941820771045214L;
@@ -42,7 +43,7 @@ public class FileServiceImpl implements FileService,Serializable {
 	}
     
 	@Override
-	public void scan() {
+	public void saveScan() {
 		//删除表中中不存在文件的记录 删除失效文件
 		//添加分页循环处理
 		
@@ -102,7 +103,7 @@ public class FileServiceImpl implements FileService,Serializable {
 	}
 
 	@Override
-	public String upload(String key, String id, String name, String path, String about) {
+	public String saveUpload(String key, String id, String name, String path, String about) {
 		File file = new File(path);
 		String filesize = ""+file.length();
 		String type = FileUtil.getFileType(name);
@@ -129,7 +130,7 @@ public class FileServiceImpl implements FileService,Serializable {
 	}
 
 	@Override
-	public int fileUpDown(String fileId, String type, String detaTime) {
+	public int saveUpOrDown(String fileId, String type, String detaTime) {
         // id,fileid,type(up/down),costtime(ms),time
 		return baseDao.executeSql("insert into file_down_up"
 				+ "(id, fileid, type, costtime, time)"

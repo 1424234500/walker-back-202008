@@ -6,11 +6,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.walker.common.util.Page;
 import com.walker.service.BaseService;
 import com.walker.web.dao.hibernate.BaseDao;
-
+@Transactional
 @Service("baseService")
 public class BaseServiceImpl implements BaseService,Serializable {
  

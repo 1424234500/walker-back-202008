@@ -37,7 +37,7 @@
 	<mappers>
 		<!-- <mapper resource="com/walker/web/dao/mybatis/mapper/BaseMapper.xml"  /> -->
 	</mappers>
-
+	<!-- 配置扫描  dao接口实现的 配置文件mapper.xml -->
 	
 
 </configuration>

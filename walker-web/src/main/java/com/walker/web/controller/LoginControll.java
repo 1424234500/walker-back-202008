@@ -34,7 +34,7 @@ public class LoginControll extends BaseControll{
 		String id = getValue(request, "id");
 		String pwd = getValue(request, "pwd");
 		
-		echo(loginService.login(id, pwd));
+		echo(loginService.saveLogin(id, pwd));
 	}
  
     

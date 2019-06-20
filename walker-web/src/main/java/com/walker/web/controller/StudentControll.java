@@ -61,7 +61,7 @@ public class StudentControll extends BaseControll{
 		Page page = Page.getPage(request);
 		
 		
-	    List<Map<String, Object>> res = studentServiceHibernate.list(id, name, Context.YES, timefrom, timeto, page);
+	    List<Map<String, Object>> res = studentServiceHibernate.finds(id, name, Context.YES, timefrom, timeto, page);
 	   // logger.info(MapListHelp.list2string(res));
 		echo(res, page);
 	}
@@ -97,7 +97,7 @@ public class StudentControll extends BaseControll{
 		String id = request.getParameter("id");  
 	    log(request);
 
-		Map map = studentServiceHibernate.get(id );
+		Map map = studentServiceHibernate.find(id );
 		
 	    echo(map);
 	}
@@ -113,7 +113,7 @@ public class StudentControll extends BaseControll{
 		Page page = Page.getPage(request);
 		map.putAll(RequestUtil.getRequestBean(request));
 
-	    List<Map<String, Object>> res = studentServiceMybatis.list(id, name, Context.YES, timefrom, timeto, page);
+	    List<Map<String, Object>> res = studentServiceMybatis.finds(id, name, Context.YES, timefrom, timeto, page);
 		map.put("PAGE", page);
 
 	   // logger.info(MapListHelp.list2string(res));
@@ -153,7 +153,7 @@ public class StudentControll extends BaseControll{
 		String id = request.getParameter("id");  
 	    log(request);
 
-		Map map = studentServiceMybatis.get(id );
+		Map map = studentServiceMybatis.find(id );
 		echo(map);
 	}
 	    

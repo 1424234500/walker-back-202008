@@ -17,7 +17,8 @@
         <property name="hibernate.format_sql">false</property>
         <property name="hibernate.use_sql_comments">false</property>
         <property name="hbm2ddl.auto">update</property>
-    </session-factory>
+<!--         <property name="hibernate.connection.autocommit">true</property>
+ -->    </session-factory>
 </hibernate-configuration>
 
 
