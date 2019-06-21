@@ -39,8 +39,8 @@ public class LogServiceImpl implements LogService,Serializable {
 	public void saveControl(String userid, String url, String ip, String host, int port, String params) {
 		int res = 0;
 		params = Tools.cutString(params, 180);
-		res = baseDao.executeSql("insert into log_info"
-				+ "(id,time,userid,url,ip,mac,port,about) "
+		res = baseDao.executeSql("insert into LOG_INFO"
+				+ "(ID,TIME,USERID,URL,IP,MAC,PORT,ABOUT) "
 				+ "values"
 				+ "(?,?,?,?,?,?,?,?) "
 				,LangUtil.getGenerateId(),TimeUtil.getTimeYmdHmss(),userid,url,ip,host,port,params
@@ -60,9 +60,9 @@ public class LogServiceImpl implements LogService,Serializable {
 			bean = new Bean();
 		}
 		Bean beanUrl = bean.get(url, new Bean());
-		beanUrl.put("url", url);
-		beanUrl.put("costtime", bean.get("costtime", 0L) + costtime);
-		beanUrl.put("count", bean.get("count", 0) + 1);
+		beanUrl.put("URL", url);
+		beanUrl.put("COSTTIME", bean.get("COSTTIME", 0L) + costtime);
+		beanUrl.put("COUNT", bean.get("COUNT", 0) + 1);
 		
 		bean.put(url, beanUrl);
 		cache.put(CACHE_KEY, bean);
@@ -71,6 +71,8 @@ public class LogServiceImpl implements LogService,Serializable {
 	@Override
 	public void saveStatis() { 
 		Bean bean = cache.get(CACHE_KEY, new Bean());
+		cache.remove(CACHE_KEY);
+
 //		Redis redis = Redis.getInstance();
 		//redis.show();
 		Set<Object> keys = bean.keySet();
@@ -78,15 +80,14 @@ public class LogServiceImpl implements LogService,Serializable {
 			for(Object key : keys){
 				if(bean.containsKey(key)){ 
 					Bean map = bean.get(key, new Bean()); 
-					int res = baseDao.executeSql("insert into log_time"
-							+ "(id, url, count, time, costtime) "
+					int res = baseDao.executeSql("insert into LOG_TIME"
+							+ "(ID, URL, COUNT, TIME, COSTTIME) "
 							+ "values"
 							+ "(?, ?, ?, ?, ?) "
-							, LangUtil.getGenerateId(), map.get("url") + ".do", map.get("count"), TimeUtil.getTimeYmdHmss(), map.get("costtime") 
+							, LangUtil.getGenerateId(), map.get("URL") + ".do", map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME") 
 						); 
 				}
 			}
-		cache.remove(CACHE_KEY);
 //		redis.clearKeys();
 		//redis.show();
 	}

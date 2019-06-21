@@ -23,8 +23,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.walker.common.util.FileUtil;
 import com.walker.common.util.MapListUtil;
@@ -90,21 +92,21 @@ public class FileControll extends BaseControll{
 		Page page = Page.getPage(request);
 
 		List<String> params = new ArrayList<String>();
-		String sql = "select id,(select count(*) from file_down_up where fileid=f.id and type='down') count,name,upuserid,type,file_size(filesize) filesize,to_char(uptime," + SqlUtil.getTimeFormatL() + ") uptime, to_char(changetime," + SqlUtil.getTimeFormatL() + ") changetime,about from fileinfo f where 1=1 ";
+		String sql = "select ID,(select count(*) from FILE_DOWN_UP where FILEID=f.ID and TYPE='down') COUNT,NAME,UPUSERID,TYPE,file_size(filesize) FILESIZE,to_char(UPTIME," + SqlUtil.getTimeFormatL() + ") UPTIME, CHANGETIME,ABOUT from FILEINFO f where 1=1 ";
 		if(Tools.notNull(id)){
-			sql += " and id like ? ";
+			sql += " and ID like ? ";
 			params.add("%" + id + "%");
 		} 
 		if(Tools.notNull(name)){
-			sql += " and name like ? ";
+			sql += " and NAME like ? ";
 			params.add("%" + name + "%");
 		}
 		if(Tools.notNull(timefrom)){
-			sql += " and uptime >= " + SqlUtil.to_dateL();
+			sql += " and UPTIME >= " + SqlUtil.to_dateL();
 			params.add(timefrom);
 		}
 		if(Tools.notNull(timeto)){
-			sql += " and uptime <= " + SqlUtil.to_dateL();
+			sql += " and UPTIME <= " + SqlUtil.to_dateL();
 			params.add( timeto);
 		} 
 	    List<Map<String, Object>> res = baseService.findPage(page, sql, params.toArray() );
@@ -121,7 +123,7 @@ public class FileControll extends BaseControll{
 		String info = "";
 		if(Tools.notNull(path)){
 			if(path.startsWith(Context.getUploadDir())){
-//				count = baseService.executeSql("delete from fileinfo where path=?", path);
+//				count = baseService.executeSql("delete from FILEINFO where path=?", path);
 				FileUtil.delete(path);
 			}else{
 				info = "无修改权限" + path;
@@ -162,7 +164,7 @@ public class FileControll extends BaseControll{
 		String id = request.getParameter("PATH"); 
 		String about = request.getParameter("ABOUT"); 
 	    
-		int count = baseService.executeSql("update fileinfo set about=? where PATH=? ", about, id);
+		int count = baseService.executeSql("update FILEINFO set ABOUT=? where PATH=? ", about, id);
 		Map res = MapListUtil.getMap().put("res", count).build();
 		echo( res);	
 	}
@@ -191,7 +193,7 @@ public class FileControll extends BaseControll{
 		Boolean res = false;
 		String info = "";
 		if(key.length() > 0){ //key 映射 path 方式
-			Map<String, Object> map = baseService.findOne("select * from fileinfo where id=?", key);
+			Map<String, Object> map = baseService.findOne("select * from FILEINFO where ID=?", key);
 			path = MapListUtil.getMap(map, "ID", "");
 		}
 		if(path.length() > 0){ //处理path分析文件
@@ -247,29 +249,72 @@ public class FileControll extends BaseControll{
         
 		Watch w = new Watch("upload");
         String name = file.getOriginalFilename();
-        String newName = name; // Tools.getTimeSequence() + "-" + 
         String dir = Tools.notNull(uppath) ? uppath : Context.getUploadDir();
-        String path = dir + File.separator + newName;
-        boolean res = false; 
+		String type = FileUtil.getFileType(name);
+        String pathTemp = dir + File.separator + "temp" + File.separator + name;
+        FileUtil.mkdir(dir + File.separator + "temp");
         InputStream is = null;
-        try{
-        	is = request.getInputStream();
-            FileUtil.saveFile(is, path, false);
-            //记录文件上传下载情况 并打印
-            // id,fileid,type(up/down),costtime(ms),time
-            long crc = FileUtil.checksumCrc32(new File(path));
-            String key = fileService.saveUpload("" + crc, getUser().getId(), name, path, ""); 
-            res = key.equals("0");
-            fileService.saveUpOrDown(key, "up", w.getTimeAll()+""); 
-            echo(res, key, path);
+        try {
+	        try{
+	        	is = request.getInputStream();
+	            FileUtil.saveFile(is, pathTemp, false);
+	            
+	            //获取文件识别码
+	            String key = "k_" + FileUtil.checksumCrc32(new File(pathTemp));
+	            String path = dir + File.separator + key + "." + type;
+//	            保存数据库文件 并自动删除重复id path
+	            int sta = fileService.saveUpload(key, getUser().getId(), name, path, ""); 
+	            //移动文件到目标路径
+	            FileUtil.mv(pathTemp, path);
+	            if(sta == 0 || sta == 1) {	
+		            fileService.saveUpOrDown(key, "up", w.getTimeAll()+"");
+		            echo(true, "" + sta, key);
+	            }else {
+		            echo(false, "异常" + sta, path + " " + w.toString());
+	            }
+	        }finally {
+	        	if(is != null)
+	        		is.close();	
+	        }
         }catch (Exception e) {
         	w.exceptionWithThrow(e, log);
-        } finally {
-        	if(is != null)
-        		is.close();	
-        }
+        } 
+
     }
 	
+	/*
+     * 采用file.Transto 来保存上传的文件
+     */
+    @RequestMapping("uploadCmf")
+    public void uploadCmf(@RequestParam("file") CommonsMultipartFile file,HttpServletRequest request,HttpServletResponse response) throws Exception{  
+    	Watch w = new Watch("upload");
+        String name = file.getOriginalFilename();
+        String dir = Context.getUploadDir();
+        String pathTemp = dir + File.separator + "temp" + File.separator + name;
+        FileUtil.mkdir(dir + File.separator + "temp");
+        try {
+            File newFile=new File(pathTemp);
+            //通过CommonsMultipartFile的方法直接写文件（注意这个时候）
+            file.transferTo(newFile);
+        	
+    		String type = FileUtil.getFileType(name);
+            //获取文件识别码
+            String key = "k_" + FileUtil.checksumCrc32(new File(pathTemp));
+            String path = dir + File.separator + key + "." + type;
+            //保存数据库文件 并自动删除重复id path
+            int sta = fileService.saveUpload(key, getUser().getId(), name, path, ""); 
+            //移动文件到目标路径
+            FileUtil.mv(pathTemp, path);
+            if(sta == 0 || sta == 1) {	
+	            fileService.saveUpOrDown(key, "up", w.getTimeAll()+"");
+	            echo(true, "" + sta, key);
+            }else {
+	            echo(false, "异常" + sta, path + " " + w.toString());
+            }
+        }catch (Exception e) {
+        	w.exceptionWithThrow(e, log);
+        } 
+    }
 	
 	@Override
 	public void log(Object... objs) {

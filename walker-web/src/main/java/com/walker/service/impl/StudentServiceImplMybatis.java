@@ -45,13 +45,13 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 		else  id = SqlUtil.like(id);
 		
 		Map map = MapListUtil.getMap()
-				.put("name", name)
-				.put("id", id)
-				.put("s_flag", sFlag)
-				.put("timefrom", timefrom)
-				.put("timeto", timeto)
-				.put("pagestart", page.start())
-				.put("pagestop", page.stop())
+				.put("NAME", name)
+				.put("ID", id)
+				.put("S_FLAG", sFlag)
+				.put("TIMEFROM", timefrom)
+				.put("TIMETO", timeto)
+				.put("PAGESTART", page.start())
+				.put("PAGESTOP", page.stop())
 				.build();  
 		page.setNUM(baseMapper.count(map));
 		return baseMapper.find(map);
@@ -60,9 +60,9 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 	@Override
 	public int update(String id, String name, String time) {
 		Map map = MapListUtil.getMap()
-				.put("id", id)
-				.put("name", name)
-				.put("s_mtime", time)
+				.put("ID", id)
+				.put("NAME", name)
+				.put("S_MTIME", time)
 				.build(); 
 		return baseMapper.update(map);
 	}
@@ -75,9 +75,9 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 //		return baseMapper.delete(map);
 		
 		Map map = MapListUtil.getMap()
-				.put("id", id)
-				.put("s_flag", Context.NO)
-				.put("s_mtime", TimeUtil.getTimeYmdHmss())
+				.put("ID", id)
+				.put("S_FLAG", Context.NO)
+				.put("S_MTIME", TimeUtil.getTimeYmdHmss())
 				.build(); 
 		return baseMapper.update(map);
 	}
@@ -85,7 +85,7 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 	@Override
 	public Map<String, Object> find(String id) {
 		Map<String, Object> map = MapListUtil.getMap() 
-				.put("id", id)
+				.put("ID", id)
 				.build();
 		List<Map<String, Object>> list = baseMapper.find(map);
 		Map<String, Object> res = null;
@@ -100,10 +100,10 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 	@Override
 	public int add(String name, String time) {
 		Map map = MapListUtil.getMap() 
-				.put("id", LangUtil.getGenerateId())
-				.put("name", name)
-				.put("s_mtime", TimeUtil.getTimeYmdHmss())
-				.put("s_flag", Context.YES)
+				.put("ID", LangUtil.getGenerateId())
+				.put("NAME", name)
+				.put("S_MTIME", TimeUtil.getTimeYmdHmss())
+				.put("S_FLAG", Context.YES)
 				.build();
 		return baseMapper.add(map);
 	}

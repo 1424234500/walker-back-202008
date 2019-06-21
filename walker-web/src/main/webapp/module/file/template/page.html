@@ -94,7 +94,9 @@
 
 <script type="text/javascript">
     function uploadFile(){
-        var url = "/walker-web/file/upload.do";
+       // var url = "/walker-web/file/upload.do";
+        var url = "/walker-web/file/uploadCmf.do";
+        
         var pic = $("#file").get(0).files[0];
         var formData = new FormData();
         $("#son").html( 0 +"%" );

@@ -185,6 +185,7 @@ public class FileUtil {
 			return copyStream(is, os);
 		} finally {
 			if(os != null) {
+				os.flush();
 				os.close();
 			}
 		}

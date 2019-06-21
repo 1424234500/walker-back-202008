@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class TimeUtil {
 	
@@ -72,7 +73,13 @@ public class TimeUtil {
 	 * 获取差值几天的 指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
 	 */
 	public static String getTime(String format, int detaDays) {
-		long t = System.currentTimeMillis() + detaDays * 24 * 3600 * 1000;
+		return getTime(format, detaDays * 24 * 3600 * 1000L);
+	}
+	/**
+	 * 获取差值s 指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
+	 */
+	public static String getTime(String format, long detaMills) {
+		long t = System.currentTimeMillis() + detaMills;
 		Date d = new Date(t);
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(d);
@@ -131,6 +138,7 @@ public class TimeUtil {
 	 * @return
 	 */
 	public static String formatAuto(long time, long deta) {
+		deta = Math.abs(deta);
 		String format = "";
 		if(deta < 1000) {
 			format = "SSS";	//:123
@@ -142,7 +150,7 @@ public class TimeUtil {
 			format = "HH:mm";
 		}else if(deta < 1000 * 60 * 60 * 24 * 30) {
 			format = "dd HH";
-		}else if(deta < 1000 * 60 * 60 * 24 * 30) {
+		}else if(deta < 1000 * 60 * 60 * 24 * 30 * 365) {
 			format = "MM-dd";
 		}else {
 			format = "yyyy-MM";

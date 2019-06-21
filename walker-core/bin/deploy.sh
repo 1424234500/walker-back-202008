@@ -48,7 +48,7 @@ function just(){
 	upAndTar
 }
 function walker(){
-	tar -czvf${fromfile_temp} lib/walker*
+	tar -czvf ${fromfile_temp} lib/walker*
 	upAndTar
 }
 

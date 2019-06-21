@@ -1,5 +1,7 @@
 package com.walker.service;
 
+import java.util.Map;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -11,10 +13,16 @@ public interface FileService  {
 	 */
 	public void saveScan();
 	/**
-	 * 上传文件
+	 * 上传文件后 根据crc码和路径path 来存储文件
+	 * 返回0插入
+	 * 返回1更新
+	 * 返回2 -1 其他
 	 */ 
-	public String saveUpload(String key, String id, String name, String path, String about);
+	public int saveUpload(String key, String id, String name, String path, String about);
 	
+	public Map<String,Object> findFile(String key, String path);
+	public void deleteFile(String key, String path);
+
 	/**
 	 * 文件上传或者下载记录 fileId up/down 耗时detaTime
 	 */

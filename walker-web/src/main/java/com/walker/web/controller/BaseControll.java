@@ -56,12 +56,12 @@ public abstract class BaseControll {
 	 */
 	@RequestMapping("/testlist.do")
 	public String testList(HttpServletRequest request, Map<String,Object> map) {
-		String id = request.getParameter("id");
-		String name = request.getParameter("name");
-		String timefrom = request.getParameter("timefrom");
-		String timeto = request.getParameter("timeto");
+		String id = request.getParameter("ID");
+		String name = request.getParameter("NAME");
+		String timefrom = request.getParameter("TIMEFROM");
+		String timeto = request.getParameter("TIMETO");
 		Page page = Page.getPage(request);
-	    List<Map<String, Object>> res = baseService.findPage(page, "select * from student");
+	    List<Map<String, Object>> res = baseService.findPage(page, "SELECT * FROM STUDENT");
 		map.put("res", res);
 		map.put("PAGE", page);
 		return "student/list";
@@ -71,12 +71,12 @@ public abstract class BaseControll {
 	 */
 	@RequestMapping("/testupdate.do")
 	public void testAjaxUpdateh(HttpServletRequest request, PrintWriter pw){
-		String id = request.getParameter("id"); 
-		String name = request.getParameter("name");
-		String time = request.getParameter("time");
+		String id = request.getParameter("ID"); 
+		String name = request.getParameter("NAME");
+		String time = request.getParameter("TIME");
 		
 		int res = baseService.executeSql(
-				"update student set name=?,time=to_date(?,'yyyy-mm-dd hh24:mi:ss') where id=?"
+				"UPDATE STUDENT SET NAME=?,TIME=TO_DATE(?,'YYYY-MM-DD HH24:MI:SS') WHERE ID=?"
 				,name,time,id);
 
 		pw.write("" + res);

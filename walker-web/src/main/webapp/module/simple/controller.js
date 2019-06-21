@@ -82,7 +82,7 @@ angular.module('com.simple', [])
 	        if( ! params){ 
 	            params = {};
 	        }
-	        params['TABLE_NAME'] = 'student';
+	        params['TABLE_NAME'] = 'STUDENT';
 	    return params;
 	};
 	//初始化表 主键 列信息 

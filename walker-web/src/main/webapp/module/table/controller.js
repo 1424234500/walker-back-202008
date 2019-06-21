@@ -34,7 +34,7 @@ angular.module('com.table')
             $scope.list();
         }   
     };
-    $scope.table = 'student';
+    $scope.table = 'STUDENT';
     //初始化路由页面跳转
     $scope.goHome = function(){
     	tableService.setTable($scope.table);

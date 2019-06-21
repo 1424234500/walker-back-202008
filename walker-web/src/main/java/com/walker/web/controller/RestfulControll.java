@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class RestfulControll extends BaseControll{
  
 	public RestfulControll() {
-		super(RestfulControll.class, "student");
+		super(RestfulControll.class, "STUDENT");
 
 	}
 
 	@RequestMapping(value="/{id}/make.do",method=RequestMethod.GET)
 	public void get(HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException{
-	    echo(baseService.findOne("select * from student where id=? ", id));
+	    echo(baseService.findOne("select * from STUDENT where ID=? ", id));
 	}
 
 	@RequestMapping(value="/make.do",method=RequestMethod.POST) //, produces = "application/json")
@@ -32,7 +32,7 @@ public class RestfulControll extends BaseControll{
 		String id = getValue(request, "ID");
 		String name = getValue(request, "NAME");
 		String time = getValue(request, "TIME");
-		echo(baseService.executeSql("insert into student(id,name) values(?,?)", id, name));
+		echo(baseService.executeSql("insert into STUDENT(ID,NAME) values(?,?)", id, name));
 	}
 	
 	@RequestMapping(value="/make.do",method=RequestMethod.PUT)
@@ -40,12 +40,12 @@ public class RestfulControll extends BaseControll{
 		String id = getValue(request, "ID");
 		String name = getValue(request, "NAME");
 		String time = getValue(request, "TIME");
-		echo(baseService.executeSql("update student set id=?,name=? where id=? ", id, name, id));
+		echo(baseService.executeSql("update STUDENT set ID=?,NAME=? where ID=? ", id, name, id));
 	}
 
 	@RequestMapping(value="/{id}/make.do",method=RequestMethod.DELETE)
 	public void delete(HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException{
-	    echo(baseService.executeSql("delete from student where id=? ", id));
+	    echo(baseService.executeSql("delete from STUDENT where ID=? ", id));
 	}
 
     

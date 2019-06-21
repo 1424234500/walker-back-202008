@@ -40,25 +40,25 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 	public List<Map<String, Object>> finds(String id, String name, String sFlag, String timefrom, String timeto, Page page) {
 		String sql = "";
 		List<String> params = new ArrayList<String>();
-		sql += "select * from student where 1=1";
+		sql += "select * from STUDENT where 1=1";
 		if(Tools.notNull(id)){
-			sql += " and id like ? ";
+			sql += " and ID like ? ";
 			params.add("%" + id + "%");
 		} 
 		if(Tools.notNull(name)){
-			sql += " and name like ? ";
+			sql += " and NAME like ? ";
 			params.add("%" + name + "%");
 		}
 		if(Tools.notNull(sFlag)){
-			sql += " and s_flag = ?  ";
+			sql += " and S_FLAG = ?  ";
 			params.add(Context.valueFlag(sFlag));
 		}
 		if(Tools.notNull(timefrom)){
-			sql += " and s_mtime >= ?";
+			sql += " and S_MTIME >= ?";
 			params.add(timefrom);
 		}
 		if(Tools.notNull(timeto)){
-			sql += " and s_mtime < ?";
+			sql += " and S_MTIME < ?";
 			params.add( timeto);
 		} 
 		
@@ -68,14 +68,14 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 	@Override
 	public int update(String id, String name, String time) {
 		int res = baseDao.executeSql(
-				"update student set name=?,s_mtime=? where id=?",
+				"update STUDENT set NAME=?,S_MTIME=? where ID=?",
 				name,TimeUtil.getTimeYmdHmss(),id  );
 		return res;
 	}
 	@Override
 	public int add(String name, String time) {
 		int res = 0;
-		res = baseDao.executeSql("insert into student values(?,?,?,?)",LangUtil.getGenerateId(), name, TimeUtil.getTimeYmdHmss(), Context.YES);
+		res = baseDao.executeSql("insert into STUDENT values(?,?,?,?)",LangUtil.getGenerateId(), name, TimeUtil.getTimeYmdHmss(), Context.YES);
  		return res;
 	}
 	@Override
@@ -84,13 +84,13 @@ public class StudentServiceImplHibernate implements StudentService,Serializable 
 //		res = baseDao.executeSql("delete from student where id=? ", id);
 // 		return res;
  		int res = baseDao.executeSql(
-				"update student set s_flag=?,s_mtime=? where id=?",
+				"update STUDENT set S_FLAG=?,S_MTIME=? where ID=?",
 				Context.NO, TimeUtil.getTimeYmdHmss(), id  );
 		return res;
 	}
 	@Override
 	public Map find(String id) {
- 		return  baseDao.findOne("select * from student where id=? ", id);
+ 		return  baseDao.findOne("select * from STUDENT where ID=? ", id);
 	}
 
 }

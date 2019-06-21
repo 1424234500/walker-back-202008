@@ -56,7 +56,7 @@ function just(){
 	upAndTar
 }
 function walker(){
-	tar -czvf${fromfile_temp} WEB-INF/lib/walker*
+	tar -czvf ${fromfile_temp} WEB-INF/lib/walker*
 	upAndTar
 }
 

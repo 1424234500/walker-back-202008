@@ -47,16 +47,34 @@ angular.module('com.socket', [])
         var params = $scope.search;  
     	baseService.post(	'/' + $PROJECT + '/redis/statics.do', params	).then(
         function (data) {  
-            info(data);
-            //debugger; 
-            $scope.option = data.option;
-            if($scope.items == null){ 
-                data.option.xAxis.data.push("");
-                $scope.items =  data.option.xAxis.data;
+            var add={
+	            tooltip : {
+			        trigger: 'axis'
+			    },
+			    calculable : true,
+			    toolbox: {
+			        show : true,
+			        feature : {
+			            mark : {show: true},
+			            dataView : {show: true, readOnly: false},
+			            magicType : {show: true, type: ['line', 'bar']},
+			            restore : {show: true},
+			            saveAsImage : {show: true}
+			        }
+			    },
             }
+            //debugger; 
+//            $scope.option = data.option;
+            $scope.option = $.extend({}, data.option, add);
+            $scope.option2 = $.extend({}, data.option2, add);
+            info($scope.option);
+
+            $scope.items =  $.extend("", data.items);	//data.option.xAxis.data
             $scope.search = data.arg;
 
-            toolSetChart("echarts", data.option);
+            toolSetChart("echarts", $scope.option);
+            toolSetChart("echarts2", $scope.option2);
+            
         }, error);  
 
 

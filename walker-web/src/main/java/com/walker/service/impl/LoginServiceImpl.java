@@ -36,18 +36,18 @@ public class LoginServiceImpl implements LoginService,Serializable {
 
 	@Override
 	public Boolean login() {
-		return saveLogin("test", "");
+		return saveLogin("TEST", "");
 	}
 
 	@Override
 	public Boolean saveLogin(String id, String pwd) {
 		String token = MD5.makeKey(id, System.currentTimeMillis());
 		Map map = cache.get(CACHE_KEY, new LinkedHashMap<String, Object>());
-		Bean bean = new Bean().put("token", token).put("id", id).put("time", System.currentTimeMillis()).put("expire", 60L * 1000);
+		Bean bean = new Bean().put("TOKEN", token).put("ID", id).put("TIME", System.currentTimeMillis()).put("EXPIRE", 60L * 1000);
 		map.put(token, bean);
 		cache.put(CACHE_KEY, map);	
 		logger.info("登录" + id + "." + pwd + "." + token);
-		Context.getRequest().getSession().setAttribute("token", token);
+		Context.getRequest().getSession().setAttribute("TOKEN", token);
 		return true;
 	}
     

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,9 +47,13 @@ public class RedisControl extends BaseControll {
 
 		String from = getValue(request, "FROM");
 		String to = getValue(request, "TO");
-		String format = "yyyy-MM-dd mm";
+		String url = getValue(request, "URL");
+		
+		String format = "yyyy-MM-dd HH:mm";
 		List<String> listXs = new ArrayList<>();
 		List<Bean> series = new ArrayList<>();
+		List<Bean> series2 = new ArrayList<>();
+		Set<String> items = new HashSet<String>();
 		Bean newArg = Redis.doJedis(new Fun<Bean>() {
 			@Override
 			public Bean make(Jedis jedis) {
@@ -76,11 +81,14 @@ public class RedisControl extends BaseControll {
 					min = TimeUtil.format(from, format).getTime();
 					max = min + deta;
 					toNew = TimeUtil.format((long)max, format);		
+				}else {
+					min = TimeUtil.format(from, format).getTime();
+					max = TimeUtil.format(to, format).getTime();
 				}
 				deta = max - min;
 				
 				for(String key : keys) {
-					String type = "bar";
+					String type = "bar";	//bar
 					if(listXs.size() == 0) {
 						Set<Tuple> rowWithScore = jedis.zrangeByScoreWithScores(key, min, max);
 						for(Tuple colTuple : rowWithScore) {
@@ -121,26 +129,47 @@ public class RedisControl extends BaseControll {
 					}
 					
 					String name = key.substring(start.length());
-					series.add(new Bean()
-							.put("name", name +":net")	//该线条的名字
-							.put("type", type)	//该线条的显示方式line bar pie
-							.put("stack", name)	//堆积列名
-							.put("data", line.get(0))	//该线条的y值集合
-					);
-					series.add(new Bean()
-							.put("name", name +":wait")	//该线条的名字
-							.put("type", type)	//该线条的显示方式line bar pie
-							.put("stack", name)	//堆积列名
-							.put("data", line.get(1))	//该线条的y值集合
-					);
-					series.add(new Bean()
-							.put("name", name +":done")	//该线条的名字
-							.put("type", type)	//该线条的显示方式line bar pie
-							.put("stack", name)	//堆积列名
-							.put("data", line.get(2))	//该线条的y值集合
-					);
+					items.add(name);
+					if(url.length() <= 0 || url.equals(name)) {	//选中目标接口 过滤结果
+						series.add(new Bean()
+								.put("name", name +":net")	//该线条的名字
+								.put("type", type)	//该线条的显示方式line bar pie
+								.put("stack", name)	//堆积列名
+								.put("data", line.get(0))	//该线条的y值集合
+						);
+						series.add(new Bean()
+								.put("name", name +":wait")	//该线条的名字
+								.put("type", type)	//该线条的显示方式line bar pie
+								.put("stack", name)	//堆积列名
+								.put("data", line.get(1))	//该线条的y值集合
+						);
+						series.add(new Bean()
+								.put("name", name +":done")	//该线条的名字
+								.put("type", type)	//该线条的显示方式line bar pie
+								.put("stack", name)	//堆积列名
+								.put("data", line.get(2))	//该线条的y值集合
+						);
+						series2.add(new Bean()
+								.put("name", name +":net")	//该线条的名字
+								.put("type", type)	//该线条的显示方式line bar pie
+								.put("stack", name)	//堆积列名
+								.put("data", lineAve.get(0))	//该线条的y值集合
+						);
+						series2.add(new Bean()
+								.put("name", name +":wait")	//该线条的名字
+								.put("type", type)	//该线条的显示方式line bar pie
+								.put("stack", name)	//堆积列名
+								.put("data", lineAve.get(1))	//该线条的y值集合
+						);
+						series2.add(new Bean()
+								.put("name", name +":done")	//该线条的名字
+								.put("type", type)	//该线条的显示方式line bar pie
+								.put("stack", name)	//堆积列名
+								.put("data", lineAve.get(2))	//该线条的y值集合
+						);
+					}
 				}
-				return new Bean().put("FROM", fromNew).put("TO", toNew);
+				return new Bean().put("FROM", fromNew).put("TO", toNew).put("URL", url);
 			}
 		});
 		
@@ -149,7 +178,6 @@ public class RedisControl extends BaseControll {
 		//x1, x2, x3, x4
 		//y1, y2, y3, y4 
 		//y5, y6, y7, y8   
-		Bean title = new Bean().put("text", "socket统计pqs");		//标题
 		List<String> listLineNames = new ArrayList<>();
 		for(Bean bean : series) {
 			listLineNames.add(bean.get("name", ""));
@@ -157,23 +185,102 @@ public class RedisControl extends BaseControll {
 		Bean legend = new Bean().put("data", listLineNames);   //线条名字集合
 		Bean xAxis = new Bean().put("data", listXs);  	//x坐标集合 多线条共x轴
 		Bean option = new Bean()
-				.put("title", title)  
+				.put("title", new Bean().put("text", "qps").put("subtext", "socket统计"))  
 				.put("legend", legend) 
 				.put("tooltip", new Bean()) //若无则不能预览
 				.put("xAxis", xAxis) 
 				.put("yAxis", new Bean()) 	//若无则报错YAxis 0 not found
 				.put("series", series) 		//lines
 				;
-		 
+		Bean option2 = new Bean()
+				.put("title", new Bean().put("text", "cost").put("subtext", "socket统计"))  
+				.put("legend", legend) 
+				.put("tooltip", new Bean()) //若无则不能预览
+				.put("xAxis", xAxis) 
+				.put("yAxis", new Bean()) 	//若无则报错YAxis 0 not found
+				.put("series", series2) 		//lines
+				;
 		Bean res = new Bean()
 				.put("format", format)
-				.put("arg", newArg)
 				.put("res", newArg == null)
+				.put("arg", newArg)
 				.put("option", option) 
+				.put("option2", option2) 
+				.put("items", items)
 				.put("info", RequestUtil.getRequestBean(request)); 
 		log(res);
 		echo(res);
 	}	
+	/*
+	option = {
+			tooltip : {
+		        trigger: 'axis'
+		    },
+		    calculable : true,
+		    toolbox: {
+		        show : true,
+		        feature : {
+		            mark : {show: true},
+		            dataView : {show: true, readOnly: false},
+		            magicType : {show: true, type: ['line', 'bar']},
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        }
+		    },
 	
+		    title : {
+		        text: '某地区蒸发量和降水量',
+		        subtext: '纯属虚构'
+		    },
+		    legend: {
+		        data:['蒸发量','降水量']
+		    },
+		    xAxis : [
+		        {
+		            type : 'category',
+		            data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type : 'value'
+		        }
+		    ],
+		    series : [
+		        {
+		            name:'蒸发量',
+		            type:'bar',
+		            data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
+		            markPoint : {
+		                data : [
+		                    {type : 'max', name: '最大值'},
+		                    {type : 'min', name: '最小值'}
+		                ]
+		            },
+		            markLine : {
+		                data : [
+		                    {type : 'average', name: '平均值'}
+		                ]
+		            }
+		        },
+		        {
+		            name:'降水量',
+		            type:'bar',
+		            data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
+		            markPoint : {
+		                data : [
+		                    {name : '年最高', value : 182.2, xAxis: 7, yAxis: 183, symbolSize:18},
+		                    {name : '年最低', value : 2.3, xAxis: 11, yAxis: 3}
+		                ]
+		            },
+		            markLine : {
+		                data : [
+		                    {type : 'average', name : '平均值'}
+		                ]
+		            }
+		        }
+		    ]
+		};
+	*/	                    
 	
 }

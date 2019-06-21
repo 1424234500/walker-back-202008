@@ -32,7 +32,7 @@ import com.walker.web.RequestUtil;
 @RequestMapping("/student")
 public class StudentControll extends BaseControll{
 	public StudentControll() {
-		super(StudentControll.class, "student");
+		super(StudentControll.class, "STUDENT");
 	}
 
 
@@ -54,10 +54,10 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/student_list.do")
 	public void listh(HttpServletRequest request, HttpServletResponse response)  {
-		String id = request.getParameter("id");
-		String name = request.getParameter("name");
-		String timefrom = request.getParameter("timefrom");
-		String timeto = request.getParameter("timeto");
+		String id = request.getParameter("ID");
+		String name = request.getParameter("NAME");
+		String timefrom = request.getParameter("TIMEFROM");
+		String timeto = request.getParameter("TIMETO");
 		Page page = Page.getPage(request);
 		
 		
@@ -67,9 +67,9 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/student_update.do")
 	public void updateh(HttpServletRequest request,  PrintWriter pw) {
-		String id = request.getParameter("id"); 
-		String name = request.getParameter("name");
-		String time = request.getParameter("time");
+		String id = request.getParameter("ID"); 
+		String name = request.getParameter("NAME");
+		String time = request.getParameter("TIME");
 	    log(request); 
 	    
 		int res = studentServiceHibernate.update(id, name, time);
@@ -77,7 +77,7 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/student_delete.do")
 	public void deleteh(HttpServletRequest request,  PrintWriter pw) {
-		String id = request.getParameter("id");  
+		String id = request.getParameter("ID");  
 	    log(request);
 
 		int res = studentServiceHibernate.delete(id );
@@ -85,8 +85,8 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/student_add.do")
 	public void addh(HttpServletRequest request,  PrintWriter pw) {
-		String name = request.getParameter("name");
-		String time = request.getParameter("time");
+		String name = request.getParameter("NAME");
+		String time = request.getParameter("TIME");
 	    log(request);
 
 		int res = studentServiceHibernate.add(name, time);
@@ -94,7 +94,7 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/student_get.do")
 	public void geth(HttpServletRequest request,  PrintWriter pw) {
-		String id = request.getParameter("id");  
+		String id = request.getParameter("ID");  
 	    log(request);
 
 		Map map = studentServiceHibernate.find(id );
@@ -105,10 +105,10 @@ public class StudentControll extends BaseControll{
 	 
 	@RequestMapping("/listm.do") 
 	public void listm(HttpServletRequest request, Map<Object,Object> map)  {
-		String id = request.getParameter("id");
-		String name = request.getParameter("name");
-		String timefrom = request.getParameter("timefrom");
-		String timeto = request.getParameter("timeto");
+		String id = request.getParameter("ID");
+		String name = request.getParameter("NAME");
+		String timefrom = request.getParameter("TIMEFROM");
+		String timeto = request.getParameter("TIMETO");
 	     
 		Page page = Page.getPage(request);
 		map.putAll(RequestUtil.getRequestBean(request));
@@ -123,9 +123,9 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/updatem.do")
 	public void updatem(HttpServletRequest request,  PrintWriter pw) {
-		String id = request.getParameter("id"); 
-		String name = request.getParameter("name");
-		String time = request.getParameter("time");
+		String id = request.getParameter("ID"); 
+		String name = request.getParameter("NAME");
+		String time = request.getParameter("TIME");
 	    log(request);
 
 		int res = studentServiceMybatis.update(id, name, time);
@@ -133,7 +133,7 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/deletem.do")
 	public void deletem(HttpServletRequest request,  PrintWriter pw){
-		String id = request.getParameter("id");  
+		String id = request.getParameter("ID");  
 	    log(request);
 
 		int res = studentServiceMybatis.delete(id );
@@ -141,8 +141,8 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/addm.do")
 	public void addm(HttpServletRequest request,  PrintWriter pw){
-		String name = request.getParameter("name");
-		String time = request.getParameter("time");
+		String name = request.getParameter("NAME");
+		String time = request.getParameter("TIME");
 	    log(request); 
 	    
 		int res = studentServiceMybatis.add(name, time);
@@ -150,7 +150,7 @@ public class StudentControll extends BaseControll{
 	}
 	@RequestMapping("/getm.do")
 	public void getm(HttpServletRequest request,  PrintWriter pw){
-		String id = request.getParameter("id");  
+		String id = request.getParameter("ID");  
 	    log(request);
 
 		Map map = studentServiceMybatis.find(id );

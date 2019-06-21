@@ -41,27 +41,6 @@ angular.module('com.file')
         }
     };
 
-    $('#charttimefrom').datetimepicker();
-    $('#charttimeto').datetimepicker();
-    $scope.chart = {}; //查询
-    $scope.chart.TIMEFROM = "2015";
-    $scope.chart.TIMETO = "2017";
-    $scope.statis = function(){
-        //debugger;
-        var params = $scope.chart;
-          //按月统计，每月注册人数
-        fileService.statis(params).then(
-        function (data) {
-            // debugger;
-            info(data);
-            //data.option = $.extend({"yAxis":{}}, data.option )
-            toolSetChart("echarts", data.option);
-        }, function(error){
-            alert("eeeeeeeeeeeee");
-        });
-    };
-    //$scope.statis();
-
     $scope.dir = "";
     $scope.back = function(){
         var path = $scope.dir;
@@ -118,7 +97,6 @@ angular.module('com.file')
                 info("操作数据:" + data + "条");
                 $scope.list();
             }, error);
-
     };
 
     //更新一行数据
@@ -138,11 +116,6 @@ angular.module('com.file')
             }, error);
     };
 
-    $scope.download = function(id){
-        var params = {"id":id};
-        var url = "/BaseSSM/file/download.do?id=" + id;
-        openUrl(url);
-    };
     //加载表信息
     fileService.fileCols().then(
         function (data) {
@@ -154,10 +127,6 @@ angular.module('com.file')
             $scope.defaultDir = data;
             $scope.dir = data;
         }, error);
-
-
-
-
 
 }])
 .controller('com.file.addCtrl', ['$scope', '$rootScope', 'fileService', function ($scope, $rootScope, fileService) {
@@ -174,8 +143,6 @@ angular.module('com.file')
     };
 }])
 .controller('com.file.updateCtrl', ['$scope', '$rootScope', '$stateParams', 'fileService', function ($scope, $rootScope, $stateParams, fileService) {
-
-
     $scope.params = $stateParams;
     info("stateParams");
     info($scope.params);

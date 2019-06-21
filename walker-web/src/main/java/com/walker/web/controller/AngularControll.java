@@ -52,9 +52,9 @@ public class AngularControll extends BaseControll{
 		
 		List listXs = null;
  		if(baseService.getDs().equals("oracle")) {
- 			listXs = MapListUtil.toArrayAndTurn(baseService.find("select lpad(level, 2, '0') lev from dual connect by level <=12")).get(0);
+ 			listXs = MapListUtil.toArrayAndTurn(baseService.find("SELECT LPAD(LEVEL, 2, '0') LEV FROM DUAL CONNECT BY LEVEL <=12 ")).get(0);
  		}else {
- 			listXs = MapListUtil.toArrayAndTurn(baseService.find(" select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12  ")).get(0) ;
+ 			listXs = MapListUtil.toArrayAndTurn(baseService.find(" SELECT LPAD(LEVEL, 2, '0') LEV FROM (SELECT  (@I/*'*/:=/*'*/@I+1) LEVEL FROM  INFORMATION_SCHEMA.COLUMNS T ,(SELECT   @I/*'*/:=/*'*/0) IT ) T  WHERE LEVEL<=12  ")).get(0) ;
  		}
 		
 		List listLineNames = MapListUtil.array().build();
@@ -66,17 +66,17 @@ public class AngularControll extends BaseControll{
 			if(baseService.getDs().equals("oracle")) {
 				//yi-1, yi-2, yi-3, yi-4 只查询y轴序列
 				listSeries = MapListUtil.listAdd(listSeries,  MapListUtil.toArrayAndTurn(baseService.find(
-						"SELECT nvl(t1.y, '0') y FROM ( SELECT t.xs x,count(*) y FROM ( SELECT s.*,to_char(s.time, 'MM') xs FROM student s where to_char(s.time, 'yyyy')=?  ) t group by t.xs ) t1,( select lpad(level, 2, '0') lev from dual connect by level <=12   ) t2 where t1.x(+) = t2.lev order by t2.lev  "
+						"SELECT NVL(T1.Y, '0') Y FROM ( SELECT T.XS X,COUNT(*) Y FROM ( SELECT S.*,TO_CHAR(S.TIME, 'MM') XS FROM STUDENT S WHERE TO_CHAR(S.TIME, 'YYYY')=?  ) T GROUP BY T.XS ) T1,( SELECT LPAD(LEVEL, 2, '0') LEV FROM DUAL CONNECT BY LEVEL <=12   ) T2 WHERE T1.X(+) = T2.LEV ORDER BY T2.LEV  "
 						, i)) ); 
 			}else {
 				//yi-1, yi-2, yi-3, yi-4 只查询y轴序列
 				listSeries = MapListUtil.listAdd(listSeries,  MapListUtil.toArrayAndTurn(baseService.find(
-						"SELECT ifnull(t2.y, '0') y FROM "
-						+" ( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12   ) t1"
-						+" left join "
-						+" ( SELECT t.mon x,count(*) y FROM ( SELECT s.*,substr(s.s_mtime, 6,2) mon FROM student s where substr(s.s_mtime,1,4)=?  ) t group by t.mon ) t2"
-						+" on"
-						+" t1.lev=t2.x order by t1.lev" 
+						"SELECT IFNULL(T2.Y, '0') Y FROM "
+								+" ( SELECT LPAD(LEVEL, 2, '0') LEV FROM (SELECT  (@I/*'*/:=/*'*/@I+1) LEVEL FROM  INFORMATION_SCHEMA.COLUMNS T ,(SELECT   @I/*'*/:=/*'*/0) IT ) T  WHERE LEVEL<=12   ) T1"
+								+" LEFT JOIN "
+								+" ( SELECT T.MON X,COUNT(*) Y FROM ( SELECT S.*,SUBSTR(S.S_MTIME, 6,2) MON FROM STUDENT S WHERE SUBSTR(S.S_MTIME,1,4)=?  ) T GROUP BY T.MON ) T2"
+								+" ON"
+								+" T1.LEV=T2.X ORDER BY T1.LEV" 
 						, i)) ); 
 //SELECT ifnull(t2.y, '0') y FROM 
 //( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=12   ) t1

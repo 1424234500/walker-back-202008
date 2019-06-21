@@ -41,5 +41,27 @@ public class Key {
 	final public static String ABOUT = "ABOUT";	
 	
 	final public static String SOCKET = "SOCKET";	
+	
+	final public static String STA = "STA";
+
+	/**
+	 * 未操作
+	 */
+	final public static String STA_DEF = "STA_DEF";
+
+	/**
+	 * 下载中
+	 */
+	final public static String STA_LOADING = "STA_LOADING";
+	/**
+	 * 下载失败
+	 */
+	final public static String STA_FALSE = "STA_FALSE";	
+	/**
+	 * 已下载
+	 */
+	final public static String STA_TRUE = "STA_TRUE";
+	
+	
 
 }

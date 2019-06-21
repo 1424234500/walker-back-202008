@@ -1,0 +1,31 @@
+package com.walker.common.util;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class TimeUtilTest {
+
+	@Test
+	public void testFormatAuto() {
+		String format = "yyyy-MM-dd HH:mm:ss";
+
+		String from = TimeUtil.getTime(format, 0);
+
+		long mindeta = -1L * 10 * 1000;
+		for(int i = 0; i < 6; i++) {
+			mindeta *= 10;
+			
+			String to = TimeUtil.getTime(format, mindeta);
+
+			long max = TimeUtil.format(from, format).getTime();
+			long min = TimeUtil.format(to, format).getTime();
+			long deta = max - min;
+			
+			Tools.out(from, to, deta, TimeUtil.formatAuto(System.currentTimeMillis(), deta));
+			
+		}
+		
+	}
+
+}
