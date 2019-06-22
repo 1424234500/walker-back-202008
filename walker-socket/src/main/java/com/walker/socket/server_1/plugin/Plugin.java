@@ -80,6 +80,7 @@ public abstract class Plugin<T> {
 			msgNew.setUserTo(to);
 			List<Session<T>> onUsers = publish(to, msgNew);
 			log.info("publish " + to + " on " + onUsers.size() );
+			log.info("订阅列表");
 			Tools.formatOut(onUsers);
 			
 			if(onUsers.size() <= 0) {

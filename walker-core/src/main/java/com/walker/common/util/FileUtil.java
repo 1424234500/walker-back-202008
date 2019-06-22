@@ -768,18 +768,13 @@ public class FileUtil {
 	 * @return	amr
 	 */
 	public static String getFileType(String path) {
-		String res = "null";
-		if (path == null) {
-		} else {
-			int ii = path.lastIndexOf(".");
-			// out(""+ii);
-			if (ii >= 0) {
-				return path.substring(ii + 1);
-			}
+		String name = getFileName(path);
+		int index1 = name.lastIndexOf(".");
+		if(index1 >= 0) {
+			name = name.substring(index1 +1, name.length());
 		}
-		return res;
+		return name;
 	}
-
 
 	/**
 	 * 获取文件名 不要后缀
@@ -788,22 +783,12 @@ public class FileUtil {
 	 * @return	test
 	 */
 	public static String getFileNameOnly(String path) {
-		String res = "null";
-
-		if (path == null) {
-		} else {
-			int ii = path.lastIndexOf(".");
-			// out(""+ii);
-			if (ii >= 0) {
-				res = path.substring(0, ii); // F:/s/d/1000
-				ii = path.lastIndexOf("\\");
-				// out(""+ii);
-				if (ii >= 0) {
-					res = res.substring(ii + 1);
-				}
-			}
+		String name = getFileName(path);
+		int index1 = name.lastIndexOf(".");
+		if(index1 >= 0) {
+			name = name.substring(0, index1);
 		}
-		return res;
+		return name;
 	}
 
 	/**
@@ -813,19 +798,14 @@ public class FileUtil {
 	 * @return	test.amr
 	 */
 	public static String getFileName(String path) {
-		String res = "null";
-
-		if (path == null) {
-		} else {
-			int ii = path.lastIndexOf(File.separator);
-			// out(""+ii);
-			if (ii >= 0) {
-				res = path.substring(ii + 1);
-			}
+		String res = path;
+		int index = path.lastIndexOf(File.separator);
+		if(index >= 0) {
+			res = path.substring(index + 1, path.length());
 		}
 		return res;
-	}
 
+	}
 	/**
 	 * 获取文件父路径
 	 * 
@@ -834,17 +814,11 @@ public class FileUtil {
 	 */
 	public static String getFilePath(String path) {
 		String res = "";
-
-		if (path == null) {
-		} else {
-			int ii = path.lastIndexOf(File.separator);
-			// out(""+ii);
-			if (ii >= 0) {
-				res = path.substring(0, ii);
-			}
+		int index = path.lastIndexOf(File.separator);
+		if(index >= 0) {
+			res = path.substring(0, index);
 		}
 		return res;
-
 	}
 
 	public static void out(Object... objects) {

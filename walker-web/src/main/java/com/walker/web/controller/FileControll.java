@@ -299,8 +299,8 @@ public class FileControll extends BaseControll{
         	
     		String type = FileUtil.getFileType(name);
             //获取文件识别码
-            String key = "k_" + FileUtil.checksumCrc32(new File(pathTemp));
-            String path = dir + File.separator + key + "." + type;
+            String key = "k_" + FileUtil.checksumCrc32(new File(pathTemp)) + "." + type;
+            String path = dir + File.separator + key;
             //保存数据库文件 并自动删除重复id path
             int sta = fileService.saveUpload(key, getUser().getId(), name, path, ""); 
             //移动文件到目标路径
