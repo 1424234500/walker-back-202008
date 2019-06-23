@@ -186,6 +186,9 @@ public class FileControll extends BaseControll{
     	Watch w = new Watch("download");
     	String path = getValue(request, "PATH");
     	String key = getValue(request, "KEY");
+    	if(key.length() == 0) {
+    		key = getValue(request, "ID");
+    	}
 //		String path1 = new String(path.getBytes("iso-8859-1"), "gbk");
 //		String path3 = URLDecoder.decode(path, "utf-8");
 //		String path4 = URLDecoder.decode(path);
@@ -195,6 +198,9 @@ public class FileControll extends BaseControll{
 		if(key.length() > 0){ //key 映射 path 方式
 			Map<String, Object> map = baseService.findOne("select * from FILEINFO where ID=?", key);
 			path = MapListUtil.getMap(map, "ID", "");
+		}
+		if(path.length() <= 0 && key.length() > 0) {
+			path = Context.getUploadDir() + File.separator + key;
 		}
 		if(path.length() > 0){ //处理path分析文件
 			int type = FileUtil.check(path);
