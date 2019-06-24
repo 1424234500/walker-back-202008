@@ -177,8 +177,9 @@ public class FileControll extends BaseControll{
 	}
 	 /**  
      * 文件下载
-     * path 若有则按照path下载
-     * key  则按照key 映射path下载
+     * key/id  则按照key 映射path下载
+
+     * path 若无key/id则 path下载
      * 
      */  
     @RequestMapping("/download.do")  
@@ -222,7 +223,9 @@ public class FileControll extends BaseControll{
 	        try{
 	        	os = response.getOutputStream();
 	        	int length = FileUtil.readFile(path, os);
-	 	        echo (length > 0, ""+length, w.toString());
+	        	RequestUtil.setDownFileLength(response, length);
+//	 	        echo (length > 0, ""+length, w.toString());
+	        	w.res(length, log);
 	        }catch(Exception e) {
 	        	w.exceptionWithThrow(e, log);
 	        }  finally {
@@ -244,7 +247,8 @@ public class FileControll extends BaseControll{
     public void upload(HttpServletRequest request,  PrintWriter pw) throws IOException{
         MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
         MultipartFile file = mreq.getFile("file");
-        String uppath = request.getParameter("path");
+        String uppath = getValue(request, "path");
+        String key = getValue(request, "key");
         if(uppath == null || uppath.length() == 0) {
         	uppath = Context.getUploadDir();
         }
@@ -266,7 +270,9 @@ public class FileControll extends BaseControll{
 	            FileUtil.saveFile(is, pathTemp, false);
 	            
 	            //获取文件识别码
-	            String key = "k_" + FileUtil.checksumCrc32(new File(pathTemp));
+	            if(key.length() == 0) {
+	            	key= "k_" + FileUtil.checksumCrc32(new File(pathTemp));
+	            }
 	            String path = dir + File.separator + key + "." + type;
 //	            保存数据库文件 并自动删除重复id path
 	            int sta = fileService.saveUpload(key, getUser().getId(), name, path, ""); 
@@ -290,11 +296,15 @@ public class FileControll extends BaseControll{
 	
 	/*
      * 采用file.Transto 来保存上传的文件
+     * key 指定命名
      */
     @RequestMapping("uploadCmf")
     public void uploadCmf(@RequestParam("file") CommonsMultipartFile file,HttpServletRequest request,HttpServletResponse response) throws Exception{  
     	Watch w = new Watch("upload");
         String name = file.getOriginalFilename();
+        String uppath = getValue(request, "path");
+        String key = getValue(request, "key");
+        
         String dir = Context.getUploadDir();
         String pathTemp = dir + File.separator + "temp" + File.separator + name;
         FileUtil.mkdir(dir + File.separator + "temp");
@@ -305,7 +315,9 @@ public class FileControll extends BaseControll{
         	
     		String type = FileUtil.getFileType(name);
             //获取文件识别码
-            String key = "k_" + FileUtil.checksumCrc32(new File(pathTemp)) + "." + type;
+    		if(key.length() == 0) {	//若传了命名则不按照自动生成唯一标识
+            	key = "k_" + FileUtil.checksumCrc32(new File(pathTemp)) + "." + type;
+    		}
             String path = dir + File.separator + key;
             //保存数据库文件 并自动删除重复id path
             int sta = fileService.saveUpload(key, getUser().getId(), name, path, ""); 

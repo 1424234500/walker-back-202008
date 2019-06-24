@@ -199,6 +199,12 @@ public class RequestUtil {
 	}
 
 	/**
+	 * 设置下载 文件 长度
+	 */
+	public static void setDownFileLength( HttpServletResponse response, int length) {
+		response.setContentLength(length);
+	}
+	/**
 	 * 设置下载 文件 头
 	 */
 	public static void setHeaderDownFile(HttpServletRequest request, HttpServletResponse response, String fileName)
@@ -208,18 +214,17 @@ public class RequestUtil {
 //        //设置文件下载头  
 //        response.addHeader("Content-Disposition", "attachment;filename=" + name);    
 //        //设置文件ContentType类型，这样设置，会自动判断下载文件类型    
-//        response.setContentType("multipart/form-data");   
+        response.setContentType("multipart/form-data");   
         
         
 		String userbrowser = "unknow";
 		userbrowser = request.getHeader("User-Agent");
 		if (userbrowser == null) {
-			userbrowser = "unknow";
+			userbrowser = "Chrome";
 		}
 		if (-1 < userbrowser.indexOf("MSIE 6.0") || -1 < userbrowser.indexOf("MSIE 7.0")) {
 			// IE6、7
-			response.addHeader("content-disposition",
-					"attachment;filename=" + new String(fileName.getBytes(), "ISO8859-1"));
+			response.addHeader("content-disposition", "attachment;filename=" + new String(fileName.getBytes(), "ISO8859-1"));
 		} else if (-1 < userbrowser.indexOf("MSIE 8.0")) {
 			// IE8
 			response.addHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
@@ -228,16 +233,13 @@ public class RequestUtil {
 			response.addHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
 		} else if (-1 < userbrowser.indexOf("Chrome")) {
 			// chrome
-			response.addHeader("content-disposition",
-					"attachment;filename*=UTF-8''" + URLEncoder.encode(fileName, "UTF-8"));
+			response.addHeader("content-disposition", "attachment;filename*=UTF-8''" + URLEncoder.encode(fileName, "UTF-8"));
 		} else if (-1 < userbrowser.indexOf("Safari")) {
 			// safari
-			response.addHeader("content-disposition",
-					"attachment;filename=" + new String(fileName.getBytes(), "ISO8859-1"));
+			response.addHeader("content-disposition", "attachment;filename=" + new String(fileName.getBytes(), "ISO8859-1"));
 		} else {
 			// other brower
-			response.addHeader("content-disposition",
-					"attachment;filename*=UTF-8''" + URLEncoder.encode(fileName, "UTF-8"));
+			response.addHeader("content-disposition", "attachment;filename*=UTF-8''" + URLEncoder.encode(fileName, "UTF-8"));
 		}
 	}
 

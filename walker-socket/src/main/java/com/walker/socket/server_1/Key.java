@@ -47,20 +47,20 @@ public class Key {
 	/**
 	 * 未操作
 	 */
-	final public static String STA_DEF = "STA_DEF";
+	final public static String STA_DEF = "-1";
 
 	/**
 	 * 下载中
 	 */
-	final public static String STA_LOADING = "STA_LOADING";
+	final public static String STA_LOADING = "1";
 	/**
 	 * 下载失败
 	 */
-	final public static String STA_FALSE = "STA_FALSE";	
+	final public static String STA_FALSE = "0";	
 	/**
 	 * 已下载
 	 */
-	final public static String STA_TRUE = "STA_TRUE";
+	final public static String STA_TRUE = "101";
 	
 	
 
