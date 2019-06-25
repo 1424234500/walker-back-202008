@@ -20,6 +20,9 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -141,7 +144,8 @@ public class FileControll extends BaseControll{
 		String oldName = request.getParameter("OLDNAME");  
 		String name = request.getParameter("NAME");  //新名字
 		if(name== null || name.length() == 0) {
-			echo(false, "重命名不能为空");
+//			echo(false, "重命名不能为空");
+			name = FileUtil.getFileName(oldPath);
 		}
 		int count = 0;
 		String info = "";
@@ -176,7 +180,7 @@ public class FileControll extends BaseControll{
 		echo( map);	
 	}
 	 /**  
-     * 文件下载
+     * 文件下载 基本实现
      * key/id  则按照key 映射path下载
 
      * path 若无key/id则 path下载
@@ -198,7 +202,7 @@ public class FileControll extends BaseControll{
 		String info = "";
 		if(key.length() > 0){ //key 映射 path 方式
 			Map<String, Object> map = baseService.findOne("select * from FILEINFO where ID=?", key);
-			path = MapListUtil.getMap(map, "ID", "");
+			path = MapListUtil.getMap(map, "PATH", "");
 		}
 		if(path.length() <= 0 && key.length() > 0) {
 			path = Context.getUploadDir() + File.separator + key;
@@ -236,7 +240,7 @@ public class FileControll extends BaseControll{
     }  
     
     /**
-     * 上传文件
+     * 上传文件 基本实现
      * 存入文件系统 path路径
      * 
      * 生产key 存入数据库映射路径和key 以md5为key 文件去重
@@ -294,13 +298,85 @@ public class FileControll extends BaseControll{
 
     }
 	
-	/*
+	 /**  
+     * 文件下载 springmvc实现
+     * key/id  则按照key 映射path下载
+
+     * path 若无key/id则 path下载
+     * 
+     */  
+	@RequestMapping("/downloadRe")
+	public ResponseEntity<byte[]> downloadRe(HttpServletRequest request) throws IOException {
+		Watch w = new Watch("downloadRe");
+    	String path = getValue(request, "PATH");
+    	String key = getValue(request, "KEY");
+    	if(key.length() == 0) {
+    		key = getValue(request, "ID");
+    	}
+//		String path1 = new String(path.getBytes("iso-8859-1"), "gbk");
+//		String path3 = URLDecoder.decode(path, "utf-8");
+//		String path4 = URLDecoder.decode(path);
+		path = new String(path.getBytes("iso-8859-1"), "utf-8");
+		Boolean res = false;
+		String info = "";
+		if(key.length() > 0){ //key 映射 path 方式
+			Map<String, Object> map = baseService.findOne("select * from FILEINFO where ID=?", key);
+			path = MapListUtil.getMap(map, "PATH", "");
+		}
+		if(path.length() <= 0 && key.length() > 0) {
+			path = Context.getUploadDir() + File.separator + key;
+		}
+		if(path.length() > 0){ //处理path分析文件
+			int type = FileUtil.check(path);
+			if(type == 1){
+				info = path + " 是文件夹";
+			}else if(type == 0){
+				info = path + " 存在";
+				res = true;
+			}else{
+				info = path + " 不存在";
+			}
+		}
+		w.put("path", path);
+		w.put("info", info);
+		if(!res){
+			w.res(log);
+		    return ResponseEntity.notFound().eTag(res.toString()).build();
+		}else {
+			String name = FileUtil.getFileName(path);
+
+		    File file = new File(path);
+		    byte[] body = null;
+		    InputStream is = null;
+		    try {
+			    is = new FileInputStream(file);
+			    body = new byte[is.available()];
+			    is.read(body);
+		    }catch(Exception e){
+		    	w.exception(e, log);
+		    }finally {
+		    	if(is != null) is.close();
+		    }
+		    HttpHeaders headers = new HttpHeaders();
+		    headers.add("Content-Disposition", "attchement;filename=" + name);
+
+			String userbrowser = request.getHeader("User-Agent");
+			w.put(userbrowser);
+		    headers.add("Content-Disposition", RequestUtil.getDispo(userbrowser, name));
+
+		    ResponseEntity<byte[]> entity = new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
+		    w.res(log);
+		    return entity;
+		}
+	}
+	/**
+	 * 文件上传 sprignmvc实现
      * 采用file.Transto 来保存上传的文件
      * key 指定命名
      */
     @RequestMapping("uploadCmf")
     public void uploadCmf(@RequestParam("file") CommonsMultipartFile file,HttpServletRequest request,HttpServletResponse response) throws Exception{  
-    	Watch w = new Watch("upload");
+    	Watch w = new Watch("uploadCmf");
         String name = file.getOriginalFilename();
         String uppath = getValue(request, "path");
         String key = getValue(request, "key");

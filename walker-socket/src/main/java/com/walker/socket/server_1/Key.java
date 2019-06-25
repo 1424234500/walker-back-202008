@@ -18,6 +18,9 @@ public class Key {
     public static final String PHOTO = "PHOTO";
     
     public static final String PROFILE = "PROFILE";
+    public static final String IMAGE = "IMAGE";
+    public static final String PNG = "PNG";
+    public static final String GRAPH = "GRAPH";
 
     public static final String ID = "ID";
     public static final String TIME = "TIME";
