@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.walker.common.setting.Setting;
 import com.walker.common.util.Tools;
+import com.walker.socket.server_1.netty.handler.HeartBeatClientHandler;
 import com.walker.socket.server_1.netty.handler.NettyDecoder;
 import com.walker.socket.server_1.netty.handler.NettyEncoder;
 import com.walker.socket.server_1.netty.handler.SessionHandler;
@@ -59,7 +60,7 @@ public class SocketNetty {
 					p.addLast(new IdleStateHandler(10, 0, 0, TimeUnit.SECONDS)); 	//5s心跳包 
 //					p.addLast( new ObjectEncoder(),  new ObjectDecoder(ClassResolvers.cacheDisabled(null)))
 				    p.addLast(new NettyEncoder(), new NettyDecoder());  
-//					p.addLast(new HeartBeatClientHandler());  
+					p.addLast(new HeartBeatClientHandler());  
 					p.addLast(new SessionHandler());                 
 				}
              })
