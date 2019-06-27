@@ -29,11 +29,9 @@ public  class OfflinemsgPlugin<T> extends Plugin<T>{
 	 */
 	public void onData(Msg msg) { 
 		Bean data = msg.getData();
-		String beforeStr = data.get(Key.BEFORE, TimeUtil.getTimeYmdHmss());
-		long before = TimeUtil.format(beforeStr, "yyyy-MM-dd HH:mm:ss:sss").getTime();
-
+		String before = data.get(Key.BEFORE, TimeUtil.getTimeYmdHmss());
 		String count = data.get(Key.COUNT, "200");
-		List<Msg> msgs = service.finds(getNowUser(msg), before, Integer.valueOf(count));
+		List<Msg> msgs = service.finds(getNowUser(msg).getId(), before, Integer.valueOf(count));
 		msg.setData(msgs);
 		publish(msg);
 

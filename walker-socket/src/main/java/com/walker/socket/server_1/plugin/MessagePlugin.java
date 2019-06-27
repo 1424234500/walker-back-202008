@@ -7,7 +7,6 @@ import com.walker.socket.service.redis.MessageServiceImpl;
 
 public  class MessagePlugin<T> extends Plugin<T>{
 	
-	MessageService service = new MessageServiceImpl();
 	
     MessagePlugin(Bean params) {
 		super(params);
@@ -16,7 +15,6 @@ public  class MessagePlugin<T> extends Plugin<T>{
 	 * {type:message,sto:,sfrom:128.2.3.1\:9080,to:123,from:222,data:{type:txt,body:hello} }	
 	 */
 	public void onData(Msg msg) {
-		service.save(getNowUser(msg), msg);
 		
 		//存储
 //		 *					{type:message,data:{to:123,from:222,type:txt,body:hello} }		

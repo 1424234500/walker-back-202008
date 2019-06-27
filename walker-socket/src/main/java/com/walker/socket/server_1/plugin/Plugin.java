@@ -14,6 +14,8 @@ import com.walker.socket.server_1.Msg;
 import com.walker.socket.server_1.netty.handler.SessionHandler;
 import com.walker.socket.server_1.session.Session;
 import com.walker.socket.server_1.session.User;
+import com.walker.socket.service.MessageService;
+import com.walker.socket.service.redis.MessageServiceImpl;
 
 /**
  * 业务分类处理插件
@@ -21,7 +23,9 @@ import com.walker.socket.server_1.session.User;
  */
 public abstract class Plugin<T> {
 	protected Logger log = Logger.getLogger(Plugin.class); 
+	MessageService service = new MessageServiceImpl();
 
+	
 	final public static String KEY_LOGIN = "login";
 	final public static String KEY_SERVICE= "service";
 	final public static String KEY_MESSAGE = "message";
@@ -83,6 +87,9 @@ public abstract class Plugin<T> {
 		for(String to : tos) {
 			Msg msgNew = LangUtil.cloneObject(msgc);
 			msgNew.setUserTo(to);
+			
+			service.save(to, msgNew);
+			
 			List<Session<T>> onUsers = publish(to, msgNew);
 			log.info("publish " + to + " on " + onUsers.size() );
 			log.info("订阅列表");

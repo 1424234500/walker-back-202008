@@ -123,8 +123,8 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 
 		bean.set(Key.USER, getUser());
 		String beforeStr = bean.get(Key.BEFORE, TimeUtil.getTimeYmdHmss());
-		long before = TimeUtil.format(beforeStr, "yyyy-MM-dd HH:mm:ss:sss").getTime();
-		bean.set(Key.MSG, messageService.finds(user, before, Integer.MAX_VALUE));
+//		long before = TimeUtil.format(beforeStr, "yyyy-MM-dd HH:mm:ss:sss").getTime();
+//		bean.set(Key.MSG, messageService.finds(user.getId(), before, Integer.MAX_VALUE));
 		
 	}
 	public void onUnLogin(Bean bean) {
