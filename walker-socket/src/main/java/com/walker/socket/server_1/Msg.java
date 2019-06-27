@@ -3,6 +3,7 @@ package com.walker.socket.server_1;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.walker.common.util.ArraysUtil;
@@ -63,6 +64,9 @@ public class Msg extends Bean implements Cloneable{
 	
 	
 	public Msg() {}
+	public Msg(Map<?,?> bean) {
+		super(bean);
+	}
 	public Msg(String json) {
 		int t = JsonUtil.getType(json);
 		if(t == 1){

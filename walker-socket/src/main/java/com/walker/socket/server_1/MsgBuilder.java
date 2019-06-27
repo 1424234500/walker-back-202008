@@ -3,6 +3,7 @@ package com.walker.socket.server_1;
 import org.junit.Test;
 
 import com.walker.common.util.Bean;
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.socket.server_1.plugin.Plugin;
@@ -45,7 +46,9 @@ public class MsgBuilder {
 	 */
 	public static Msg testMessageTo(String to, String body) {
 		return new Msg().setType(Plugin.KEY_MESSAGE)
-				.setData(new Bean().set(Key.TYPE, Key.TEXT).set(Key.TEXT, body))
+				.setData(new Bean().set(Key.TYPE, Key.TEXT).set(Key.TEXT, body)
+//						.set(Key.ID, LangUtil.getGenerateId())
+						)
 				.setUserTo(to)
 				.setTimeClient(System.currentTimeMillis());
 	}

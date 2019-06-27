@@ -18,10 +18,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.walker.common.util.Bean;
 import com.walker.common.util.FileUtil;
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
+import com.walker.socket.server_1.Key;
 import com.walker.socket.server_1.Msg;
 import com.walker.socket.server_1.MsgBuilder;
 
@@ -100,9 +103,20 @@ public class ClientUI extends JFrame {
 				String mmsg = ("" + jtfSend.getText());// 写入发送流到 客户端去
 				String obj = mmsg;
 				try {
+					Msg msg = new Msg(mmsg);
+					Bean data = msg.getData();
+					if(data.get(Key.ID, "").length() == 0){
+						data.set(Key.ID, LangUtil.getGenerateId());
+					}
+					obj = msg.toString();
+				}catch(Exception ee) {
+					ee.printStackTrace();
+				}
+				
+				try {
 					client.send(obj);
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
+					out(e1.toString(), obj);
 					e1.printStackTrace();
 				}
 			}
