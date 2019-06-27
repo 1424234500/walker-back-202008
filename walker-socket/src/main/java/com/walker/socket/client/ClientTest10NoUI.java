@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.walker.common.setting.Setting;
 import com.walker.common.util.Bean;
 import com.walker.common.util.ThreadUtil;
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.socket.server_1.Msg;
 import com.walker.socket.server_1.MsgBuilder;
@@ -155,7 +156,7 @@ public class ClientTest10NoUI{
 
 	}
 	public void login(Client client) throws Exception {
-		client.send(MsgBuilder.testLogin(Tools.getRandomNum(10, 99, 2)).toString());
+		client.send(MsgBuilder.makeLogin(Tools.getRandomNum(10, 99, 2), TimeUtil.getTimeYmdHmss()).toString());
 	}
 	public void sendAllUser(Client client) throws Exception {
 		count.addAndGet(1L);

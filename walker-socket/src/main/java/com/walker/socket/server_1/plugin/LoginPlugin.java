@@ -29,7 +29,7 @@ public class LoginPlugin<T> extends Plugin<T>{
 		log.info("login " + msg.toString());
 		
 		//以user 为 id去重 校验
-		Session<?> session = SessionHandler.sessionService.getSession(msg.getFrom(), "");
+		Session<?> session = getNowSession(msg);
 		Session<?> sessionId = SessionHandler.sessionService.getSession("", id);
 		if(session == null) {
 			throw new ErrorException("该用户已掉线", data);

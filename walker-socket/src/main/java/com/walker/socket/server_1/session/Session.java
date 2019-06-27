@@ -12,6 +12,8 @@ import com.walker.socket.server_1.Key;
 import com.walker.socket.server_1.Msg;
 import com.walker.socket.server_1.MsgBuilder;
 import com.walker.socket.server_1.plugin.Plugin;
+import com.walker.socket.service.MessageService;
+import com.walker.socket.service.redis.MessageServiceImpl;
 
 /**
  * 会话 关联socket user
@@ -27,7 +29,9 @@ import com.walker.socket.server_1.plugin.Plugin;
  */
 public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	private static Logger log = Logger.getLogger(Session.class); 
-
+	
+	MessageService messageService = new MessageServiceImpl();
+	
 	User user = new User();
 	/**
 	 * socket ip:port
@@ -115,6 +119,13 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 		sub.subscribe(user.getId(), this);	//订阅当前登录用户userid
 		sub.subscribe("all_user", this);		//订阅所有登录用户
 		log.info("login ok " + this.toString() );
+		
+
+		bean.set(Key.USER, getUser());
+		String beforeStr = bean.get(Key.BEFORE, TimeUtil.getTimeYmdHmss());
+		long before = TimeUtil.format(beforeStr, "yyyy-MM-dd HH:mm:ss:sss").getTime();
+		bean.set(Key.MSG, messageService.finds(user, before, Integer.MAX_VALUE));
+		
 	}
 	public void onUnLogin(Bean bean) {
 		User user = getUser();
@@ -143,7 +154,6 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 			Bean bean = (Bean) msg.getData();
 			if(status == 0) {
 				this.onLogin(bean);
-				bean.set(Key.USER, getUser());
 			}else {
 				this.onUnLogin(bean);
 			}

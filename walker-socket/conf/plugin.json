@@ -5,7 +5,12 @@
 		"login"	:	{
 			"class"	:	"com.walker.socket.server_1.plugin.LoginPlugin",
 			"on"	:	true,
-			"limit"	:	0,
+			"limit"	:	0
+		},
+		"offlinemsg"	:	{
+			"class"	:	"com.walker.socket.server_1.plugin.OfflinemsgPlugin",
+			"on"	:	true,
+			"limit"	:	0
 		},
 		"login1"	:	{
 			class	:	com.walker.socket.server_1.plugin.Login,

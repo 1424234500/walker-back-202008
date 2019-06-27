@@ -5,7 +5,12 @@ package com.walker.socket.server_1;
  * andorid 静态键配置化
  */
 public class Key {
+	
+    public static final String BEFORE = "BEFORE";
+    public static final String COUNT = "COUNT";
 
+    
+    
     public static final String ALL_USER = "all_user";
     public static final String ALL_SOCKET = "all_socket";
 
@@ -67,4 +72,9 @@ public class Key {
 	
 	
 
+	public static String getKeyOffline(String key) {
+		return "offline:" + key;
+	}
+	
+	
 }

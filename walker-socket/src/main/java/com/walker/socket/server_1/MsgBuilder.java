@@ -1,6 +1,9 @@
 package com.walker.socket.server_1;
 
+import org.junit.Test;
+
 import com.walker.common.util.Bean;
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.socket.server_1.plugin.Plugin;
 import com.walker.socket.server_1.session.Session;
@@ -17,9 +20,17 @@ public class MsgBuilder {
 	/**
 	 * 	"{type:login,data:{user:username,pwd:123456} }"
 	 */
-	public static Msg testLogin(Object user) {
+	public static Msg makeLogin(String userId, String before) {
 		return new Msg().setType(Plugin.KEY_LOGIN)
-				.setData(new Bean().set(Key.ID, "id:"+user).set(Key.NAME, user).set(Key.PWD, "123456"))
+				.setData(new Bean().set(Key.ID, userId).set(Key.NAME, userId).set(Key.PWD, "123456").set(Key.BEFORE, before))
+				.setTimeClient(System.currentTimeMillis());
+	}
+	/**
+	 * 登录拉去时间前
+	 */
+	public static Msg makeLogin(String userId, String pwd, String before) {
+		return new Msg().setType(Plugin.KEY_LOGIN)
+				.setData(new Bean().set(Key.ID, userId).set(Key.NAME, userId).set(Key.PWD, pwd).set(Key.BEFORE, before))
 				.setTimeClient(System.currentTimeMillis());
 	}
 	/**
@@ -92,9 +103,9 @@ public class MsgBuilder {
 		return new Msg().setType(Plugin.KEY_LOGIN).setStatus(2).setData(bean.set(Key.SESSION, session));
 	}
 
-
-	public static void main(String[] argv) {
-		Tools.out(testLogin("test"));
+	@Test
+	public void test() {
+		Tools.out(makeLogin("test", TimeUtil.getTimeYmdHmss()));
 		Tools.out(testMessageTo("to", "test"));
 		Tools.out(testMonitor());
 		

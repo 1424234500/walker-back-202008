@@ -18,7 +18,7 @@ echo "项目名 name_proj ${name_proj}"
 jarf="${name_proj}-0.0.1-SNAPSHOT.jar"
 echo "jar file $jarf"
 cmd="java -jar ${jarf}"
-logfile='/home/walker/walker-socket/logs/socket.log'
+logfile='/home/walker/logs/socket.log'
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
 greparg=${jarf}
 about="

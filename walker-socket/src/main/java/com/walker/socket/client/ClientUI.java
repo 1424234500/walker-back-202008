@@ -111,7 +111,7 @@ public class ClientUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String key = jtfSend2.getText();	//发往用户连接
 				try {
-					client.send(MsgBuilder.testLogin(key).toString());
+					client.send(MsgBuilder.makeLogin(key, TimeUtil.getTimeYmdHmss()).toString());
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

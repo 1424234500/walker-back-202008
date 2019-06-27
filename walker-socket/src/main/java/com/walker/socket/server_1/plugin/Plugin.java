@@ -11,7 +11,9 @@ import com.walker.common.util.Tools;
 import com.walker.core.route.SubPub;
 import com.walker.core.route.SubPubMgr;
 import com.walker.socket.server_1.Msg;
+import com.walker.socket.server_1.netty.handler.SessionHandler;
 import com.walker.socket.server_1.session.Session;
+import com.walker.socket.server_1.session.User;
 
 /**
  * 业务分类处理插件
@@ -21,7 +23,10 @@ public abstract class Plugin<T> {
 	protected Logger log = Logger.getLogger(Plugin.class); 
 
 	final public static String KEY_LOGIN = "login";
+	final public static String KEY_SERVICE= "service";
 	final public static String KEY_MESSAGE = "message";
+	final public static String KEY_OFFLINEMSG= "offlinemsg";
+
 	final public static String KEY_ECHO = "echo";
 	final public static String KEY_MONITOR = "monitor";
 	final public static String KEY_SESSION = "session";
@@ -97,8 +102,12 @@ public abstract class Plugin<T> {
 	public List<Session<T>> publish(String channel, Msg msg) {
 		return pub.publish(channel, msg);
 	}
-
-
+	public Session<?> getNowSession(Msg msg){
+		return SessionHandler.sessionService.getSession(msg.getFrom(), "");
+	}
+	public User getNowUser(Msg msg){
+		return getNowSession(msg).getUser();
+	}
 	abstract void onData(Msg bean);
 	
 }
