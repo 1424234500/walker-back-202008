@@ -36,7 +36,8 @@ public class MessageServiceImpl implements MessageService{
 		return Redis.doJedis(new Fun<Long>() {
 			@Override
 			public Long make(Jedis jedis) {
-				long score = System.currentTimeMillis();
+//				long score = System.currentTimeMillis();
+				long score = msg.getTimeDo();
 				String key = Key.getKeyOffline(toId);
 				jedis.zadd(key, score, msg.toString());
 				log.info(key + " save " + score);

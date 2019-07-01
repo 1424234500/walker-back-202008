@@ -88,7 +88,9 @@ public abstract class Plugin<T> {
 			Msg msgNew = LangUtil.cloneObject(msgc);
 			msgNew.setUserTo(to);
 			
-			service.save(to, msgNew);
+			//离线消息记录
+			if(msg.getType().equals(Plugin.KEY_MESSAGE))
+				service.save(to, msgNew);
 			
 			List<Session<T>> onUsers = publish(to, msgNew);
 			log.info("publish " + to + " on " + onUsers.size() );
