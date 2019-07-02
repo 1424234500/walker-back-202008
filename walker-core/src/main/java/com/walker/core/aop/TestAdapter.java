@@ -28,6 +28,7 @@ public abstract class TestAdapter implements Test{
 			res = doTest();
 		}catch(Exception e) {
 			res = false;
+			e.printStackTrace();
 			log.error(e);
 		} 
 		if(res) {
@@ -39,7 +40,7 @@ public abstract class TestAdapter implements Test{
 	}
 
 	/**
-	 * 返回false则抛出异常
+	 * 返回false则抛出异常 
 	 */
 	public boolean doTest() {return true;};
 	public boolean doInit() {return true;};
@@ -53,6 +54,7 @@ public abstract class TestAdapter implements Test{
 			res = doInit();
 		}catch(Exception e) {
 			res = false;
+			e.printStackTrace();
 			log.error(e);
 		} 
 		if(res) {
@@ -71,6 +73,7 @@ public abstract class TestAdapter implements Test{
 			res = doUninit();
 		}catch(Exception e) {
 			res = false;
+			e.printStackTrace();
 			log.error(e);
 		} 
 		if(res) {

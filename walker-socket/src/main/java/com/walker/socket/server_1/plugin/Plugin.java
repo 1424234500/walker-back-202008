@@ -82,15 +82,16 @@ public abstract class Plugin<T> {
 		Msg msgc = LangUtil.cloneObject(msg);
 
 		String[] tos = msgc.getUserTo();
+
+		//离线消息记录
+		if(msg.getType().equals(Plugin.KEY_MESSAGE))
+			service.save(tos, msgc);
+		
 		//单端在线 记录未命中目标 向上传递
 		List<String> offUsers = new ArrayList<String>();
 		for(String to : tos) {
 			Msg msgNew = LangUtil.cloneObject(msgc);
 			msgNew.setUserTo(to);
-			
-			//离线消息记录
-			if(msg.getType().equals(Plugin.KEY_MESSAGE))
-				service.save(to, msgNew);
 			
 			List<Session<T>> onUsers = publish(to, msgNew);
 			log.info("publish " + to + " on " + onUsers.size() );

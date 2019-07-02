@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -354,4 +355,26 @@ public class SqlUtil{
 		}
 		return sql;
 	}
+	
+	/**
+	 * 分表 表名生成 
+	 * 分表依赖键值 至少一个
+	 * 分表数量
+	 */
+	public static int makeTableCount(int count, String...keys) {
+		String key = makeTableKey(keys);
+		return Math.abs(key.hashCode()) % count;
+	}
+	/**
+	 * 生成分表键 无序
+	 */
+	public static String makeTableKey(String...keys) {
+		Arrays.sort(keys);
+		StringBuilder key = new StringBuilder();
+		for(String str : keys) {
+			key.append(str).append(":");
+		}
+		return key.toString();
+	}
+	
 }

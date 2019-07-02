@@ -4,22 +4,21 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import com.walker.core.aop.Fun;
 import com.walker.core.aop.TestAdapter;
 import com.walker.core.cache.*;
 
 import redis.clients.jedis.*;
 
 /**
- * redis数据库
+ * redis 集群模式
  * 连接池管理
  * 提供连接 销毁连接
  * 单例
  * @author walker
  *
  */
-public class Redis  extends TestAdapter{ 
-	protected static Logger log = Logger.getLogger(Redis.class); 
+public class RedisCluster  extends TestAdapter{ 
+	protected static Logger log = Logger.getLogger(RedisCluster.class); 
 	String host;
 	JedisPoolConfig config;
 	/**
@@ -35,13 +34,10 @@ public class Redis  extends TestAdapter{
 	 */
 	int close = 0;
 	/**
-	 * 保持不断掉的jedis
-	 */
-	Map<String, Jedis> mapJedisLong;
-	/**
 	 * 连接池
 	 */
-	JedisPool pool;
+//	JedisPool pool;
+	JedisCluster jedisCluster; 
 	
 	/**
 	 * 回调环绕执行redis 操作
@@ -49,52 +45,22 @@ public class Redis  extends TestAdapter{
 	public static <T> T doJedis(Fun<T> fun){
 		T res = null;
 		if(fun != null) {
-			Jedis jedis = Redis.getInstance().getJedis();
 			try {
-				res = fun.make(jedis);
+				RedisCluster rc = RedisCluster.getInstance();
+				JedisCluster jc = rc.getJedisCluster();
+				res = fun.make(jc);
 			}finally {
-				Redis.getInstance().close(jedis);
 			}
 		} else {
 			log.error("fun is null");
 		}
 		return res;
-	}
-	/**
-	 * 不销毁的 独用连接
-	 * @param key
-	 */
-	public Jedis getJedis(String key) {
-		Jedis res = mapJedisLong.get(key);
-		if(res == null) {
-			res = getJedis();
-			mapJedisLong.put(key, res);
-		}
-		return res;
-	}
-	/**
-	 * 获取jedis 必须关闭close
-	 * @return
-	 */
-	public Jedis getJedis(){
-		get++;
-		return pool.getResource();
-	}
-	public void close(String key) {
-		Jedis res = mapJedisLong.get(key);
-		close(res);
-		mapJedisLong.remove(key);
-	}
-	
-	public void close(Jedis jedis){
-		if(jedis != null){
-			jedis.close();
-			get--;
-		}
+	} 
+	public JedisCluster getJedisCluster() {
+		return this.jedisCluster;
 	}
 	/**
 	 * 从缓存获取并初始化
-	 * @return 
 	 */
 	public boolean doInit(){ 
 		Cache<String> cache = CacheMgr.getInstance();
@@ -106,60 +72,65 @@ public class Redis  extends TestAdapter{
 		config.setMaxWaitMillis(cache.get("redis_maxWaitMillis", 1000)); 
         // 设置空闲连接
         config.setMaxIdle(cache.get("redis_maxIdle", 3));
-        host = cache.get("redis_host", "localhost");
+//        host = cache.get("redis_host", "localhost");
+        host = cache.get("redis_host_cluster", "localhost:7000,localhost:7001,localhost:7002,localhost:7003,localhost:7004,localhost:7005");
+        String nodes[] = host.split(",");
         
-		pool = new JedisPool(config, host);
- 
-		mapJedisLong = new HashMap<>();
+		//集群结点
+		Set<HostAndPort> jedisClusterNode = new HashSet<HostAndPort>();
+		for(int i = 0; i < nodes.length; i++) {
+			String node = nodes[i];
+			String ipPort[] = node.split(":");
+			log.warn("add cluster \t" + i + "\t " + node);
+			jedisClusterNode.add(new HostAndPort(ipPort[0], Integer.valueOf(ipPort[1])));
+		}
+		jedisCluster = new JedisCluster(jedisClusterNode, config);
+		
 		log.info("redis init ----------------------- " + cc++);
-		test();
 		log.info(this.toString());
 		if(cc > 1) {
 			log.error("----------------------------");
 			log.error("---------单例失败？？？？？------------");
 			log.error("----------------------------");
 		}
+		test();
 		return true;
 	}
 	
 	@Override
+	public boolean doTest() {
+		jedisCluster.set("test:cluster","1");
+		return jedisCluster.get("test:cluster").equals("1");
+	}
+
+	@Override
 	public boolean doUninit() {
-		log.warn("uninit");
 		return super.doUninit();
 	}
-	@Override
-	public boolean doTest() {
-		Jedis jedis = getJedis();
-		try {
-			jedis.set("test:redis", "1");
-			return jedis.get("test:redis").equals("1");
-		}finally {
-			close(jedis);
-		}
-	}
-	private Redis() {
+
+	private RedisCluster() {
 		init();
 	}
 	
-	public static  Redis getInstance() {
+	public static  RedisCluster getInstance() {
 		return SingletonFactory.instance;
 	}
 	//单例
 	private static class SingletonFactory{
-		static Redis instance ;
+		static RedisCluster instance ;
 		static {
 			log.warn("singleton instance construct " + SingletonFactory.class);
-			instance = new Redis();
+			instance = new RedisCluster();
 		}
 	}
 	public String toString() {
-		return "host:" + host + " long:" + mapJedisLong.size() + " get:" + get + " cc:" + cc + " config:" + config;
+		return "host:" + host + " get:" + get + " cc:" + cc + " config:" + config + " cluster:" + String.valueOf(jedisCluster);
 	}
 	
 	/**
 	 * jedis获取 执行后 自动关闭
 	 */
 	public interface Fun<T>{
-		public T make(Jedis jedis) ;
+		public T make(JedisCluster jedis) ;
 	} 
 }	

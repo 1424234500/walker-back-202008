@@ -8,6 +8,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,7 +199,7 @@ public class Dao implements BaseDao {
 
 	public int[] executeSql(String sql, List<List<Object>> objs) {
 		sql = SqlUtil.filter(sql);
-		Watch w = new Watch(sql).put("size", objs.size());
+		Watch w = new Watch(sql).put("size", objs.size()).put("eg", objs.get(0));
 		int[] res = {};
 		Connection conn = null;
 		PreparedStatement pst = null;
@@ -212,7 +213,7 @@ public class Dao implements BaseDao {
 				pst.addBatch();
 			}
 			res = pst.executeBatch();
-			w.res(res, log);
+			w.res(Arrays.toString(res), log);
 		} catch (Exception e) {
 			w.exceptionWithThrow(e, log);
 		} finally {

@@ -31,7 +31,7 @@ public  class OfflinemsgPlugin<T> extends Plugin<T>{
 		Bean data = msg.getData();
 		String before = data.get(Key.BEFORE, TimeUtil.getTimeYmdHmss());
 		String count = data.get(Key.COUNT, "200");
-		List<Msg> msgs = service.finds(getNowUser(msg).getId(), before, Integer.valueOf(count));
+		List<Msg> msgs = service.findAfter(getNowUser(msg).getId(), before, Integer.valueOf(count));
 		msg.setData(msgs);
 		publish(msg);
 

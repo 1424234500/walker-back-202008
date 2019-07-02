@@ -77,9 +77,9 @@ public class Msg extends Bean implements Cloneable{
 //			this.setUserFrom(bean.get(KEY_USER_FROM, ""));
 //			this.setData(bean.get(KEY_DATA));
 			
-			if(this.getTimeClient() == 0) {//避免不传导致 计算异常
+//			if(this.getTimeClient() == 0) {//避免不传导致 计算异常
 				this.setTimeClient(System.currentTimeMillis());//确保type
-			}
+//			}
 		}else {
 			this.setType("echo");
 			this.setData(new Bean().set("json", json));
