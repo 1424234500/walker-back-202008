@@ -3,6 +3,7 @@ package com.walker.socket.service.redis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -49,10 +50,7 @@ public class MessageServiceImpl implements MessageService{
 			//保存消息实体
 			Bean data = msg.getData();
 			String msgId = data.get(Key.ID, LangUtil.getGenerateId());
-			dao.executeSql("insert into " + TABLE_MSG + SqlUtil.makeTableCount(COUNT_MSG,msgId) 
-			+ " values(?,?)", 
-					msgId, msg.toString()
-			);
+			dao.executeSql("insert into " + TABLE_MSG + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " values(?,?)",  msgId, msg.toString() );
 			Bean dbLines = new Bean();
 			String fromId = msg.getUserFrom().getId();
 			for(String toId : toIds) {
@@ -117,12 +115,47 @@ public class MessageServiceImpl implements MessageService{
 
 	
 	
-
+	/**
+	 * 查询用户a和用户b聊天的 时间节点之前的数据 mysql 分表
+	 * @param userId
+	 * @param before
+	 * @param count
+	 * @return
+	 */
 	@Override
 	public List<Msg> findBefore(String userId, String toId, String before, int count) {
 		log.info(Arrays.toString(new Object[] { userId, toId, before, count } ));
 		List<Msg> list = new ArrayList<Msg>();
+		String id = SqlUtil.makeTableKey(userId, toId);
+		String tableName = TABLE_MSG_USER + SqlUtil.makeTableCount(COUNT_MSG_USER, id);
+		Long time = TimeUtil.format(before, "yyyy-MM-dd HH:mm:ss:SSS").getTime();
 
+		List<Map<String, Object>> ids = dao.findPage("SELECT * FROM " + tableName + " WHERE ID=? AND TIME < ? order by TIME desc ", 1, count, id, time);
+		for(Map<String, Object> map : ids) {
+			String userFrom = String.valueOf(map.get("USER_FROM"));
+			String userTo = String.valueOf(map.get("USER_TO"));
+			String msgId = String.valueOf(map.get("MSG_ID"));
+			Msg msg = this.findMsg(msgId);
+			if(msg != null) {
+				list.add(msg);
+			}else {
+				log.warn("msg null ? " + userFrom + " " + userTo + " " + msgId);
+			}
+		}
+		
+//		mysql> select * from W_MSG_1;
+//		+-----------------------+----------------------------------------------------------------------------+
+//		| ID                    | TEXT                                                                       |
+//		+-----------------------+----------------------------------------------------------------------------+
+//		| 35689868912060_Prd_iu | {"TD":1562069257362,"DATA":{"count":0},"TO":"001,002,003","TYPE":"message" |
+//
+//		mysql> select * from W_MSG_USER_3;
+//		+----------+-----------+---------+-----------------------+---------------+
+//		| ID       | USER_FROM | USER_TO | MSG_ID                | TIME          |
+//		+----------+-----------+---------+-----------------------+---------------+
+//		| 000:003: | 000       | 003     | 35689868912060_Prd_iu | 1562069257362 |
+
+		
 		
 		return list;
 	}
@@ -148,6 +181,23 @@ public class MessageServiceImpl implements MessageService{
 
 	}
 
+/*
+TRUNCATE TABLE W_MSG_0;
+TRUNCATE TABLE W_MSG_1;
+TRUNCATE TABLE W_MSG_USER_0;
+TRUNCATE TABLE W_MSG_USER_1;
+TRUNCATE TABLE W_MSG_USER_2;
+TRUNCATE TABLE W_MSG_USER_3;
+*/
+	@Override
+	public Msg findMsg(String msgId) {
+		Map<String,Object> map = dao.findOne("SELECT * FROM " + TABLE_MSG + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " WHERE ID=? ", msgId);
+		if(map == null) {
+			return null;
+		}
+		String text = String.valueOf(map.get("TEXT"));
+		return new Msg(text);
+	}
 
 	
 
@@ -160,7 +210,7 @@ public class MessageServiceImpl implements MessageService{
 		String id2 = "002";
 		String id3 = "003";
 		List<String> scores = new ArrayList<String>();
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 4; i++) {
 			Msg msg = new MsgBuilder().makeMsg(Plugin.KEY_MESSAGE, "", new Bean().set("count", i))
 					.setUserFrom(new User().setId(id).setName("name"))
 					.setTimeDo(System.currentTimeMillis());
@@ -173,22 +223,13 @@ public class MessageServiceImpl implements MessageService{
 			Tools.out(score, t);
 			scores.add(t);
 		}
+//		Tools.formatOut(scores);
 		
-		List<Msg> list = service.findAfter(id, scores.get(scores.size() - 1), 3);
+		List<Msg> list = service.findAfter(id, scores.get(0), 3);
 		Tools.formatOut(list);
-		
 
-		List<Msg> list1 = service.findAfter(id, scores.get(scores.size() - 1), 3);
+		List<Msg> list1 = service.findBefore(id, id1, scores.get(scores.size() - 1), 3);
 		Tools.formatOut(list1);
 		
-	}
-
-
-
-
-	@Override
-	public Msg findMsg(String msgId) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

@@ -233,16 +233,18 @@ public class ArraysUtil {
 	}
 	/**
 	 * 字符串连接
-	 * @param arr
+	 * @param arr 去空格
 	 * @param split
 	 * @return
 	 */
 	public static <T> String join(Collection<T> arr, String split){
-		String res = split;
+		String res = "";
 		for(T item : arr) {
-			res += String.valueOf(item);
+			if(String.valueOf(item).length() > 0)	
+				res += split + String.valueOf(item);
 		}
-		res = res.substring(split.length());
+		if(res.length() > 0)
+			res = res.substring(1);
 		return res;
 	}
 	

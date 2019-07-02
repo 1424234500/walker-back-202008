@@ -1,5 +1,6 @@
 package com.walker.socket.server_1;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -159,11 +160,16 @@ public class Msg extends Bean implements Cloneable{
 		return this;
 	}
 	public Msg addUserTo(String to) {
-		List<String> list = Arrays.asList(this.get(KEY_USER_TO, "").split(SPLIT));
-		List<String> add = Arrays.asList(to.split(SPLIT));
-		list.addAll(add);
-		Set<String> set = ArraysUtil.asSet(list.toArray(new String[0]));
-		String res = ArraysUtil.join(set, ",");
+		Set<String> list = new HashSet<>();
+		String tos[] = this.getUserTo();
+		for(String str : tos) {
+			list.add(str);
+		}
+		String tos1[] = to.split(SPLIT);
+		for(String str : tos1) {
+			list.add(str);
+		}
+		String res = ArraysUtil.join(list, ",");
 		this.set(KEY_USER_TO, res);
 		return this;
 	}
