@@ -213,7 +213,6 @@ public class RedisTest {
 			@Override
 			public Object make(JedisCluster jedis) {
 				Watch w = new Watch("test \t" + key + " \t" + count);
-				
 				jedis.del(key + "*");
 				for(int i = 0; i < count; i++) {
 					jedis.set(key + ":" + i, "value" + i);

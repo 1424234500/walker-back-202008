@@ -13,6 +13,7 @@
 		<module>walker-core</module>
 		<module>walker-socket</module>
 		<module>walker-web</module>
+		<module>walker-service</module>
 	</modules>
 
 

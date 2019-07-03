@@ -32,8 +32,17 @@ public class Watch {
 		this.sb.append(str);
 		return this;
 	}
+	public Watch putln(String str) {
+		this.sb.append(str).append("\n");
+		return this;
+	}
 	public Watch put(Object key, Object...values) {
 		this.sb.append(" " + key + ":" + Tools.objects2string(values));
+		return this;
+	}
+	public Watch putln(Object key, Object...values) {
+		put(key, values);
+		this.put("\n");
 		return this;
 	}
 	/**
@@ -48,6 +57,11 @@ public class Watch {
 		this.put( (keys.length > 0 ? Tools.objects2string(keys)+" " : "" )+ "cost", deta);
 		times.add(0, now);
 		return deta;
+	}
+	public long costln(Object...keys) {
+		long res = cost(keys);
+		this.put("\n");
+		return res;
 	}
 	/**
 	 * 获取分片耗时
