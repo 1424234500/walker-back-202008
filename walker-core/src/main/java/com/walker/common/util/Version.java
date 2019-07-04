@@ -1,0 +1,57 @@
+package com.walker.common.util;
+
+import java.io.File;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+
+import com.walker.core.cache.CacheMgr;
+import com.walker.core.exception.ErrorException;
+
+/**
+ * 获取jar包版本号
+ *
+ */
+public final class Version {  
+
+    private Version() {}  
+	protected static Logger logger = Logger.getLogger(XmlUtil.class); 
+
+
+    private static final Pattern VERSION_PATTERN = Pattern.compile("([0-9][0-9\\.\\-]*)\\.jar");  
+
+    private static final String VERSION = getVersion(Version.class, "2.0.0");  
+
+    public static String getVersion(){  
+        return VERSION;  
+    }  
+
+    public static String getVersion(Class cls, String defaultVersion) {  
+        try {  
+            // 首先查找MANIFEST.MF规范中的版本号  
+            String version = cls.getPackage().getImplementationVersion();  
+            if (version == null || version.length() == 0) {  
+                version = cls.getPackage().getSpecificationVersion();  
+            }  
+            if (version == null || version.length() == 0) {  
+                // 如果MANIFEST.MF规范中没有版本号，基于jar包名获取版本号  
+                String file = cls.getProtectionDomain().getCodeSource().getLocation().getFile();  
+                if (file != null  &&  file.length() >0 && file.endsWith(".jar")) {  
+                    Matcher matcher = VERSION_PATTERN.matcher(file);  
+                    while (matcher.find() && matcher.groupCount() > 0) {  
+                        version = matcher.group(1);  
+                    }  
+                }  
+            }  
+            // 返回版本号，如果为空返回缺省版本号  
+            return version == null || version.length() == 0 ? defaultVersion : version;  
+        } catch (Throwable e) { // 防御性容错  
+            // 忽略异常，返回缺省版本号  
+            logger.error(e.getMessage(), e);  
+            return defaultVersion;  
+        }  
+    }  
+
+}

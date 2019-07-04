@@ -10,6 +10,7 @@
 实体类	？	map/bean
 如何实现实体类的set/get操作而实际存储为map/bean 便捷实现层级json
 
+
 自定义实现	？	spring插件
 接口抽象多种实现方式
 
@@ -18,26 +19,32 @@ web - socket - android
 android收到数据后 解析数据到实体类 存储数据库 再接着用实体类做业务处理
 android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[db->Object->] 
 ```
+####日志级别
+	参考 https://dubbo.gitbooks.io/dubbo-dev-book/principals/robustness.html	8	设计原则
+	WARN 表示可以恢复的问题，无需人工介入。	定期查看
+	ERROR 表示需要人工介入问题。				严重 程序退出	报警监控
+	出问题时的现场信息 ip 用户 参数 异常栈 并给出可能的原因和解决方案? 
+	避免重复无意义日志
+
 #####集群部署
 
-```
-端		协议		代理		服务器群			数据库		业务
-android		socket		f5/nginx-socket						消息收发
-												server-socket1		redis/mysql
-												server-socket2		redis/mysql
-browser		http		f5/nginx-web						文件上传下载
-												server-web1		redis/mysql
-												server-web2		redis/mysql
+	端|协议|代理|服务器群|数据库|业务
+	-|-|-|-|-|-
+	android | socket | f5/nginx-socket |  | 消息收发
+	 |  |  |  | server-socket1 | redis/mysql | 
+	 |  |  |  | sserver-socket2 | redis/mysql | 
+	browser | http | f5/nginx-web |  | 文件上传下载
+	 |  |  |  | server-web1 | redis/mysql | 
+	 |  |  |  | server-web2 | redis/mysql | 
 							
-redis cluster模式 三主三备
-./src/redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1
+	redis cluster模式 三主三备
+	./src/redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1
+	
+	mysql 消息和记录分表
+	W_MSG_0		W_MSG_1
+	W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
 
-mysql 消息和记录分表
-W_MSG_0		W_MSG_1
-W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
 
-
-```
 
 # 模块划分
 ## walker-core
@@ -53,6 +60,7 @@ W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
 	Ehcache 实现
 	
 * database 数据库模块 原生jdbc工具类 List<Map> 形式
+
     Pool 连接池接口
     PoolC3p0Impl c3p0实现
     RedisMgr redis连接池案例工具
@@ -67,6 +75,8 @@ W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
 	rmi java rmi实现的提供和调用案例
 	dubbo dubbo实现的提供和调用案例 使用了 zookeeper和redis注册中心 dubbo-admin-2.5.7.war监控中心
 
+## walker-service
+	
 
 ## walker-socket
 	socket模块 简单java项目 使用原生socket和Netty框架实现即时通信 并通过redis发布订阅实现集群模式

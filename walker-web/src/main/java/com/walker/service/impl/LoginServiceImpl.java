@@ -26,7 +26,7 @@ import com.walker.web.dao.hibernate.BaseDao;
 import com.walker.web.mode.LoginUser;
 @Transactional
 @Service("loginService")
-@Scope("prototype") 
+//@Scope("prototype") 
 public class LoginServiceImpl implements LoginService,Serializable {
 	private static final long serialVersionUID = 8304941820771045214L;
     @Autowired
