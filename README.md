@@ -18,6 +18,9 @@ web - socket - android
 数据通信统一json 数据隔离 是否使用序列化？暂不
 android收到数据后 解析数据到实体类 存储数据库 再接着用实体类做业务处理
 android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[db->Object->] 
+
+表名 字段名一定大写 查询要取别名 兼容oracle mysql sqlite的sql语法
+
 ```
 ####日志级别
 	参考 https://dubbo.gitbooks.io/dubbo-dev-book/principals/robustness.html	8	设计原则
@@ -28,14 +31,14 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 
 #####集群部署
 
-	端|协议|代理|服务器群|数据库|业务
-	-|-|-|-|-|-
-	android | socket | f5/nginx-socket |  | 消息收发
-	 |  |  |  | server-socket1 | redis/mysql | 
-	 |  |  |  | sserver-socket2 | redis/mysql | 
-	browser | http | f5/nginx-web |  | 文件上传下载
-	 |  |  |  | server-web1 | redis/mysql | 
-	 |  |  |  | server-web2 | redis/mysql | 
+    |   端   |   协议   |   代理   |   服务器群   |   数据库   |   业务   |   
+    |   --- |   --- |   --- |   --- |   --- |   --- |   --- |   --- |   
+    |   android   |   socket | f5/nginx-socket |  | 消息收发
+    |   |   |   |   server-socket1 | redis/mysql | 
+    |   |   |   |   sserver-socket2 | redis/mysql | 
+    |   browser   | http | f5/nginx-web |  | 文件上传下载 |   
+    |   |   |   |   server-web1 | redis/mysql | 
+    |   |   |   |   server-web2 | redis/mysql | 
 							
 	redis cluster模式 三主三备
 	./src/redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1

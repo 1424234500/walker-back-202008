@@ -60,7 +60,7 @@ angular.module('com.table')
             $scope.sort.order = '';
         }
     };
-    $scope.sql = 'select * from student';
+    $scope.sql = 'select * from STUDENT';
     $scope.list = function(){ 
         var page = $scope.page;
         page["ORDER"] = $scope.sort.orderCol ? $scope.sort.orderCol + ($scope.sort.order ? ' DESC': '') : ''

@@ -7,5 +7,5 @@
   </parent>
   <artifactId>walker-service</artifactId>
   <name>service</name>
-  <description>redis mysql save find via dubbo </description>
+  <description>redis mysql save find via dubbo api</description>
 </project>

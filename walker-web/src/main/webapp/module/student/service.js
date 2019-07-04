@@ -10,7 +10,7 @@ angular.module('com.student')
 
     var service = {};
     //操作表名
-    var tableName = mName;
+    var tableName = "STUDENT";
 
     service.setTable = function(name){
         tableName = name;

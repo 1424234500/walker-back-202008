@@ -15,6 +15,7 @@
       <sourceFolder url="file://$MODULE_DIR$/walker-socket/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/walker-socket/src/test/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/walker-socket/src/test/resources" type="java-test-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/walker-socket/release" />
       <excludeFolder url="file://$MODULE_DIR$/walker-socket/target" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />

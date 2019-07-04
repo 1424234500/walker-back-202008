@@ -15,6 +15,7 @@
       <sourceFolder url="file://$MODULE_DIR$/walker-core/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/walker-core/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/walker-core/src/test/resources" type="java-test-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/walker-core/release" />
       <excludeFolder url="file://$MODULE_DIR$/walker-core/target" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
