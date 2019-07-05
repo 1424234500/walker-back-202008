@@ -1,0 +1,19 @@
+server:
+  connection-timeout: 8000
+  tomcat:
+    uri-encoding: utf-8
+    max-connections: 1000
+    max-threads: 200
+    min-spare-threads: 10
+
+
+spring:
+  profiles:
+    active: test
+
+  resources:
+    static-locations: classpath:/
+
+#
+#logging:
+#  config: classpath:log4j2.yml

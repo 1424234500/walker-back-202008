@@ -73,10 +73,11 @@ public class CacheMgr extends TestAdapter{
 		cache.put("cache:dir:project", Context.getPathRoot());
 		cache.put("cache:dir:conf", Context.getPathConf());
 		cache.put("files", Arrays.asList(dir.list()));
-		
+		log.warn("配置加载路径 " + dir.getAbsolutePath());
 		for (String item : dir.list()) {
 			String path = dir.getAbsolutePath() + File.separator + item;
 			if (FileUtil.check(path) == 0 && path.endsWith(".properties")) {
+				log.warn("解析文件存入cache " + path);
 				cache.putAll(SettingUtil.getSetting(path));
 			}
 		}

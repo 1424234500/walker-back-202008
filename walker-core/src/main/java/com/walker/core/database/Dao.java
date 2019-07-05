@@ -94,7 +94,6 @@ public class Dao implements BaseDao {
 	 * 获得结果集
 	 * 
 	 * @param sql    SQL语句
-	 * @param params 参数
 	 * @param page   要显示第几页
 	 * @param rows   每页显示多少条
 	 * @return 结果集
