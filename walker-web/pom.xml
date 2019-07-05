@@ -44,6 +44,22 @@
 
 	<dependencies>
 
+
+		<dependency>
+			<groupId>com.walker</groupId>
+			<artifactId>walker-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.walker</groupId>
+			<artifactId>walker-service</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+
 		<!--spring核心包 -->
 		<dependency>
 			<groupId>org.springframework</groupId>

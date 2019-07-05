@@ -15,4 +15,17 @@
     <name>service</name>
     <description>service api  mode </description>
 
+    <dependencies>
+
+
+        <dependency>
+            <groupId>com.walker</groupId>
+            <artifactId>walker-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+
+
+    </dependencies>
+
 </project>
