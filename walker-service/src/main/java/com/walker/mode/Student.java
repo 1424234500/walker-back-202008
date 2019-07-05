@@ -1,8 +1,5 @@
-package com.walker.web.mode;
+package com.walker.mode;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class Student {
     private String id;
 

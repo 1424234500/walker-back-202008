@@ -1,30 +1,21 @@
 package com.walker.web.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.walker.common.util.Bean;
-import com.walker.common.util.MapListUtil;
 import com.walker.common.util.TimeUtil;
-import com.walker.common.util.Tools;
 import com.walker.core.database.Redis;
 import com.walker.core.database.Redis.Fun;
 import com.walker.web.RequestUtil;
-
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Tuple;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/redis")

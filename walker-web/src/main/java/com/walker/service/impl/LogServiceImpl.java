@@ -1,27 +1,20 @@
 package com.walker.service.impl;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.walker.common.util.Bean;
 import com.walker.common.util.LangUtil;
-import com.walker.common.util.MapListUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.service.LogService;
-import com.walker.web.dao.Redis;
 import com.walker.web.dao.hibernate.BaseDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.Set;
 @Transactional
 @Service("logService")
 @Scope("prototype") 

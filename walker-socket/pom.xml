@@ -32,11 +32,6 @@
 
 	<dependencies>
 
-		<dependency>
-			<groupId>com.walker</groupId>
-			<artifactId>walker-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
 		<dependency>

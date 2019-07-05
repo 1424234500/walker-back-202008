@@ -2,8 +2,6 @@ package com.walker.service;
 
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
-
 /**
  * 日志管理
  */

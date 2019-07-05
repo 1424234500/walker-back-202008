@@ -22,14 +22,16 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 表名 字段名一定大写 查询要取别名 兼容oracle mysql sqlite的sql语法
 
 ```
-####日志级别
+
+###日志级别
+
 	参考 https://dubbo.gitbooks.io/dubbo-dev-book/principals/robustness.html	8	设计原则
 	WARN 表示可以恢复的问题，无需人工介入。	定期查看
 	ERROR 表示需要人工介入问题。				严重 程序退出	报警监控
 	出问题时的现场信息 ip 用户 参数 异常栈 并给出可能的原因和解决方案? 
 	避免重复无意义日志
 
-#####集群部署
+###集群部署
 
     |   端   |   协议   |   代理   |   服务器群   |   数据库   |   业务   |   
     |   --- |   --- |   --- |   --- |   --- |   --- |   --- |   --- |   
@@ -85,20 +87,21 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 	socket模块 简单java项目 使用原生socket和Netty框架实现即时通信 并通过redis发布订阅实现集群模式
 #### socket 网络组件
 * client 模拟客户端 
-
+``
     ClientUI java swing GUI图形化客户端模拟
     ClientTest10NoUI 模拟多用户并发压测
-  
+``
 * server_0 原生socket 旧Netty实现的服务端
 * server_1 使用Netty重新构造的服务端
-
+``
 	job 任务调度 常用于统计监控数据
 	netty.handler Netty处理器
 	plugin 业务处理插件 配置化
 	session 会话管理
 	Msg 统一传递消息类
-
+``
 ## walker-web
+
 	java web 项目 使用spring mvc hibernate mybatis 实现oracle数据处理
 	
 #### service 业务service处理
@@ -107,6 +110,7 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 	
 
 #### web 网络服务servlet提供
+
 * controller 控制器 
 
     BaseController 基本抽象类 可继承快捷实现单表配置化增删查改
@@ -119,10 +123,11 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 * dao 数据存取 分别以hibernate和mybatis实现了通用型List<Map>结构的数据查询和修改
 
 * event 
-
+``
     intercept 拦截器 登录拦截 日志拦截 环绕监控
     listener 系统启动监听OnLoad
     task 定时任务调度器
+``
 * mode 基本数据模型
 
 

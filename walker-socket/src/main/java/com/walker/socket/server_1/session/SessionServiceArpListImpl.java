@@ -1,27 +1,25 @@
 package com.walker.socket.server_1.session;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
-
 import com.walker.common.setting.Setting;
 import com.walker.common.util.Bean;
-import com.walker.common.util.JsonUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.aop.Fun;
 import com.walker.core.pipe.Pipe;
 import com.walker.core.pipe.PipeMgr;
 import com.walker.core.pipe.PipeMgr.Type;
-import com.walker.socket.server_1.Key;
-import com.walker.socket.server_1.Msg;
-import com.walker.socket.server_1.MsgBuilder;
+import com.walker.mode.Key;
+import com.walker.mode.Msg;
 import com.walker.socket.server_1.SocketException;
+import com.walker.socket.server_1.plugin.MsgBuilder;
 import com.walker.socket.server_1.plugin.PluginMgr;
 import com.walker.socket.server_1.plugin.aop.CountModel;
+import org.apache.log4j.Logger;
+import org.apache.log4j.NDC;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 用戶连接管理
@@ -56,7 +54,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
      * 线程内部使用对象 避免再编码解码json
      * 多进程可切换使用redis 编码解码string
      */
-//    private Pipe<Msg> pipe = PipeMgr.getPipe(Type.PIPE, "queue-msg");
+//    private Pipe<Msg0> pipe = PipeMgr.getPipe(Type.PIPE, "queue-msg");
     private Pipe<String> pipe = PipeMgr.getPipe(Type.REDIS, "stat:queue-msg");
     
     public String show() {
@@ -129,7 +127,16 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		String key = socket.key();
 		Session<T> session = index.get(key);
 		if(session != null) {
-			Msg msg = new Msg(obj.toString(), session);	//集成发送者的信息  禁止冒名顶替
+			Msg msg = new Msg(obj.toString());	//集成发送者的信息  禁止冒名顶替
+			//设置来源socket key session<T>
+			msg.setFrom(session.getKey());
+			//设置userFrom当前用户 若消息包含了from 则不设置 允许顶替发消息
+			msg.setUserFrom(session.getUser());
+			//默认发给自己
+			if(msg.getTo().length() == 0) {
+				msg.setTo(session.getUser().getId());
+			}
+
 			msg.setWaitSize(pipe.size());
 //			pipe.put(msg);
 			CountModel.getInstance().onNet(msg);

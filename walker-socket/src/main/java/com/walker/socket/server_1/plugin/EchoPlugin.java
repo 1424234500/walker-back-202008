@@ -1,7 +1,7 @@
 package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
-import com.walker.socket.server_1.Msg;
+import com.walker.mode.Msg;
 
 public class EchoPlugin<T> extends Plugin<T>{
 

@@ -1,6 +1,5 @@
-package com.walker.socket.server_1;
+package com.walker.mode;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -10,8 +9,6 @@ import java.util.Set;
 import com.walker.common.util.ArraysUtil;
 import com.walker.common.util.Bean;
 import com.walker.common.util.JsonUtil;
-import com.walker.socket.server_1.session.Session;
-import com.walker.socket.server_1.session.User;
 
 /**
  * socket 传递 消息结构 
@@ -86,20 +83,7 @@ public class Msg extends Bean implements Cloneable{
 			this.setData(new Bean().set("json", json));
 		}
 	}
-	public Msg(String json, Session<?> session) {
-		this(json);
-		
-		//设置来源socket key session<T> 
-		this.setFrom(session.getKey());
-		
-		//设置userFrom当前用户 若消息包含了from 则不设置 允许顶替发消息
-		this.setUserFrom(session.getUser());
-		
-		//默认发给自己
-		if(getTo().length() == 0) {
-			setTo(session.getUser().getId());
-		}
-	}
+
 	
 	
 	public Msg setFrom(String from) {

@@ -1,7 +1,6 @@
 package com.walker.service;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 登录服务

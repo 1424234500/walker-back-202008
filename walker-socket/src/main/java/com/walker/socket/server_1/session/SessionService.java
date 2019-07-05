@@ -1,8 +1,8 @@
 package com.walker.socket.server_1.session;
 
-import java.util.List;
-
 import com.walker.common.util.Bean;
+
+import java.util.List;
 
 /**
  * 会话管理

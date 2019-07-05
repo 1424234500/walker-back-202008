@@ -1,7 +1,7 @@
 package com.walker.socket.server_1.plugin.aop;
 
 import com.walker.common.util.Bean;
-import com.walker.socket.server_1.Msg;
+import com.walker.mode.Msg;
 import com.walker.socket.server_1.SocketException;
 
 public class AuthAop<T> extends Aop<T>{

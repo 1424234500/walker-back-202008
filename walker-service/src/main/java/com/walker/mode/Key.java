@@ -1,4 +1,4 @@
-package com.walker.socket.server_1;
+package com.walker.mode;
 
 
 /**

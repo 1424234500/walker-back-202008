@@ -2,13 +2,11 @@ package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
 import com.walker.core.exception.ErrorException;
-import com.walker.socket.server_1.Key;
-import com.walker.socket.server_1.Msg;
-import com.walker.socket.server_1.MsgBuilder;
-import com.walker.socket.server_1.SocketException;
+import com.walker.mode.Key;
+import com.walker.mode.Msg;
+import com.walker.mode.User;
 import com.walker.socket.server_1.netty.handler.SessionHandler;
 import com.walker.socket.server_1.session.Session;
-import com.walker.socket.server_1.session.User;
 
 public class LoginPlugin<T> extends Plugin<T>{
 

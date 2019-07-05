@@ -1,25 +1,19 @@
 package com.walker.web.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
+import com.walker.common.util.Page;
+import com.walker.service.BaseService;
+import com.walker.service.StudentService;
+import com.walker.web.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.walker.common.util.JsonUtil;
-import com.walker.common.util.Page;
-import com.walker.common.util.Tools;
-import com.walker.service.BaseService;
-import com.walker.service.StudentService;
-import com.walker.web.RequestUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 
 /**

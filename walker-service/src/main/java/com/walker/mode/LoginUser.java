@@ -1,12 +1,10 @@
-package com.walker.web.mode;
+package com.walker.mode;
 
-import org.springframework.stereotype.Component;
 /**
  * 登录角色信息
  * @author Walker
  *
  */
-@Component
 public class LoginUser {
 	
 	public static LoginUser getUser(){

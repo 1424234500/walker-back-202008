@@ -1,22 +1,14 @@
 package com.walker.web.controller;
- 
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.time.StopWatch;
+import com.walker.common.util.FileUtil;
+import com.walker.common.util.MapListUtil;
+import com.walker.common.util.Page;
+import com.walker.common.util.Tools;
+import com.walker.core.database.SqlUtil;
+import com.walker.core.mode.Watch;
+import com.walker.service.FileService;
+import com.walker.web.RequestUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,14 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import com.walker.common.util.FileUtil;
-import com.walker.common.util.MapListUtil;
-import com.walker.common.util.Page;
-import com.walker.common.util.Tools;
-import com.walker.core.database.SqlUtil;
-import com.walker.core.mode.Watch;
-import com.walker.service.FileService;
-import com.walker.web.RequestUtil; 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 @Controller

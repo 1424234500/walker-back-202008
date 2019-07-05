@@ -1,10 +1,9 @@
 package com.walker.socket.server_1.plugin.aop;
 
-import org.apache.log4j.Logger;
-
 import com.walker.common.util.Bean;
-import com.walker.socket.server_1.Msg;
+import com.walker.mode.Msg;
 import com.walker.socket.server_1.SocketException;
+import org.apache.log4j.Logger;
 
 public abstract class Aop<T> {
 	protected static Logger log = Logger.getLogger(Aop.class); 

@@ -1,11 +1,7 @@
-package com.walker.web.mode;
+package com.walker.mode;
 
-import java.util.Date;
 
-import org.springframework.stereotype.Component;
-
-@Component
-public class User {
+public class UserWeb {
     private String id;
 
     private String username;

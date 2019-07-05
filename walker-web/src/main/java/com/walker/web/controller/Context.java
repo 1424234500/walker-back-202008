@@ -1,12 +1,11 @@
 package com.walker.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Component;
-
 import com.walker.common.util.Bean;
 import com.walker.common.util.Page;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 环境上下文

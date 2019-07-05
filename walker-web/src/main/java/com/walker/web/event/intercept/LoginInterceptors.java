@@ -1,23 +1,21 @@
 package com.walker.web.event.intercept;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.walker.common.util.Bean;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.service.LogService;
 import com.walker.service.LoginService;
 import com.walker.web.RequestUtil;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 拦截器 日志 登录/访问权限 事务   监控所有用户操作和登录并记录日志数据库
@@ -48,8 +46,8 @@ public class LoginInterceptors implements HandlerInterceptor{
     }  
   
     @Autowired
-	@Qualifier("logService") 
-    LogService logService;
+	@Qualifier("logService")
+	LogService logService;
     /** 
      * 可以考虑作权限，日志，事务等等 
      * 该方法在目标方法调用之前被调用； 

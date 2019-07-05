@@ -1,9 +1,7 @@
 package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
-import com.walker.socket.server_1.Msg;
-import com.walker.socket.service.MessageService;
-import com.walker.socket.service.redis.MessageServiceImpl;
+import com.walker.mode.Msg;
 
 public  class MessagePlugin<T> extends Plugin<T>{
 	

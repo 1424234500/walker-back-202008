@@ -13,7 +13,7 @@ import com.walker.common.util.Tools;
  *
  */
 @SuppressWarnings({"rawtypes", "unchecked" })
-public class Msg{
+public class Msg0 {
 	final public static int SHOW = -1000;				//监控
 
 	final public static int BROADCAST = -2;		//广播所有
@@ -41,7 +41,7 @@ public class Msg{
 	//消息实体
 	Map data;		//消息数据包
 	
-	public Msg(){
+	public Msg0(){
 		id = UUID.randomUUID().toString();
 		ok = "";
 		info = "";
@@ -53,12 +53,12 @@ public class Msg{
 		fromSysKey = "";
 		fromKey = "";
 	}
-	public Msg(boolean ifNull){
+	public Msg0(boolean ifNull){
 		if(ifNull){
 			id = UUID.randomUUID().toString();
 		}
 	}
-	public Msg(String jsonstr){
+	public Msg0(String jsonstr){
         Map map = JsonUtil.get(jsonstr);
         this.setOk(MapListUtil.getMap(map, "ok", "0"));
         this.setInfo(MapListUtil.getMap(map, "in", ""));
@@ -73,13 +73,13 @@ public class Msg{
 	}
 	
 	//回传消息
-	public Msg getEcho(boolean ok, String info){
-		Msg msg = new Msg(false);
-		msg.setMsgType(Msg.RES);
-		msg.setId(this.id);
-		msg.setOk(ok);
-		msg.setInfo(info);
-		return msg;
+	public Msg0 getEcho(boolean ok, String info){
+		Msg0 msg0 = new Msg0(false);
+		msg0.setMsgType(Msg0.RES);
+		msg0.setId(this.id);
+		msg0.setOk(ok);
+		msg0.setInfo(info);
+		return msg0;
 	}
 	
 	
@@ -121,14 +121,14 @@ public class Msg{
 		this.ok = ok?"1":"0";
 	}
 
-	public Msg setMsgType(int key){
+	public Msg0 setMsgType(int key){
 		this.msgType = key;
 		return this;
 	}
 	
 	
 	
-	public Msg put(Object key, Object value){
+	public Msg0 put(Object key, Object value){
 		 data.put(key, value);
 		 return this;
 	}
@@ -189,7 +189,7 @@ public class Msg{
 		return msgType;
 	}
 
-	public Msg setData(Map data){
+	public Msg0 setData(Map data){
 		this.data = data;
 		return this;
 	}

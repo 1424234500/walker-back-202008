@@ -1,12 +1,13 @@
 package com.walker.socket.service.redis;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.walker.service.MessageService;
+import com.walker.socket.server_1.plugin.MsgBuilder;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
@@ -20,12 +21,9 @@ import com.walker.core.database.Redis;
 import com.walker.core.database.Redis.Fun;
 import com.walker.core.database.SqlUtil;
 import com.walker.core.mode.Watch;
-import com.walker.socket.server_1.Key;
-import com.walker.socket.server_1.Msg;
-import com.walker.socket.server_1.MsgBuilder;
-import com.walker.socket.server_1.plugin.Plugin;
-import com.walker.socket.server_1.session.User;
-import com.walker.socket.service.MessageService;
+import com.walker.mode.Key;
+import com.walker.mode.Msg;
+import com.walker.mode.User;
 
 import redis.clients.jedis.Jedis;
 
@@ -35,7 +33,7 @@ import redis.clients.jedis.Jedis;
  * @author walker
  *
  */
-public class MessageServiceImpl implements MessageService{
+public class MessageServiceImpl implements MessageService {
 	private static Logger log = Logger.getLogger(MessageServiceImpl.class); 
 	BaseDao dao = new Dao();
 	final static String TABLE_MSG= "W_MSG";
@@ -286,7 +284,7 @@ public class MessageServiceImpl implements MessageService{
 		String id4 = "004";
 		List<String> scores = new ArrayList<String>();
 		for(int i = 0; i < saveCount; i++) {
-			Msg msg = new MsgBuilder().makeMsg(Plugin.KEY_MESSAGE, "", new Bean().set("count", i))
+			Msg msg = new MsgBuilder().makeMsg("TEST_" + getClass().getSimpleName(), "", new Bean().set("count", i))
 					.setUserFrom(new User().setId(id).setName("name"))
 					.setTimeDo(System.currentTimeMillis());
 			msg.addUserTo(id1);

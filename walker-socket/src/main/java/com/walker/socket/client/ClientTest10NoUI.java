@@ -1,16 +1,16 @@
 package com.walker.socket.client;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.walker.common.setting.Setting;
-import com.walker.common.util.Bean;
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
-import com.walker.socket.server_1.Msg;
-import com.walker.socket.server_1.MsgBuilder;
+import com.walker.mode.Msg;
+import com.walker.socket.server_1.plugin.MsgBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 /**
  * 保持每个连接发送频率
  * 逐步扩大连接数,当连接数最大

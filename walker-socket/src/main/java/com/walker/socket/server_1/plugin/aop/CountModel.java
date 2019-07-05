@@ -2,8 +2,7 @@ package com.walker.socket.server_1.plugin.aop;
 
 import com.walker.core.database.Redis;
 import com.walker.core.database.Redis.Fun;
-import com.walker.socket.server_1.Msg;
-
+import com.walker.mode.Msg;
 import redis.clients.jedis.Jedis;
 
 /**

@@ -1,7 +1,12 @@
 package com.walker.socket.client;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import com.walker.common.util.*;
+import com.walker.mode.Key;
+import com.walker.mode.Msg;
+import com.walker.socket.server_1.plugin.MsgBuilder;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -9,24 +14,6 @@ import java.awt.event.WindowEvent;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
-import com.walker.common.util.Bean;
-import com.walker.common.util.FileUtil;
-import com.walker.common.util.LangUtil;
-import com.walker.common.util.ThreadUtil;
-import com.walker.common.util.TimeUtil;
-import com.walker.common.util.Tools;
-import com.walker.socket.server_1.Key;
-import com.walker.socket.server_1.Msg;
-import com.walker.socket.server_1.MsgBuilder;
 
 /**
  * 简易图形化控制模拟客户端 连理连接 收发消息 断开连接

@@ -1,7 +1,6 @@
-package com.walker.socket.server_1.session;
+package com.walker.mode;
 
 import com.walker.common.util.Bean;
-import com.walker.socket.server_1.Key;
 
 public class User extends Bean{
 	
