@@ -10,8 +10,8 @@
         <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <artifactId>walker-service-impl</artifactId>
-    <name>service-impl</name>
+    <artifactId>walker-service-provider</artifactId>
+    <name>service-provider</name>
     <description>service impl and dubbo service provider via Spring Boot</description>
     <groupId>com.walker</groupId>
     <version>0.0.1-SNAPSHOT</version>

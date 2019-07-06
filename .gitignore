@@ -27,3 +27,5 @@ local.properties
 *.db
 *.~sql
 *.out
+
+*attach_pid*
