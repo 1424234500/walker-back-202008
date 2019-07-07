@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.walker.common.util.ClassUtil;
 import com.walker.common.util.HttpUtil;
 import com.walker.common.util.Page;
-import com.walker.common.util.RobotUtil;
+import com.walker.common.util.Pc;
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
 import com.walker.common.util.ThreadUtil.Type;
@@ -73,7 +73,7 @@ public class ContextListener implements ServletContextListener {
                 log.info("........................................................");
             	log.warn("----------销毁 执行ShutdownHook----------");
             	String nowTime = Tools.getNowTimeL();
-            	String str = RobotUtil.getRuntime();
+            	String str = Pc.getRuntime();
             	log.warn(nowTime);
             	log.warn(str);
             	log.warn("----------销毁 执行ShutdownHook 完毕----------");

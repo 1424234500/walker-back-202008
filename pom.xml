@@ -14,8 +14,9 @@
 		<module>walker-socket</module>
 		<module>walker-web</module>
 		<module>walker-service</module>
-		<module>walker-service-impl</module>
-	</modules>
+		<module>walker-service-provider</module>
+        <module>walker-robot</module>
+    </modules>
 
 
 

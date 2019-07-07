@@ -1,17 +1,8 @@
 package com.walker.common.util;
 
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.*;
+import java.awt.datatransfer.*;
+import java.awt.event.InputEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,10 +17,10 @@ import java.util.regex.Pattern;
  * @author Walker
  *
  */
-public class RobotUtil {
+public class Pc {
 	public static volatile Robot robot = null;
 	
-	private RobotUtil() { }
+	private Pc() { }
 
 	private static class SingletonFactory{           
 		  private static Robot instance;
@@ -41,46 +32,110 @@ public class RobotUtil {
 			}
 		  }
 	}
-	public static Robot getInstance(){           
+
+	public static Robot getInstance() {
 	    return SingletonFactory.instance;           
-	}  
+	}
+
+
 
 	/**
-	 * 按键按下
+	 * 按键按下 KeyEvent.VK_A
+	 * @param   keycode Key to release (e.g. <code>KeyEvent.VK_A</code>)
 	 */
-	public static void keyPress(int keyCode) {
-		getInstance().keyPress(keyCode);
+	public static void keyPress(int keycode) {
+		getInstance().keyPress(keycode);
 	}
 	/**
-	 * 按键松开
+	 * 按键松开 KeyEvent.VK_A
+	* @param   keycode Key to release (e.g. <code>KeyEvent.VK_A</code>)
 	 */
-	public static void keyRelease(int keyCode) {
-		getInstance().keyRelease(keyCode);
+	public static void keyRelease(int keycode) {
+		getInstance().keyRelease(keycode);
 	}
+
+	/**
+	 * 按键按下松开 延时 KeyEvent.VK_A
+	 * @param   keycode Key to release (e.g. <code>KeyEvent.VK_A</code>)
+	 */
+	public static int keyClick(int keycode, long dtime) {
+		keyPress(keycode);
+		if(dtime > 0){
+			try {
+				Thread.sleep(dtime);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		keyRelease(keycode);
+		return keycode;
+	}
+
+	/**
+	 * 鼠标按键按下 MouseEvent.BUTTON1 MouseEvent.BUTTON2 MouseEvent.BUTTON3
+	 */
+	public static void mousePress(int button123) {
+		int button = InputEvent.getMaskForButton(button123);
+		getInstance().mousePress(button);
+	}
+	/**
+	 * 鼠标按键松开 MouseEvent.BUTTON1 MouseEvent.BUTTON2 MouseEvent.BUTTON3
+	 */
+	public static void mouseRelease(int button123) {
+		int button = InputEvent.getMaskForButton(button123);
+		getInstance().mouseRelease(button);
+	}
+
+	/**
+	 * 按下 松开  MouseEvent.BUTTON1 MouseEvent.BUTTON2 MouseEvent.BUTTON3
+	 */
+	public static Point mouseClick(int button123, long dtime){
+		mousePress(button123);
+		if(dtime > 0){
+			try {
+				Thread.sleep(dtime);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		mouseRelease(button123);
+		return mouseGet();
+    }
+
+
+
+    public static Tuple<Integer,Integer> getScreenWidthHeight() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int w = (int) screenSize.getWidth();
+        int h = (int) screenSize.getHeight();
+        return new Tuple<Integer,Integer>(w, h);
+    }
 	/**
 	 * 获取鼠标点
 	 */
-	public static Point getMouse() {
+	public static Point mouseGet() {
 		return MouseInfo.getPointerInfo().getLocation();
 	}
 	/**
 	 * 设置鼠标点
 	 */
-	public static void setMouse(int x, int y) {
+	public static Point mouseSet(int x, int y) {
 		getInstance().mouseMove(x, y);
+		return mouseGet();
 	}
 	/**
 	 * 移动鼠标点
 	 */
-	public static void moveMouse(int dx, int dy) {
-		Point p = getMouse();
+	public static Point mouseMove(int dx, int dy) {
+		Point p = mouseGet();
 		getInstance().mouseMove((int)p.getX() + dx, (int)p.getY() + dy);
+		return mouseGet();
 	}
 	/**
 	 * 获取鼠标点颜色
 	 */
 	public static Color getColor() {
-		Point p = getMouse();
+		Point p = mouseGet();
 		return getColor(p.x, p.y);
 	}
 	/**
@@ -93,7 +148,7 @@ public class RobotUtil {
 	/**
 	 * 从剪切板获得文字。
 	 */
-	public static String getSysClipboardText() {
+	public static String getClipboardText() {
 		String ret = "";
 		Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
 		// 获取剪切板中的内容
@@ -116,7 +171,7 @@ public class RobotUtil {
 	/**
 	 * 将字符串复制到剪切板。
 	 */
-	public static void setSysClipboardText(String str) {
+	public static void setClipboardText(String str) {
 		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable tText = new StringSelection(str);
 		clip.setContents(tText, null);
@@ -125,7 +180,7 @@ public class RobotUtil {
 	/**
 	 * 从剪切板获得图片。
 	 */
-	public static Image getImageFromClipboard() throws Exception {
+	public static Image getClipboardImage() throws Exception {
 		Clipboard sysc = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable cc = sysc.getContents(null);
 		if (cc == null)
@@ -157,10 +212,23 @@ public class RobotUtil {
 		};
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
 	}
+
+	/**
+	 * 执行cmd命令
+	 *
+	 * @param command
+	 * @return
+	 * @throws IOException
+	 */
 	public static Process doCmd(String command) throws IOException {
 		Runtime runtime = Runtime.getRuntime();
 		return runtime.exec(command);
 	}
+
+	/**
+	 * 获取执行环境信息
+	 * @return
+	 */
 	public static String getRuntime() {
 		Runtime runtime = Runtime.getRuntime();
 		String res = "Runtime: \n";

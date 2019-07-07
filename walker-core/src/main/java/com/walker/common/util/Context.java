@@ -37,6 +37,13 @@ public class Context {
 		System.out.println("System.getProperty(\"user.dir\") \t" + System.getProperty("user.dir"));
 		System.out.println(" System.getProperty(\"java.class.path\") \t" +  System.getProperty("java.class.path") );
 //        System.out.println("getClass().getProtectionDomain().getCodeSource().getLocation() \t"+ Context.class.getClass().getProtectionDomain().getCodeSource().getLocation() );
+
+
+		System.out.println("----------------------------");
+		System.out.println("----root---" + getPathRoot());
+		System.out.println("----conf---" + getPathConf());
+		System.out.println("----------------------------");
+
 	}
 
 	/*
@@ -93,8 +100,6 @@ System.getProperty("user.dir") 	/home/walker/e/workspace_my/walker/walker-socket
 	}
 	/**
 	 * 配置文件路径
-	 * @param file
-	 * @return
 	 */
 	public static String getPathConf() {
 //		web项目需要配置于WEB-INF/classes 	spring.xml	 web.xml寻址classpath:   ? 

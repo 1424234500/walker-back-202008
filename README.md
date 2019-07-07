@@ -46,14 +46,14 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 	./src/redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1
 	
 	mysql 消息和记录分表
-	W_MSG_0		W_MSG_1
-	W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
+	W_MSG       W_MSG_0		    W_MSG_1
+	W_MSG_USER  W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
 
 
 
 # 模块划分
 ## walker-core
-	核心模块 简单java项目
+	核心模块 简单java项目 公用工具 和数据结构发布订阅简单实现
 #### common 通用工具 待修改划分
 #### core 核心组件
 * annotation 自定义注解实现Test db
@@ -82,14 +82,33 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 
 ## walker-service
 
+     抽象接口 数据操作 基本公用mode 可导出jar于各端使用
+
 ## walker-service-provider
-    
+
     使用springboot搭建的web项目 浏览器使用swagger用于接口测试
     http://localhost:8080/swagger-ui.html
+    使用dubbo/springcloud提供服务化接口
+    具体实现service模块 用于socket/web模块存储调用
+
+    集群部署
+    挂载  公用注册中心
+    通信  远程调用
 
 ## walker-socket
-	socket模块 简单java项目 使用原生socket和Netty框架实现即时通信 并通过redis发布订阅实现集群模式
+
+	socket模块 简单java项目 使用原生socket和Netty框架实现即时通信
+
+	集群部署
+	挂载  公用redis
+	通信  发布订阅
+
 #### socket 网络组件
+
+	集群部署
+	挂载  f5/nginx
+	通信  无
+
 * client 模拟客户端 
 ``
     ClientUI java swing GUI图形化客户端模拟
@@ -104,9 +123,14 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 	session 会话管理
 	Msg 统一传递消息类
 ``
+
 ## walker-web
 
 	java web 项目 使用spring mvc hibernate mybatis 实现oracle数据处理
+
+	集群部署
+	挂载  f5/nginx
+	通信  无
 	
 #### service 业务service处理
 
