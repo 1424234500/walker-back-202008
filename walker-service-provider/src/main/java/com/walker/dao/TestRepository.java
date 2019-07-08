@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
     spring data jpa方法命名规则
@@ -61,9 +62,9 @@ public interface TestRepository extends JpaRepository<Test, Long> {//实体类 �
     /**
      *  nativeQuery sql
      */
-
+    @Transactional
     @Modifying
-    @Query(value = "update TEST_MODE set name=?1 where id=?2", nativeQuery = true)   //占位符传值形式
+    @Query(value = "update test_mode set name=?1 where id=?2", nativeQuery = true)   //占位符传值形式
     int updateTest(String name, Long id);
 
     /**
