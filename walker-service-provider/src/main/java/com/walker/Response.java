@@ -2,8 +2,11 @@ package com.walker;
 
 import io.swagger.annotations.*;
 import lombok.Data;
+import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @ApiModel(value="基础返回类value",description="基础返回类description")
@@ -97,5 +100,14 @@ public class Response<T> implements Serializable {
     public static <T> Response<T> makeFalse(String info, T data){
         return make(false, info, data);
     }
+
+
+    public static Response makePage(String info, Pageable page, Object data){
+        Map<String, Object> map = new HashMap<>();
+        map.put("page", page);
+        map.put("data", data);
+        return make(true, info, map);
+    }
+
 
 }

@@ -2,21 +2,11 @@ package com.walker.controller;
 
 
 import com.walker.Response;
-import com.walker.common.util.Bean;
-import com.walker.mode.Test;
-import com.walker.service.TestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /*
 
@@ -58,21 +48,18 @@ Parameter Types
 
 
  */
-@Api(value = "测试 | swagger | springboot | controller |返回对象")
+@Api(value = "测试 控制层 | swagger | springboot | controller | 返回对象 ")
 @Controller
 @RequestMapping("/restful")
-public class RestfulTestController {
+public class RestfulController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private TestService service;
 
-
-    @ApiOperation(value="value 测试返回字符串 get", notes="notes 返回字符串")
+    @ApiOperation(value="get 获取字符串", notes="url restful参数 PathVariable")
     @ResponseBody
     @RequestMapping(value="/{id}/{name}/make.do",method= RequestMethod.GET)
     public String get(
-            @PathVariable(value = "id", required = true) Long id,
+            @PathVariable(value = "id", required = true) String id,
             @PathVariable(value = "name", required = false) String name
     ){
         String res = "get id:" + id + " name:" + name;
@@ -80,77 +67,53 @@ public class RestfulTestController {
         return res;
     }
 
-    @ApiOperation(value="value 测试返回对象 get", notes="notes  测试返回对象")
+    @ApiOperation(value="get 获取对象 自动Object get set 转json", notes="url restful参数 PathVariable")
     @ResponseBody
     @RequestMapping(value="/{id}/{name}/makeobject.do",method= RequestMethod.GET)
     public Response getobject(
-            @PathVariable(value = "id", required = true) Long id,
+            @PathVariable(value = "id", required = true) String id,
             @PathVariable(value = "name", required = false) String name
     ){
         String res = "get id:" + id + " name:" + name;
         log.info(res);
-        Test model = service.getOne(id);
-        return Response.makeTrue(res, model);
+        return Response.makeTrue(res, "");
     }
 
-    @ApiOperation(value="value 测试添加 post", notes="notes 测试添加 post")
+    @ApiOperation(value="post 添加对象", notes="post参数 RequestParam ")
     @ResponseBody
     @RequestMapping(value="/make.do",method=RequestMethod.POST, produces = "application/json")
     public Response post(
-            @RequestParam(value="id", required = false) Long id,
+            @RequestParam(value="id", required = false) String id,
             @RequestParam(value = "name", required = true, defaultValue = "nobody") String name,
             @RequestParam(value = "time", required = false, defaultValue = "000") String time
     ){
         String res = "post id:" + id + " name:" + name+ " time:" + time;
         log.info(res);
-        Test model = service.add(new Test(id, name, time, ""));
-        return Response.makeTrue(res, model);
+        return Response.makeTrue(res, "");
     }
-    @ApiOperation(value="value 测试更新 put", notes="notes 测试更新 put")
+    @ApiOperation(value="put 更新", notes="put参数 RequestParam")
     @ResponseBody
     @RequestMapping(value="/make.do",method=RequestMethod.PUT)
     public Response put(
-            @RequestParam(value = "id",required = true) Long id,
+            @RequestParam(value = "id",required = true) String id,
             @RequestParam(value = "name", required = false, defaultValue = "default-name") String name,
             @RequestParam(value = "time", required = false, defaultValue = "000") String time
     ){
         String res = "put id:" + id + " name:" + name+ " time:" + time;
         log.info(res);
-        int model = service.update(new Test(id, name, time, ""));
 
-        return Response.makeTrue(res, model);
+        return Response.makeTrue(res, "");
     }
 
-    @ApiOperation(value="value 测试删除 delete", notes="notes 测试删除 delete")
+    @ApiOperation(value="delete 删除", notes="delete参数 restful 路径 PathVariable ")
     @ResponseBody
     @RequestMapping(value="/{id}/make.do",method=RequestMethod.DELETE)
     public Response delete(
-            @PathVariable(value = "id", required = true) Long id
+            @PathVariable(value = "id", required = true) String id
     ){
         String res = "delete id:" + id;
         log.info(res);
-        service.delete(id);
         return Response.makeTrue(res);
-    }
-
-    @ApiOperation(value="测试查询", notes="get")
-    @ResponseBody
-    @RequestMapping(value="/query.do",method=RequestMethod.PUT)
-    public Response query(
-            @RequestParam(value = "id",required = false) Long id,
-            @RequestParam(value = "name", required = false, defaultValue = "") String name,
-            @RequestParam(value = "time", required = false, defaultValue = "") String time,
-            @RequestParam(value = "orderBy", required = false, defaultValue = "id") String orderBy,
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "showNum", required = false, defaultValue = "3") int showNum
-
-            ){
-        String res = "query id:" + id + " name:" + name+ " time:" + time;
-        log.info(res);
-        Sort orders = new Sort(Sort.Direction.ASC, orderBy);
-        Page<Test> list = service.finds(new Test(id, name, time, ""), orders, page, showNum);
-
-        return Response.makeTrue(res, list);
     }
 
 }

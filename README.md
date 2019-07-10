@@ -90,6 +90,9 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
     http://localhost:8080/swagger-ui.html
     使用dubbo/springcloud提供服务化接口
     具体实现service模块 用于socket/web模块存储调用
+    
+    使用jpa做对象操作
+    使用jdbcTemplate做简单sql操作
 
     集群部署
     挂载  公用注册中心

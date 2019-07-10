@@ -72,15 +72,22 @@ public class CacheMgr extends TestAdapter{
 		File dir = new File(Context.getPathConf());
 		cache.put("cache:dir:project", Context.getPathRoot());
 		cache.put("cache:dir:conf", Context.getPathConf());
-		cache.put("files", Arrays.asList(dir.list()));
-		log.warn("配置加载路径 " + dir.getAbsolutePath());
-		for (String item : dir.list()) {
-			String path = dir.getAbsolutePath() + File.separator + item;
-			if (FileUtil.check(path) == 0 && path.endsWith(".properties")) {
-				log.warn("解析文件存入cache " + path);
-				cache.putAll(SettingUtil.getSetting(path));
+		String[] dirlist = dir.list();
+		if(dirlist != null && dirlist.length > 0) {
+			cache.put("files", Arrays.asList(dirlist));
+			for (String item : dir.list()) {
+				String path = dir.getAbsolutePath() + File.separator + item;
+				if (FileUtil.check(path) == 0 && path.endsWith(".properties")) {
+					log.warn("解析文件存入cache " + path);
+					cache.putAll(SettingUtil.getSetting(path));
+				}
 			}
 		}
+		else{
+			cache.put("files", "null");
+		}
+		log.warn("配置加载路径 " + dir.getAbsolutePath());
+
 		
 		//initOracle(cache);
 		log.warn("初始化完毕------------------ ");

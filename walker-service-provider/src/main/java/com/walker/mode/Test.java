@@ -13,27 +13,29 @@ import javax.persistence.*;
 public class Test {
 
     @Id     //主键
-    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
-    private Long id;
-    @Column(length = 32)    //255
+//    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
+    @Column(name="ID", nullable = false, length = 32)
+    private String id;
+    @Column(name = "NAME", nullable = false, length = 256)    //255
     private String name;
-    @Column(length = 32)
+    @Column(name = "TIME", nullable = false, length = 32)
     private String time;
-    @Column(length = 64)
+    @Column(name = "PWD", nullable = true, length = 64)
     private String pwd;
 
-    public Test(Long id, String name, String time, String pwd){
+    public Test(){}
+    public Test(String id, String name, String time, String pwd){
         this.id = id;
         this.name = name;
         this.time = time;
         this.pwd = pwd;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

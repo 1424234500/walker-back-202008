@@ -19,7 +19,27 @@ import org.apache.log4j.Logger;
 import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImpl;
 
 public class Tools {
-	
+
+	public static void main(String[] args) {
+		int num = 15 + 64;
+		String binaryString = Integer.toBinaryString(num);
+		out(binaryString);
+		for (int i = 0; i < binaryString.getBytes().length; i++)
+		{
+			System.out.print(get(num, i) + "\t");
+		}
+	}
+
+
+	/**
+	 * @param num:要获取二进制值的数 64 + 15 -> 0100 1111
+	 * @param index:倒数第一位为0，依次类推 低位到高位
+	 */
+	public static int get(int num, int index)
+	{
+		return (num & (0x1 << index)) >> index;
+	}
+
 	
 	public static void regex(String[] str, String regex){
 		//编译正则
@@ -42,7 +62,6 @@ public class Tools {
 	
 	/**
 	 * 异常栈格式化
-	 * @param throwable
 	 * @return
 	 */
 	public static String toString(Throwable e) {
