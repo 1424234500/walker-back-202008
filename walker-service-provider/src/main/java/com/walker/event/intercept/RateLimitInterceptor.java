@@ -30,7 +30,7 @@ public class RateLimitInterceptor implements HandlerInterceptor{
      *  
      */  
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object method, ModelAndView modelAndView) throws Exception {  
-    	// logger.info("==============执行顺序: 2、postHandle================");    
+    	// log.info("==============执行顺序: 2、postHandle================");
     }  
   
     /** 

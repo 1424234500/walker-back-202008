@@ -13,15 +13,9 @@ import com.walker.common.util.Page;
  * @author
  * 
  */
-public interface BaseDao {
+public interface BaseDao extends BaseJdbc{
 
-	/**
-	 * 数据源 不同数据源 不同实现方式 分页 ddl dml
-	 * 
-	 * @param ds
-	 */
-	public void setDs(String ds);
-	public String getDs() ;
+
 
 	/**
 	 * 获取表的列数组
@@ -73,16 +67,6 @@ public interface BaseDao {
 	
 	
 	
-	
-/////////////////////////////////必须实现 其他依赖以下接口
-	/**
-	 * 获得结果集		
-	 * 
-	 * @param sql    SQL语句
-	 * @param params 参数
-	 * @return 结果集
-	 */
-	public List<Map<String, Object>> find(String sql, Object... params);
 
 	/**
 	 *获取查询结果的列数组
@@ -91,27 +75,7 @@ public interface BaseDao {
 	 * @return String List数组
 	 */
 	public List<String> getColumnsBySql(String sql);
-	/**
-	 * 执行SQL语句
-	 * 
-	 * @return 响应行数
-	 */
-	public int executeSql(String sql, Object... params);
 
-	/**
-	 * 批量执行sql
-	 * 
-	 * @return
-	 */
-	public int[] executeSql(String sql, List<List<Object>> objs);
 
-	/**
-	 * 执行存储过程 最后一个占位?返回值
-	 * 
-	 * @param proc    "{call countBySal(?,?)}"
-	 * @param objects
-	 * @return
-	 */
-	public int executeProc(String proc, Object... objects);
 
 }

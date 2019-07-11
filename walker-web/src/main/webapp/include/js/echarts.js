@@ -4795,7 +4795,7 @@ BoundingRect.create = function (rect) {
  * @module zrender/graphic/Group
  * @example
  *     var Group = require('zrender/container/Group');
- *     var Circle = require('zrender/graphic/shape/Circle');
+ *     var Circle = require('zrender/awt/shape/Circle');
  *     var g = new Group();
  *     g.position[0] = 100;
  *     g.position[1] = 100;
@@ -4810,7 +4810,7 @@ BoundingRect.create = function (rect) {
  */
 
 /**
- * @alias module:zrender/graphic/Group
+ * @alias module:zrender/awt/Group
  * @constructor
  * @extends module:zrender/mixin/Transformable
  * @extends module:zrender/mixin/Eventful
@@ -7363,11 +7363,11 @@ function parseRichText(text, style) {
                     // (1) If image is not loaded, it will be loaded at render phase and call
                     // `dirty()` and `textBackgroundColor.image` will be replaced with the loaded
                     // image, and then the right size will be calculated here at the next tick.
-                    // See `graphic/helper/text.js`.
+                    // See `awt/helper/text.js`.
                     // (2) If image loaded, and `textBackgroundColor.image` is image src string,
                     // use `imageHelper.findExistImage` to find cached image.
                     // `imageHelper.findExistImage` will always be called here before
-                    // `imageHelper.createOrUpdateImage` in `graphic/helper/text.js#renderRichText`
+                    // `imageHelper.createOrUpdateImage` in `awt/helper/text.js#renderRichText`
                     // which ensures that image will not be rendered before correct size calcualted.
                     if (bgImg) {
                         bgImg = findExistImage(bgImg);
@@ -8089,15 +8089,15 @@ RectText.prototype = {
 
 /**
  * 可绘制的图形基类
- * Base class of all displayable graphic objects
+ * Base class of all displayable awt objects
  * @module zrender/graphic/Displayable
  */
 
 
 /**
- * @alias module:zrender/graphic/Displayable
+ * @alias module:zrender/awt/Displayable
  * @extends module:zrender/Element
- * @extends module:zrender/graphic/mixin/RectText
+ * @extends module:zrender/awt/mixin/RectText
  */
 function Displayable(opts) {
 
@@ -8345,7 +8345,7 @@ inherits(Displayable, Element);
 mixin(Displayable, RectText);
 
 /**
- * @alias zrender/graphic/Image
+ * @alias zrender/awt/Image
  * @extends module:zrender/graphic/Displayable
  * @constructor
  * @param {Object} opts
@@ -13968,7 +13968,7 @@ var abs = Math.abs;
 
 var pathProxyForDraw = new PathProxy(true);
 /**
- * @alias module:zrender/graphic/Path
+ * @alias module:zrender/awt/Path
  * @extends module:zrender/graphic/Displayable
  * @constructor
  * @param {Object} opts
@@ -14813,7 +14813,7 @@ function mergePath$1(pathEls, opts) {
 }
 
 /**
- * @alias zrender/graphic/Text
+ * @alias zrender/awt/Text
  * @extends module:zrender/graphic/Displayable
  * @constructor
  * @param {Object} opts
@@ -16565,7 +16565,7 @@ function animateOrSetProps(isUpdate, el, props, animatableModel, dataIndex, cb) 
 }
 
 /**
- * Update graphic element properties with or without animation according to the
+ * Update awt element properties with or without animation according to the
  * configuration in series.
  *
  * Caution: this method will stop previous animation.
@@ -16578,11 +16578,11 @@ function animateOrSetProps(isUpdate, el, props, animatableModel, dataIndex, cb) 
  * @param {number} [dataIndex]
  * @param {Function} [cb]
  * @example
- *     graphic.updateProps(el, {
+ *     awt.updateProps(el, {
  *         position: [100, 100]
  *     }, seriesModel, dataIndex, function () { console.log('Animation done!'); });
  *     // Or
- *     graphic.updateProps(el, {
+ *     awt.updateProps(el, {
  *         position: [100, 100]
  *     }, seriesModel, function () { console.log('Animation done!'); });
  */
@@ -16591,7 +16591,7 @@ function updateProps(el, props, animatableModel, dataIndex, cb) {
 }
 
 /**
- * Init graphic element properties with or without animation according to the
+ * Init awt element properties with or without animation according to the
  * configuration in series.
  *
  * Caution: this method will stop previous animation.
@@ -16712,7 +16712,7 @@ function groupTransition(g1, g2, animatableModel, cb) {
             }
             // else {
             //     if (el.previousProps) {
-            //         graphic.updateProps
+            //         awt.updateProps
             //     }
             // }
         }
@@ -24151,7 +24151,7 @@ var setItemDataAndSeriesIndex = function (child) {
     child.dataType = this.dataType;
 };
 /**
- * Set graphic element relative to data. It can be set as null
+ * Set awt element relative to data. It can be set as null
  * @param {number} idx
  * @param {module:zrender/Element} [el]
  */
@@ -39153,7 +39153,7 @@ extendChartView({
         );
 
         // Notice: when thisTree and oldTree are the same tree (see list.cloneShallow),
-        // the oldTree is actually losted, so we can not find all of the old graphic
+        // the oldTree is actually losted, so we can not find all of the old awt
         // elements from tree. So we use this stragegy: make element storage, move
         // from old storage to new storage, clear old storage.
 
@@ -46759,7 +46759,7 @@ var coverRenderers = {
         createCover: function (controller, brushOption) {
             var cover = new Group();
 
-            // Do not use graphic.Polygon because graphic.Polyline do not close the
+            // Do not use awt.Polygon because awt.Polyline do not close the
             // border of the shape when drawing, which is a better experience for user.
             cover.add(new Polyline({
                 name: 'main',
@@ -46774,7 +46774,7 @@ var coverRenderers = {
         },
         endCreating: function (controller, cover) {
             cover.remove(cover.childAt(0));
-            // Use graphic.Polygon close the shape.
+            // Use awt.Polygon close the shape.
             cover.add(new Polygon({
                 name: 'main',
                 draggable: true,
@@ -47610,16 +47610,16 @@ var SankeySeries = SeriesModel.extend({
     },
 
     /**
-     * Return the graphic data structure
+     * Return the awt data structure
      *
-     * @return {module:echarts/data/Graph} graphic data structure
+     * @return {module:echarts/data/Graph} awt data structure
      */
     getGraph: function () {
         return this.getData().graph;
     },
 
     /**
-     * Get edge data of graphic data structure
+     * Get edge data of awt data structure
      *
      * @return {module:echarts/data/List} data structure of list
      */
@@ -52492,7 +52492,7 @@ var findPointFromSeries = function (finder, ecModel) {
         ) || [];
     }
     else if (el) {
-        // Use graphic bounding rect
+        // Use awt bounding rect
         var rect = el.getBoundingRect().clone();
         rect.applyTransform(el.transform);
         point = [
@@ -55079,7 +55079,7 @@ function createEl(elOption) {
         var Clz = graphic[graphicType.charAt(0).toUpperCase() + graphicType.slice(1)];
 
         if (__DEV__) {
-            assert(Clz, 'graphic type "' + graphicType + '" can not be found.');
+            assert(Clz, 'awt type "' + graphicType + '" can not be found.');
         }
 
         el = new Clz();
@@ -55484,17 +55484,17 @@ registerPreprocessor(function (option) {
     var graphicOption = option.graphic;
 
     // Convert
-    // {graphic: [{left: 10, type: 'circle'}, ...]}
+    // {awt: [{left: 10, type: 'circle'}, ...]}
     // or
-    // {graphic: {left: 10, type: 'circle'}}
+    // {awt: {left: 10, type: 'circle'}}
     // to
-    // {graphic: [{elements: [{left: 10, type: 'circle'}, ...]}]}
+    // {awt: [{elements: [{left: 10, type: 'circle'}, ...]}]}
     if (isArray(graphicOption)) {
         if (!graphicOption[0] || !graphicOption[0].elements) {
             option.graphic = [{elements: graphicOption}];
         }
         else {
-            // Only one graphic instance can be instantiated. (We dont
+            // Only one awt instance can be instantiated. (We dont
             // want that too many views are created in echarts._viewMap)
             option.graphic = [option.graphic[0]];
         }
@@ -55588,7 +55588,7 @@ var GraphicModel = extendComponentModel({
             if (__DEV__) {
                 assert(
                     isObject(newElOption) || resultItem.exist,
-                    'Empty graphic option definition'
+                    'Empty awt option definition'
                 );
             }
 
@@ -55720,10 +55720,10 @@ extendComponentView({
     },
 
     /**
-     * Update graphic elements.
+     * Update awt elements.
      *
      * @private
-     * @param {Object} graphicModel graphic model
+     * @param {Object} graphicModel awt model
      * @param {module:echarts/ExtensionAPI} api extension API
      */
     _updateElements: function (graphicModel, api) {
@@ -55736,7 +55736,7 @@ extendComponentView({
         var elMap = this._elMap;
         var rootGroup = this.group;
 
-        // Top-down tranverse to assign graphic settings to each elements.
+        // Top-down tranverse to assign awt settings to each elements.
         each$1(elOptionsToUpdate, function (elOption) {
             var $action = elOption.$action;
             var id = elOption.id;
@@ -55796,10 +55796,10 @@ extendComponentView({
     },
 
     /**
-     * Locate graphic elements.
+     * Locate awt elements.
      *
      * @private
-     * @param {Object} graphicModel graphic model
+     * @param {Object} graphicModel awt model
      * @param {module:echarts/ExtensionAPI} api extension API
      */
     _relocate: function (graphicModel, api) {
@@ -55859,13 +55859,13 @@ function createEl$1(id, targetElParent, elOption, elMap) {
     var graphicType = elOption.type;
 
     if (__DEV__) {
-        assert(graphicType, 'graphic type MUST be set');
+        assert(graphicType, 'awt type MUST be set');
     }
 
     var Clz = graphic[graphicType.charAt(0).toUpperCase() + graphicType.slice(1)];
 
     if (__DEV__) {
-        assert(Clz, 'graphic type can not be found');
+        assert(Clz, 'awt type can not be found');
     }
 
     var el = new Clz(elOption);
@@ -56303,7 +56303,7 @@ function makeBackground(rect, componentModel) {
     // FIXME
     // `subPixelOptimizeRect` may bring some gap between edge of viewpart
     // and background rect when setting like `left: 0`, `top: 0`.
-    // graphic.subPixelOptimizeRect(rect);
+    // awt.subPixelOptimizeRect(rect);
 
     return rect;
 }
@@ -58063,7 +58063,7 @@ extendComponentView({
             // align and verticalAlign will not work.
             vAlign = null;
         }
-        // Specify tooltip position by string 'top' 'bottom' 'left' 'right' around graphic element
+        // Specify tooltip position by string 'top' 'bottom' 'left' 'right' around awt element
         else if (typeof positionExpr === 'string' && el) {
             var pos = calcTooltipPosition(
                 positionExpr, rect, contentSize
@@ -58276,7 +58276,7 @@ function isCenterAlign(align) {
     return align === 'center' || align === 'middle';
 }
 
-// FIXME Better way to pack data in graphic element
+// FIXME Better way to pack data in awt element
 
 /**
  * @action
@@ -62684,7 +62684,7 @@ var eachAxisDim$1 = createNameEach(AXIS_DIMS, ['axisIndex', 'axis', 'index', 'id
 /**
  * If tow dataZoomModels has the same axis controlled, we say that they are 'linked'.
  * dataZoomModels and 'links' make up one or more graphics.
- * This function finds the graphic where the source dataZoomModel is in.
+ * This function finds the awt where the source dataZoomModel is in.
  *
  * @public
  * @param {Function} forEachNode Node iterator.
@@ -66546,7 +66546,7 @@ var ContinuousView = VisualMapView.extend({
 
         // Text is always horizontal layout but should not be effected by
         // transform (orient/inverse). So label is built separately but not
-        // use zrender/graphic/helper/RectText, and is located based on view
+        // use zrender/awt/helper/RectText, and is located based on view
         // group (according to handleLabelPoint) but not barGroup.
         var textStyleModel = this.visualMapModel.textStyleModel;
         var handleLabel = new Text({

@@ -5,8 +5,3 @@ spring:
     password: qwer
     driver-class-name: com.mysql.jdbc.Driver
 
-
-#    jdbc.mysql.DriverClass=com.mysql.jdbc.Driver
-#    jdbc.mysql.JdbcUrl=jdbc:mysql://39.106.111.11:3306/walker?useUnicode=true&characterEncoding=utf-8&useSSL=false
-#    jdbc.mysql.User=walker
-#    jdbc.mysql.Password=qwer

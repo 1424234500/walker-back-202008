@@ -1,4 +1,20 @@
-package com.walker.socket.service.redis;
+package com.walker.service.impl;
+
+import com.walker.common.util.*;
+import com.walker.core.database.SqlUtil;
+import com.walker.dao.JdbcDao;
+import com.walker.mode.Key;
+import com.walker.mode.Msg;
+import com.walker.mode.User;
+import com.walker.service.MessageService;
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,36 +22,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.walker.service.MessageService;
-import com.walker.socket.server_1.plugin.MsgBuilder;
-import org.apache.log4j.Logger;
-import org.junit.Test;
-
-import com.walker.common.util.Bean;
-import com.walker.common.util.LangUtil;
-import com.walker.common.util.TimeUtil;
-import com.walker.common.util.Tools;
-import com.walker.core.database.BaseDao;
-import com.walker.core.database.Dao;
-import com.walker.core.database.Redis;
-import com.walker.core.database.Redis.Fun;
-import com.walker.core.database.SqlUtil;
-import com.walker.common.util.Watch;
-import com.walker.mode.Key;
-import com.walker.mode.Msg;
-import com.walker.mode.User;
-
-import redis.clients.jedis.Jedis;
-
 /**
  * 离线消息积压队列
  * 上线后 先拉离线 清空 再接收新消息
- * @author walker
  *
  */
+@Service("messageService")
 public class MessageServiceImpl implements MessageService {
-	private static Logger log = Logger.getLogger(MessageServiceImpl.class); 
-	BaseDao dao = new Dao();
+	Logger log = Logger.getLogger(getClass());
+
+	@Autowired
+	JdbcDao dao;
+
+	@Autowired
+	RedisTemplate redisTemplate;
+
 	final static String TABLE_MSG= "W_MSG";
 	final static String TABLE_MSG_USER = "W_MSG_USER";
 	
@@ -50,7 +51,7 @@ public class MessageServiceImpl implements MessageService {
 	public List<Integer> sizeMsg() {
 		List<Integer> res = new ArrayList<>();
 		for(int i = 0; i < COUNT_MSG; i++) {
-			res.add(dao.count("select * from " + TABLE_MSG_ + i));
+			res.add(dao.count( "select * from " + TABLE_MSG_ + i));
 		}
 		log.info(res);
 		return res;
@@ -61,14 +62,15 @@ public class MessageServiceImpl implements MessageService {
 	public List<Integer> sizeMsgUser(){
 		List<Integer> res = new ArrayList<>();
 		for(int i = 0; i < COUNT_MSG_USER; i++) {
-			res.add(dao.count("select * from " + TABLE_MSG_USER_ + i));
+			res.add(dao.count( "select * from " + TABLE_MSG_USER_ + i));
+
 		}
 		log.info(res);
 		return res;
 	}
 	
 	@Override
-	public Long save(String[] toIds, Msg msg) {
+	public Long save(final String[] toIds, final Msg msg) {
 		try {
 			//insert into W_MSG_0 values()
 			//insert into W_MSG_1 values()
@@ -76,6 +78,7 @@ public class MessageServiceImpl implements MessageService {
 			Bean data = msg.getData();
 			String msgId = data.get(Key.ID, LangUtil.getGenerateId());
 			dao.executeSql("insert into " + TABLE_MSG_ + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " values(?,?)",  msgId, msg.toString() );
+
 			Bean dbLines = new Bean();
 			String fromId = msg.getUserFrom().getId();
 			for(String toId : toIds) {
@@ -100,8 +103,12 @@ public class MessageServiceImpl implements MessageService {
 			for(Entry<?, ?> entry : dbLines.entrySet()) {
 				String db = String.valueOf(entry.getKey());
 				List<List<Object>> lines = (List<List<Object>>) entry.getValue();
+				List<Object[]> jdbcArgs = new ArrayList<>();
+				for(List<Object> line : lines){
+					jdbcArgs.add(line.toArray());
+				}
 				if(lines.size() > 0) {
-					dao.executeSql("INSERT INTO " + db + " VALUES(?,?,?,?,?) ", lines);
+					dao.executeSql("INSERT INTO " + db + " VALUES(?,?,?,?,?) ", jdbcArgs);
 				}
 			}
 //-消息 分表ID 消息id - 消息json串
@@ -118,24 +125,21 @@ public class MessageServiceImpl implements MessageService {
 		}catch(Exception e) {
 			log.error("save msg error " + msg.toString(), e);;
 		}
-		return Redis.doJedis(new Fun<Long>() {
-			@Override
-			public Long make(Jedis jedis) {
-//				long score = System.currentTimeMillis();
-				long score = msg.getTimeDo();
-				for(String toId : toIds) {
-					String key = Key.getKeyOffline(toId);
-					jedis.zadd(key, score, msg.toString());
-					log.info(key + " save " + score);
 
-					if(jedis.zcard(key) > 500) {
-						long res = jedis.zremrangeByRank(key, 0, 0);
-						log.info(key + " rem " + res);
-					}
-				}
-				return score;
+		ZSetOperations<String, String> zSetOperations =  redisTemplate.opsForZSet();
+		long score = msg.getTimeDo();
+		for(String toId : toIds) {
+			String key = Key.getKeyOffline(toId);
+			zSetOperations.add(key, msg.toString(), score);
+			log.info(key + " save " + score);
+
+			if(zSetOperations.zCard(key) > 500) {
+				//).zremrangeByRank
+				long res = zSetOperations.removeRange(key, 0, 0);
+				log.info(key + " rem " + res);
 			}
-		});
+		}
+		return score;
 	}
 
 	
@@ -154,6 +158,7 @@ public class MessageServiceImpl implements MessageService {
 		String id = SqlUtil.makeTableKey(userId, toId);
 		String tableName = TABLE_MSG_USER_ + SqlUtil.makeTableCount(COUNT_MSG_USER, id);
 		Long time = TimeUtil.format(before, "yyyy-MM-dd HH:mm:ss:SSS").getTime();
+
 
 		List<Map<String, Object>> ids = dao.findPage("SELECT * FROM " + tableName + " WHERE ID=? AND TIME < ? order by TIME desc ", 1, count, id, time);
 		for(Map<String, Object> map : ids) {
@@ -224,21 +229,19 @@ public class MessageServiceImpl implements MessageService {
 	}
 	@Override
 	public List<Msg> findAfter(String userId, String after, int count) {
-		return Redis.doJedis(new Fun<List<Msg>>() {
-			@Override
-			public List<Msg> make(Jedis jedis) {
-				List<Msg> list = new ArrayList<Msg>();
-				String key = Key.getKeyOffline(userId);
-				Long b = TimeUtil.format(after, "yyyy-MM-dd HH:mm:ss:SSS").getTime();
+		ZSetOperations<String, String> zSetOperations =  redisTemplate.opsForZSet();
+
+		List<Msg> list = new ArrayList<Msg>();
+		String key = Key.getKeyOffline(userId);
+		Long b = TimeUtil.format(after, "yyyy-MM-dd HH:mm:ss:SSS").getTime();
 //				Set<String> set = jedis.zrevrangeByScore(key, b - 1, 0, 0, count);//获取上面的 旧的
-				Set<String> set = jedis.zrangeByScore(key, b+1, Double.MAX_VALUE, 0, count);	//获取下面的 新的
-				log.info("findAfter " + key + " " + after + " " + b + " " + Double.MAX_VALUE + " " + set.size());
-				for(String str : set) {
-					list.add(new Msg(str));
-				}
-				return list;
-			}
-		});
+		Set<String> set = zSetOperations.rangeByScore(key, b+1, Double.MAX_VALUE, 0, count);
+//				jedis.zrangeByScore(key, b+1, Double.MAX_VALUE, 0, count);	//获取下面的 新的
+		log.info("findAfter " + key + " " + after + " " + b + " " + Double.MAX_VALUE + " " + set.size());
+		for(String str : set) {
+			list.add(new Msg(str));
+		}
+		return list;
 
 	}
 
@@ -263,64 +266,4 @@ public class MessageServiceImpl implements MessageService {
 
 	
 
-
-	@Test
-	public void test() {
-		
-		MessageServiceImpl service = new MessageServiceImpl();
-		
-		int saveCount = 100;
-		int size = 100;
-		Watch w = new Watch("test merge and no merge", size);
-
-		w.costln("sizeMsg", service.sizeMsg());
-		w.costln("sizeMsgUser", service.sizeMsgUser());
-		
-		
-		String id = "000";
-		String id1 = "001";
-		String id2 = "002";
-		String id3 = "003";
-		String id4 = "004";
-		List<String> scores = new ArrayList<String>();
-		for(int i = 0; i < saveCount; i++) {
-			Msg msg = new MsgBuilder().makeMsg("TEST_" + getClass().getSimpleName(), "", new Bean().set("count", i))
-					.setUserFrom(new User().setId(id).setName("name"))
-					.setTimeDo(System.currentTimeMillis());
-			msg.addUserTo(id1);
-			msg.addUserTo(id2);
-			msg.addUserTo(id3);
-			msg.addUserTo(id4);
-			
-			Long score = service.save(msg.getUserTo(), msg);
-			String t = TimeUtil.format(score, "yyyy-MM-dd HH:mm:ss:SSS");
-			Tools.out(score, t);
-			scores.add(t);
-		}
-		w.costln("save",saveCount);
-		w.costln("sizeMsg", service.sizeMsg());
-		w.costln("sizeMsgUser", service.sizeMsgUser());
-		
-		Tools.formatOut(scores);
-		//查接收者的离线消息
-		List<Msg> list = service.findAfter(id1, scores.get(0), 20);
-		Tools.formatOut(list);
-		
-		//查发送者和接受者会话的历史消息
-		List<Msg> list1 = service.findBefore(id, id1, scores.get(scores.size() - 1), 20);
-		Tools.formatOut(list1);
-		
-		for(int i = 0;i < size; i++) {
-			Tools.out(i);
-			service.findBefore(id, id1, scores.get(scores.size() - 1), i % 20);
-		}
-		w.costln("findBefore",size);
-		for(int i = 0;i < size; i++) {
-			Tools.out(i);
-			service.findBeforeByMerge(id, id1, scores.get(scores.size() - 1), i % 20);
-		}
-		w.costln("findBeforeByMerge",size);
-		w.res();
-		Tools.out(w);
-	}
 }

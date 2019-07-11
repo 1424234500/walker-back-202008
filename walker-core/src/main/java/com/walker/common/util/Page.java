@@ -62,40 +62,47 @@ public class Page implements Serializable{
 	 * 设置预期数据的总数量 并根据页显示数量更新总页数 
 	 * @param num
 	 */
-	public void setNUM(long num) {
+	public Page setNUM(long num) {
 		this.NUM = num;
 		this.PAGENUM = (int) Math.ceil( 1.0 * num / this.SHOWNUM );
+		return this;
 	}
 
 	public int getSHOWNUM() {
 		return SHOWNUM;
 	}
 
-	public void setSHOWNUM(Object eachPageNum) {
+	public Page setSHOWNUM(Object eachPageNum) {
 		int defaultShowNum = Page.showNumDefault;
 		this.SHOWNUM = LangUtil.turn(eachPageNum, Page.showNumDefault);
 		if(this.SHOWNUM <= 0){
 			this.SHOWNUM = defaultShowNum;
 		}
+		return this;
 	}
 
 	public int getNOWPAGE() {
 		return NOWPAGE;
 	}
 
-	public void setNOWPAGE(String nowPage) {
-		this.NOWPAGE = Tools.parseInt(nowPage, 1);
+	public Page setNOWPAGE(int nowPage){
+		this.NOWPAGE = nowPage;
 		if(this.NOWPAGE < 1){
 			this.NOWPAGE = 1;
 		}
+		return this;
+	}
+
+	public Page setNOWPAGE(String nowPage) {
+		return setNOWPAGE(Tools.parseInt(nowPage, 1));
 	}
 
 	public int getPAGENUM() {
 		return PAGENUM;
 	}
 
-	public void setPAGENUM(Object pageNum) {
-		this.PAGENUM = LangUtil.turn(pageNum, 0);
+	public Page setPAGENUM(Object pageNum) {
+		this.PAGENUM = LangUtil.turn(pageNum, 0);return this;
 	}
 	public String getORDER(String defaultValue) {
 		String res = this.getORDER();
@@ -108,8 +115,8 @@ public class Page implements Serializable{
 		return ORDER;
 	}
 
-	public void setORDER(String order) {
-		this.ORDER = order;
+	public Page setORDER(String order) {
+		this.ORDER = order;return this;
 	}
 
 	

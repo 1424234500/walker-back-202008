@@ -1,17 +1,21 @@
 package com.walker;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.walker.common.util.Page;
 import io.swagger.annotations.*;
 import lombok.Data;
 import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 
 @ApiModel(value="基础返回类value",description="基础返回类description")
 @Data
-public class Response<T> implements Serializable {
+//@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})   //使用jackjson将对象json化的时候出现的错误。
+public class Response implements Serializable {
 
     public static final String INFO_TRUE = "操作成功";
     public static final String INFO_FALSE = "操作失败";
@@ -38,7 +42,7 @@ public class Response<T> implements Serializable {
         return flag;
     }
 
-    public Response<T> setFlag(Boolean flag) {
+    public Response setFlag(Boolean flag) {
         this.flag = flag;
         return this;
     }
@@ -47,7 +51,7 @@ public class Response<T> implements Serializable {
         return info;
     }
 
-    public Response<T> setInfo(String info) {
+    public Response setInfo(String info) {
         this.info = info;
         return this;
     }
@@ -56,53 +60,56 @@ public class Response<T> implements Serializable {
         return costTime;
     }
 
-    public Response<T> setCostTime(Long costTime) {
+    public Response setCostTime(Long costTime) {
         this.costTime = costTime;
         return this;
     }
 
-    public T getData() {
-        return data;
+    public <T> T getData() {
+        return (T)data;
     }
 
-    public Response<T> setData(T data) {
+    public Response setData(Object data) {
         this.data = data;
         return this;
     }
 
     @ApiModelProperty(example="{id:1, name:2}")
-    T data;
+    Object data;
 
-
-    Response(Boolean flag, String info, T data){
+    Response(){}
+    Response(Boolean flag, String info, Object data){
         this.flag = flag;
         this.info = info;
 //        this.costTime = costTime;
         this.data = data;
     }
 
-
-
-
-    public static <T> Response<T> make(Boolean sta, String info, T data){
-        return new Response<T>(sta, info, data);
+    public String toString(){
+        return Arrays.toString(new Object[]{"Response", flag, info, data});
     }
 
-    public static <T> Response<T> makeTrue(String info){
+
+
+    public static  Response make(Boolean sta, String info, Object data){
+        return new Response(sta, info, data);
+    }
+
+    public static  Response makeTrue(String info){
         return make(true, info, null);
     }
-    public static <T> Response<T> makeTrue(String info, T data){
+    public static  Response makeTrue(String info, Object data){
         return make(true, info, data);
     }
-    public static <T> Response<T> makeFalse(String info){
+    public static  Response makeFalse(String info){
         return make(false, info, null);
     }
-    public static <T> Response<T> makeFalse(String info, T data){
+    public static  Response makeFalse(String info, Object data){
         return make(false, info, data);
     }
 
 
-    public static Response makePage(String info, Pageable page, Object data){
+    public static Response makePage(String info, Page page, Object data){
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
         map.put("data", data);

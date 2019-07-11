@@ -1,5 +1,6 @@
 package com.walker.service;
 
+import com.walker.common.util.Page;
 import com.walker.mode.Test;
 import org.springframework.data.domain.Pageable;
 
@@ -14,7 +15,8 @@ public interface TestJdbcService {
     public Integer delete(Test test);
     public Test get(Test test);
 
-    public List<Test> finds(Test test, Pageable page);
+    public List<Test> finds(Test test, Page page);
+    public Integer count(Test test);
 
 
 

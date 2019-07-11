@@ -12,9 +12,4 @@ spring:
   profiles:
     active: test
 
-  resources:
-    static-locations: classpath:/
-
-#
-#logging:
-#  config: classpath:log4j2.yml
+  

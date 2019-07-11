@@ -8,7 +8,6 @@ import java.util.Map;
 
 /**
  * 案例：student表的hibernate和mybatis两种方式实现操作
- * @author Walker
  *
  */
 public interface StudentService  {

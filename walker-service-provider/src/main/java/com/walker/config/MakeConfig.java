@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+/**
+ * 自定义配置文件
+ */
 @Configuration
 @PropertySource({"classpath:make.properties"})
 @Component("makeConfig")

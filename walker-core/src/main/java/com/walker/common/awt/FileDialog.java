@@ -1,4 +1,4 @@
-package com.walker.common.graphic;
+package com.walker.common.awt;
 import java.io.File;
 
 import javax.swing.JFileChooser;

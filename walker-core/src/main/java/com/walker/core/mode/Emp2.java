@@ -19,7 +19,14 @@ public class Emp2 extends Emp{
 		System.out.println("emp2 init");
 		
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Emp2{" +
+				"id='" + id + '\'' +
+				'}';
+	}
+
 	public String getId() {
 		return id;
 	}

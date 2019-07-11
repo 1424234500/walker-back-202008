@@ -84,7 +84,7 @@ public class FileServiceImpl implements FileService,Serializable {
 								+ "(id,                   uptime, name,filesize,  type,path,changetime               ,about ) values "
 								+ "(SEQ_FILEINFO.Nextval, sysdate,?    ,?      ,  ?   ,?    ,"+ SqlHelp.to_dateL() +",?   ) "
 								                                 ,name ,filesize ,type,path,changetime               ,about    );
-						logger.info("添加文件记录：" + name);
+						log.info("添加文件记录：" + name);
 					}
 				}
 				return obj;

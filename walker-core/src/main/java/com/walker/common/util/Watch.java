@@ -1,10 +1,9 @@
-package com.walker.core.mode;
+package com.walker.common.util;
 
 import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import com.walker.common.util.Tools;
 import com.walker.core.exception.ErrorException;
 
 /**

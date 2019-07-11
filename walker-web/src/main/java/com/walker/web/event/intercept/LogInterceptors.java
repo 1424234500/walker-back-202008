@@ -41,14 +41,14 @@ public class LogInterceptors implements HandlerInterceptor{
      * 可以用来释放资源 
      */   
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object method, Exception e)    throws Exception {  
-    	// logger.info("==============执行顺序: 3、afterCompletion================");    
+    	// log.info("==============执行顺序: 3、afterCompletion================");
         //结束时间   统计应用的性能 
         long endTime = System.currentTimeMillis();
         // 得到线程绑定的局部变量（开始时间）
         long beginTime = (long) startTimeThreadLocal.get(); 
         long time = endTime - beginTime;
         // 此处认为处理时间超过500毫秒的请求为慢请求
-//        logger.info("--------stop " + Tools.calcTime(time));
+//        log.info("--------stop " + Tools.calcTime(time));
  
         String requestUri = request.getRequestURI();  
         String contextPath = request.getContextPath();  
@@ -69,7 +69,7 @@ public class LogInterceptors implements HandlerInterceptor{
      *  
      */  
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object method, ModelAndView modelAndView) throws Exception {  
-    	// logger.info("==============执行顺序: 2、postHandle================");    
+    	// log.info("==============执行顺序: 2、postHandle================");
     }  
   
     /** 
@@ -81,7 +81,7 @@ public class LogInterceptors implements HandlerInterceptor{
      *  
      */  
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object method) throws Exception {  
-        //logger.info("==============执行顺序: 1、preHandle================");    
+        //log.info("==============执行顺序: 1、preHandle================");
 //    	String s = request.getCharacterEncoding();
     	request.setCharacterEncoding("UTF-8");
     	response.setCharacterEncoding("UTF-8");
@@ -114,7 +114,7 @@ public class LogInterceptors implements HandlerInterceptor{
         	}
         }
         //日志 记录 输出       
-//        logger.info("++++++++ ");
+//        log.info("++++++++ ");
 	    logger.info("[" + url + "] [" + cla + "." + name + "]" + RequestUtil.getRequestBean(request).toString());
  
         return true;  

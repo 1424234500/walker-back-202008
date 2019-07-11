@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.exception.InfoException;
-import com.walker.core.mode.Watch;
 
 /**
  * Http工具类

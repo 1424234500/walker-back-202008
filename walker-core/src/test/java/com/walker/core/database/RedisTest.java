@@ -1,7 +1,5 @@
 package com.walker.core.database;
 
-import static org.junit.Assert.*;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -9,7 +7,7 @@ import org.junit.Test;
 
 import com.walker.common.util.Tools;
 import com.walker.core.database.Redis.Fun;
-import com.walker.core.mode.Watch;
+import com.walker.common.util.Watch;
 
 import redis.clients.jedis.*;
 

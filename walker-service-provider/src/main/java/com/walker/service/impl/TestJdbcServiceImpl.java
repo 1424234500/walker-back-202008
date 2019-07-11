@@ -1,5 +1,6 @@
 package com.walker.service.impl;
 
+import com.walker.common.util.Page;
 import com.walker.mode.Test;
 import com.walker.service.TestJdbcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,21 @@ public class TestJdbcServiceImpl implements TestJdbcService {
     }
 
     @Override
-    public List<Test> finds(Test test, Pageable page) {
-        List<Test> list = jdbcTemplate.query("SELECT * FROM TEST_MODE WHERE ID=? OR NAME LIKE  CONCAT('%', ?, '%') ", new Object[]{test.getId(), test.getName()}, new BeanPropertyRowMapper<Test>(Test.class));
+    public List<Test> finds(Test test, Page page) {
+        List<Test> list = jdbcTemplate.query(
+                "SELECT * FROM TEST_MODE WHERE ID=? " +
+                        "OR NAME LIKE  CONCAT('%', ?, '%') ",
+                new Object[]{test.getId(), test.getName()},
+                new BeanPropertyRowMapper<Test>(Test.class));
         return list;
      }
+    @Override
+    public Integer count(Test test){
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM TEST_MODE WHERE ID=? OR NAME LIKE CONCAT('%', ?, '%'"
+        ,new Object[]{test.getId(), test.getName()}
+        ,Integer.class
+        )
+        ;
+    }
 
 }

@@ -275,7 +275,6 @@ public class SqlUtil{
 	/**
 	 * 结果集转换 值
 	 * @param rs
-	 * @param col
 	 * @return	[ [1, n1], [2,n2] ]
 	 * @throws SQLException
 	 */
@@ -292,11 +291,26 @@ public class SqlUtil{
 		}
 		return res;
 	}
-
+	/**
+	 * 结果集转换 值
+	 * @param rs
+	 * @return	[ [1, n1], [2,n2] ]
+	 * @throws SQLException
+	 */
+	public static List<List<String>> toValues(List<Map<String,Object>> rs)   {
+		List<List<String>> res = new ArrayList<List<String>>();
+		for(Map<String,Object> map : rs){
+			ArrayList<String> list = new ArrayList<String>();
+			for (String key : map.keySet()) {
+				list.add(String.valueOf(map.get(key)));
+			}
+			res.add(list);
+		}
+		return res;
+	}
 	/**
 	 * 结果集转换 列
 	 * @param rs
-	 * @param col
 	 * @return	[ id, name ]
 	 * @throws SQLException
 	 */
@@ -309,6 +323,24 @@ public class SqlUtil{
 		}
 		return res;
 	}
+
+
+	/**
+	 * 结果集转换 列
+	 * @param rs
+	 * @return	[ id, name ]
+	 * @throws SQLException
+	 */
+	public static List<String> toKeys(List<Map<String,Object>> rs)  {
+		List<String> res = new ArrayList<>();
+
+		if(rs.size() > 0){
+			Map<String, Object> map = rs.get(0);
+			res.addAll(map.keySet());
+		}
+		return res;
+	}
+
 	private static Logger log = Logger.getLogger(SqlUtil.class);
 	/**
 	 * 执行sql文件

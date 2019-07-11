@@ -14,7 +14,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.*;
 
 /**
-
+图形化测试工具配置
 
 http://localhost:8080/swagger-ui.html
 

@@ -34,7 +34,7 @@ public class LoginInterceptors implements HandlerInterceptor{
      * 可以用来释放资源 
      */   
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object method, Exception e)    throws Exception {  
-    	// logger.info("==============执行顺序: 3、afterCompletion================");      
+    	// log.info("==============执行顺序: 3、afterCompletion================");
     }  
     /** 
      * 该方法在目标方法调用之后，渲染视图之前被调用； 
@@ -42,7 +42,7 @@ public class LoginInterceptors implements HandlerInterceptor{
      *  
      */  
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object method, ModelAndView modelAndView) throws Exception {  
-    	// logger.info("==============执行顺序: 2、postHandle================");    
+    	// log.info("==============执行顺序: 2、postHandle================");
     }  
   
     @Autowired
@@ -56,7 +56,7 @@ public class LoginInterceptors implements HandlerInterceptor{
      *  
      */  
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object method) throws Exception {  
-       // logger.info("==============执行顺序: 1、preHandle================");    
+       // log.info("==============执行顺序: 1、preHandle================");
  
         //登录权限
 //	    LoginUser user = (LoginUser) request.getSession().getAttribute("SY_LOGINUSER");

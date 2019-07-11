@@ -1,5 +1,7 @@
 package com.walker.mode;
 
+import java.util.Arrays;
+
 public class Student {
     private String id;
 
@@ -30,5 +32,9 @@ public class Student {
 	public void setTime(String time) {
 		this.time = time;
 	}
- 
+
+	@Override
+	public String toString() {
+		return Arrays.toString(new Object[]{"Student", id, name, time});
+	}
 }

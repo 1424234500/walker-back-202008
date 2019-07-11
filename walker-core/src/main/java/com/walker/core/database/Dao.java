@@ -4,12 +4,10 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
-import com.walker.core.exception.ErrorException;
-import com.walker.core.mode.Watch;
+import com.walker.common.util.Watch;
 
 /**
  * 数据库常用操作工具 选择一种连接池实现 每种连接池对应多种数据源 多种数据库

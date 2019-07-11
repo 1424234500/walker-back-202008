@@ -1,13 +1,11 @@
 package com.walker.mode;
 
-import lombok.Data;
 
 import javax.persistence.*;
 
 /**
  * jpa实体类测试
  */
-@Data
 @Entity
 @Table(name = "TEST_MODE")
 public class Test {

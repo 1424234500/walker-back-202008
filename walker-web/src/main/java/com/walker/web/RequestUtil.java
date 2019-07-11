@@ -59,7 +59,7 @@ public class RequestUtil {
 			ret += (char) iCh;
 		}
 
-		// logger.debug("unEscape: input=" + src + " output=" + ret);
+		// log.debug("unEscape: input=" + src + " output=" + ret);
 		return ret;
 	}
 
@@ -95,7 +95,7 @@ public class RequestUtil {
 			ret += (char) iCh;
 		}
 
-		// logger.debug("unEscape: input=" + src + " output=" + ret);
+		// log.debug("unEscape: input=" + src + " output=" + ret);
 		return ret;
 	}
 

@@ -2,6 +2,7 @@ package com.walker.controller;
 
 
 import com.walker.Response;
+import com.walker.common.util.Page;
 import com.walker.mode.Test;
 import com.walker.service.TestJpaService;
 import io.swagger.annotations.Api;
@@ -95,18 +96,17 @@ public class TestController {
     @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)
     public Response findPage(
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(value = "size", required = false, defaultValue = "3") Integer size
+            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum
     ) {
         String res = "get   name:" + name;
         log.info(res);
 
-        Sort sort = new Sort(Sort.Direction.ASC, "name");
-        Pageable pageable = new PageRequest(page, size, sort);
-        log.info(pageable.toString());
-        List<Test> list = service.finds(new Test("", name, "", ""), pageable);
-        log.info(pageable.toString());
-        return Response.makePage(res, pageable, list);
+        Page page1 = new Page().setNOWPAGE(nowPage).setSHOWNUM(showNum);
+
+        List<Test> list = service.finds(new Test("", name, "", ""), page1);
+        log.info(page1.toString());
+        return Response.makePage(res, page1, list);
     }
 
 

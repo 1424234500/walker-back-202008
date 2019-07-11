@@ -2,6 +2,7 @@ package com.walker.controller;
 
 
 import com.walker.Response;
+import com.walker.common.util.Page;
 import com.walker.dao.TestRepository;
 import com.walker.mode.Test;
 import io.swagger.annotations.Api;
@@ -72,22 +73,25 @@ public class RepositoryController {
     @RequestMapping(value = "/selfFindPage.do", method = RequestMethod.GET)
     public Response selfFindPage(
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(value = "size", required = false, defaultValue = "3") Integer size
+            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum
     ) {
         Sort sort = new Sort(Sort.Direction.ASC, "name");
-        Pageable pageable = new PageRequest(page, size, sort);
+        Pageable pageable = new PageRequest(nowPage-1, showNum, sort);
         log.info(pageable.toString());
+        Page page1 = new Page().setNOWPAGE(nowPage).setSHOWNUM(showNum);
         List<Test> list = repository.selfFindPage(name, pageable);
-        log.info(pageable.toString());
-        return Response.makePage("", pageable, list);
+        int count = repository.selfCount(name);
+        page1.setNUM(count);
+        log.info(page1.toString());
+        return Response.makePage("", page1, list);
     }
 
     @ApiOperation(value = "自定义查询 selfCount")
     @ResponseBody
     @RequestMapping(value = "/selfCount.do", method = RequestMethod.GET, produces = "application/json")
     public Response selfCount(
-            @RequestParam(value = "name", required = false) String name
+            @RequestParam(value = "name", required = false, defaultValue = "") String name
     ) {
         return Response.makeTrue("", repository.selfCount(name));
     }
@@ -95,9 +99,14 @@ public class RepositoryController {
     @ResponseBody
     @RequestMapping(value = "/getOne.do", method = RequestMethod.GET, produces = "application/json")
     public Response getOne(
-            @RequestParam(value = "id", required = true) String id
+            @RequestParam(value = "id", required = true, defaultValue = "1") String id
             ) {
-        return Response.makeTrue("", repository.getOne(id));
+        try {
+            Test res = repository.getOne(id);
+            return Response.makeTrue("", res);
+        }catch (Exception e){
+            return Response.makeFalse("no exists " + id);
+        }
     }
 
     @ApiOperation(value = "save 存储")

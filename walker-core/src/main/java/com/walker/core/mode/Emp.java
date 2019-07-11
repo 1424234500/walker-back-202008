@@ -16,11 +16,24 @@ public class Emp {
 	}
 	public Emp(){
 		System.out.println("emp init");
-
-		
 	}
-	
-	
+
+	public Emp(String id, String name, String dept) {
+		this();
+		this.id = id;
+		this.name = name;
+		this.dept = dept;
+	}
+
+	@Override
+	public String toString() {
+		return "Emp{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", dept='" + dept + '\'' +
+				'}';
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -43,5 +56,7 @@ public class Emp {
 	public void fun(){
 		System.out.println("emp fun this.id:" + this.id  );
 	}
-	
+
+
+
 }
