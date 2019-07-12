@@ -2,7 +2,13 @@ package com.walker.mode;
 
 import com.walker.common.util.Bean;
 
-public class User extends Bean{
+import java.io.Serializable;
+
+/**
+ * socket 用户
+ *
+ * */
+public class User extends Bean implements Cloneable, Serializable {
 	
 	
 	/**

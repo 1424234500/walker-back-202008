@@ -1,5 +1,6 @@
 package com.walker.mode;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +30,7 @@ import com.walker.common.util.JsonUtil;
  * 		
  */
 @SuppressWarnings("unchecked")
-public class Msg extends Bean implements Cloneable{
+public class Msg extends Bean implements Cloneable, Serializable {
 	public static final long serialVersionUID = 1L;
 	final public static String SPLIT = ",";
 	

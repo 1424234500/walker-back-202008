@@ -12,6 +12,9 @@ spring:
     hibernate:
       #自动创建表
       ddl-auto: update
+      #jpa表名大小写问题 全大写
+      naming:
+        physical-strategy:  org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
 
   resources:
