@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 测试仓库repository实现功能
+ * 测试仓库repository
  */
 @Api(value = "测试jpa操作 dao层 自定义sql ")
 @Controller

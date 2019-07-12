@@ -83,7 +83,7 @@ public interface TestRepository extends JpaRepository<Test, String> {//实体类
      */
     @Transactional
     @Modifying
-    @Query(value = "update test_mode t set t.name =?1 where t.id=?2", nativeQuery = true)   //占位符传值形式
+    @Query(value = "update TEST_MODE t set t.name =?1 where t.id=?2", nativeQuery = true)   //占位符传值形式
     int selfUpdateSql(String name, String id);
 
 

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /*
-为jpa实体类做测试
+测试 jap service
 
  */
 @Api(value = "测试jpa操作 service层 ")
