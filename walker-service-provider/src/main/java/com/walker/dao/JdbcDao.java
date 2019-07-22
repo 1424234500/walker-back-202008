@@ -34,21 +34,26 @@ public class JdbcDao extends BaseDaoAdapter {
     }
 
     @Override
-    public int executeSql(String sql, Object... params) {
+    public Integer executeSql(String sql, Object... params) {
         return jdbcTemplate.update(sql, params);
     }
 
     @Override
-    public int[] executeSql(String sql, List<List<Object>> objs) {
+    public Integer[] executeSql(String sql, List<List<Object>> objs) {
         List<Object[]> args = new ArrayList<>();
         for(List<Object> arg : objs){
             args.add(arg.toArray());
         }
-        return jdbcTemplate.batchUpdate(sql, args);
+        int resint[] = jdbcTemplate.batchUpdate(sql, args);
+        Integer[] res = new Integer[resint.length];
+        for(int i = 0; i< resint.length; i++){
+            res[i] = resint[i];
+        }
+        return res;
     }
 
     @Override
-    public int executeProc(String proc, Object... objects) {
+    public Integer executeProc(String proc, Object... objects) {
         return 0;
     }
 }

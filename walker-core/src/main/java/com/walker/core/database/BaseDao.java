@@ -62,7 +62,7 @@ public interface BaseDao extends BaseJdbc{
 	 * @param params 参数
 	 * @return 数目
 	 */
-	public int count(String sql, Object... params);
+	public Integer count(String sql, Object... params);
 
 	
 	

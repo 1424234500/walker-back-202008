@@ -13,7 +13,7 @@ import com.walker.core.encode.Pinyin;
 public class DaoTest {
 
 	@Test
-	public void testFind() {
+	public void testEF() {
 		BaseDao dao = new Dao();
 
 		Tools.out(dao.executeSql("CREATE TABLE  IF NOT EXISTS  junit (code VARCHAR(20), name VARCHAR(20)); "));
@@ -30,11 +30,7 @@ public class DaoTest {
 		Tools.out(dao.executeSql("delete from junit  where code like ?", "%2%"));
 		
 	}
-	@Test
-	public void test() {
-		
-	}
-	
+
 	
 
 }

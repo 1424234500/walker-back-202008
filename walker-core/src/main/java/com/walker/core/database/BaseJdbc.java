@@ -31,14 +31,14 @@ public interface BaseJdbc {
      *
      * @return 响应行数
      */
-    public int executeSql(String sql, Object... params);
+    public Integer executeSql(String sql, Object... params);
 
     /**
      * 批量执行sql
      *
      * @return
      */
-    public int[] executeSql(String sql, List<List<Object>> objs);
+    public Integer[] executeSql(String sql, List<List<Object>> objs);
 
     /**
      * 执行存储过程 最后一个占位?返回值
@@ -47,5 +47,5 @@ public interface BaseJdbc {
      * @param objects
      * @return
      */
-    public int executeProc(String proc, Object... objects);
+    public Integer executeProc(String proc, Object... objects);
 }

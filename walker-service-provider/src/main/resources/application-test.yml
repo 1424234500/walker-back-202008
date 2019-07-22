@@ -16,22 +16,23 @@ spring:
       naming:
         physical-strategy:  org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
-
+#prefix=spring.resources, ignoreInvalidFields=false, ignoreUnknownFields=false; nested exception is org.springframework.boot.context.properties.bind.BindException: Failed to bind properties under 'spring.resources' to org.springframework.boot.autoconfigure.web.ResourceProperties
+#2019-07-22 14:35:32.864  INFO 30039 --- [  restartedMain] ConditionEvaluationReportLoggingListener :
   resources:
     static-locations: classpath:/
-    redis:
-      timeout: 3000
-      host: 127.0.0.1
-      password:
-      sentinel:
-        master: master
-        nodes: xxx,xxx,xxx
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 4
-          max-wait: 100
+#    redis:
+#      timeout: 3000
+#      host: 127.0.0.1
+#      password:
+#      sentinel:
+#        master: master
+#        nodes: xxx,xxx,xxx
+#      lettuce:
+#        pool:
+#          max-active: 8
+#          max-idle: 8
+#          min-idle: 4
+#          max-wait: 100
 
 
 

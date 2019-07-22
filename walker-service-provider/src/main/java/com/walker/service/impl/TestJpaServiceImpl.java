@@ -3,7 +3,7 @@ package com.walker.service.impl;
 import com.walker.common.util.Page;
 import com.walker.dao.TestRepository;
 import com.walker.mode.Test;
-import com.walker.service.TestJpaService;
+import com.walker.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("testJpaService")
-public class TestJpaServiceImpl implements TestJpaService {
+public class TestJpaServiceImpl implements TestService {
 
     @Autowired
     private TestRepository testRepository;
@@ -28,8 +28,9 @@ public class TestJpaServiceImpl implements TestJpaService {
     }
 
     @Override
-    public void delete(Test test) {
+    public Integer delete(Test test) {
         testRepository.deleteById(test.getId());
+        return 1;
     }
 
     @Override
@@ -43,5 +44,10 @@ public class TestJpaServiceImpl implements TestJpaService {
         Pageable pageable = new PageRequest(page.getNOWPAGE()-1, page.getSHOWNUM(), sort);
         page.setNUM(testRepository.selfCount(test.getName()));
         return testRepository.selfFindPage(test.getName(), pageable);
+    }
+
+    @Override
+    public Integer count(Test test) {
+        return Integer.valueOf(Long.valueOf(testRepository.count()).intValue());
     }
 }

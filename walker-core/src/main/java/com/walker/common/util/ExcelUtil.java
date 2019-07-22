@@ -9,7 +9,6 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
-import org.junit.Test;
 
 
 public class ExcelUtil {
@@ -377,28 +376,24 @@ public class ExcelUtil {
  
     }
 
-    
-    
-    @Test
-    public void test() throws IOException {
-    	Integer n = 9;
-    	Integer arr[][] = new Integer[n][n];
-    	Integer title[] = new Integer[n];
-    	for(Integer i = 1; i < n+1; i++) {
-    		title[i-1] = i;
-    		arr[i-1] = new Integer[n];
-    		for(Integer j = 1; j < n + 1 - i; j++) {
-    			arr[i-1][j-1] = i * j;
-    		}
-    	}
-    	String path = "/home/walker/e/testExcel.xls";
-    	saveToExcel(arr, title, n+"x"+n, path);
-    	
-    	List<String[]> list = readExcel(new File(path));
-    	for(String[] ss : list) {
-    		Tools.out(ss);
-    	}
-    }
+    public static void main(String [] argv) throws IOException {
+        Integer n = 9;
+        Integer arr[][] = new Integer[n][n];
+        Integer title[] = new Integer[n];
+        for(Integer i = 1; i < n+1; i++) {
+            title[i-1] = i;
+            arr[i-1] = new Integer[n];
+            for(Integer j = 1; j < n + 1 - i; j++) {
+                arr[i-1][j-1] = i * j;
+            }
+        }
+        String path = "/home/walker/e/testExcel.xls";
+        saveToExcel(arr, title, n+"x"+n, path);
 
+        List<String[]> list = readExcel(new File(path));
+        for(String[] ss : list) {
+            Tools.out(ss);
+        }
+    }
 
 }

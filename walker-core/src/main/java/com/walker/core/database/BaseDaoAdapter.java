@@ -19,7 +19,7 @@ import java.util.Map;
  * 部分实现 抽离关键 子实现
  */
 public abstract class BaseDaoAdapter implements BaseDao {
-	private static Logger log = Logger.getLogger(BaseDaoAdapter.class);
+	protected static Logger log = Logger.getLogger(BaseDaoAdapter.class);
 
 
 
@@ -70,7 +70,7 @@ public abstract class BaseDaoAdapter implements BaseDao {
 	}
 
 	@Override
-	public int count(String sql, Object... objects) {
+	public Integer count(String sql, Object... objects) {
 		int res = 0;
 		sql = SqlUtil.makeSqlCount(sql);
 		List<List<String>> list = MapListUtil.toArray(this.find(sql, objects));

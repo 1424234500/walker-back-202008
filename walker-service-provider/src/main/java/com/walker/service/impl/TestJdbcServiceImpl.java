@@ -1,10 +1,10 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.Page;
+import com.walker.dao.JdbcDao;
 import com.walker.mode.Test;
-import com.walker.service.TestJdbcService;
+import com.walker.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("testJdbcService")
-public class TestJdbcServiceImpl implements TestJdbcService {
+public class TestJdbcServiceImpl implements TestService {
     @Autowired
     JdbcTemplate jdbcTemplate;
-
+    @Autowired
+    JdbcDao jdbcDao;
+    
+    
     @Override
     public Test add(Test test) {
-        jdbcTemplate.update("INSERT INTO TEST_MODE VALUES(?,?,?,?) ", test.getId(), test.getName(), test.getTime(), test.getPwd());
+        jdbcDao.executeSql("INSERT INTO TEST_MODE VALUES(?,?,?,?) ", test.getId(), test.getName(), test.getTime(), test.getPwd());
         return test;
     }
 
@@ -29,7 +32,7 @@ public class TestJdbcServiceImpl implements TestJdbcService {
 
     @Override
     public Integer delete(Test test) {
-        return jdbcTemplate.update("DELETE FROM TEST_MODE WHERE ID=? ", test.getId());
+        return jdbcDao.executeSql("DELETE FROM TEST_MODE WHERE ID=? ", test.getId());
     }
 
     @Override
