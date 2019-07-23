@@ -43,7 +43,7 @@ public interface BaseDao extends BaseJdbc{
 	 * @param rows   每页显示多少条
 	 * @return 结果集
 	 */
-	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... params);
+	public List<Map<String, Object>> findPage(String sql, Integer page, Integer rows, Object... params);
 
 	/**
 	 * 获得结果集 分页

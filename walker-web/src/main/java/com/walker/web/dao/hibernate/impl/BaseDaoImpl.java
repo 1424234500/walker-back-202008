@@ -84,19 +84,19 @@ public class BaseDaoImpl implements BaseDao  {
 	}
 	
 	@Override
-	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... objects) {
+	public List<Map<String, Object>> findPage(String sql, Integer page, Integer rows, Object... objects) {
 		return this.find(SqlUtil.makeSqlPage(getDs(), sql, page, rows), objects);
 	}
  
 	@Override
-	public int executeSql(String sql, Object... objects) {
+	public Integer executeSql(String sql, Object... objects) {
 		SQLQuery q = getCurrentSession().createSQLQuery(sql);
 		setObjectsToSql(q, objects);
 		return q.executeUpdate();
 	}
  
 	@Override
-	public int count(String sql, Object... objects) {
+	public Integer count(String sql, Object... objects) {
 		SQLQuery q = getCurrentSession().createSQLQuery(SqlUtil.makeSqlCount(sql));
 		setObjectsToSql(q, objects);
 		return ((Number) q.uniqueResult()).intValue();
@@ -127,7 +127,7 @@ public class BaseDaoImpl implements BaseDao  {
 	
 	public void setObjectsToSql(SQLQuery q, Object...objects){
 		if (objects != null &&  objects.length > 0) {
-			for (int i = 0; i < objects.length; i++) {
+			for (Integer i = 0; i < objects.length; i++) {
 				q.setParameter(i+1, objects[i]);
 			}
 		}
@@ -142,13 +142,13 @@ public class BaseDaoImpl implements BaseDao  {
 	}
 
 	@Override
-	public int[] executeSql(String sql, List<List<Object>> objs) {
+	public Integer[] executeSql(String sql, List<List<Object>> objs) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int executeProc(String proc, Object... objects) {
+	public Integer executeProc(String proc, Object... objects) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

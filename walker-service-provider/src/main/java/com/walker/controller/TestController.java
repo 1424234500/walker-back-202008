@@ -4,22 +4,20 @@ package com.walker.controller;
 import com.walker.Response;
 import com.walker.common.util.Page;
 import com.walker.mode.Test;
-import com.walker.service.TestJpaService;
+import com.walker.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /*
-测试 jap service
+测试 jap jpaService
 
  */
 @Api(value = "测试jpa操作 service层 ")
@@ -30,7 +28,8 @@ public class TestController {
 
 
     @Autowired
-    private TestJpaService service;
+    @Qualifier("testJpaService")
+    private TestService jpaService;
 
     //    public Test add( Test test);
     @ApiOperation(value = "post 添加", notes = "post参数 RequestParam ")
@@ -43,7 +42,7 @@ public class TestController {
     ) {
         String res = "post id:" + id + " name:" + name + " time:" + time;
         log.info(res);
-        Test model = service.add(new Test(id, name, time, ""));
+        Test model = jpaService.add(new Test(id, name, time, ""));
         return Response.makeTrue(res, model);
     }
 
@@ -59,7 +58,7 @@ public class TestController {
     ) {
         String res = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
         log.info(res);
-        Integer model = service.update(new Test(id, name, time, pwd));
+        Integer model = jpaService.update(new Test(id, name, time, pwd));
         return Response.makeTrue(res, model);
     }
 
@@ -72,7 +71,7 @@ public class TestController {
     ) {
         String res = "delete id:" + id;
         log.info(res);
-        service.delete(new Test(id, "", "", ""));
+        jpaService.delete(new Test(id, "", "", ""));
         return Response.makeTrue(res);
     }
 
@@ -84,7 +83,7 @@ public class TestController {
     ) {
         String res = "get id:" + id;
         log.info(res);
-        Test model = service.get(new Test(id, "", "", ""));
+        Test model = jpaService.get(new Test(id, "", "", ""));
         return Response.makeTrue(res, model);
     }
 //
@@ -104,7 +103,7 @@ public class TestController {
 
         Page page1 = new Page().setNOWPAGE(nowPage).setSHOWNUM(showNum);
 
-        List<Test> list = service.finds(new Test("", name, "", ""), page1);
+        List<Test> list = jpaService.finds(new Test("", name, "", ""), page1);
         log.info(page1.toString());
         return Response.makePage(res, page1, list);
     }

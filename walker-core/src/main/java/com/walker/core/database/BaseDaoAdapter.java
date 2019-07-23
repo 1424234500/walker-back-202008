@@ -57,7 +57,7 @@ public abstract class BaseDaoAdapter implements BaseDao {
 	 * @return 结果集
 	 */
 	@Override
-	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... objects) {
+	public List<Map<String, Object>> findPage(String sql, Integer page, Integer rows, Object... objects) {
 		sql = SqlUtil.makeSqlPage(getDs(), sql, page, rows);
 		return this.find(sql, objects);
 	}
@@ -71,7 +71,7 @@ public abstract class BaseDaoAdapter implements BaseDao {
 
 	@Override
 	public Integer count(String sql, Object... objects) {
-		int res = 0;
+		Integer res = 0;
 		sql = SqlUtil.makeSqlCount(sql);
 		List<List<String>> list = MapListUtil.toArray(this.find(sql, objects));
 		if(list != null && list.size() > 0) {

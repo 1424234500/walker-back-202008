@@ -41,12 +41,12 @@ public class BaseServiceImpl implements BaseService,Serializable {
 	}
 
 	@Override
-	public int executeSql(String sql, Object... params) {
+	public Integer executeSql(String sql, Object... params) {
 		return baseDao.executeSql(sql, params);
 	}
 
 	@Override
-	public int count(String sql, Object... params) {
+	public Integer count(String sql, Object... params) {
 		return baseDao.count(sql, params);
 	}
 
@@ -71,17 +71,17 @@ public class BaseServiceImpl implements BaseService,Serializable {
 	}
 
 	@Override
-	public List<Map<String, Object>> findPage(String sql, int page, int rows, Object... params) {
+	public List<Map<String, Object>> findPage(String sql, Integer page, Integer rows, Object... params) {
 		return baseDao.findPage(sql, page, rows, params);
 	}
 
 	@Override
-	public int[] executeSql(String sql, List<List<Object>> objs) {
+	public Integer[] executeSql(String sql, List<List<Object>> objs) {
 		return baseDao.executeSql(sql, objs);
 	}
 
 	@Override
-	public int executeProc(String proc, Object... objects) {
+	public Integer executeProc(String proc, Object... objects) {
 		return baseDao.executeProc(proc, objects);
 	}
 

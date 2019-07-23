@@ -5,16 +5,12 @@ import com.walker.core.database.SqlUtil;
 import com.walker.dao.JdbcDao;
 import com.walker.mode.Key;
 import com.walker.mode.Msg;
-import com.walker.mode.User;
 import com.walker.service.MessageService;
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
 	Logger log = Logger.getLogger(getClass());
 
 	@Autowired
-	JdbcDao dao;
+	JdbcDao jdbcDao;
 
 	@Autowired
 	RedisTemplate redisTemplate;
@@ -51,7 +47,7 @@ public class MessageServiceImpl implements MessageService {
 	public List<Integer> sizeMsg() {
 		List<Integer> res = new ArrayList<>();
 		for(int i = 0; i < COUNT_MSG; i++) {
-			res.add(dao.count( "select * from " + TABLE_MSG_ + i));
+			res.add(jdbcDao.count( "select * from " + TABLE_MSG_ + i));
 		}
 		log.info(res);
 		return res;
@@ -62,7 +58,7 @@ public class MessageServiceImpl implements MessageService {
 	public List<Integer> sizeMsgUser(){
 		List<Integer> res = new ArrayList<>();
 		for(int i = 0; i < COUNT_MSG_USER; i++) {
-			res.add(dao.count( "select * from " + TABLE_MSG_USER_ + i));
+			res.add(jdbcDao.count( "select * from " + TABLE_MSG_USER_ + i));
 
 		}
 		log.info(res);
@@ -77,7 +73,7 @@ public class MessageServiceImpl implements MessageService {
 			//保存消息实体
 			Bean data = msg.getData();
 			String msgId = data.get(Key.ID, LangUtil.getGenerateId());
-			dao.executeSql("insert into " + TABLE_MSG_ + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " values(?,?)",  msgId, msg.toString() );
+			jdbcDao.executeSql("insert into " + TABLE_MSG_ + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " values(?,?)",  msgId, msg.toString() );
 
 			Bean dbLines = new Bean();
 			String fromId = msg.getUserFrom().getId();
@@ -103,12 +99,8 @@ public class MessageServiceImpl implements MessageService {
 			for(Entry<?, ?> entry : dbLines.entrySet()) {
 				String db = String.valueOf(entry.getKey());
 				List<List<Object>> lines = (List<List<Object>>) entry.getValue();
-				List<Object[]> jdbcArgs = new ArrayList<>();
-				for(List<Object> line : lines){
-					jdbcArgs.add(line.toArray());
-				}
 				if(lines.size() > 0) {
-					dao.executeSql("INSERT INTO " + db + " VALUES(?,?,?,?,?) ", jdbcArgs);
+					jdbcDao.executeSql("INSERT INTO " + db + " VALUES(?,?,?,?,?) ", lines);
 				}
 			}
 //-消息 分表ID 消息id - 消息json串
@@ -160,7 +152,7 @@ public class MessageServiceImpl implements MessageService {
 		Long time = TimeUtil.format(before, "yyyy-MM-dd HH:mm:ss:SSS").getTime();
 
 
-		List<Map<String, Object>> ids = dao.findPage("SELECT * FROM " + tableName + " WHERE ID=? AND TIME < ? order by TIME desc ", 1, count, id, time);
+		List<Map<String, Object>> ids = jdbcDao.findPage("SELECT * FROM " + tableName + " WHERE ID=? AND TIME < ? order by TIME desc ", 1, count, id, time);
 		for(Map<String, Object> map : ids) {
 			String userFrom = String.valueOf(map.get("USER_FROM"));
 			String userTo = String.valueOf(map.get("USER_TO"));
@@ -200,7 +192,7 @@ public class MessageServiceImpl implements MessageService {
 //		String tableName = TABLE_MSG_USER_ + SqlUtil.makeTableCount(COUNT_MSG_USER, id);
 		Long time = TimeUtil.format(before, "yyyy-MM-dd HH:mm:ss:SSS").getTime();
 //select u.ID,u.USER_FROM,u.USER_TO,u.MSG_ID,u.TIME,m.TEXT from W_MSG m,W_MSG_USER u where u.MSG_ID=m.ID;
-		List<Map<String, Object>> ids = dao.findPage("SELECT u.ID,u.USER_FROM,u.USER_TO,u.MSG_ID,u.TIME,m.TEXT FROM " 
+		List<Map<String, Object>> ids = jdbcDao.findPage("SELECT u.ID,u.USER_FROM,u.USER_TO,u.MSG_ID,u.TIME,m.TEXT FROM "
 		+ TABLE_MSG + " m," + TABLE_MSG_USER + " u  WHERE u.ID=? AND u.TIME < ? and u.MSG_ID=m.ID order by u.TIME desc ", 1, count, id, time);
 		for(Map<String, Object> map : ids) {
 			String userFrom = String.valueOf(map.get("USER_FROM"));
@@ -247,7 +239,7 @@ public class MessageServiceImpl implements MessageService {
 
 	@Override
 	public Msg findMsg(String msgId) {
-		Map<String,Object> map = dao.findOne("SELECT * FROM " + TABLE_MSG_ + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " WHERE ID=? ", msgId);
+		Map<String,Object> map = jdbcDao.findOne("SELECT * FROM " + TABLE_MSG_ + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " WHERE ID=? ", msgId);
 		if(map == null) {
 			return null;
 		}
@@ -256,7 +248,7 @@ public class MessageServiceImpl implements MessageService {
 	}
 	@Override
 	public Msg findMsgByMerge(String msgId) {
-		Map<String,Object> map = dao.findOne("SELECT * FROM " + TABLE_MSG + " WHERE ID=? ", msgId);
+		Map<String,Object> map = jdbcDao.findOne("SELECT * FROM " + TABLE_MSG + " WHERE ID=? ", msgId);
 		if(map == null) {
 			return null;
 		}

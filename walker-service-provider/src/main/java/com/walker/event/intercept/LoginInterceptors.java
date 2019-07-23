@@ -5,7 +5,6 @@ import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.event.RequestUtil;
 import com.walker.event.SpringContextUtil;
-import com.walker.service.AsService;
 import com.walker.service.LogService;
 import com.walker.service.LoginService;
 import org.apache.log4j.Logger;
