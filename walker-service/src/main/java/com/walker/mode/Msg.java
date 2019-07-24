@@ -79,6 +79,8 @@ public class Msg extends Bean implements Cloneable, Serializable {
 //			if(this.getTimeClient() == 0) {//避免不传导致 计算异常
 				this.setTimeClient(System.currentTimeMillis());//确保type
 //			}
+
+
 		}else {
 			this.setType("echo");
 			this.setData(new Bean().set("json", json));

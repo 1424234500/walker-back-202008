@@ -32,8 +32,8 @@ public class MessageServiceImplTest {
 
 //            MessageServiceImpl messageService = new MessageServiceImpl();
 
-            int saveCount = 100;
-            int size = 100;
+            int saveCount = 3;
+            int size = 3;
             Watch w = new Watch("test merge and no merge", size);
 
             w.costln("sizeMsg", messageService.sizeMsg());
@@ -77,12 +77,12 @@ public class MessageServiceImplTest {
             Tools.formatOut(list1);
 
             for(int i = 0;i < size; i++) {
-                Tools.out(i);
+//                Tools.out(i);
                 messageService.findBefore(id, id1, scores.get(scores.size() - 1), i % 20);
             }
             w.costln("findBefore",size);
             for(int i = 0;i < size; i++) {
-                Tools.out(i);
+//                Tools.out(i);
                 messageService.findBeforeByMerge(id, id1, scores.get(scores.size() - 1), i % 20);
             }
             w.costln("findBeforeByMerge",size);

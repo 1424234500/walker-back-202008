@@ -1,0 +1,70 @@
+2019-07-24 19:23:54.501  INFO 31638 --- [restartedMain] c.w.Application                          : Starting Application on walker with PID 31638 (/home/walker/e/workspace/walker/walker-service-provider/target/classes started by walker in /home/walker/e/workspace/walker)
+2019-07-24 19:23:54.510  INFO 31638 --- [restartedMain] c.w.Application                          : The following profiles are active: pro
+2019-07-24 19:23:54.570  INFO 31638 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2019-07-24 19:23:54.571  INFO 31638 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2019-07-24 19:23:55.902  INFO 31638 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-07-24 19:23:55.906  INFO 31638 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-07-24 19:23:56.052  INFO 31638 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 139ms. Found 1 repository interfaces.
+2019-07-24 19:23:56.067  INFO 31638 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-07-24 19:23:56.069  INFO 31638 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-07-24 19:23:56.115  INFO 31638 --- [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.walker.dao.TestRepository.
+2019-07-24 19:23:56.116  INFO 31638 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41ms. Found 0 repository interfaces.
+2019-07-24 19:23:56.539  INFO 31638 --- [restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$e27a4bfc] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-07-24 19:23:56.567  INFO 31638 --- [restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'cacheConfig' of type [com.walker.config.CacheConfig$$EnhancerBySpringCGLIB$$74baa7e4] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-07-24 19:23:57.025  INFO 31638 --- [restartedMain] o.s.b.w.e.t.TomcatWebServer              : Tomcat initialized with port(s): 8080 (http)
+2019-07-24 19:23:57.055  INFO 31638 --- [restartedMain] o.a.c.c.StandardService                  : Starting service [Tomcat]
+2019-07-24 19:23:57.056  INFO 31638 --- [restartedMain] o.a.c.c.StandardEngine                   : Starting Servlet engine: [Apache Tomcat/9.0.21]
+2019-07-24 19:23:57.161  INFO 31638 --- [restartedMain] o.a.c.c.C.[.[.[/]                        : Initializing Spring embedded WebApplicationContext
+2019-07-24 19:23:57.161  INFO 31638 --- [restartedMain] o.s.w.c.ContextLoader                    : Root WebApplicationContext: initialization completed in 2590 ms
+2019-07-24 19:23:57.169  INFO 31638 --- [restartedMain] bConfig$$EnhancerBySpringCGLIB$$e4fe3a36 : ServletListenerRegistrationBean
+2019-07-24 19:23:57.628  INFO 31638 --- [restartedMain] o.h.j.i.u.LogHelper                      : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-07-24 19:23:57.688  INFO 31638 --- [restartedMain] o.h.Version                              : HHH000412: Hibernate Core {5.3.10.Final}
+2019-07-24 19:23:57.691  INFO 31638 --- [restartedMain] o.h.c.Environment                        : HHH000206: hibernate.properties not found
+2019-07-24 19:23:57.806  INFO 31638 --- [restartedMain] o.h.a.c.Version                          : HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-07-24 19:23:57.932  INFO 31638 --- [restartedMain] c.z.h.HikariDataSource                   : HikariPool-1 - Starting...
+2019-07-24 19:23:57.935  WARN 31638 --- [restartedMain] c.z.h.u.DriverDataSource                 : Registered driver with driverClassName=com.mysql.jdbc.Driver was not found, trying direct instantiation.
+2019-07-24 19:23:59.747  INFO 31638 --- [restartedMain] c.z.h.HikariDataSource                   : HikariPool-1 - Start completed.
+2019-07-24 19:23:59.759  INFO 31638 --- [restartedMain] o.h.d.Dialect                            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+2019-07-24 19:24:00.993  INFO 31638 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-07-24 19:24:01.039  INFO 31638 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2019-07-24 19:24:01.294  INFO 31638 --- [restartedMain] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
+2019-07-24 19:24:01.662  INFO 31638 --- [restartedMain] eConfig$$EnhancerBySpringCGLIB$$df35ca09 : DataSourceConfig redisTemplate init
+2019-07-24 19:24:01.939  INFO 31638 --- [restartedMain] bConfig$$EnhancerBySpringCGLIB$$e4fe3a36 : addInterceptors
+2019-07-24 19:24:01.944  WARN 31638 --- [restartedMain] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-07-24 19:24:02.129  WARN 31638 --- [restartedMain] rConfig$$EnhancerBySpringCGLIB$$d91d592c : start config createRestApi
+2019-07-24 19:24:02.227  INFO 31638 --- [restartedMain] o.s.s.c.ThreadPoolTaskExecutor           : Initializing ExecutorService 'applicationTaskExecutor'
+2019-07-24 19:24:02.575  INFO 31638 --- [restartedMain] o.q.i.StdSchedulerFactory                : Using default implementation for ThreadExecutor
+2019-07-24 19:24:02.589  INFO 31638 --- [restartedMain] o.q.c.SchedulerSignalerImpl              : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2019-07-24 19:24:02.590  INFO 31638 --- [restartedMain] o.q.c.QuartzScheduler                    : Quartz Scheduler v.2.3.1 created.
+2019-07-24 19:24:02.591  INFO 31638 --- [restartedMain] o.q.s.RAMJobStore                        : RAMJobStore initialized.
+2019-07-24 19:24:02.592  INFO 31638 --- [restartedMain] o.q.c.QuartzScheduler                    : Scheduler meta-data: Quartz Scheduler (v2.3.1) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2019-07-24 19:24:02.593  INFO 31638 --- [restartedMain] o.q.i.StdSchedulerFactory                : Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2019-07-24 19:24:02.593  INFO 31638 --- [restartedMain] o.q.i.StdSchedulerFactory                : Quartz scheduler version: 2.3.1
+2019-07-24 19:24:02.593  INFO 31638 --- [restartedMain] o.q.c.QuartzScheduler                    : JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@17c4846a
+2019-07-24 19:24:02.704  INFO 31638 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+2019-07-24 19:24:02.717  INFO 31638 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+2019-07-24 19:24:02.732  INFO 31638 --- [restartedMain] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+2019-07-24 19:24:03.046  INFO 31638 --- [restartedMain] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: deleteUsingDELETE_1
+2019-07-24 19:24:03.053  INFO 31638 --- [restartedMain] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: getUsingGET_1
+2019-07-24 19:24:03.068  INFO 31638 --- [restartedMain] o.s.s.q.SchedulerFactoryBean             : Starting Quartz Scheduler now
+2019-07-24 19:24:03.069  INFO 31638 --- [restartedMain] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2019-07-24 19:24:03.100  INFO 31638 --- [restartedMain] o.s.b.w.e.t.TomcatWebServer              : Tomcat started on port(s): 8080 (http) with context path ''
+2019-07-24 19:24:03.103  INFO 31638 --- [restartedMain] c.w.Application                          : Started Application in 9.924 seconds (JVM running for 11.089)
+2019-07-24 19:27:33.411  INFO 31638 --- [Thread-10] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+2019-07-24 19:27:33.412  INFO 31638 --- [Thread-10] o.s.s.q.SchedulerFactoryBean             : Shutting down Quartz Scheduler
+2019-07-24 19:27:33.413  INFO 31638 --- [Thread-10] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED shutting down.
+2019-07-24 19:27:33.413  INFO 31638 --- [Thread-10] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+2019-07-24 19:27:33.413  INFO 31638 --- [Thread-10] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED shutdown complete.
+2019-07-24 19:27:33.414  INFO 31638 --- [Thread-10] o.s.s.c.ThreadPoolTaskExecutor           : Shutting down ExecutorService 'applicationTaskExecutor'
+2019-07-24 19:27:33.416  INFO 31638 --- [Thread-10] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2019-07-24 19:27:33.421  INFO 31638 --- [Thread-10] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown initiated...
+2019-07-24 19:27:33.430  INFO 31638 --- [Thread-10] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown completed.

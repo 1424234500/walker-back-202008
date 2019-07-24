@@ -10,6 +10,6 @@ server:
 
 spring:
   profiles:
-    active: test
+    active: pro
 
   

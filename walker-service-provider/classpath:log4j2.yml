@@ -1,0 +1,72 @@
+2019-07-24 19:27:46.307  WARN 31829 --- [main] ory$DuplicateJsonObjectContextCustomizer : 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/home/walker/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+	jar:file:/home/walker/.m2/repository/org/json/json/20160810/json-20160810.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2019-07-24 19:27:46.336  INFO 31829 --- [main] c.w.s.i.MessageServiceImplTest           : Starting MessageServiceImplTest on walker with PID 31829 (started by walker in /home/walker/e/workspace/walker/walker-service-provider)
+2019-07-24 19:27:46.337  INFO 31829 --- [main] c.w.s.i.MessageServiceImplTest           : The following profiles are active: pro
+2019-07-24 19:27:48.448  INFO 31829 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-07-24 19:27:48.455  INFO 31829 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-07-24 19:27:48.838  INFO 31829 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 368ms. Found 1 repository interfaces.
+2019-07-24 19:27:48.883  INFO 31829 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-07-24 19:27:48.885  INFO 31829 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-07-24 19:27:48.948  INFO 31829 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.walker.dao.TestRepository.
+2019-07-24 19:27:48.948  INFO 31829 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 49ms. Found 0 repository interfaces.
+2019-07-24 19:27:49.976  INFO 31829 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$e5827f2e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-07-24 19:27:50.057  INFO 31829 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'cacheConfig' of type [com.walker.config.CacheConfig$$EnhancerBySpringCGLIB$$77c2db16] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-07-24 19:27:51.216  INFO 31829 --- [main] o.h.j.i.u.LogHelper                      : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-07-24 19:27:51.380  INFO 31829 --- [main] o.h.Version                              : HHH000412: Hibernate Core {5.3.10.Final}
+2019-07-24 19:27:51.384  INFO 31829 --- [main] o.h.c.Environment                        : HHH000206: hibernate.properties not found
+2019-07-24 19:27:51.673  INFO 31829 --- [main] o.h.a.c.Version                          : HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-07-24 19:27:51.946  INFO 31829 --- [main] c.z.h.HikariDataSource                   : HikariPool-1 - Starting...
+2019-07-24 19:27:51.954  WARN 31829 --- [main] c.z.h.u.DriverDataSource                 : Registered driver with driverClassName=com.mysql.jdbc.Driver was not found, trying direct instantiation.
+2019-07-24 19:27:53.308  INFO 31829 --- [main] c.z.h.HikariDataSource                   : HikariPool-1 - Start completed.
+2019-07-24 19:27:53.332  INFO 31829 --- [main] o.h.d.Dialect                            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+2019-07-24 19:27:55.456  INFO 31829 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-07-24 19:27:56.151  INFO 31829 --- [main] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
+2019-07-24 19:27:56.695  INFO 31829 --- [main] eConfig$$EnhancerBySpringCGLIB$$e23dfd3b : DataSourceConfig redisTemplate init
+2019-07-24 19:27:57.617  INFO 31829 --- [main] bConfig$$EnhancerBySpringCGLIB$$e8066d68 : addInterceptors
+2019-07-24 19:27:57.630  WARN 31829 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-07-24 19:27:58.370  WARN 31829 --- [main] rConfig$$EnhancerBySpringCGLIB$$dc258c5e : start config createRestApi
+2019-07-24 19:27:58.450  INFO 31829 --- [main] bConfig$$EnhancerBySpringCGLIB$$e8066d68 : ServletListenerRegistrationBean
+2019-07-24 19:27:59.471  INFO 31829 --- [main] o.s.s.c.ThreadPoolTaskExecutor           : Initializing ExecutorService 'applicationTaskExecutor'
+2019-07-24 19:28:00.728  INFO 31829 --- [main] o.q.i.StdSchedulerFactory                : Using default implementation for ThreadExecutor
+2019-07-24 19:28:00.777  INFO 31829 --- [main] o.q.c.SchedulerSignalerImpl              : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2019-07-24 19:28:00.777  INFO 31829 --- [main] o.q.c.QuartzScheduler                    : Quartz Scheduler v.2.3.1 created.
+2019-07-24 19:28:00.779  INFO 31829 --- [main] o.q.s.RAMJobStore                        : RAMJobStore initialized.
+2019-07-24 19:28:00.781  INFO 31829 --- [main] o.q.c.QuartzScheduler                    : Scheduler meta-data: Quartz Scheduler (v2.3.1) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2019-07-24 19:28:00.781  INFO 31829 --- [main] o.q.i.StdSchedulerFactory                : Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2019-07-24 19:28:00.782  INFO 31829 --- [main] o.q.i.StdSchedulerFactory                : Quartz scheduler version: 2.3.1
+2019-07-24 19:28:00.782  INFO 31829 --- [main] o.q.c.QuartzScheduler                    : JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@207e3ffd
+2019-07-24 19:28:01.003  INFO 31829 --- [main] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+2019-07-24 19:28:01.057  INFO 31829 --- [main] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+2019-07-24 19:28:01.090  INFO 31829 --- [main] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+2019-07-24 19:28:01.639  INFO 31829 --- [main] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: deleteUsingDELETE_1
+2019-07-24 19:28:01.650  INFO 31829 --- [main] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: getUsingGET_1
+2019-07-24 19:28:01.680  INFO 31829 --- [main] o.s.s.q.SchedulerFactoryBean             : Starting Quartz Scheduler now
+2019-07-24 19:28:01.680  INFO 31829 --- [main] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2019-07-24 19:28:01.695  INFO 31829 --- [main] c.w.s.i.MessageServiceImplTest           : Started MessageServiceImplTest in 16.188 seconds (JVM running for 19.186)
+2019-07-24 19:28:03.010  INFO 31829 --- [main] i.l.c.EpollProvider                      : Starting without optional epoll library
+2019-07-24 19:28:03.014  INFO 31829 --- [main] i.l.c.KqueueProvider                     : Starting without optional kqueue library
+2019-07-24 19:28:09.731  INFO 31829 --- [Thread-3] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+2019-07-24 19:28:09.732  INFO 31829 --- [Thread-3] o.s.s.q.SchedulerFactoryBean             : Shutting down Quartz Scheduler
+2019-07-24 19:28:09.733  INFO 31829 --- [Thread-3] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED shutting down.
+2019-07-24 19:28:09.733  INFO 31829 --- [Thread-3] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+2019-07-24 19:28:09.737  INFO 31829 --- [Thread-3] o.q.c.QuartzScheduler                    : Scheduler quartzScheduler_$_NON_CLUSTERED shutdown complete.
+2019-07-24 19:28:09.740  INFO 31829 --- [Thread-3] o.s.s.c.ThreadPoolTaskExecutor           : Shutting down ExecutorService 'applicationTaskExecutor'
+2019-07-24 19:28:09.751  INFO 31829 --- [Thread-3] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2019-07-24 19:28:09.760  INFO 31829 --- [Thread-3] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown initiated...
+2019-07-24 19:28:09.775  INFO 31829 --- [Thread-3] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown completed.
