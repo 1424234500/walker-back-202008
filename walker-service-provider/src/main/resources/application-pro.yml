@@ -43,6 +43,10 @@ spring:
     # 连接超时时间（毫秒）
     timeout: 8000
 
-#
+
 logging:
-  file: classpath:log4j2.yml
+  config: log4j2.yml
+
+
+
+

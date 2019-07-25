@@ -32,8 +32,9 @@ public class LogInterceptors implements HandlerInterceptor{
     private Logger log = LoggerFactory.getLogger(getClass());
 
 //    @Autowired
-//	@Qualifier("logService")
+//	  @Qualifier("logService")
 //    LogService logService;
+    //此处不能自动注入? 扫描注入包配置问题
     LogService logService = SpringContextUtil.getBean("logService");
 
 
@@ -52,17 +53,23 @@ public class LogInterceptors implements HandlerInterceptor{
         // 得到线程绑定的局部变量（开始时间）
         long beginTime = (long) startTimeThreadLocal.get(); 
         long time = endTime - beginTime;
-        // 此处认为处理时间超过500毫秒的请求为慢请求
-//        log.info("--------stop " + Tools.calcTime(time));
  
         String requestUri = request.getRequestURI();  
         String contextPath = request.getContextPath();  
         String url = requestUri.substring(contextPath.length());  //[/student/listm]
         String params = RequestUtil.getRequestBean(request).toString();
-        
+
+
+        // 此处认为处理时间超过500毫秒的请求为慢请求
+        if(time > 3000){
+            log.error("after [" + url + "] [ cost " + time + "] " + params);
+        }else if(time > 1000){
+            log.warn("after [" + url + "] [ cost " + time + "] " + params);
+        }else{
+            log.info("after [" + url + "] [ cost " + time + "] " + params);
+        }
         logService.saveStatis(url, params, time);
 
-        
         NDC.pop();
 
         Context.clear();
@@ -90,16 +97,17 @@ public class LogInterceptors implements HandlerInterceptor{
 //    	String s = request.getCharacterEncoding();
     	request.setCharacterEncoding("UTF-8");
     	response.setCharacterEncoding("UTF-8");
-    	
+    	Object params = RequestUtil.getRequestBean(request).toString();
+
         // 设置开始时间  线程绑定变量（该数据只有当前请求的线程可见）
         startTimeThreadLocal.set(System.currentTimeMillis());
         
         //log4j 日志栈控制 配置输出 %X{uid} %X{remoteAddr}
-        NDC.push(request.getRemoteAddr() + ":" + request.getRemotePort());
+        NDC.push(request.getRemoteAddr() + ":" + request.getRemotePort() + " " + params);
 
         Context.setRequest(request);
         Context.setResponse(response);
-        Context.setTimeStart();
+        Context.setTimeStart();             //设置上下文
         
         
  
@@ -120,8 +128,8 @@ public class LogInterceptors implements HandlerInterceptor{
         }
         //日志 记录 输出       
 //        log.info("++++++++ ");
-	    log.info("[" + url + "] [" + cla + "." + name + "]" + RequestUtil.getRequestBean(request).toString());
- 
+	    log.info("before [" + url + "] [" + cla + "." + name + "]" + params);
+
         return true;  
     }  
   

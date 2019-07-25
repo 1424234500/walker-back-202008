@@ -39,9 +39,9 @@ public interface MessageService {
     Msg findMsgByMerge(String msgId);
     /**
      * 查询用户a和用户b聊天的 时间节点之前的数据 mysql 分表
-     * @param userId
-     * @param before
-     * @param count
+     * @param userId    001
+     * @param before    "yyyy-MM-dd HH:mm:ss:SSS"
+     * @param count 3
      * @return
      */
     List<Msg> findBefore(String userId, String toId, String before, int count);

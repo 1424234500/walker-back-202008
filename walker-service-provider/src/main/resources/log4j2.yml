@@ -39,14 +39,20 @@ Configuration:
 
   Loggers:
     Root:
-      level: info
+#      level: debug
+      level:
+        com.demo: DEBUG
+        org.springframework.jdbc.core.JdbcTemplate: DEBUG
       AppenderRef:
         - ref: CONSOLE
         - ref: ROLLING_FILE
-    Logger: # 为com.xjj包配置特殊的Log级别，方便调试  
-      - name: com.xjj
-        additivity: false
-        level: ${sys:log.level.xjj}
-        AppenderRef:
-          - ref: CONSOLE
-          - ref: ROLLING_FILE  
+
+
+
+#          log4j:
+#            logger:
+#              org:
+#                springframework:
+#                  jdbc:
+#                    core:
+#                      JdbcTemplate=debug:

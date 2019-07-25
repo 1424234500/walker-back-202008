@@ -2,6 +2,7 @@ package com.walker;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.walker.common.util.Page;
+import com.walker.event.Context;
 import io.swagger.annotations.*;
 import lombok.Data;
 import org.springframework.data.domain.Pageable;
@@ -92,7 +93,10 @@ public class Response implements Serializable {
 
 
     public static  Response make(Boolean sta, String info, Object data){
-        return new Response(sta, info, data);
+        long timestart = Context.getTimeStart();
+        long timestop = System.currentTimeMillis();
+        long time = timestop - timestart;
+        return new Response(sta, info, data).setCostTime(time);
     }
 
     public static  Response makeTrue(String info){
