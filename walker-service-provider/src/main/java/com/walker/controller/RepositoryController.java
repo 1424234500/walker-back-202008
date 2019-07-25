@@ -101,14 +101,13 @@ public class RepositoryController {
     public Response getOne(
             @RequestParam(value = "id", required = true, defaultValue = "1") String id
             ) {
-        try {
-            Test res = repository.getOne(id);
+        Test res = repository.getOne(id);
+        if (res == null) {
+            return Response.makeFalse("not exists");
+        } else {
             return Response.makeTrue("", res);
-        }catch (Exception e){
-            return Response.makeFalse("no exists " + id);
         }
     }
-
     @ApiOperation(value = "save 存储")
     @ResponseBody
     @RequestMapping(value = "/save.do", method = RequestMethod.POST, produces = "application/json")

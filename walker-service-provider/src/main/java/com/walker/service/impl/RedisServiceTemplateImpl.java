@@ -100,6 +100,21 @@ public class RedisServiceTemplateImpl {
         return result;
     }
     /**
+     * 读取缓存
+     * @param key
+     * @return
+     */
+    public <T> T getConfig(final String key, final T defaultValue) {
+        T result = null;
+        ValueOperations<Serializable, T> operations = redisTemplate.opsForValue();
+        result = operations.get(key);
+        if(result != null)
+            return result;
+        else{
+            return defaultValue;
+        }
+    }
+    /**
      * 哈希 添加
      * @param key
      * @param hashKey

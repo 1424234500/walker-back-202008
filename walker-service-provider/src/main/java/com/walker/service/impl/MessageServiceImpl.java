@@ -8,6 +8,7 @@ import com.walker.mode.Msg;
 import com.walker.service.MessageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,10 @@ import java.util.Set;
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {
 	Logger log = Logger.getLogger(getClass());
+
+	@Autowired
+	@Qualifier("redisServiceTemplateImpl")
+	RedisServiceTemplateImpl redisServiceTemplateImpl;
 
 	@Autowired
 	JdbcDao jdbcDao;
@@ -73,6 +78,7 @@ public class MessageServiceImpl implements MessageService {
 			//保存消息实体
 			Bean data = msg.getData();
 			String msgId = data.get(Key.ID, LangUtil.getGenerateId());
+			data.set(Key.ID, msgId);
 			jdbcDao.executeSql("insert into " + TABLE_MSG_ + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " values(?,?)",  msgId, msg.toString() );
 
 			Bean dbLines = new Bean();
@@ -125,7 +131,7 @@ public class MessageServiceImpl implements MessageService {
 			zSetOperations.add(key, msg.toString(), score);
 			log.info(key + " save " + score);
 
-			if(zSetOperations.zCard(key) > 500) {
+			if(zSetOperations.zCard(key) > redisServiceTemplateImpl.getConfig("max:offline", 500)) {
 				//).zremrangeByRank
 				long res = zSetOperations.removeRange(key, 0, 0);
 				log.info(key + " rem " + res);

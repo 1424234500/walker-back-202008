@@ -1,10 +1,13 @@
-package com.walker.event.task;
+package com.walker.config;
 
 import com.walker.service.FileService;
 import com.walker.service.LogService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,9 +15,16 @@ import org.springframework.stereotype.Component;
  * 定时器任务
  */
 @Component
-public class TimerTask {
-	static private Logger log = Logger.getLogger("spring.TimerTask"); 
+@Configuration      //1.主要用于标记配置类，兼备Component的效果。
+@EnableAsync        // 2.开启多线程
+@EnableScheduling   // 3.开启定时任务
+public class ScheduleConfig {
+	static private Logger log = Logger.getLogger(ScheduleConfig.class);
 	static private long count = 0;
+	@Autowired
+	LogService logService;
+	@Autowired
+	FileService fileService;
 	
 	@Scheduled(cron = "0 59 23 ? * *") //每天
 	public void EveryDay() {
@@ -28,17 +38,20 @@ public class TimerTask {
 	    
 	    log.info("扫描同步上传文件"); 
 	    //刷新上传文件集合的 文件数据到 内存数据库？ 文件管理系统 展示文件 介绍（图片），
-//	    fileService.saveScan();
+	    fileService.saveScan();
 	}
 
-
+	/**
+	 * 允许多线程 前后执行周期独立
+	 */
+	@Async
 	@Scheduled(cron = "0/10 * * * * ?") //每分钟
 	public void eachMinute() {
 	    log.info("[eachMinute 0/60 * * * * ?][每分钟任务]");
 		log.info("Redis操作记录持久化"); 
 	    //刷新redis到oracle
-//	    logService.saveStatis();
-//	    fileService.scan();
+	    logService.saveStatis();
+	    fileService.scan();
 
 	}
 

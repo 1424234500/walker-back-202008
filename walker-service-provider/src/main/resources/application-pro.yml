@@ -1,4 +1,6 @@
 #正式使用 远程数据库 远程redis集群
+quartz:
+  enabled: true
 
 spring:
   datasource:
@@ -44,8 +46,21 @@ spring:
     timeout: 8000
 
 
+
+
 logging:
-  config: log4j2.yml
+  file: sb.log
+#  pattern:
+#    console: "%date{HH:mm:ss.SSS} %-5level %-30.30logger{29} : %msg%n"
+  level:
+    com.demo: DEBUG
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+
+
+#
+#logging:
+#  config: classpath:log4j2.yml
+
 
 
 

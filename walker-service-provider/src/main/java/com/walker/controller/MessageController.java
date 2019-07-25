@@ -75,7 +75,7 @@ public class MessageController  {
         msg.setTimeDo(System.currentTimeMillis());
 
         Long score = messageService.save(msg.getUserTo(), msg);
-        return Response.makeTrue("save", messageService.save(toIds, msg));
+        return Response.makeTrue("save " + score, msg);
     }
 
     /**
@@ -84,10 +84,10 @@ public class MessageController  {
     @ApiOperation(value = "查消息实体", notes = "")
     @ResponseBody
     @RequestMapping(value = "/findMsg.do", method = RequestMethod.POST, produces = "application/json")
-    public Response  save(
+    public Response  findMsg(
             @RequestParam(value = "msgId", required = true, defaultValue = "m_111") String msgId
     ) {
-        return Response.makeTrue("save", messageService.findMsg(msgId));
+        return Response.makeTrue("findMsg", messageService.findMsg(msgId));
     }
 
     /**
@@ -102,7 +102,7 @@ public class MessageController  {
     public Response  findMsgByMerge(
             @RequestParam(value = "msgId", required = true, defaultValue = "m_111") String msgId
     ) {
-        return Response.makeTrue("save", messageService.findMsgByMerge(msgId));
+        return Response.makeTrue("findMsgByMerge", messageService.findMsgByMerge(msgId));
     }
 
     /**
