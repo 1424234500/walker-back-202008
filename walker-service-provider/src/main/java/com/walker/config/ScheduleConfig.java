@@ -23,9 +23,7 @@ public class ScheduleConfig {
 	static private long count = 0;
 	@Autowired
 	LogService logService;
-	@Autowired
-	FileService fileService;
-	
+
 	@Scheduled(cron = "0 59 23 ? * *") //每天
 	public void EveryDay() {
 	    log.info("[eachDay 23:59][每天任务]");
@@ -38,7 +36,7 @@ public class ScheduleConfig {
 	    
 	    log.info("扫描同步上传文件"); 
 	    //刷新上传文件集合的 文件数据到 内存数据库？ 文件管理系统 展示文件 介绍（图片），
-	    fileService.saveScan();
+//	    fileService.saveScan();
 	}
 
 	/**
@@ -51,7 +49,7 @@ public class ScheduleConfig {
 		log.info("Redis操作记录持久化"); 
 	    //刷新redis到oracle
 	    logService.saveStatis();
-	    fileService.scan();
+//	    fileService.scan();
 
 	}
 
