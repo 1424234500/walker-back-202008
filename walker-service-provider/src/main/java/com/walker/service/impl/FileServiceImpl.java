@@ -1,9 +1,8 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.*;
+import com.walker.dao.JdbcDao;
 import com.walker.service.FileService;
-import com.walker.web.controller.Context;
-import com.walker.web.dao.hibernate.BaseDao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 @Transactional
 @Service("fileService")
 public class FileServiceImpl implements FileService,Serializable {
@@ -22,7 +22,7 @@ public class FileServiceImpl implements FileService,Serializable {
 	
 	
     @Autowired
-    protected BaseDao baseDao;
+    protected JdbcDao jdbcDao;
     //info:
 //文件管理 W_FILEINFO: id,name,upuserid,filesize,type,path,uptime,createtime,changetime,about
 
@@ -30,7 +30,7 @@ public class FileServiceImpl implements FileService,Serializable {
 	@Override
 	public void initDirs() {
 		log.info("** 初始化项目相关文件夹");
-		FileUtil.mkdir( Context.getUploadDir());
+		FileUtil.mkdir( com.walker.event.Context.getUploadDir());
 		log.info("**! 初始化项目相关文件夹");
 	}
     
@@ -39,12 +39,12 @@ public class FileServiceImpl implements FileService,Serializable {
 		//删除表中中不存在文件的记录 删除失效文件
 		//添加分页循环处理
 		
-		int count = baseDao.count("select * from W_FILEINFO");
+		int count = jdbcDao.count("select * from W_FILEINFO");
 		int once = Context.getDbOnce();
 		Page pageBean = new Page(once, count);
 		int page = pageBean.getPAGENUM();
 		while(page > 0){
-			List<Map<String, Object>> list = baseDao.findPage("select * from W_FILEINFO", page--, once);
+			List<Map<String, Object>> list = jdbcDao.findPage("select * from W_FILEINFO", page--, once);
 			
 			StringBuilder sb = new StringBuilder();
 			for(int i = 0; i < list.size(); i++){
@@ -56,7 +56,7 @@ public class FileServiceImpl implements FileService,Serializable {
 			} 
 			if(sb.length() > 0){
 				sb.setLength(sb.length() - 1);
-				baseDao.executeSql("delete from W_FILEINFO where PATH in (" + sb.toString() + ") ");
+				jdbcDao.executeSql("delete from W_FILEINFO where PATH in (" + sb.toString() + ") ");
 			}
 
 		}
@@ -80,7 +80,7 @@ public class FileServiceImpl implements FileService,Serializable {
 						String path = obj.getPath();
 						String changetime = Tools.formatL(new Date(obj.lastModified()));
 						String about = path;
-						baseDao.executeSql("insert into W_FILEINFO"
+						jdbcDao.executeSql("insert into W_FILEINFO"
 								+ "(id,                   uptime, name,filesize,  type,path,changetime               ,about ) values "
 								+ "(SEQ_W_FILEINFO.Nextval, sysdate,?    ,?      ,  ?   ,?    ,"+ SqlHelp.to_dateL() +",?   ) "
 								                                 ,name ,filesize ,type,path,changetime               ,about    );
@@ -94,10 +94,10 @@ public class FileServiceImpl implements FileService,Serializable {
 
 	}
 	public Map<String,Object> findFile(String key, String path){
-		return baseDao.findOne("select * from W_FILEINFO where ID=? or PATH=? ", key, path);
+		return jdbcDao.findOne("select * from W_FILEINFO where ID=? or PATH=? ", key, path);
 	}
 	public void deleteFile(String key, String path) {
-		baseDao.executeSql("delete from W_FILEINFO where ID=? or PATH=? ", key, path);
+		jdbcDao.executeSql("delete from W_FILEINFO where ID=? or PATH=? ", key, path);
 	}
 
 
@@ -108,7 +108,7 @@ public class FileServiceImpl implements FileService,Serializable {
 		String type = FileUtil.getFileType(name);
 		String changetime = Tools.formatL(new Date(file.lastModified()));
 		about = Tools.cutString(about, 500);
-//		String key = baseDao.getString("select SEQ_W_FILEINFO.Nextval from dual");
+//		String key = jdbcDao.getString("select SEQ_W_FILEINFO.Nextval from dual");
 //		String key = LangUtil.getGenerateId();
 		int res = -1;
 		Map<String,Object> map = findFile(key, path);
@@ -119,7 +119,7 @@ public class FileServiceImpl implements FileService,Serializable {
 			log.info("该文件已经存在 相同key " + map + " " + path + " delete " + pathDel + " 删除文件结果:" + resDel);
 			res ++;
 		}
-		res += baseDao.executeSql("insert into W_FILEINFO"
+		res += jdbcDao.executeSql("insert into W_FILEINFO"
 			+ "(ID,                   UPTIME, NAME,FILESIZE,  TYPE,PATH,CHANGETIME               ,ABOUT,UPUSERID ) values "
 			+ "(?, ?,?    ,?      ,  ?   ,?    ,?,?, ?   ) "
 			                                 , key, TimeUtil.getTimeYmdHmss(),name,filesize ,type,path,TimeUtil.getTimeYmdHmss()               ,about, id   )
@@ -130,7 +130,7 @@ public class FileServiceImpl implements FileService,Serializable {
 	@Override
 	public int saveUpOrDown(String fileId, String type, String detaTime) {
         // id,fileid,type(up/down),costtime(ms),time
-		return baseDao.executeSql("insert into W_FILE_DOWN_UP"
+		return jdbcDao.executeSql("insert into W_FILE_DOWN_UP"
 				+ "(ID, FILEID, TYPE, COSTTIME, TIME)"
 				+" values "
 				+" (?, ?, ?, ?, ?) "

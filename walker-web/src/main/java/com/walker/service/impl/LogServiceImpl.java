@@ -59,7 +59,7 @@ public class LogServiceImpl implements LogService,Serializable {
 		
 		bean.put(url, beanUrl);
 		cache.put(CACHE_KEY, bean);
-		saveStatis();
+//		saveStatis();
 	}
 	@Override
 	public void saveStatis() { 
@@ -73,11 +73,11 @@ public class LogServiceImpl implements LogService,Serializable {
 			for(Object key : keys){
 				if(bean.containsKey(key)){ 
 					Bean map = bean.get(key, new Bean()); 
-					int res = baseDao.executeSql("insert into LOG_TIME"
-							+ "(ID, URL, COUNT, TIME, COSTTIME) "
+					int res = baseDao.executeSql("insert into W_LOG_TIME"
+							+ "(IPPORT, ID, URL, COUNT, TIME, COSTTIME) "
 							+ "values"
-							+ "(?, ?, ?, ?, ?) "
-							, LangUtil.getGenerateId(), map.get("URL") + ".do", map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME") 
+							+ "(?, ?, ?, ?, ?, ?) "
+							, "localhost:8080", LangUtil.getGenerateId(), map.get("URL") + ".do", map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME")
 						); 
 				}
 			}

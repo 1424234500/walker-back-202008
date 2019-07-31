@@ -1,6 +1,7 @@
-package com.walker.service.impl;
+package com.walker.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -12,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * 常用redis操作 template实现
  */
-@Service("redisServiceTemplateImpl")
-public class RedisServiceTemplateImpl {
+@Repository("redisDao")
+public class RedisDao {
 
     @Autowired
     private RedisTemplate redisTemplate;

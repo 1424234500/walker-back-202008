@@ -2,7 +2,8 @@ package com.walker.config;
 
 import com.walker.service.FileService;
 import com.walker.service.LogService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
@@ -19,19 +20,20 @@ import org.springframework.stereotype.Component;
 @EnableAsync        // 2.开启多线程
 @EnableScheduling   // 3.开启定时任务
 public class ScheduleConfig {
-	static private Logger log = Logger.getLogger(ScheduleConfig.class);
+	private Logger log = LoggerFactory.getLogger(getClass());
+
 	static private long count = 0;
 	@Autowired
 	LogService logService;
 
-	@Scheduled(cron = "0 59 23 ? * *") //每天
-	public void EveryDay() {
+	@Scheduled(cron = "59 59 23 ? * *") //每天
+	public void everyDay() {
 	    log.info("[eachDay 23:59][每天任务]");
 	}
 
 	
 	@Scheduled(cron = "0 0/60 * * * ?") //每小时
-	public void EveryHour() {
+	public void everyHour() {
 	    log.info("[eachHour 59m][每小时任务]");
 	    
 	    log.info("扫描同步上传文件"); 
@@ -43,8 +45,8 @@ public class ScheduleConfig {
 	 * 允许多线程 前后执行周期独立
 	 */
 	@Async
-	@Scheduled(cron = "0/10 * * * * ?") //每分钟
-	public void eachMinute() {
+	@Scheduled(cron = "0/60 * * * * ?") //每分钟
+	public void everyMinute() {
 	    log.info("[eachMinute 0/60 * * * * ?][每分钟任务]");
 		log.info("Redis操作记录持久化"); 
 	    //刷新redis到oracle
@@ -54,8 +56,8 @@ public class ScheduleConfig {
 	}
 
 	@Scheduled(cron = "0/10 * * * * ?") //每10s
-	public void eachMake() {
-//	    log.info(count++);
+	public void everySec10() {
+		log.info("[everySec10 0/10 * * * * ?][每10s任务]" + count ++);
 	}
 
 

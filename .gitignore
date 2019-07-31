@@ -29,3 +29,6 @@ local.properties
 *.out
 
 *attach_pid*
+classpath*
+
+

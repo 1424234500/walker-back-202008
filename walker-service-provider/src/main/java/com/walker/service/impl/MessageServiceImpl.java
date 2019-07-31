@@ -3,6 +3,7 @@ package com.walker.service.impl;
 import com.walker.common.util.*;
 import com.walker.core.database.SqlUtil;
 import com.walker.dao.JdbcDao;
+import com.walker.dao.RedisDao;
 import com.walker.mode.Key;
 import com.walker.mode.Msg;
 import com.walker.service.MessageService;
@@ -29,8 +30,8 @@ public class MessageServiceImpl implements MessageService {
 	Logger log = Logger.getLogger(getClass());
 
 	@Autowired
-	@Qualifier("redisServiceTemplateImpl")
-	RedisServiceTemplateImpl redisServiceTemplateImpl;
+	@Qualifier("redisDao")
+	RedisDao redisDao;
 
 	@Autowired
 	JdbcDao jdbcDao;
@@ -131,7 +132,7 @@ public class MessageServiceImpl implements MessageService {
 			zSetOperations.add(key, msg.toString(), score);
 			log.info(key + " save " + score);
 
-			if(zSetOperations.zCard(key) > redisServiceTemplateImpl.getConfig("max:offline", 500)) {
+			if(zSetOperations.zCard(key) > redisDao.getConfig("max:offline", 500)) {
 				//).zremrangeByRank
 				long res = zSetOperations.removeRange(key, 0, 0);
 				log.info(key + " rem " + res);

@@ -49,7 +49,7 @@ spring:
 
 
 logging:
-  file: sb.log
+  file: /home/walker/logs/sb.log
 #  pattern:
 #    console: "%date{HH:mm:ss.SSS} %-5level %-30.30logger{29} : %msg%n"
   level:

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.walker.event.intercept.LogInterceptors;
 import com.walker.event.intercept.LoginInterceptors;
+import com.walker.event.listener.ContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,7 +111,7 @@ public class WebConfig implements WebMvcConfigurer {
     public ServletListenerRegistrationBean listenerRegist() {
         log.info("ServletListenerRegistrationBean");
         ServletListenerRegistrationBean srb = new ServletListenerRegistrationBean();
-//        srb.setListener(new ContextListener());
+        srb.setListener(new ContextListener());
         return srb;
     }
 }
