@@ -5,7 +5,7 @@ angular.module('com.student')
 	//此处的成员变量 和 函数都能被子类ctrl使用和访问
 	//若是对象类型 可修改对象成员					//可用于多 子路由共享数据 
 	//若是基本类型或更改引用 则新内存隔离	//注意不会修改父类的数据
-	var mName = 'STUDENT';
+	var mName = 'student';
     var routeDir = 'main.' + mName;		//	main.simple
 	$scope.mName = mName;
 	
