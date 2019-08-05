@@ -5,10 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.walker</groupId>
 	<artifactId>walker</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<version>0.0.1</version>
 	<name>walker</name>
 	<description>walker's project parent</description>
+	<packaging>pom</packaging>
+
+
 	<modules>
 		<module>walker-core</module>
 		<module>walker-socket</module>
@@ -48,12 +50,18 @@ ${project.xxx} 当前pom文件的任意节点的内容
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
+					<encoding>UTF-8</encoding>
+					<verbose>false</verbose>
 				</configuration>
 			</plugin>
-		
+
+
+
+
 			<!-- 打包配置启动类 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

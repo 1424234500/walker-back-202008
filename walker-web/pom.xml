@@ -1,16 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.walker</groupId>
 		<artifactId>walker</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.1</version>
 	</parent>
+
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.walker</groupId>
 	<artifactId>walker-web</artifactId>
-	<packaging>war</packaging>
+	<version>0.0.1</version>
 	<name>web</name>
-	<description>desc</description>
+	<description>desc web</description>
+	<packaging>war</packaging>
+
+
+
 
 	<properties>
 		<spring.version>4.3.18.RELEASE</spring.version>
@@ -48,14 +55,13 @@
 		<dependency>
 			<groupId>com.walker</groupId>
 			<artifactId>walker-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.walker</groupId>
 			<artifactId>walker-service</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
+			<version>0.0.1</version>
 		</dependency>
 
 
