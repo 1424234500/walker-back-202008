@@ -15,7 +15,7 @@ echo "部署路径 dir_proj ${dir_proj}"
 echo "项目名 name_proj ${name_proj}"
 
 ##-----------------------------------------
-jarf="${name_proj}-0.0.1-SNAPSHOT.jar"
+jarf="${name_proj}-0.0.1.jar"
 echo "jar file $jarf"
 cmd="java -jar ${jarf}"
 logfile='/home/walker/logs/socket.log'

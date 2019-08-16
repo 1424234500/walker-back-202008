@@ -61,7 +61,7 @@ app
 .config(['$stateProvider', '$urlRouterProvider', function ( $stateProvider, $urlRouterProvider ) {
    
     //使用when来对一些不合法的路由进行重定向  
-    $urlRouterProvider.when('', '/main')   
+    $urlRouterProvider.when('', '/login')
     /**
      * 默认跳转到主页面
      */
@@ -130,8 +130,8 @@ function ($rootScope, Socket) {
     $rootScope.isLogined = $rootScope.isLogined == null ? false:$rootScope.isLogined;
     info($rootScope.isLogined); 
  
-    $rootScope.isLogined = true;
-    //$rootScope.$broadcast('system:login');
+    // $rootScope.isLogined = true;
+    // $rootScope.$broadcast('system:login');
 
 
 

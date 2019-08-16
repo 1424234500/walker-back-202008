@@ -61,9 +61,10 @@ public class LoginInterceptors implements HandlerInterceptor{
         //登录权限
 //	    LoginUser user = (LoginUser) request.getSession().getAttribute("SY_LOGINUSER");
 	    
-		Object tokenObj = request.getSession().getAttribute("token");
+		Object tokenObj = request.getSession().getAttribute(LoginService.CACHE_KEY);
 //		cache.put("USER_ONLINE", map);
 	    Map<String, Object> map =  cache.get(LoginService.CACHE_KEY, new HashMap<String, Object>());
+	    boolean needLogin = true;
 	    if(tokenObj != null && map != null && map.containsKey(tokenObj) ){
 	    	Bean user = (Bean) map.get(tokenObj);
 	    	
@@ -72,9 +73,9 @@ public class LoginInterceptors implements HandlerInterceptor{
 	    	Long time = user.get("time", 0L);
 	    	Long expire = user.get("expire", 0L);
 	    	if(time + expire < System.currentTimeMillis()){
-		    	logger.info(token + "." + id + "." + time + "." + expire + "." + " 过期 失效 ");
-		    	loginService.login();
+		    	logger.info(token + "." + id + "." + time + "." + expire + "." + " 过期 失效:跳转到login页面！ ");
 	    	}else{
+	    		needLogin = false;
 		    	logger.info(token + "." + id + "." + time + "." + expire + "." + " 已登录 未过期 ");
 		    	//登录用户操作日志 记录 用户id,操作url权限?,用户操作ip/mac/端口
 		    	String requestUri = request.getRequestURI();  
@@ -88,13 +89,16 @@ public class LoginInterceptors implements HandlerInterceptor{
 		        
 		        logService.saveControl(id, url, ip, host, port, params);
 	    	}
-    	}else{
-	    	logger.info("token:" + tokenObj + " 无效 未登录：跳转到login页面！");
+    	}
+	    if(needLogin){
+	    	logger.info("token:" + tokenObj + " 无效 未登录:跳转到login页面！");
 	    	loginService.login();
-           // request.getRequestDispatcher("/login/onlogin.do").forward(request, response);  
-           // return false;
+//			String url = request.getRequestURI().substring(request.getContextPath().length());  //[/student/listm]
+//			request.setAttribute("fromUrl", url);
+//            request.getRequestDispatcher("/#/login").forward(request, response);
+//            response.sendRedirect("/login");
 	    }
-        return true;  
+        return needLogin;
     }  
   
 }  

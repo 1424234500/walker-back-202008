@@ -19,6 +19,8 @@ import com.walker.core.exception.ErrorException;
 public class Watch {
 	List<Long> times;
 	StringBuilder sb;
+	Map<String, Long> keyCost;
+
 	public Watch() {
 		this("");
 	}
@@ -26,6 +28,7 @@ public class Watch {
 		this.times = new ArrayList<Long>();
 		this.times.add(System.currentTimeMillis());
 		sb = new StringBuilder(Tools.objects2string(infos));
+		this.keyCost = new LinkedHashMap<>();
 	}
 	public Watch put(String str) {
 		this.sb.append(str);
@@ -36,7 +39,12 @@ public class Watch {
 		return this;
 	}
 	public Watch put(Object key, Object...values) {
-		this.sb.append(" " + key + ":" + Tools.objects2string(values));
+		this.sb.append(" " + key + ">" + Tools.objects2string(values));
+		return this;
+	}
+	public Watch put(String key, Long dtime) {
+		put(key, "" + dtime);
+		this.keyCost.put(key, dtime);
 		return this;
 	}
 	public Watch putln(Object key, Object...values) {
@@ -46,14 +54,12 @@ public class Watch {
 	}
 	/**
 	 * 分key耗时 查询操作耗时50ms
-	 * @param key
-	 * @return
 	 */
 	public long cost(Object...keys) {
 		long now = System.currentTimeMillis();
 		long last = times.get(0);
 		long deta = now - last;
-		this.put( (keys.length > 0 ? Tools.objects2string(keys)+" " : "" )+ "cost", deta);
+		this.put( (keys.length > 0 ? Tools.objects2string(keys)+" " : "" )+ "", deta);
 		times.add(0, now);
 		return deta;
 	}
@@ -91,7 +97,7 @@ public class Watch {
 		long now =  System.currentTimeMillis();
 		long last = times.get(times.size() - 1);
 		long deta = now - last;
-		this.put("total", deta);
+		this.put("total", deta + "");
 
 		for(Logger log : logs) {
 			log.info(this);
@@ -133,6 +139,28 @@ public class Watch {
 	}
 	public String toString() {
 		return this.sb.toString();
+	}
+	public String toPrettyString(){
+		String str = this.toString();
+		StringBuilder sb2 = new StringBuilder(str);
+
+		Long total = 0L;
+		for(String key : keyCost.keySet()){
+			Long time = keyCost.get(key);
+			total += time;
+		}
+		sb2.append("\n----total " + total + "----\n");
+		sb2.append("ms\t%\tKey\n");
+		sb2.append("----------------------\n");
+
+		for(String key : keyCost.keySet()){
+			Long time = keyCost.get(key);
+			float percent = (int)(1f * time / total * 1000) / 10f;
+			sb2.append(time + "\t" + percent + "%\t" + key + "\n");
+		}
+
+		sb2.append("---------end-------------\n");
+		return sb2.toString();
 	}
 
 }

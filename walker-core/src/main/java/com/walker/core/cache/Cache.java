@@ -105,5 +105,5 @@ public interface Cache<K> {
      */
     void startup();
     
-    Type getType();
+    CacheMgr.Type getType();
 }

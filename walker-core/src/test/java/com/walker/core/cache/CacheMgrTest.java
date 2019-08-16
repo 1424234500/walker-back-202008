@@ -17,7 +17,7 @@ public class CacheMgrTest extends TestBase{
 	@Test
 	public void test() {
 
-		Cache<String> cache = CacheMgr.getInstance(Type.EHCACHE);
+		Cache<String> cache = CacheMgr.getInstance(CacheMgr.Type.EHCACHE);
 		cache.put("aaa", "value");
 		Tools.out(1, cache.get("aaa", "bbb"));
 		

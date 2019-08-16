@@ -20,7 +20,13 @@ angular.module('com.login')
 
                 $rootScope.isLogined = true;
                 $scope.goHome();
-            }, error);  
+            }, function error(obj) {
+                info("操作失败.obj=" );
+                info(obj);
+                $rootScope.isLogined = false;
+
+
+            } );
     }; 
  
     $scope.registe = function(){ 

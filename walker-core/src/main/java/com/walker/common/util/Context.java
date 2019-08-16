@@ -51,7 +51,7 @@ Tomcat web
 Thread.currentThread().getContextClassLoader().getResource("") 	file:/home/walker/e/workspace_my/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/walker-web/WEB-INF/classes/
 ClassLoader.getSystemResource("") 	null
 Context.class.getClassLoader().getResource("") 	file:/home/walker/e/workspace_my/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/walker-web/WEB-INF/classes/
-Context.class.getResource("") 	jar:file:/home/walker/e/workspace_my/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/walker-web/WEB-INF/lib/walker-core-0.0.1-SNAPSHOT.jar!/com/walker/common/util/
+Context.class.getResource("") 	jar:file:/home/walker/e/workspace_my/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/walker-web/WEB-INF/lib/walker-core-0.0.1.jar!/com/walker/common/util/
 Context.class.getResource("/") 	file:/home/walker/e/workspace_my/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/walker-web/WEB-INF/classes/
 new File("").getAbsolutePath() 	/home/walker/e/help_note/shell
 System.getProperty("user.dir") 	/home/walker/e/help_note/shell

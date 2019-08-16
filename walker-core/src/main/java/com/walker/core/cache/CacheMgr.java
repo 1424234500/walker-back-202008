@@ -141,11 +141,12 @@ public class CacheMgr extends TestAdapter{
 		
 		return cache.get("int", 0) == 1;
 	}
-}
 
-enum Type {
-	MAP, EHCACHE, REDIS,
-}
+	public enum Type {
+		MAP, EHCACHE, REDIS,
+	}
 
+
+}
 
 

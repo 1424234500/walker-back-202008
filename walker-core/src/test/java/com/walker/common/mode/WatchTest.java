@@ -29,10 +29,16 @@ public class WatchTest {
 		Watch w = new Watch("query");
 		ThreadUtil.sleep(1000);
 		w.cost("sql");
-		ThreadUtil.sleep(1000);
+		ThreadUtil.sleep(200);
 		w.cost("parse");
+		ThreadUtil.sleep(10);
+		w.cost("other");
+		ThreadUtil.sleep(50);
+		w.cost("return");
+
 		w.res(5, log);
 		Tools.out(w);
+		Tools.out(w.toPrettyString());
 	}
 	
 	

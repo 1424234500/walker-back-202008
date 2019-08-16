@@ -447,8 +447,8 @@ class CacheMapImpl implements Cache<String> {
 	}
 	
 	@Override
-	public Type getType() {
-		return Type.MAP;
+	public CacheMgr.Type getType() {
+		return CacheMgr.Type.MAP;
 	}
 
 }
