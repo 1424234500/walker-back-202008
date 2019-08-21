@@ -2,13 +2,19 @@ package com.walker.mode;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
 /**
  * 基本模型 用于测试
  */
-public class Student {
+public class Student  implements Cloneable, Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id     //主键
 	@Column(name="ID", nullable = false, length = 32)
 	private String id;
@@ -53,12 +59,11 @@ public class Student {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(getId());
-	}
-
-	@Override
 	public String toString() {
-		return Arrays.toString(new Object[]{"Student", id, name, time});
+		return "Student{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", time='" + time + '\'' +
+				'}';
 	}
 }

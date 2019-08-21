@@ -3,12 +3,9 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Bean;
-import com.walker.common.util.Page;
 import com.walker.mode.Msg;
-import com.walker.mode.Test;
 import com.walker.mode.User;
 import com.walker.service.MessageService;
-import com.walker.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -17,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /*
 测试 jap jpaService

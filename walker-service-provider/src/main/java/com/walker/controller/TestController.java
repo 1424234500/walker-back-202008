@@ -3,7 +3,7 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Page;
-import com.walker.mode.Test;
+import com.walker.mode.Teacher;
 import com.walker.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +31,7 @@ public class TestController {
     @Qualifier("testJpaService")
     private TestService jpaService;
 
-    //    public Test add( Test test);
+    //    public Teacher add( Teacher test);
     @ApiOperation(value = "post 添加", notes = "post参数 RequestParam ")
     @ResponseBody
     @RequestMapping(value = "/action.do", method = RequestMethod.POST, produces = "application/json")
@@ -42,11 +42,11 @@ public class TestController {
     ) {
         String res = "post id:" + id + " name:" + name + " time:" + time;
         log.info(res);
-        Test model = jpaService.add(new Test(id, name, time, ""));
+        Teacher model = jpaService.add(new Teacher(id, name, time, ""));
         return Response.makeTrue(res, model);
     }
 
-    //    public Integer update(Test test);
+    //    public Integer update(Teacher test);
     @ApiOperation(value = "put 更新", notes = "put参数 RequestParam ")
     @ResponseBody
     @RequestMapping(value = "/action.do", method = RequestMethod.PUT, produces = "application/json")
@@ -58,11 +58,11 @@ public class TestController {
     ) {
         String res = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
         log.info(res);
-        Integer model = jpaService.update(new Test(id, name, time, pwd));
+        Integer model = jpaService.update(new Teacher(id, name, time, pwd));
         return Response.makeTrue(res, model);
     }
 
-    //    public void delete(Test test);
+    //    public void delete(Teacher test);
     @ApiOperation(value = "delete 删除", notes = "delete参数 restful 路径 PathVariable ")
     @ResponseBody
     @RequestMapping(value = "/{id}/action.do", method = RequestMethod.DELETE)
@@ -71,11 +71,11 @@ public class TestController {
     ) {
         String res = "delete id:" + id;
         log.info(res);
-        jpaService.delete(new Test(id, "", "", ""));
+        jpaService.delete(new Teacher(id, "", "", ""));
         return Response.makeTrue(res);
     }
 
-    //    public Test get(Test test);
+    //    public Teacher get(Teacher test);
     @ResponseBody
     @RequestMapping(value = "/action.do", method = RequestMethod.GET, produces = "application/json")
     public Response get(
@@ -83,11 +83,11 @@ public class TestController {
     ) {
         String res = "get id:" + id;
         log.info(res);
-        Test model = jpaService.get(new Test(id, "", "", ""));
+        Teacher model = jpaService.get(new Teacher(id, "", "", ""));
         return Response.makeTrue(res, model);
     }
 //
-//    public Page<Test> finds(Test test, Pageable page) ;
+//    public Page<Teacher> finds(Teacher test, Pageable page) ;
 
 
     @ApiOperation(value = "get 分页查询", notes = "url restful参数 PathVariable")
@@ -103,7 +103,7 @@ public class TestController {
 
         Page page1 = new Page().setNOWPAGE(nowPage).setSHOWNUM(showNum);
 
-        List<Test> list = jpaService.finds(new Test("", name, "", ""), page1);
+        List<Teacher> list = jpaService.finds(new Teacher("", name, "", ""), page1);
         log.info(page1.toString());
         return Response.makePage(res, page1, list);
     }

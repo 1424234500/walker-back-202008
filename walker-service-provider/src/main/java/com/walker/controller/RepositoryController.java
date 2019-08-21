@@ -3,8 +3,8 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Page;
-import com.walker.dao.TestRepository;
-import com.walker.mode.Test;
+import com.walker.dao.TeacherRepository;
+import com.walker.mode.Teacher;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class RepositoryController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private TestRepository repository;
+    private TeacherRepository repository;
 
 
     @ApiOperation(value = "自定义更新 selfUpdateSql")
@@ -41,14 +41,14 @@ public class RepositoryController {
         return Response.makeTrue("", repository.selfUpdateSql(name, id));
     }
 
-    @ApiOperation(value = "自定义更新 selfUpdateJPQL")
+    @ApiOperation(value = "自定义更新 selfUpdateCacheJPQL")
     @ResponseBody
     @RequestMapping(value = "/selfUpdateJPQL.do", method = RequestMethod.POST, produces = "application/json")
     public Response selfUpdateJPQL(
             @RequestParam(value = "id", required = true) String id,
             @RequestParam(value = "name", required = false, defaultValue = "default") String name
     ) {
-        return Response.makeTrue("", repository.selfUpdateJPQL(name, id));
+        return Response.makeTrue("", repository.selfUpdateCacheJPQL(name, id));
     }
 
     @ApiOperation(value = "自定义删除 selfDeleteJPQL")
@@ -80,7 +80,7 @@ public class RepositoryController {
         Pageable pageable = new PageRequest(nowPage-1, showNum, sort);
         log.info(pageable.toString());
         Page page1 = new Page().setNOWPAGE(nowPage).setSHOWNUM(showNum);
-        List<Test> list = repository.selfFindPage(name, pageable);
+        List<Teacher> list = repository.selfFindPage(name, pageable);
         int count = repository.selfCount(name);
         page1.setNUM(count);
         log.info(page1.toString());
@@ -101,7 +101,7 @@ public class RepositoryController {
     public Response getOne(
             @RequestParam(value = "id", required = true, defaultValue = "1") String id
             ) {
-        Test res = repository.getOne(id);
+        Teacher res = repository.getOne(id);
         if (res == null) {
             return Response.makeFalse("not exists");
         } else {
@@ -116,7 +116,7 @@ public class RepositoryController {
             @RequestParam(value = "name", required = true, defaultValue = "default") String name,
             @RequestParam(value = "time", required = false, defaultValue = "default") String time
     ) {
-        Test model = repository.save(new Test(id, name, time, ""));
+        Teacher model = repository.save(new Teacher(id, name, time, ""));
         return Response.makeTrue("", model);
     }
     @ApiOperation(value = "existsById 查询")
@@ -153,7 +153,7 @@ public class RepositoryController {
             @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @RequestParam(value = "time", required = false, defaultValue = "") String time
     ) {
-        Test model = new Test(id, name, time, "");
+        Teacher model = new Teacher(id, name, time, "");
         repository.delete(model);
         return Response.makeTrue("", model);
     }

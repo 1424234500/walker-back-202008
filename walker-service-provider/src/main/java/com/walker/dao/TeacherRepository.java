@@ -1,7 +1,8 @@
 package com.walker.dao;
 
-import com.walker.mode.Test;
-import org.springframework.data.domain.Page;
+import com.walker.mode.Teacher;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import springfox.documentation.annotations.Cacheable;
 
 import java.util.List;
 
@@ -65,7 +65,7 @@ import java.util.List;
 
 
 @Repository
-public interface TestRepository extends JpaRepository<Test, String> {//实体类 主键类型
+public interface TeacherRepository extends JpaRepository<Teacher, String> {//实体类 主键类型
 //    List<T> findAll();
 //    List<T> findAll(Sort var1);
 //    List<T> findAllById(Iterable<ID> var1);
@@ -89,39 +89,47 @@ public interface TestRepository extends JpaRepository<Test, String> {//实体类
 
 
     /**
-     * JPQL sql 非原生方式 hql?  占位符 表对应的 类名 属性名
+     * JPQL更新 占位符 表对应的 类名 属性名
+     * @CachePut 每次都执行方法 删除缓存
      */
     @Transactional
     @Modifying
-    @Query(value = "update Test t set t.name =?1 where t.id=?2")   //占位符传值形式
-    int selfUpdateJPQL(String name, String id);
+//    @CachePut(value = "cache-key", key="targetClass + methodName +#p0")
+    @Cacheable(keyGenerator="keyGenerator",value="cache-key")
+    @Query(value = "update Teacher t set t.name =?1 where t.id=?2")   //占位符传值形式
+    int selfUpdateCacheJPQL(String name, String id);
+
+    /**
+     * JPQL查询 缓存
+     * @Cacheable 缓存方法操作
+     */
+    @Cacheable(keyGenerator="keyGenerator",value="cache-key")
+    @Query("select u from Teacher u where u.id=?1")
+    Teacher selfFindOneCacheJPQL(String id);
 
     /**
      * JPQL删除
      */
-    @Query("delete from Test t where t.id=?1 ")
+    @Query("delete from Teacher t where t.id=?1 ")
     int selfDeleteJPQL(String id);
 
 
     /**
-     * JPQL 2   别名
+     * JPQL  别名
      */
-    @Query("from Test u where u.name=:name")
-    Test selfFindByName(@Param("name") String name);
+    @Query("from Teacher u where u.name=:name")
+    Teacher selfFindByName(@Param("name") String name);
 
-//    @Cacheable(value="u", key="#root.targetClass.name + #p0")
-    @Query("from Test u where u.id=?1")
-    Test selfFindById(String id);
     /**
      * JPQL 分页查询定制
      */
-    @Query("select t from Test t where t.name like CONCAT('%', ?1, '%') ")
-    List<Test> selfFindPage(String name, Pageable page);
+    @Query("select t from Teacher t where t.name like CONCAT('%', ?1, '%') ")
+    List<Teacher> selfFindPage(String name, Pageable page);
 
     /**
      * JPQL查询数量
      */
-    @Query("select count(t.id) from Test t where t.name like CONCAT('%', ?1, '%') ")
+    @Query("select count(t.id) from Teacher t where t.name like CONCAT('%', ?1, '%') ")
     int selfCount(String name);
 
 

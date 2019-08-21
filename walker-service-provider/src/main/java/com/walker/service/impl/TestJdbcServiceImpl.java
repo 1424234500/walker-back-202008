@@ -2,7 +2,7 @@ package com.walker.service.impl;
 
 import com.walker.common.util.Page;
 import com.walker.dao.JdbcDao;
-import com.walker.mode.Test;
+import com.walker.mode.Teacher;
 import com.walker.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,24 +20,24 @@ public class TestJdbcServiceImpl implements TestService {
     
     
     @Override
-    public Test add(Test test) {
+    public Teacher add(Teacher test) {
         jdbcDao.executeSql("INSERT INTO TEST_MODE VALUES(?,?,?,?) ", test.getId(), test.getName(), test.getTime(), test.getPwd());
         return test;
     }
 
     @Override
-    public Integer update(Test test) {
+    public Integer update(Teacher test) {
         return null;
     }
 
     @Override
-    public Integer delete(Test test) {
+    public Integer delete(Teacher test) {
         return jdbcDao.executeSql("DELETE FROM TEST_MODE WHERE ID=? ", test.getId());
     }
 
     @Override
-    public Test get(Test test) {
-        List<Test> list = jdbcTemplate.query("SELECT * FROM TEST_MODE WHERE ID=? OR NAME LIKE  CONCAT('%', ?, '%') ", new Object[]{test.getId(), test.getName()}, new BeanPropertyRowMapper<Test>(Test.class));
+    public Teacher get(Teacher test) {
+        List<Teacher> list = jdbcTemplate.query("SELECT * FROM TEST_MODE WHERE ID=? OR NAME LIKE  CONCAT('%', ?, '%') ", new Object[]{test.getId(), test.getName()}, new BeanPropertyRowMapper<Teacher>(Teacher.class));
         if(list.size() > 0){
             return list.get(0);
         }
@@ -45,16 +45,16 @@ public class TestJdbcServiceImpl implements TestService {
     }
 
     @Override
-    public List<Test> finds(Test test, Page page) {
-        List<Test> list = jdbcTemplate.query(
+    public List<Teacher> finds(Teacher test, Page page) {
+        List<Teacher> list = jdbcTemplate.query(
                 "SELECT * FROM TEST_MODE WHERE ID=? " +
                         "OR NAME LIKE  CONCAT('%', ?, '%') ",
                 new Object[]{test.getId(), test.getName()},
-                new BeanPropertyRowMapper<Test>(Test.class));
+                new BeanPropertyRowMapper<Teacher>(Teacher.class));
         return list;
      }
     @Override
-    public Integer count(Test test){
+    public Integer count(Teacher test){
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM TEST_MODE WHERE ID=? OR NAME LIKE CONCAT('%', ?, '%'"
         ,new Object[]{test.getId(), test.getName()}
         ,Integer.class

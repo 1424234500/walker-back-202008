@@ -1,8 +1,7 @@
 package com.walker.service;
 
 import com.walker.common.util.Page;
-import com.walker.mode.Test;
-import io.swagger.models.auth.In;
+import com.walker.mode.Teacher;
 
 import java.util.List;
 
@@ -10,13 +9,13 @@ public interface TestService {
 
 
 
-    public Test add(Test test);
-    public Integer update(Test test);
-    public Integer delete(Test test);
-    public Test get(Test test);
+    public Teacher add(Teacher test);
+    public Integer update(Teacher test);
+    public Integer delete(Teacher test);
+    public Teacher get(Teacher test);
 
-    public List<Test> finds(Test test, Page page);
-    public Integer count(Test test);
+    public List<Teacher> finds(Teacher test, Page page);
+    public Integer count(Teacher test);
 
 
 
