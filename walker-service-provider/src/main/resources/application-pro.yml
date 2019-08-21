@@ -9,6 +9,7 @@ spring:
     password: qwer
     driver-class-name: com.mysql.jdbc.Driver
 
+
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -41,7 +42,9 @@ spring:
     # 连接超时时间（毫秒）
     timeout: 8000
 
-
+    default:
+      #redis cache 过期时间
+      expiration:3600
 
 logging:
   file: /home/walker/logs/sb.log

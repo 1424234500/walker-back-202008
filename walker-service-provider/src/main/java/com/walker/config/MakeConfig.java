@@ -25,6 +25,17 @@ public class MakeConfig {
     @Value("${test}")
     public String test;
 
+    /**
+     * 全局变量读取设置
+     */
+    public static String TEST;
+    @Value("${test}")
+    public void setExamplePath(String test) {
+        log.info("read static properties " + test);
+        MakeConfig.TEST = test;
+    }
+
+
     public String toString(){
         String res = "test:" + test;
         log.info(res);
