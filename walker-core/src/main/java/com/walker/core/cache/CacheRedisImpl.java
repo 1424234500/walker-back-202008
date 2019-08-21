@@ -22,7 +22,7 @@ import redis.clients.jedis.Jedis;
  * 只支持 key-value key-list key-zset
  * redis实现
  */
-class CacheRedisImpl implements Cache<String> {
+class CacheRedisImpl extends CacheAdapter<String>{//implements Cache<String> {
 	
 	private static final String SPLIT = ":";
 	public CacheRedisImpl(){

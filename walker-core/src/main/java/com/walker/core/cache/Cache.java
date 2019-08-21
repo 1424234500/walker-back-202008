@@ -70,6 +70,18 @@ public interface Cache<K> {
    
     <V> V get(K key);
     <V> V get(K key, V defaultValue);
+
+    /**
+     * 获取缓存 若不存在则新获取并存入缓存
+     * @param key
+     * @param cacheFunction
+     * @param <V>
+     * @return
+     */
+    <V> V getFun(K key, Cache.Function cacheFunction);
+    public interface Function{
+        <V> V cache();
+    }
     <V> Cache<?> put(K key, V value);
     /**
      * 缓存时间

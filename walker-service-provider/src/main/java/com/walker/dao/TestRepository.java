@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import springfox.documentation.annotations.Cacheable;
 
 import java.util.List;
 
@@ -108,6 +109,7 @@ public interface TestRepository extends JpaRepository<Test, String> {//实体类
     @Query("from Test u where u.name=:name")
     Test selfFindByName(@Param("name") String name);
 
+//    @Cacheable(value="u", key="#root.targetClass.name + #p0")
     @Query("from Test u where u.id=?1")
     Test selfFindById(String id);
     /**

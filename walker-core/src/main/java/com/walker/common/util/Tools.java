@@ -59,7 +59,6 @@ public class Tools {
 		
 	}
 
-	
 	/**
 	 * 异常栈格式化
 	 * @return
@@ -215,7 +214,7 @@ public class Tools {
 				if(objects[i] instanceof Object[]){
 					objs[i] = objects2string((Object[])objects[i]);
 				}else{
-					objs[i] = objects[i].toString();
+					objs[i] = LangUtil.toString(objects[i]);
 				}
 			} else
 				objs[i] = "null!";

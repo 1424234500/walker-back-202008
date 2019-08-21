@@ -21,7 +21,8 @@ import com.walker.common.util.Tools;
  * 缓存池支持 ?
  * 缓存时间支持
  */
-class CacheMapImpl implements Cache<String> {
+class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
+
 	private static final String SPLIT = ".";
 	static int ALL_COUNT = 0; //所有缓存访问get次数
 
@@ -131,6 +132,8 @@ class CacheMapImpl implements Cache<String> {
 		}
 		return defaultValue;
 	}
+
+
 
 	@Override
 	public <V> Cache<String> put(String key, V value) {

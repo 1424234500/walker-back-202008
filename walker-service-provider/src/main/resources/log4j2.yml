@@ -10,7 +10,7 @@ Configuration:
       - name: log.level.xjj
         value: trace
       - name: log.path
-        value: /opt/logs
+        value: /home/walker/logs
       - name: project.name
         value: my-spring-boot
 
@@ -53,4 +53,4 @@ Configuration:
 #
 #  Configuration上有个INFO，Root下有个debug，
 #  需要明确的是Configuration的status是log4j2本身的日志打印级别，并是不全局日志级别
-#  。而Root下的leve，则恰恰是全局日志级别。
+#  而Root下的leve是全局日志级别。

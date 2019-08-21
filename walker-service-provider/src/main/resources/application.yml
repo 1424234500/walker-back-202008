@@ -5,11 +5,11 @@ server:
     max-connections: 1000
     max-threads: 200
     min-spare-threads: 10
-
-
+  port: 8080
 
 spring:
   profiles:
-    active: pro
+    active: pro,pro_redis,pro_mysql,pro_log4j2 #加载多个模块配置文件yml
 
-  
+
+

@@ -23,48 +23,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class DataSourceConfig {
-    private Logger log = LoggerFactory.getLogger(getClass());
 
-
-    /**
-     *
-     redisTemplate.opsForValue();//操作字符串
-     redisTemplate.opsForHash();//操作hash
-     redisTemplate.opsForList();//操作list
-     redisTemplate.opsForSet();//操作set
-     redisTemplate.opsForZSet();//操作有序set
-
-     * @param redisConnectionFactory
-     * @return
-     */
-
-    @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        log.info("DataSourceConfig redisTemplate init");
-
-        RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
-
-
-
-        ObjectMapper om = new ObjectMapper();
-        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-
-        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
-        jackson2JsonRedisSerializer.setObjectMapper(om);
-        template.setHashKeySerializer(jackson2JsonRedisSerializer);
-        template.setHashValueSerializer(jackson2JsonRedisSerializer);
-
-
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        template.setKeySerializer(stringRedisSerializer);
-        template.setValueSerializer(stringRedisSerializer);
-
-
-        template.afterPropertiesSet();
-        return template;
-    }
 
 
 }

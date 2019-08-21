@@ -1,6 +1,7 @@
 package com.walker.config;
 
 
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.*;
@@ -47,9 +48,8 @@ body：（不常用）
 
 
 
-@ComponentScan("com.walker.controller")//需要扫描的api位置
 @Configuration//说明是一个配置类
-@EnableSwagger2//支持swagger2
+@EnableSwagger2
 public class SwaggerConfig {
     private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -75,6 +75,9 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
+                //扫描函数注解
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                //api包指定
 //                .apis(RequestHandlerSelectors.basePackage("comw.walker.controller"))
                 .paths(PathSelectors.any())
                 .build();

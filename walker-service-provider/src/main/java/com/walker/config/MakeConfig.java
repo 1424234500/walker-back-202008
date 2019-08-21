@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 自定义配置文件
+ *
+ 用@Configuration注解该类，等价于XML中配置beans；用@Bean标注方法等价于XML中配置bean。
  */
 @Configuration
 @PropertySource({"classpath:make.properties"})

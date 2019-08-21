@@ -26,7 +26,7 @@ import net.sf.ehcache.Element;
  * 缓存服务实现类
  * ehcache实现
  */
-class CacheEhcacheImpl implements Cache<String> {
+class CacheEhcacheImpl  extends CacheAdapter<String>{//implements Cache<String> {
 	static int ALL_COUNT = 0; //所有缓存访问get次数
 	private CacheManager cacheMgr = null;
 	private net.sf.ehcache.Cache cache = null;

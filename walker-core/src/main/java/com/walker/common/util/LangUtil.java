@@ -1,11 +1,7 @@
 package com.walker.common.util;
 
 import java.lang.reflect.Field;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.http.client.utils.CloneUtils;
 import org.apache.log4j.Logger;
@@ -74,11 +70,42 @@ public class LangUtil {
          }
 		
 	}
+
+
+	public static String toString(Object obj){
+		if (obj instanceof Map) {
+			return ((Map)obj).toString();
+		} else if (obj instanceof Collection) {
+			Collection<Object> list = (Collection<Object>)obj;
+			StringBuilder sb = new StringBuilder("list\t").append(list.size());
+			int i = 0;
+			for(Object item : list){
+				sb.append(i).append("\t").append(toString(item)).append("\n");
+			}
+			return sb.toString();
+		} else if (
+				obj instanceof String
+						|| obj instanceof Integer
+						|| obj instanceof Double
+						|| obj instanceof Long
+						|| obj instanceof Float
+						|| obj instanceof Character
+						|| obj instanceof Short
+						|| obj instanceof Boolean
+		) {
+			return String.valueOf(obj);
+		} else {//按照基本类型 key-value转化
+			if (obj != null) {
+				Map<String, Object> map = LangUtil.turnObj2Map(obj);
+				return toString(map);
+			}
+		}
+		return "null!";
+	}
 	
 	/**
 	 * class bean对象转换为map
 	 * @param obj
-	 * @param hashMap
 	 * @return
 	 */
 	public static Map<String, Object> turnObj2Map(Object obj) {
@@ -105,7 +132,6 @@ public class LangUtil {
 	 * 目标类型转换
 	 * 
 	 * @param obj
-	 * @param defaultValue
 	 * @return
 	 */
 	public static <T> T turn(Object obj) {
