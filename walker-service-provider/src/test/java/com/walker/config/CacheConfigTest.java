@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
 
+import javax.tools.Tool;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,26 +26,21 @@ public class CacheConfigTest {
     @Test
     public void cacheManager() {
         StopWatch sw = new StopWatch();
-        sw.start("save");
-
-        Teacher teacher = teacherRepository.save(new Teacher().setId("1").setName("name").setPwd("pwd").setTime("time"));
-        Teacher teachers2 = teacherRepository.save(new Teacher().setId("2").setName("name2").setPwd("pwd").setTime("time"));
-        Tools.out("save", teacher);
-        sw.stop();
-        sw.start("findOneCache1");
-        Teacher teacher1 = teacherRepository.selfFindOneCacheJPQL("1");
-        Tools.out("findone ", teacher1);
-        sw.stop();
-
-        sw.start("findOneCache2");
-        Teacher teacher2 = teacherRepository.selfFindOneCacheJPQL("1");
-        Tools.out("findcache", teacher2);
-        sw.stop();
-
-        sw.start("findOneCache3");
-        Teacher teacher3 = teacherRepository.selfFindOneCacheJPQL("1");
-        Tools.out("findcache", teacher3);
-        sw.stop();
+        for(int i = 0; i < 5; i++){
+            sw.start("save" + i);
+            Tools.out("save" + i, teacherRepository.save(new Teacher().setId(i+"").setName("name" + i).setPwd("pwd").setTime("time")));
+            sw.stop();
+        }
+        for(int i = 0; i < 3; i++) {
+            sw.start("findOneCache" + i);
+            Tools.out("findcache" + i, teacherRepository.selfFindOneCacheJPQL("1"));
+            sw.stop();
+        }
+        for(int i = 0; i < 3; i++) {
+            sw.start("findListCache" + i);
+            Tools.out("findList", teacherRepository.selfFindListCacheJPQL(Arrays.asList("1", "2", "3")));
+            sw.stop();
+        }
         sw.start("findListCache1");
         Tools.out("findList", teacherRepository.selfFindListCacheJPQL(Arrays.asList("1", "2")));
 

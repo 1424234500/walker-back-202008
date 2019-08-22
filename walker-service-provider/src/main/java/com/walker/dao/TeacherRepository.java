@@ -94,7 +94,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {//实
      */
     @Transactional
     @Modifying
-//    @CachePut(value = "cache-key", key="targetClass + methodName +#p0")
+//    @CachePut(value = "cache-key", key="#root.targetClass.name + #p0")
     @CachePut(keyGenerator="keyGenerator",value="cache-teacher")
     @Query(value = "update Teacher t set t.name =?1 where t.id=?2")   //占位符传值形式
     int selfUpdateCacheJPQL(String name, String id);
