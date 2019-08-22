@@ -95,7 +95,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {//实
     @Transactional
     @Modifying
 //    @CachePut(value = "cache-key", key="targetClass + methodName +#p0")
-    @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
+    @CachePut(keyGenerator="keyGenerator",value="cache-teacher")
     @Query(value = "update Teacher t set t.name =?1 where t.id=?2")   //占位符传值形式
     int selfUpdateCacheJPQL(String name, String id);
 
@@ -106,6 +106,14 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {//实
     @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
     @Query("select u from Teacher u where u.id=?1")
     Teacher selfFindOneCacheJPQL(String id);
+
+    /**
+     * JPQL查询 缓存
+     * @Cacheable 缓存方法操作
+     */
+    @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
+    @Query("select u from Teacher u where u.id in (?1) ")
+    List<Teacher> selfFindListCacheJPQL(List<String> ids);
 
     /**
      * JPQL删除
