@@ -32,7 +32,22 @@ public class Launcher {
 //		test1();
 //		testAnd();
 		testSplit();
+		testArgs();
+		testArgs(null);
+		testNull();
 		Tools.out("-----------------end-------------------");
+	}
+
+	void testArgs(Object...objects){
+		Tools.out("null?", objects == null);
+		if(objects != null)
+		Tools.out("length", objects.length);
+	}
+	void testNull(){
+
+		Object obj = null;
+		System.out.println(String.valueOf(obj));
+		System.out.println(obj.toString());
 	}
 	public void testSplit() {
 		Tools.out(",a,b".split(",")[1]);
