@@ -74,7 +74,7 @@ public class CacheConfig extends CachingConfigurerSupport {
      */
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        log.info("redisTemplate " );
+        log.info("init----------redisTemplate " );
 
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
@@ -102,7 +102,7 @@ public class CacheConfig extends CachingConfigurerSupport {
      */
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        log.info("cacheManager " +  redisDefaultExpiration);
+        log.info("init----------cacheManager " +  redisDefaultExpiration);
 
 //        RedisCacheManager cacheManager = RedisCacheManager.create(factory);
 //        return cacheManager;
@@ -131,7 +131,7 @@ public class CacheConfig extends CachingConfigurerSupport {
      */
     @Bean
     public KeyGenerator keyGenerator() {
-        log.debug("keyGenerator");
+        log.debug("init----------keyGenerator");
         return new KeyGenerator() {
             @Override
             public Object generate(Object target, Method method, Object... params) {

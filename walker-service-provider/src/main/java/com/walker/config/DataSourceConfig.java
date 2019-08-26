@@ -1,18 +1,19 @@
 package com.walker.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
 
 /**
  * 数据源源配置
@@ -23,45 +24,29 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 
 @Configuration
-@EnableTransactionManagement
-//@MapperScan("com.example.db.dao")
-public class DataSourceConfig {
+public class DataSourceConfig  {
+    private Logger log = LoggerFactory.getLogger(getClass());
+
+//    /**
+//     * 默认主数据源配置
+//     * @return
+//     * @throws SQLException
+//     */
+//    @Bean("dataSource")
+//    @ConfigurationProperties(prefix="spring.datasource")
+//    public DataSource dataSource() throws SQLException {
+//        log.info("init----------dataSource init");
+//        return DataSourceBuilder.create().build();
+//    }
 //
 //    @Autowired
-//    private DataSource dataSource;
-//
-//    @Bean(name = "sqlSessionFactory")
-//    public SqlSessionFactory sqlSessionFactoryBean() {
-//        SqlSessionFactoryBean sqlsession = new SqlSessionFactoryBean();
-//        sqlsession.setDataSource(dataSource);
-//        try {
-//            //添加XML目录
-//            ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-//            sqlsession.setMapperLocations(resolver.getResources("classpath:mapping/*.xml"));
-//            return sqlsession.getObject();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }
+//    DataSource dataSource;
+//    @Bean("jdbcTemplate")
+//    public JdbcTemplate jdbcTemplate(){
+//        return  new JdbcTemplate(dataSource);
 //    }
-//
-//    @Bean
-//    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
-//        return new SqlSessionTemplate(sqlSessionFactory);
-//    }
-//
-//    @Bean
-//    public PlatformTransactionManager annotationDrivenTransactionManager() {
-//        return new DataSourceTransactionManager(dataSource);
-//    }
-//
-//
-//    @Bean(name = "exampleSequence")
-//    public OracleSequenceMaxValueIncrementer exampleSequenceBean(){
-//        OracleSequenceMaxValueIncrementer exampleSequence = new OracleSequenceMaxValueIncrementer();
-//        exampleSequence.setIncrementerName("EXAMPLE_SEQ");
-//        exampleSequence.setDataSource(dataSource);
-//        return exampleSequence;
-//    }
+
+
+
 
 }

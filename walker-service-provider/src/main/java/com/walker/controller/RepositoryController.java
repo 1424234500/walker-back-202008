@@ -28,7 +28,7 @@ public class RepositoryController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private TeacherRepository repository;
+    private TeacherRepository teacherRepository;
 
 
     @ApiOperation(value = "自定义更新 selfUpdateSql")
@@ -38,7 +38,7 @@ public class RepositoryController {
             @RequestParam(value = "id", required = true) String id,
             @RequestParam(value = "name", required = false, defaultValue = "default") String name
     ) {
-        return Response.makeTrue("", repository.selfUpdateSql(name, id));
+        return Response.makeTrue("", teacherRepository.selfUpdateSql(name, id));
     }
 
     @ApiOperation(value = "自定义更新 selfUpdateCacheJPQL")
@@ -48,7 +48,7 @@ public class RepositoryController {
             @RequestParam(value = "id", required = true) String id,
             @RequestParam(value = "name", required = false, defaultValue = "default") String name
     ) {
-        return Response.makeTrue("", repository.selfUpdateCacheJPQL(name, id));
+        return Response.makeTrue("", teacherRepository.selfUpdateCacheJPQL(name, id));
     }
 
     @ApiOperation(value = "自定义删除 selfDeleteJPQL")
@@ -57,7 +57,7 @@ public class RepositoryController {
     public Response selfDeleteJPQL(
             @RequestParam(value = "id", required = true) String id
     ) {
-        return Response.makeTrue("", repository.selfDeleteJPQL(id));
+        return Response.makeTrue("", teacherRepository.selfDeleteJPQL(id));
     }
 
     @ApiOperation(value = "自定义查询 selfFindByName")
@@ -66,7 +66,7 @@ public class RepositoryController {
     public Response selfFindByName(
             @RequestParam(value = "name", required = false) String name
     ) {
-        return Response.makeTrue("", repository.selfFindByName(name));
+        return Response.makeTrue("", teacherRepository.selfFindByName(name));
     }
     @ApiOperation(value = "分页查询", notes = "url restful参数 PathVariable")
     @ResponseBody
@@ -80,8 +80,8 @@ public class RepositoryController {
         Pageable pageable = new PageRequest(nowPage-1, showNum, sort);
         log.info(pageable.toString());
         Page page1 = new Page().setNowpage(nowPage).setShownum(showNum);
-        List<Teacher> list = repository.selfFindPage(name, pageable);
-        int count = repository.selfCount(name);
+        List<Teacher> list = teacherRepository.selfFindPage(name, pageable);
+        int count = teacherRepository.selfCount(name);
         page1.setNum(count);
         log.info(page1.toString());
         return Response.makePage("", page1, list);
@@ -93,7 +93,7 @@ public class RepositoryController {
     public Response selfCount(
             @RequestParam(value = "name", required = false, defaultValue = "") String name
     ) {
-        return Response.makeTrue("", repository.selfCount(name));
+        return Response.makeTrue("", teacherRepository.selfCount(name));
     }
     @ApiOperation(value = "getOne 查询")
     @ResponseBody
@@ -101,7 +101,7 @@ public class RepositoryController {
     public Response getOne(
             @RequestParam(value = "id", required = true, defaultValue = "1") String id
             ) {
-        Teacher res = repository.getOne(id);
+        Teacher res = teacherRepository.getOne(id);
         if (res == null) {
             return Response.makeFalse("not exists");
         } else {
@@ -116,7 +116,7 @@ public class RepositoryController {
             @RequestParam(value = "name", required = true, defaultValue = "default") String name,
             @RequestParam(value = "time", required = false, defaultValue = "default") String time
     ) {
-        Teacher model = repository.save(new Teacher(id, name, time, ""));
+        Teacher model = teacherRepository.save(new Teacher(id, name, time, ""));
         return Response.makeTrue("", model);
     }
     @ApiOperation(value = "existsById 查询")
@@ -125,7 +125,7 @@ public class RepositoryController {
     public Response existsById(
             @RequestParam(value = "id", required = true) String id
     ) {
-        return Response.makeTrue("", repository.existsById(id));
+        return Response.makeTrue("", teacherRepository.existsById(id));
     }
 
     @ApiOperation(value = "count 计数")
@@ -133,7 +133,7 @@ public class RepositoryController {
     @RequestMapping(value = "/count.do", method = RequestMethod.GET, produces = "application/json")
     public Response count(
             ) {
-        return Response.makeTrue("", repository.count());
+        return Response.makeTrue("", teacherRepository.count());
     }
 
     @ApiOperation(value = "deleteById 删除")
@@ -142,7 +142,7 @@ public class RepositoryController {
     public Response deleteById(
             @RequestParam(value = "id", required = true) String id
     ) {
-        repository.deleteById(id);
+        teacherRepository.deleteById(id);
         return Response.makeTrue("", id);
     }
     @ApiOperation(value = "delete 删除")
@@ -154,7 +154,7 @@ public class RepositoryController {
             @RequestParam(value = "time", required = false, defaultValue = "") String time
     ) {
         Teacher model = new Teacher(id, name, time, "");
-        repository.delete(model);
+        teacherRepository.delete(model);
         return Response.makeTrue("", model);
     }
 }

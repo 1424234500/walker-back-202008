@@ -71,7 +71,7 @@ public class SwaggerConfig {
      */
     @Bean
     public Docket createRestApi() {
-        log.warn("start config createRestApi");
+        log.warn("init-------------start config createRestApi");
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()

@@ -1,0 +1,61 @@
+#分表mysql  shardingsphere
+
+sharding:
+  jdbc:
+    datasource:
+      #多数据源分库别名配置
+      names: walker0,walker1
+      walker0:
+        type: org.apache.commons.dbcp.BasicDataSource
+#        type: com.mchange.v2.c3p0.ComboPooledDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://39.106.111.11:3306/walker0?useUnicode=true&characterEncoding=utf-8&useSSL=false
+        username: walker0
+        password: qwer
+        maxWait: 3000
+        maxActive: 64
+        maxIdle: 16
+        minIdle: 4
+        validationQuery: select 1 from dual
+
+
+      walker1:
+        type: org.apache.commons.dbcp.BasicDataSource
+#        type: com.mchange.v2.c3p0.ComboPooledDataSource
+
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://39.106.111.11:3306/walker1?useUnicode=true&characterEncoding=utf-8&useSSL=false
+        username: walker1
+        password: qwer
+        maxWait: 3000
+        maxActive: 64
+        maxIdle: 16
+        minIdle: 4
+        validationQuery: select 1 from dual
+
+    config:
+      sharding:
+        # 默认数据源 不配置分表参数的直接存这个源
+        default-data-source-name: walker0
+
+        props:
+          sql.show: true
+        # 默认分库策略 分库ID不能与分表ID一样，不加策略使用默认
+        default-database-strategy:
+          inline:
+            sharding-column: SEX
+            algorithm-expression: walker$->{SEX % 2}
+        tables:
+          #表 ID[long], SEX[0,1], NAME, PWD
+          W_MAN:
+            actual-data-nodes: walker$->{0..1}.W_MAN_$->{0..3}
+#            key-generator-column-name: SEX
+            database-strategy:  #分库策略
+              inline:
+                sharding-column: SEX
+                algorithm-expression:  walker${SEX % 2}
+            table-strategy:  #分表策略
+              inline:
+                sharding-column: ID
+                algorithm-expression: W_MAN_${ID % 4}
+#                precise-algorithm-class-name: com.walker.xxx

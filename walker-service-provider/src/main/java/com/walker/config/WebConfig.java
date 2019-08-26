@@ -70,7 +70,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        log.info("addInterceptors");
+        log.info("init---------------addInterceptors");
         registry.addInterceptor(new LogInterceptors() )
                 .excludePathPatterns(
                         Arrays.asList(new String[]{
@@ -144,7 +144,7 @@ public class WebConfig implements WebMvcConfigurer {
     //配置文件上传
     @Bean//(name = {"multipartResolver"})
     public MultipartResolver multipartResolver(){
-        log.info("multipartResolver init");
+        log.info("init-------------multipartResolver init");
         CommonsMultipartResolver commonsMultipartResolver=new org.springframework.web.multipart.commons.CommonsMultipartResolver();
         commonsMultipartResolver.setDefaultEncoding("utf-8");
         commonsMultipartResolver.setMaxUploadSize(1024 * 1024 * 1024);

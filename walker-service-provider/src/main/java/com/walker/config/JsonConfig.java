@@ -26,6 +26,7 @@ public class JsonConfig {
 
     @Bean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
+        log.info("init----------fastJsonHttpMessageConverters");
         // 1.定义一个converters转换消息的对象
         FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
         // 2.添加fastjson的配置信息，比如: 是否需要格式化返回的json数据

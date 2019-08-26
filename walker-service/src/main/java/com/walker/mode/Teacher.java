@@ -13,6 +13,8 @@ public class Teacher implements Cloneable,Serializable{
 
     @Id     //主键
 //    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
+//    @GeneratedValue(generator = "system-uuid")
+//    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @Column(name="ID", nullable = false, length = 32)
     private String id;
     @Column(name = "NAME", nullable = false, length = 256)    //255

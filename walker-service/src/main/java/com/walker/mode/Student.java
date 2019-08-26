@@ -20,7 +20,7 @@ public class Student  implements Cloneable, Serializable {
 	private String id;
 	@Column(name = "NAME", nullable = false, length = 256)    //255
     private String name;
-	@Column(name = "NAME", nullable = true, length = 32)    //255
+	@Column(name = "TIME", nullable = true, length = 32)    //255
     private String time;
 
 	public String getId() {
