@@ -79,10 +79,10 @@ public class RepositoryController {
         Sort sort = new Sort(Sort.Direction.ASC, "name");
         Pageable pageable = new PageRequest(nowPage-1, showNum, sort);
         log.info(pageable.toString());
-        Page page1 = new Page().setNOWPAGE(nowPage).setSHOWNUM(showNum);
+        Page page1 = new Page().setNowpage(nowPage).setShownum(showNum);
         List<Teacher> list = repository.selfFindPage(name, pageable);
         int count = repository.selfCount(name);
-        page1.setNUM(count);
+        page1.setNum(count);
         log.info(page1.toString());
         return Response.makePage("", page1, list);
     }

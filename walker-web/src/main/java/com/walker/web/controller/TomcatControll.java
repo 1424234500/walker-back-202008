@@ -68,7 +68,7 @@ public class TomcatControll extends BaseControll{
 		Bean map = RequestUtil.getParam(request); //, new String[]{"URL", "KEY", "VALUE", "EXPIRE", "TYPE"}
 		Page page = Page.getPage(request);
 		Bean res = cache.findCacheList(map);
-		page.setNUM(res.get("size", 0));
+		page.setNum(res.get("size", 0));
 		res.put("page", page);
 		echo(res);
 	}

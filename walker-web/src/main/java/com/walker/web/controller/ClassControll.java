@@ -37,7 +37,7 @@ public class ClassControll extends BaseControll{
 		list = ClassUtil.getPackageClassBean(packageName, true);
 
 		Page page = Page.getPage(request);
-		page.setNUM(list==null?-1:list.size());
+		page.setNum(list==null?-1:list.size());
 		echo(list, page);
 	}
 	@RequestMapping("/detail.do")
@@ -56,7 +56,7 @@ public class ClassControll extends BaseControll{
 			cache.put("/class/detail", bean);
 		}
 		Page page = Page.getPage(request);
-		page.setNUM(list.size());
+		page.setNum(list.size());
 		echo(list, page);
 	}
 	

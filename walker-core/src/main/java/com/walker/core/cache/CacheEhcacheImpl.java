@@ -250,7 +250,7 @@ class CacheEhcacheImpl  extends CacheAdapter<String>{//implements Cache<String> 
 		}else{
 			res = new ArrayList<>();
 		}
-		SortUtil.sort(res, page.getORDER());
+		SortUtil.sort(res, page.getOrder());
 		return new Bean().put("ok", toUrl==urls).put("urls", toUrl).put("list", res).put("oftype", oftype).put("size", size);
 	}
 	public List<Map<?,?>> mapToList(Map<?, ?> theMap, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){

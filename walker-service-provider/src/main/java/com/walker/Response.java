@@ -1,11 +1,9 @@
 package com.walker;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.walker.common.util.Page;
 import com.walker.event.Context;
 import io.swagger.annotations.*;
 import lombok.Data;
-import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
 import java.util.Arrays;

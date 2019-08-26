@@ -60,7 +60,7 @@ angular.module('com.student')
     //列表查询 
     $scope.list = function(){ 
         var page = $scope.page;
-        page["ORDER"] = $scope.sort.orderCol ? $scope.sort.orderCol + ($scope.sort.order ? ' DESC': '') : ''
+        page["order"] = $scope.sort.orderCol ? $scope.sort.orderCol + ($scope.sort.order ? ' desc': '') : ''
         var search = $scope.search;
         var params = $.extend({}, page, search);
         studentService.list(params).then(

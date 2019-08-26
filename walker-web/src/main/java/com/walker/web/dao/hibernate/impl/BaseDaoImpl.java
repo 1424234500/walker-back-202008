@@ -136,9 +136,9 @@ public class BaseDaoImpl implements BaseDao  {
 
 	@Override
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... objects) {
-		page.setNUM(this.count(sql, objects ));
-		sql = SqlUtil.makeSqlOrder(sql, page.getORDER());
-		return this.findPage(sql,page.getNOWPAGE(), page.getSHOWNUM(), objects );
+		page.setNum(this.count(sql, objects ));
+		sql = SqlUtil.makeSqlOrder(sql, page.getOrder());
+		return this.findPage(sql,page.getNowpage(), page.getShownum(), objects );
 	}
 
 	@Override

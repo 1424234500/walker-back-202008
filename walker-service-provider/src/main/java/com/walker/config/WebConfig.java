@@ -12,21 +12,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
+import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * 配置
+ * 配置mvc web.xml spring-mvc.xml
  *
  * 过滤器
  * 过滤器是什么?
@@ -106,12 +112,56 @@ public class WebConfig implements WebMvcConfigurer {
 //      	</mvc:interceptor>
 //    </mvc:interceptors>
     }
+//
+//    @Bean
+//    public ServletListenerRegistrationBean listenerRegist() {
+//        log.info("ServletListenerRegistrationBean");
+//        ServletListenerRegistrationBean srb = new ServletListenerRegistrationBean();
+//        srb.setListener(new ContextListener());
+//        return srb;
+//    }
+//
+//
+//
+//
+//
+//
+//    @Override
+//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        log.info("configureMessageConverters init");
+//
+//        MarshallingHttpMessageConverter marshallingHttpMessageConverter = new MarshallingHttpMessageConverter();
+//        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+//        mediaTypes.add(MediaType.TEXT_XML);
+//        mediaTypes.add(MediaType.APPLICATION_XML);
+//        XStreamMarshaller xStreamMarshaller=new XStreamMarshaller();
+//        marshallingHttpMessageConverter.setSupportedMediaTypes(mediaTypes);
+//        marshallingHttpMessageConverter.setMarshaller(xStreamMarshaller);
+//        marshallingHttpMessageConverter.setUnmarshaller(xStreamMarshaller);
+//        converters.add(marshallingHttpMessageConverter);
+//    }
 
-    @Bean
-    public ServletListenerRegistrationBean listenerRegist() {
-        log.info("ServletListenerRegistrationBean");
-        ServletListenerRegistrationBean srb = new ServletListenerRegistrationBean();
-        srb.setListener(new ContextListener());
-        return srb;
+    //配置文件上传
+    @Bean//(name = {"multipartResolver"})
+    public MultipartResolver multipartResolver(){
+        log.info("multipartResolver init");
+        CommonsMultipartResolver commonsMultipartResolver=new org.springframework.web.multipart.commons.CommonsMultipartResolver();
+        commonsMultipartResolver.setDefaultEncoding("utf-8");
+        commonsMultipartResolver.setMaxUploadSize(1024 * 1024 * 1024);
+        commonsMultipartResolver.setMaxInMemorySize(1024 * 1024 * 64);
+        return commonsMultipartResolver;
     }
+//    //异常处理
+//    @Bean
+//    public ExceptionHandler exceptionResolver(){
+//        ExceptionHandler exceptionHandler = new ExceptionHandler();
+//        return exceptionHandler;
+//    }
+
+
+
+
+
+
+
 }

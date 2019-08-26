@@ -2,12 +2,9 @@ package com.walker.core.database;
 
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
-import com.walker.common.util.Watch;
 import org.apache.log4j.Logger;
 
-import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -64,9 +61,9 @@ public abstract class BaseDaoAdapter implements BaseDao {
 
 	@Override
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... objects) {
-		page.setNUM(this.count(sql, objects));
-		sql = SqlUtil.makeSqlOrder(sql, page.getORDER());
-		return this.findPage(sql, page.getNOWPAGE(), page.getSHOWNUM(), objects);
+		page.setNum(this.count(sql, objects));
+		sql = SqlUtil.makeSqlOrder(sql, page.getOrder());
+		return this.findPage(sql, page.getNowpage(), page.getShownum(), objects);
 	}
 
 	@Override

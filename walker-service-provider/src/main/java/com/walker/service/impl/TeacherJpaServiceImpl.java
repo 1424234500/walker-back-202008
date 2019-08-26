@@ -3,7 +3,7 @@ package com.walker.service.impl;
 import com.walker.common.util.Page;
 import com.walker.dao.TeacherRepository;
 import com.walker.mode.Teacher;
-import com.walker.service.TestService;
+import com.walker.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("testJpaService")
-public class TestJpaServiceImpl implements TestService {
+public class TeacherJpaServiceImpl implements TeacherService {
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -41,8 +41,8 @@ public class TestJpaServiceImpl implements TestService {
     @Override
     public List<Teacher> finds(Teacher test, Page page) {
         Sort sort = new Sort(Sort.Direction.ASC, "name");
-        Pageable pageable = new PageRequest(page.getNOWPAGE()-1, page.getSHOWNUM(), sort);
-        page.setNUM(teacherRepository.selfCount(test.getName()));
+        Pageable pageable = new PageRequest(page.getNowpage()-1, page.getShownum(), sort);
+        page.setNum(teacherRepository.selfCount(test.getName()));
         return teacherRepository.selfFindPage(test.getName(), pageable);
     }
 

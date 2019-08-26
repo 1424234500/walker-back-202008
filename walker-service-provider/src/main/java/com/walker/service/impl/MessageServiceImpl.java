@@ -30,7 +30,6 @@ public class MessageServiceImpl implements MessageService {
 	Logger log = Logger.getLogger(getClass());
 
 	@Autowired
-	@Qualifier("redisDao")
 	RedisDao redisDao;
 
 	@Autowired

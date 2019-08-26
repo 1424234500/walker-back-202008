@@ -42,7 +42,7 @@ public class FileServiceImpl implements FileService,Serializable {
 		int count = baseDao.count("select * from W_FILEINFO");
 		int once = Context.getDbOnce();
 		Page pageBean = new Page(once, count);
-		int page = pageBean.getPAGENUM();
+		int page = pageBean.getPagenum();
 		while(page > 0){
 			List<Map<String, Object>> list = baseDao.findPage("select * from W_FILEINFO", page--, once);
 			

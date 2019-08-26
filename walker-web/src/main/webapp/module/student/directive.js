@@ -16,7 +16,7 @@
             var pageArr = [], allPages;
             scope.$watch(function () {
                 if (scope.page) {
-                    return scope.page.PAGES;
+                    return scope.page.pages;
                 }
                 return null;
             }, function (pages) {
@@ -82,12 +82,12 @@
                     info("请输入正确的页码", "warning");
                     return false;
                 } else {
-                    if (goPage < 1 || goPage > scope.page.PAGES) {
+                    if (goPage < 1 || goPage > scope.page.pages) {
                         info("请输入正确的页码", "warning");
                         return false;
                     }
                 }
-                scope.page.NOWPAGE = goPage;
+                scope.page.nowpage = goPage;
                 scope.goPageNum = "";
                 scope.clickNumData(goPage);
             };

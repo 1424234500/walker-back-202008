@@ -93,16 +93,16 @@ ngClick，ngMouseover要写成ng-click，ng-mouseover的形式。
 
 /*<!-- 
  long NUM = 0;	//总数据条数
- int SHOWNUM = defaultEachPageNum;//每页数量
- int NOWPAGE = 1;	//当前页码
- int PAGENUM = 0;	//总页数
- String ORDER;	//排序
- String DESC;	//倒序
+ int shownum = defaultEachPageNum;//每页数量
+ int nowpage = 1;	//当前页码
+ int pagenum = 0;	//总页数
+ String order;	//排序
+ String desc;	//倒序
 -->*/
 //共13页，当前第11页 -> 2-3 4 5-6 
 function calcPage(page){
-    var now = page.NOWPAGE;
-    var max = page.PAGENUM;
+    var now = page.nowpage;
+    var max = page.pagenum;
     var deta = 2; 
     var from = 1;
     var to = max;

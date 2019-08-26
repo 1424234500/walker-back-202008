@@ -5,7 +5,7 @@ import com.walker.mode.Teacher;
 
 import java.util.List;
 
-public interface TestService {
+public interface TeacherService {
 
 
 

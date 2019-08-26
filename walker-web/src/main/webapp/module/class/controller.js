@@ -26,7 +26,7 @@ angular.module('com.class')
     $scope.showCols = ["PACKAGE",]; //展示列 "SIZE"
     //$scope.showCols2 = ["RETURNTYPE", "NAME", "PARAMETERTYPES", "DEFAULTVALUE", "TOSTRING"]; //展示列
     $scope.showCols2 = [ "TOSTRING"]; //展示列
-    $scope.page = {"NOWPAGE":1, "SHOWNUM":50, "ORDER":"","DESC":""}; //分页参数
+    $scope.page = {"nowpage":1, "shownum":50, "order":"","desc":""}; //分页参数
 
     //bean.put("NAME", item.getName()); //aaa
     //bean.put("RETURNTYPE", item.getReturnType());//int
@@ -35,9 +35,9 @@ angular.module('com.class')
     //bean.put("TOSTRING", item.toString());
     //查询列表
     $scope.list = function(){
-        var PAGE = $scope.page;
+        var page = $scope.page;
         var search = $scope.search;
-        var params = $.extend({}, PAGE, search);
+        var params = $.extend({}, page, search);
         var url = '/' + $PROJECT + '/class/list.do';
         baseService.post(url, params).then(
             function (data) {

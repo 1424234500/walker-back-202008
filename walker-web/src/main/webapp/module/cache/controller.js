@@ -37,13 +37,13 @@ angular.module('com.cache')
 	
     $scope.cols = ["URL", "KEY", "VALUE", "EXPIRE", "TYPE"]; //搜索<添加/修改>列
     $scope.showCols = ["KEY", "VALUE", "EXPIRE", "COUNT"]; //展示列
-    $scope.page = {"NOWPAGE":1, "SHOWNUM":50, "ORDER":"","DESC":""}; //分页参数
+    $scope.page = {"nowpage":1, "shownum":50, "order":"","desc":""}; //分页参数
 
     //查询列表
     $scope.list = function(){
-        var PAGE = $scope.page;
+        var page = $scope.page;
         var search = $scope.search;
-        var params = $.extend({}, PAGE, search);
+        var params = $.extend({}, page, search);
         var url = '/' + $PROJECT + '/tomcat/listCacheMap.do';
         baseService.post(url, params).then(
             function (data) {

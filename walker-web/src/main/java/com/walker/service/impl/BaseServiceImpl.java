@@ -36,8 +36,8 @@ public class BaseServiceImpl implements BaseService,Serializable {
 
 	@Override
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... params) {
-		page.setNUM(baseDao.count(sql, params ));
-		return baseDao.findPage(sql,page.getNOWPAGE(),page.getSHOWNUM(), params );
+		page.setNum(baseDao.count(sql, params ));
+		return baseDao.findPage(sql,page.getNowpage(),page.getShownum(), params );
 	}
 
 	@Override

@@ -23,7 +23,7 @@ angular.module('com.http')
     };
 
     $scope.cols = ["ID", "NAME", "TIME"]; //搜索<添加/修改>列
-    $scope.page = {"NOWPAGE":1, "SHOWNUM":50, "ORDER":"","DESC":""}; //分页参数
+    $scope.page = {"nowpage":1, "shownum":50, "order":"","desc":""}; //分页参数
     //查询列表
     $scope.get = function(){
         var url = $scope.urlGet;

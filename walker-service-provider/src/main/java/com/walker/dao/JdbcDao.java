@@ -11,7 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Repository("jdbcDao")
+
+/*
+* 注解	含义
+@Component	最普通的组件，可以被注入到spring容器进行管理
+@Repository	作用于持久层
+@Service	作用于业务逻辑层
+@Controller	作用于表现层（spring-mvc的注解）
+* */
+@Repository
 public class JdbcDao extends BaseDaoAdapter {
 
     @Autowired

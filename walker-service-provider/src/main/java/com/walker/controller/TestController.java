@@ -4,7 +4,7 @@ package com.walker.controller;
 import com.walker.Response;
 import com.walker.common.util.Page;
 import com.walker.mode.Teacher;
-import com.walker.service.TestService;
+import com.walker.service.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class TestController {
 
     @Autowired
     @Qualifier("testJpaService")
-    private TestService jpaService;
+    private TeacherService jpaService;
 
     //    public Teacher add( Teacher test);
     @ApiOperation(value = "post 添加", notes = "post参数 RequestParam ")
@@ -101,9 +101,9 @@ public class TestController {
         String res = "get   name:" + name;
         log.info(res);
 
-        Page page1 = new Page().setNOWPAGE(nowPage).setSHOWNUM(showNum);
+        Page page1 = new Page().setNowpage(nowPage).setShownum(showNum);
 
-        List<Teacher> list = jpaService.finds(new Teacher("", name, "", ""), page1);
+        List<Teacher> list = jpaService.finds(new Teacher("", name == null ? "" : name, "", ""), page1);
         log.info(page1.toString());
         return Response.makePage(res, page1, list);
     }

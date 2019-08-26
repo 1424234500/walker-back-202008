@@ -63,7 +63,7 @@ angular.module('com.table')
     $scope.sql = 'select * from STUDENT';
     $scope.list = function(){ 
         var page = $scope.page;
-        page["ORDER"] = $scope.sort.orderCol ? $scope.sort.orderCol + ($scope.sort.order ? ' DESC': '') : ''
+        page["order"] = $scope.sort.orderCol ? $scope.sort.orderCol + ($scope.sort.order ? ' desc': '') : ''
         var params = $.extend({"sql":$scope.sql}, page);
         tableService.find(params).then(
             function (data) {
@@ -133,9 +133,9 @@ angular.module('com.table')
             }
         };
         $scope.list = function(){ 
-            var PAGE = $scope.page;
+            var page = $scope.page;
             var search = $scope.search;
-            var params = $.extend({}, PAGE, search);
+            var params = $.extend({}, page, search);
             tableService.list(params).then(
                 function (data) {
                     $scope.httplist = data.list;

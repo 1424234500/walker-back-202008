@@ -7,25 +7,40 @@ import javax.servlet.http.HttpServletRequest;
 public class Page implements Serializable{
 	private static final long serialVersionUID = 1L;
 	static int showNumDefault = 10;
-	long NUM = 0;	//总数据条数
-	int SHOWNUM = 5;//每页数量
-	int NOWPAGE = 1;	//当前页码
-	int PAGENUM = 0;	//总页数
-	String ORDER = "";	//排序	id, name desc, time asc 空则不排序
+	/**
+	 * 总数据条数
+	 */
+	long num = 0;
+	/**
+	 * 每页数量
+	 */
+	int shownum = 5;
+	/**
+	 * 当前页码
+	 */
+	int nowpage = 1;
+	/**
+	 * 总页数
+	 */
+	int pagenum = 0;
+	/**
+	 * 排序	id, name desc, time asc 空则不排序
+	 */
+	String order = "";
 	public String toString() {
 		return this.toBean().toString();
 	}
 	public Page(){
-		SHOWNUM = 10;
+		shownum = 10;
 	}
 	
-	public Page(int showNum, long allNum){
-		this.SHOWNUM = showNum;
-		this.setNUM(allNum);
+	public Page(int shownum, long allNum){
+		this.shownum = shownum;
+		this.setNum(allNum);
 	}
 	
 	public Bean toBean(){
-		return new Bean().put("NUM", NUM).put("SHOWNUM", SHOWNUM).put("NOWPAGE", NOWPAGE).put("ORDER", ORDER);
+		return new Bean().put("num", num).put("shownum", shownum).put("nowpage", nowpage).put("order", order);
 	}
 	
 	/**
@@ -33,9 +48,9 @@ public class Page implements Serializable{
 	 */
 	public static Page getPage(HttpServletRequest request){
 		Page res = new Page();
-		res.setNOWPAGE(request.getParameter("NOWPAGE"));
-		res.setSHOWNUM(request.getParameter("SHOWNUM"));
-		res.setORDER(request.getParameter("ORDER"));
+		res.setNowpage(request.getParameter("nowpage"));
+		res.setShownum(request.getParameter("shownum"));
+		res.setOrder(request.getParameter("order"));
 		return res;
 	}
 	/**
@@ -43,80 +58,80 @@ public class Page implements Serializable{
 	 */
 	public static Page getPage(Bean bean){
 		Page res = new Page();
-		res.setNOWPAGE(bean.get("NOWPAGE", "0"));
-		res.setSHOWNUM(bean.get("SHOWNUM", "0"));
-		res.setORDER(bean.get("ORDER", ""));
+		res.setNowpage(bean.get("nowpage", "0"));
+		res.setShownum(bean.get("shownum", "0"));
+		res.setOrder(bean.get("order", ""));
 		return res;
 	}
 	
 	public int start(){
-		return (NOWPAGE-1) * SHOWNUM;
+		return (nowpage -1) * shownum;
 	}
 	public int stop(){
-		return NOWPAGE * SHOWNUM;
+		return nowpage * shownum;
 	}
-	public long getNUM() {
-		return NUM;
+	public long getNum() {
+		return num;
 	} 
 	/**
 	 * 设置预期数据的总数量 并根据页显示数量更新总页数 
 	 * @param num
 	 */
-	public Page setNUM(long num) {
-		this.NUM = num;
-		this.PAGENUM = (int) Math.ceil( 1.0 * num / this.SHOWNUM );
+	public Page setNum(long num) {
+		this.num = num;
+		this.pagenum = (int) Math.ceil( 1.0 * num / this.shownum);
 		return this;
 	}
 
-	public int getSHOWNUM() {
-		return SHOWNUM;
+	public int getShownum() {
+		return shownum;
 	}
 
-	public Page setSHOWNUM(Object eachPageNum) {
+	public Page setShownum(Object eachPageNum) {
 		int defaultShowNum = Page.showNumDefault;
-		this.SHOWNUM = LangUtil.turn(eachPageNum, Page.showNumDefault);
-		if(this.SHOWNUM <= 0){
-			this.SHOWNUM = defaultShowNum;
+		this.shownum = LangUtil.turn(eachPageNum, Page.showNumDefault);
+		if(this.shownum <= 0){
+			this.shownum = defaultShowNum;
 		}
 		return this;
 	}
 
-	public int getNOWPAGE() {
-		return NOWPAGE;
+	public int getNowpage() {
+		return nowpage;
 	}
 
-	public Page setNOWPAGE(int nowPage){
-		this.NOWPAGE = nowPage;
-		if(this.NOWPAGE < 1){
-			this.NOWPAGE = 1;
+	public Page setNowpage(int nowPage){
+		this.nowpage = nowPage;
+		if(this.nowpage < 1){
+			this.nowpage = 1;
 		}
 		return this;
 	}
 
-	public Page setNOWPAGE(String nowPage) {
-		return setNOWPAGE(Tools.parseInt(nowPage, 1));
+	public Page setNowpage(String nowPage) {
+		return setNowpage(Tools.parseInt(nowPage, 1));
 	}
 
-	public int getPAGENUM() {
-		return PAGENUM;
+	public int getPagenum() {
+		return pagenum;
 	}
 
-	public Page setPAGENUM(Object pageNum) {
-		this.PAGENUM = LangUtil.turn(pageNum, 0);return this;
+	public Page setPagenum(Object pageNum) {
+		this.pagenum = LangUtil.turn(pageNum, 0);return this;
 	}
-	public String getORDER(String defaultValue) {
-		String res = this.getORDER();
+	public String getOrder(String defaultValue) {
+		String res = this.getOrder();
 		if(res.length() <= 0) {
 			res = defaultValue;
 		}
 		return res;
 	}
-	public String getORDER() {
-		return ORDER;
+	public String getOrder() {
+		return order;
 	}
 
-	public Page setORDER(String order) {
-		this.ORDER = order;return this;
+	public Page setOrder(String order) {
+		this.order = order;return this;
 	}
 
 	

@@ -7,6 +7,7 @@ import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.dao.JdbcDao;
+import com.walker.dao.KafkaDao;
 import com.walker.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

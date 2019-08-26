@@ -20,7 +20,7 @@ angular.module('com.file')
 
     $scope.cols = ["NAME", "SIZE"]; //搜索<添加/修改>列
     $scope.showCols = ["ID","NAME", "UPUSERID", "FILESIZE", "TYPE", "UPTIME", "CHANGETIME", "ABOUT"]; //展示列
-    $scope.page = {"NOWPAGE":1, "SHOWNUM":50, "ORDER":"","DESC":""}; //分页参数
+    $scope.page = {"nowpage":1, "shownum":50, "order":"","desc":""}; //分页参数
 
     $scope.search = {}; //查询
     $scope.search={};

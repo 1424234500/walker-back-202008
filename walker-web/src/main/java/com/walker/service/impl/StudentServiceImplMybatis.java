@@ -44,7 +44,7 @@ public class StudentServiceImplMybatis implements StudentService, Serializable {
 				.put("PAGESTART", page.start())
 				.put("PAGESTOP", page.stop())
 				.build();  
-		page.setNUM(baseMapper.count(map));
+		page.setNum(baseMapper.count(map));
 		return baseMapper.find(map);
 	}
 
