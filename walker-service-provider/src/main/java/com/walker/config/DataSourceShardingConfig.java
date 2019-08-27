@@ -3,6 +3,8 @@ package com.walker.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.shardingsphere.api.algorithm.sharding.PreciseShardingValue;
+import io.shardingsphere.api.algorithm.sharding.standard.PreciseShardingAlgorithm;
 import io.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  * 数据源源配置
@@ -49,7 +52,6 @@ public class DataSourceShardingConfig extends SpringBootConfiguration {
         log.info("dataSource init " + ds.toString());
         return ds;
     }
-
 
 
 

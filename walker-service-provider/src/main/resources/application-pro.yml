@@ -58,7 +58,7 @@ spring:
 
     default:
       #redis cache 过期时间
-      expiration:3600
+      expiration:3509
 
 logging:
   file: /home/walker/logs/sb.log

@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 
 @Entity
-@Table(name = "MAN")
+@Table(name = "W_MAN")
 public class Man implements Cloneable, Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id     //主键
@@ -20,15 +20,24 @@ public class Man implements Cloneable, Serializable {
 	private String id;
 	@Column(name = "NAME", nullable = false, length = 256)    //255
     private String name;
-	@Column(name = "SEX", nullable = false, length = 2)    //255
-	private String sex;
-	@Column(name = "PWD", nullable = false, length = 2)    //255
+	@Column(name = "SEX", nullable = false)    //255
+	private Integer sex;
+	@Column(name = "PWD", nullable = false, length = 200)    //255
 	private String pwd;
 	@Column(name = "S_MTIME", nullable = true, length = 32)    //255
     private String time;
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
+	}
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public Man setSex(Integer sex) {
+		this.sex = sex;
+		return this;
 	}
 
 	@Override
@@ -60,14 +69,6 @@ public class Man implements Cloneable, Serializable {
 		return this;
 	}
 
-	public String getSex() {
-		return sex;
-	}
-
-	public Man setSex(String sex) {
-		this.sex = sex;
-		return this;
-	}
 
 	public String getPwd() {
 		return pwd;
