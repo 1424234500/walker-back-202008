@@ -24,7 +24,12 @@ import java.util.Set;
  * 离线消息积压队列
  * 上线后 先拉离线 清空 再接收新消息
  *
+ * 修改		手动分表修改
+ * 查询1	手动分表查询
+ * 查询2	MERGE引擎合表查询
+ *
  */
+@com.alibaba.dubbo.config.annotation.Service(version = "1.0.0", timeout = 2048)
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {
 	Logger log = Logger.getLogger(getClass());

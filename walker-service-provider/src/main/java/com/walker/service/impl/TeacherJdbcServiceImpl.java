@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service("testJdbcService")
+@Service("teacherJdbcService")
 public class TeacherJdbcServiceImpl implements TeacherService {
     @Autowired
     JdbcTemplate jdbcTemplate;

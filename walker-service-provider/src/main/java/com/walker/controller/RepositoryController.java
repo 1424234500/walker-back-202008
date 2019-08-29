@@ -2,7 +2,6 @@ package com.walker.controller;
 
 
 import com.walker.Response;
-import com.walker.common.util.Page;
 import com.walker.dao.TeacherRepository;
 import com.walker.mode.Teacher;
 import io.swagger.annotations.Api;
@@ -10,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -77,16 +77,55 @@ public class RepositoryController {
             @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum
     ) {
         Sort sort = new Sort(Sort.Direction.ASC, "name");
-        Pageable pageable = new PageRequest(nowPage-1, showNum, sort);
+        Pageable pageable = PageRequest.of(nowPage-1, showNum, sort);
         log.info(pageable.toString());
-        Page page1 = new Page().setNowpage(nowPage).setShownum(showNum);
+        com.walker.common.util.Page page1 = new com.walker.common.util.Page().setNowpage(nowPage).setShownum(showNum);
         List<Teacher> list = teacherRepository.selfFindPage(name, pageable);
         int count = teacherRepository.selfCount(name);
         page1.setNum(count);
         log.info(page1.toString());
         return Response.makePage("", page1, list);
     }
+    @ApiOperation(value = "分页查询2 repository分页查询jpql", notes = "url restful参数 PathVariable")
+    @ResponseBody
+    @RequestMapping(value = "/selfFindPage2.do", method = RequestMethod.GET)
+    public Response selfFindPage2(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum
+    ) {
+        Sort sort = new Sort(Sort.Direction.ASC, "name");
+        Pageable pageable = PageRequest.of(nowPage-1, showNum, sort);
+        log.info(pageable.toString());
+        com.walker.common.util.Page page1 = new com.walker.common.util.Page().setNowpage(nowPage).setShownum(showNum);
+        Page<Teacher> pageOnceJpql = teacherRepository.selfFindPageOnceJpql(name, pageable);
+        List<Teacher> list = pageOnceJpql.getContent();
 
+        long count = pageOnceJpql.getTotalElements();//teacherRepository.selfCount(name);
+        page1.setNum(count);
+        log.info(page1.toString());
+        return Response.makePage("", page1, list);
+    }
+    @ApiOperation(value = "分页查询2 repository分页查询 sql", notes = "url restful参数 PathVariable")
+    @ResponseBody
+    @RequestMapping(value = "/selfFindPage3.do", method = RequestMethod.GET)
+    public Response selfFindPage3(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum
+    ) {
+        Sort sort = new Sort(Sort.Direction.ASC, "name");
+        Pageable pageable = PageRequest.of(nowPage-1, showNum, sort);
+        log.info(pageable.toString());
+        com.walker.common.util.Page page1 = new com.walker.common.util.Page().setNowpage(nowPage).setShownum(showNum);
+        Page<Teacher> pageOnceJpql = teacherRepository.selfFindPageOnceSql(name, pageable);
+        List<Teacher> list = pageOnceJpql.getContent();
+
+        long count = pageOnceJpql.getTotalElements();//teacherRepository.selfCount(name);
+        page1.setNum(count);
+        log.info(page1.toString());
+        return Response.makePage("", page1, list);
+    }
     @ApiOperation(value = "自定义查询 selfCount")
     @ResponseBody
     @RequestMapping(value = "/selfCount.do", method = RequestMethod.GET, produces = "application/json")
@@ -97,11 +136,11 @@ public class RepositoryController {
     }
     @ApiOperation(value = "getOne 查询")
     @ResponseBody
-    @RequestMapping(value = "/getOne.do", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/findById.do", method = RequestMethod.GET, produces = "application/json")
     public Response getOne(
             @RequestParam(value = "id", required = true, defaultValue = "1") String id
             ) {
-        Teacher res = teacherRepository.getOne(id);
+        Teacher res = teacherRepository.findById(id).get();
         if (res == null) {
             return Response.makeFalse("not exists");
         } else {

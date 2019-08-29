@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * 生成表名 可动态 去掉实际表名区间 按日期生成表
+ */
 public class DefaultShardingAlgorithm implements PreciseShardingAlgorithm<String> {
     private Logger log = LoggerFactory.getLogger(getClass());
 
