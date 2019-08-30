@@ -113,18 +113,21 @@ System.getProperty("user.dir") 	/home/walker/e/workspace_my/walker/walker-socket
 			}
 		}
 		if(res.length() == 0) {
-			res = getPathRoot(System.getProperty("path_conf", "conf"));
+			res = getPathRoot(getConfName());
 		}
 //		/walker/walker-socket/target/classes/
 //		/home/walker/e/workspace_my/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/walker-web/WEB-INF/classes/
-
-		
-		
 		return res;
+	}
+	public static void setConfName(String name){
+		System.setProperty("path_conf", name);
+	}
+	public static String getConfName(){
+		return System.getProperty("path_conf", "conf");
 	}
 	public static String getPathConf(String file) {
 		return getPathConf() + File.separator + file;
-}
+	}
 
 	
 	

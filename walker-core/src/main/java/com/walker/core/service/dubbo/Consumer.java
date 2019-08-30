@@ -16,7 +16,7 @@ public class Consumer {
 	
     public static void main(String[] args) throws Exception {
 //        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
-//        		new String[] {"dubbo-consumer.xml"});
+//        		new String[] {"dubbo-dubbo.xml"});
 //        context.start();
 //        new Consumer(context);
     }

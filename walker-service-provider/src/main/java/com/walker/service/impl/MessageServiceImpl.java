@@ -29,7 +29,6 @@ import java.util.Set;
  * 查询2	MERGE引擎合表查询
  *
  */
-@com.alibaba.dubbo.config.annotation.Service(version = "1.0.0", timeout = 2048)
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {
 	Logger log = Logger.getLogger(getClass());

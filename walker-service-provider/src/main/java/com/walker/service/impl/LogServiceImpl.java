@@ -9,6 +9,7 @@ import com.walker.core.cache.CacheMgr;
 import com.walker.dao.JdbcDao;
 import com.walker.dao.KafkaDao;
 import com.walker.service.LogService;
+import com.walker.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,8 @@ import java.util.Set;
 
 @Transactional
 @Service("logService")
-@Scope("prototype")
-public class LogServiceImpl implements LogService,Serializable {
-	private static final long serialVersionUID = 8304941820771045214L;
+//@Scope("prototype")	//默认单例 dubbo不能单例
+public class LogServiceImpl implements LogService {
     @Autowired
     private JdbcDao jdbcDao;
 
