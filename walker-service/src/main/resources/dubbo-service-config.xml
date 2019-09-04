@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://code.alibabatech.com/schema/dubbo
        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
-	
+
 	<!-- 可配置于classPath:dubbo.properties -->
-	
-    <!-- name提供方应用名 owner负责人 -->
-	<dubbo:application name="dubbo_ssm_consumer" owner="walker" logger="log4j"  />
-	
+
+
+	<!-- name提供方应用名 owner负责人 aa-->
+	<dubbo:application name="dubbo_service_consumer" owner="walker" logger="log4j"  />
+
 	<!-- 提供服务端口 -->
 	<dubbo:protocol name="dubbo" port="20881" />
-	
+
 	<!-- 注册中心 -->
 
 	<!-- zookeeper 版本可配？ enable="true" ,122.10.1.12:2182 register="false" 只订阅-->
-	<dubbo:registry address="127.0.0.1:2181" protocol="zookeeper"  />
+	<dubbo:registry address="127.0.0.1:2181" protocol="zookeeper" register="true" />
 	<!-- redis -->		
 	
 	<!-- 监控中心 -->
@@ -36,13 +36,12 @@
 	<!-- 服务消费 2 -->
 	
     <!-- 指向远程服务代理,和provider中相同-->
-	<dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="2048" version="1.0"  />
-	<dubbo:service ref="messageService" interface="com.walker.service.MessageService" timeout="2048" version="1.0" />
-	<dubbo:service ref="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="2048" version="1.0" />
+<!--	<dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="2048" version="1.0"  />-->
+<!--	<dubbo:service ref="messageService" interface="com.walker.service.MessageService" timeout="2048" version="1.0" />-->
+<!--	<dubbo:service ref="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="2048" version="1.0" />-->
 
-	<dubbo:service ref="loginService" interface="com.walker.service.LoginService" timeout="2048" version="1.0" />
 	<dubbo:service ref="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="2048" version="1.0" />
-	<dubbo:service ref="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="2048" version="1.0" />
+<!--	<dubbo:service ref="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="2048" version="1.0" />-->
 
 
 </beans>
