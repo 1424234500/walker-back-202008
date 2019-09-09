@@ -24,5 +24,7 @@ public interface LogService  {
 	 * 把统计在redis中的数据导出到oracle
 	 */
 	public void saveStatis();
-		
+
+
+	public String echo(String hello);
 }

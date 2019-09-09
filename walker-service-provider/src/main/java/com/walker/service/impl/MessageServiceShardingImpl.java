@@ -96,7 +96,6 @@ public class MessageServiceShardingImpl implements MessageService {
 //			jdbcDao.executeSql("insert into " + TABLE_MSG_ + SqlUtil.makeTableCount(COUNT_MSG,msgId) + " values(?,?)",  msgId, msg.toString() );
 			Message message = new Message().setId(msgId).setText(msg.toString());
 			messageRepository.save(message);
-
 			List<MessageUser> dbLines = new ArrayList<>();
 			String fromId = msg.getUserFrom().getId();
 			for(String toId : toIds) {
