@@ -87,4 +87,9 @@ public class LogServiceImpl implements LogService {
 		//redis.show();
 	}
 
+	@Override
+	public String echo(String hello) {
+		return "echo:" + hello;
+	}
+
 }
