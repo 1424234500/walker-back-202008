@@ -49,6 +49,12 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 	W_MSG       W_MSG_0		    W_MSG_1
 	W_MSG_USER  W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
 
+###端口分配
+socket_port_netty=8093
+port_rmi=8090
+port_webservice=8091
+port_dubbo=8092
+
 
 
 # 模块划分
@@ -133,13 +139,8 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 
 	集群部署
 	挂载  f5/nginx
-	通信  无
+	通信  无	
 	
-#### service 业务service处理
-
-	service 服务层 封装业务逻辑块 
-	
-
 #### web 网络服务servlet提供
 
 * controller 控制器 

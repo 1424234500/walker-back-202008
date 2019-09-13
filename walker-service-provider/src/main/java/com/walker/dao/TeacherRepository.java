@@ -3,6 +3,7 @@ package com.walker.dao;
 import com.walker.mode.Teacher;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -129,16 +130,30 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {//实
     Teacher selfFindByName(@Param("name") String name);
 
     /**
-     * JPQL 分页查询定制
+     * JPQL查询数量
+     */
+    @Query("select count(t.id) from Teacher t where t.name like CONCAT('%', ?1, '%') ")
+    int selfCount(String name);
+
+    /**
+     * JPQL 分页查询定制 只获取数据
      */
     @Query("select t from Teacher t where t.name like CONCAT('%', ?1, '%') ")
     List<Teacher> selfFindPage(String name, Pageable page);
 
     /**
-     * JPQL查询数量
+     * 分页查询 native    同时获取分页信息  cost 900
      */
-    @Query("select count(t.id) from Teacher t where t.name like CONCAT('%', ?1, '%') ")
-    int selfCount(String name);
+    @Query(value = "select t.* from TEACHER t where t.name like CONCAT('%', ?1, '%')",
+            countQuery = "select count(t.id) from TEACHER t where t.name like CONCAT('%', ?1, '%')",
+            nativeQuery = true)
+    Page<Teacher> selfFindPageOnceSql(String name, Pageable pageable);
+
+    /**
+     * 分页查询 JPQL    同时获取分页信息    cost 500
+     */
+    @Query(value = "select t from Teacher t where t.name like CONCAT('%', ?1, '%')")
+    Page<Teacher> selfFindPageOnceJpql(String name, Pageable pageable);
 
 
 

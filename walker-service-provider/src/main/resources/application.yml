@@ -5,11 +5,15 @@ server:
     max-connections: 1000
     max-threads: 200
     min-spare-threads: 10
-  port: 8080
+  port: 8092
 
 spring:
+
+
   profiles:
     active: pro ,sharding #加载多个模块配置文件yml pro,test,log4j
+
+
 
   main:
     allow-bean-definition-overriding: true

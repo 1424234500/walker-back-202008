@@ -5,7 +5,7 @@ import com.walker.mode.Msg;
 import java.util.List;
 
 
-public interface MessageService {
+public interface MessageService  {
     /**
      * 消息每张分表数量
      */

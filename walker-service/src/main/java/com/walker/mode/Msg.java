@@ -29,7 +29,6 @@ import com.walker.common.util.JsonUtil;
  * 	
  * 		
  */
-@SuppressWarnings("unchecked")
 public class Msg extends Bean implements Cloneable, Serializable {
 	public static final long serialVersionUID = 1L;
 	final public static String SPLIT = ",";
@@ -40,7 +39,7 @@ public class Msg extends Bean implements Cloneable, Serializable {
 	//time_client - 网络传输耗时 - time_receive - 队列等待耗时 - time_do - 业务处理耗时 - time_send
 	final public static String KEY_TIME_CLIENT = "TC";	//client send time
 	final public static String KEY_TIME_RECEIVE = "TR";	//server receive time to pipe
-	final public static String KEY_TIME_DO = "TD";			//server consumer time
+	final public static String KEY_TIME_DO = "TD";			//server dubbo time
 	final public static String KEY_TIME_SEND = "TS";		//server send time
 	
 	final public static String KEY_WAIT_SIZE = "WS";		//pipe 队列等待深度

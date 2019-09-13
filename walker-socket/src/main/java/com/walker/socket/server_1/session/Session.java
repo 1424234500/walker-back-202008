@@ -9,9 +9,7 @@ import com.walker.core.route.SubPubMgr;
 import com.walker.mode.Key;
 import com.walker.mode.Msg;
 import com.walker.mode.User;
-import com.walker.service.MessageService;
 import com.walker.socket.server_1.plugin.Plugin;
-import com.walker.socket.service.redis.MessageServiceImpl;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,8 +27,7 @@ import org.apache.log4j.Logger;
 public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	private static Logger log = Logger.getLogger(Session.class); 
 	
-	MessageService messageService = new MessageServiceImpl();
-	
+
 	User user = new User();
 	/**
 	 * socket ip:port
@@ -122,9 +119,7 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 
 		bean.set(Key.USER, getUser());
 		String beforeStr = bean.get(Key.BEFORE, TimeUtil.getTimeYmdHmss());
-//		long before = TimeUtil.format(beforeStr, "yyyy-MM-dd HH:mm:ss:sss").getTime();
-//		bean.set(Key.MSG, messageService.finds(user.getId(), before, Integer.MAX_VALUE));
-		
+
 	}
 	public void onUnLogin(Bean bean) {
 		User user = getUser();

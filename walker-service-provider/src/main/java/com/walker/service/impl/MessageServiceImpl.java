@@ -24,6 +24,10 @@ import java.util.Set;
  * 离线消息积压队列
  * 上线后 先拉离线 清空 再接收新消息
  *
+ * 修改		手动分表修改
+ * 查询1	手动分表查询
+ * 查询2	MERGE引擎合表查询
+ *
  */
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {

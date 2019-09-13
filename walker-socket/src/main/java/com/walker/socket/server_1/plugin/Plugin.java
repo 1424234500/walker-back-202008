@@ -7,10 +7,8 @@ import com.walker.core.route.SubPub;
 import com.walker.core.route.SubPubMgr;
 import com.walker.mode.Msg;
 import com.walker.mode.User;
-import com.walker.service.MessageService;
 import com.walker.socket.server_1.netty.handler.SessionHandler;
 import com.walker.socket.server_1.session.Session;
-import com.walker.socket.service.redis.MessageServiceImpl;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -22,9 +20,7 @@ import java.util.List;
  */
 public abstract class Plugin<T> {
 	protected Logger log = Logger.getLogger(Plugin.class); 
-	MessageService service = new MessageServiceImpl();
 
-	
 	final public static String KEY_LOGIN = "login";
 	final public static String KEY_SERVICE= "service";
 	final public static String KEY_MESSAGE = "message";
@@ -82,10 +78,6 @@ public abstract class Plugin<T> {
 
 		String[] tos = msgc.getUserTo();
 
-		//离线消息记录
-		if(msg.getType().equals(Plugin.KEY_MESSAGE))
-			service.save(tos, msgc);
-		
 		//单端在线 记录未命中目标 向上传递
 		List<String> offUsers = new ArrayList<String>();
 		for(String to : tos) {

@@ -2,11 +2,14 @@ package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
 import com.walker.mode.Msg;
+import com.walker.service.MessageService;
+import com.walker.socket.service.redis.MessageServiceImpl;
 
 public  class MessagePlugin<T> extends Plugin<T>{
-	
-	
-    MessagePlugin(Bean params) {
+
+	MessageService service = new MessageServiceImpl();
+
+	MessagePlugin(Bean params) {
 		super(params);
 	}
 	/**
@@ -22,7 +25,11 @@ public  class MessagePlugin<T> extends Plugin<T>{
 //		 *						data.type	具体消息类型	text,image,voice,video,map
 //		 *						data.body
 		//发送方设置去向 接收方只看到发送给自己
-		
+
+		//离线消息记录
+		service.save(msg.getUserTo(), msg);
+
+		//广播
 		publish(msg);
 
 	}

@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /*
-测试 jap jpaService
+测试 jap teacherService
 
  */
 @Api(value = "测试jpa操作 service层 ")
 @Controller
-@RequestMapping("/test")
-public class TestController {
+@RequestMapping("/teacher")
+public class TeacherController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
 
     @Autowired
-    @Qualifier("testJpaService")
-    private TeacherService jpaService;
+    @Qualifier("teacherJpaService")
+    private TeacherService teacherService;
 
     //    public Teacher add( Teacher test);
     @ApiOperation(value = "post 添加", notes = "post参数 RequestParam ")
@@ -42,7 +42,7 @@ public class TestController {
     ) {
         String res = "post id:" + id + " name:" + name + " time:" + time;
         log.info(res);
-        Teacher model = jpaService.add(new Teacher(id, name, time, ""));
+        Teacher model = teacherService.add(new Teacher(id, name, time, ""));
         return Response.makeTrue(res, model);
     }
 
@@ -58,7 +58,7 @@ public class TestController {
     ) {
         String res = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
         log.info(res);
-        Integer model = jpaService.update(new Teacher(id, name, time, pwd));
+        Integer model = teacherService.update(new Teacher(id, name, time, pwd));
         return Response.makeTrue(res, model);
     }
 
@@ -71,7 +71,7 @@ public class TestController {
     ) {
         String res = "delete id:" + id;
         log.info(res);
-        jpaService.delete(new Teacher(id, "", "", ""));
+        teacherService.delete(new Teacher(id, "", "", ""));
         return Response.makeTrue(res);
     }
 
@@ -83,7 +83,7 @@ public class TestController {
     ) {
         String res = "get id:" + id;
         log.info(res);
-        Teacher model = jpaService.get(new Teacher(id, "", "", ""));
+        Teacher model = teacherService.get(new Teacher(id, "", "", ""));
         return Response.makeTrue(res, model);
     }
 //
@@ -103,7 +103,7 @@ public class TestController {
 
         Page page1 = new Page().setNowpage(nowPage).setShownum(showNum);
 
-        List<Teacher> list = jpaService.finds(new Teacher("", name == null ? "" : name, "", ""), page1);
+        List<Teacher> list = teacherService.finds(new Teacher("", name == null ? "" : name, "", ""), page1);
         log.info(page1.toString());
         return Response.makePage(res, page1, list);
     }

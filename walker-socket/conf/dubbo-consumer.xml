@@ -10,14 +10,14 @@
 	<!-- 可配置于classPath:dubbo.properties -->
 	
     <!-- name提供方应用名 owner负责人 -->
-	<dubbo:application name="dubbo_ssm_consumer" owner="cph" logger="log4j"  />
+	<dubbo:application name="dubbo_consumer_socket" owner="walker" logger="log4j"  />
 	
 	<!-- 提供服务端口 -->
 	<dubbo:protocol name="dubbo" port="20881" />
 	
 	<!-- 注册中心 -->
-
-	<!-- zookeeper 版本可配？ enable="true" ,122.10.1.12:2182 register="false" 只订阅-->
+	
+	<!-- zookeeper 版本可配？ enable="true" ,122.10.1.12:2182 -->
 	<dubbo:registry address="127.0.0.1:2181" protocol="zookeeper"  />
 	<!-- redis -->		
 	
@@ -36,8 +36,7 @@
 	<!-- 服务消费 2 -->
 	
     <!-- 指向远程服务代理,和provider中相同-->
-	<dubbo:reference id="serviceClass" interface="com.walker.core.service.service.ServiceClass" version="1.0" check="false" />
-   	<dubbo:reference id="serviceDubbo" interface="com.walker.core.service.service.ServiceDubbo" version="1.0" check="false" />
-	
+	<dubbo:reference id="messageService" interface="com.walker.service.MessageService" version="1.0.0" check="false" />
+
 
 </beans>
