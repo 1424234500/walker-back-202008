@@ -85,4 +85,5 @@ public class LogServiceImpl implements LogService,Serializable {
 		//redis.show();
 	}
 
+
 }

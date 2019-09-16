@@ -3,7 +3,7 @@
  
 angular.module('com.table', [])
 .config(['$urlRouterProvider', '$stateProvider',  function ($urlRouterProvider, $stateProvider) {
-   
+
     var mName = 'table';
 
     //定义层级路由 url路径 参数 绑定controller

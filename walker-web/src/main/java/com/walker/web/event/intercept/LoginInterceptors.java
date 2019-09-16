@@ -6,6 +6,7 @@ import com.walker.core.cache.CacheMgr;
 import com.walker.service.LogService;
 import com.walker.service.LoginService;
 import com.walker.web.RequestUtil;
+import com.walker.web.controller.Context;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -93,6 +94,8 @@ public class LoginInterceptors implements HandlerInterceptor{
 	    if(needLogin){
 	    	logger.info("token:" + tokenObj + " 无效 未登录:跳转到login页面！");
 	    	loginService.login();
+			request.getSession().setAttribute(LoginService.CACHE_KEY, Context.getToken());
+
 //			String url = request.getRequestURI().substring(request.getContextPath().length());  //[/student/listm]
 //			request.setAttribute("fromUrl", url);
 //            request.getRequestDispatcher("/#/login").forward(request, response);

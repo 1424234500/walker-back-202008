@@ -1,12 +1,10 @@
 package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
-import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.mode.Key;
 import com.walker.mode.Msg;
 import com.walker.socket.server_1.session.Session;
-import org.junit.Test;
 
 /**
  * 构造各种消息格式
@@ -105,13 +103,5 @@ public class MsgBuilder {
 		return new Msg().setType(Plugin.KEY_LOGIN).setStatus(2).setData(bean.set(Key.SESSION, session));
 	}
 
-	@Test
-	public void test() {
-		Tools.out(makeLogin("test", TimeUtil.getTimeYmdHmss()));
-		Tools.out(testMessageTo("to", "test"));
-		Tools.out(testMonitor());
-		
-	}
-	
 	
 }

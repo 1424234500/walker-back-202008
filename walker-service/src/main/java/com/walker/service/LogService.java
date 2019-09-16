@@ -26,5 +26,4 @@ public interface LogService  {
 	public void saveStatis();
 
 
-	public String echo(String hello);
 }

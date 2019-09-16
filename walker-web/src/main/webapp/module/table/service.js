@@ -16,11 +16,11 @@ angular.module('com.table')
         tableName = name;
     };
     service.getTable = function(){
-        return tableName;   
+        return tableName;
     };
 
     service.make = function(params){
-        if( ! params){ 
+        if( ! params){
             params = {};
         }
         params['TABLE_NAME'] = tableName;

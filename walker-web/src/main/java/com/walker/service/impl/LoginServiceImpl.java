@@ -37,7 +37,6 @@ public class LoginServiceImpl implements LoginService,Serializable {
 		map.put(token, bean);
 		cache.put(CACHE_KEY, map);	
 		log.info("登录" + id + "." + pwd + "." + token);
-		Context.getRequest().getSession().setAttribute(CACHE_KEY, token);
 		return true;
 	}
     

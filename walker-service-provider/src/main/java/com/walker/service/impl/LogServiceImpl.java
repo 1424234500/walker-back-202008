@@ -7,15 +7,11 @@ import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.dao.JdbcDao;
-import com.walker.dao.KafkaDao;
 import com.walker.service.LogService;
-import com.walker.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
 import java.util.Set;
 
 @Transactional
@@ -85,11 +81,6 @@ public class LogServiceImpl implements LogService {
 			}
 //		redis.clearKeys();
 		//redis.show();
-	}
-
-	@Override
-	public String echo(String hello) {
-		return "echo:" + hello;
 	}
 
 }

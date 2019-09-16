@@ -1,16 +1,5 @@
 package com.walker.socket.service.redis;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import com.walker.service.MessageService;
-import com.walker.socket.server_1.plugin.MsgBuilder;
-import org.apache.log4j.Logger;
-import org.junit.Test;
-
 import com.walker.common.util.Bean;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.TimeUtil;
@@ -20,12 +9,17 @@ import com.walker.core.database.Dao;
 import com.walker.core.database.Redis;
 import com.walker.core.database.Redis.Fun;
 import com.walker.core.database.SqlUtil;
-import com.walker.common.util.Watch;
 import com.walker.mode.Key;
 import com.walker.mode.Msg;
-import com.walker.mode.User;
-
+import com.walker.service.MessageService;
+import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * 离线消息积压队列
@@ -263,64 +257,4 @@ public class MessageServiceImpl implements MessageService {
 
 	
 
-
-	@Test
-	public void test() {
-		
-		MessageServiceImpl service = new MessageServiceImpl();
-		
-		int saveCount = 100;
-		int size = 100;
-		Watch w = new Watch("test merge and no merge", size);
-
-		w.costln("sizeMsg", service.sizeMsg());
-		w.costln("sizeMsgUser", service.sizeMsgUser());
-		
-		
-		String id = "000";
-		String id1 = "001";
-		String id2 = "002";
-		String id3 = "003";
-		String id4 = "004";
-		List<String> scores = new ArrayList<String>();
-		for(int i = 0; i < saveCount; i++) {
-			Msg msg = new MsgBuilder().makeMsg("TEST_" + getClass().getSimpleName(), "", new Bean().set("count", i))
-					.setUserFrom(new User().setId(id).setName("name"))
-					.setTimeDo(System.currentTimeMillis());
-			msg.addUserTo(id1);
-			msg.addUserTo(id2);
-			msg.addUserTo(id3);
-			msg.addUserTo(id4);
-			
-			Long score = service.save(msg.getUserTo(), msg);
-			String t = TimeUtil.format(score, "yyyy-MM-dd HH:mm:ss:SSS");
-			Tools.out(score, t);
-			scores.add(t);
-		}
-		w.costln("save",saveCount);
-		w.costln("sizeMsg", service.sizeMsg());
-		w.costln("sizeMsgUser", service.sizeMsgUser());
-		
-		Tools.formatOut(scores);
-		//查接收者的离线消息
-		List<Msg> list = service.findAfter(id1, scores.get(0), 20);
-		Tools.formatOut(list);
-		
-		//查发送者和接受者会话的历史消息
-		List<Msg> list1 = service.findBefore(id, id1, scores.get(scores.size() - 1), 20);
-		Tools.formatOut(list1);
-		
-		for(int i = 0;i < size; i++) {
-			Tools.out(i);
-			service.findBefore(id, id1, scores.get(scores.size() - 1), i % 20);
-		}
-		w.costln("findBefore",size);
-		for(int i = 0;i < size; i++) {
-			Tools.out(i);
-			service.findBeforeByMerge(id, id1, scores.get(scores.size() - 1), i % 20);
-		}
-		w.costln("findBeforeByMerge",size);
-		w.res();
-		Tools.out(w);
-	}
 }

@@ -27,6 +27,8 @@ import net.sf.ehcache.Element;
  * ehcache实现
  */
 class CacheEhcacheImpl  extends CacheAdapter<String>{//implements Cache<String> {
+	private static final String SPLIT = ".";
+
 	static int ALL_COUNT = 0; //所有缓存访问get次数
 	private CacheManager cacheMgr = null;
 	private net.sf.ehcache.Cache cache = null;
@@ -137,7 +139,8 @@ class CacheEhcacheImpl  extends CacheAdapter<String>{//implements Cache<String> 
 	}
 	@Override
 	public <V> String put(String url, String key, V value, long expire) {
-		return "false";
+		put(url + SPLIT + key, value, expire);
+		return url + SPLIT + key;
 	}
 	/**
 	 * 根据url 来移除key

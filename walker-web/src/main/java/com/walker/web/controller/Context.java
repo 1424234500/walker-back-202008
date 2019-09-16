@@ -119,6 +119,13 @@ public class Context extends ContextSystem {
 		return Context.get(STR_TIME, System.currentTimeMillis());
 	}
 
-	
-	
+
+
+	private final static String STR_TOKEN = "_TOKEN_";
+	public static void setToken(String token){
+		Context.set(STR_TOKEN, token);
+	}
+	public static String getToken(){
+		return Context.get(STR_TOKEN, "");
+	}
 }

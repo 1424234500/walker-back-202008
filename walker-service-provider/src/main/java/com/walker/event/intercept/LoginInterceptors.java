@@ -3,6 +3,7 @@ package com.walker.event.intercept;
 import com.walker.common.util.Bean;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
+import com.walker.event.Context;
 import com.walker.event.RequestUtil;
 import com.walker.event.SpringContextUtil;
 import com.walker.service.LogService;
@@ -91,6 +92,7 @@ public class LoginInterceptors implements HandlerInterceptor{
     	}else{
 	    	logger.info("token:" + tokenObj + " 无效 未登录：跳转到login页面！");
 	    	loginService.login();
+	    	request.getSession().setAttribute("token", Context.getToken());
            // request.getRequestDispatcher("/login/onlogin.do").forward(request, response);  
            // return false;
 	    }

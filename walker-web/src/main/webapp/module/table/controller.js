@@ -3,12 +3,12 @@ angular.module('com.table')
 
 .controller('com.table', ['$scope', '$rootScope', '$state', '$stateParams', 'tableService', function ($scope, $rootScope, $state, $stateParams, tableService) {
     //此处的成员变量 和 函数都能被子类ctrl使用和访问
-	//若是对象类型 可修改对象成员					//可用于多 子路由共享数据 
+	//若是对象类型 可修改对象成员					//可用于多 子路由共享数据
 	//若是基本类型或更改引用 则新内存隔离	//注意不会修改父类的数据
 	var mName = 'table';
     var routeDir = 'main.' + mName;		//	main.simple
 	$scope.mName = mName;
-	
+
 	 //初始化分页
     $scope.page = {};
     //初始化排序
@@ -32,7 +32,7 @@ angular.module('com.table')
     $scope.keydown = function(event){
         if (event.keyCode == 13) {
             $scope.list();
-        }   
+        }
     };
     $scope.table = 'STUDENT';
     //初始化路由页面跳转
@@ -48,7 +48,7 @@ angular.module('com.table')
         $state.go(routeDir + '.update', params);
     };
 
-    
+
     $scope.page = {};
 //    $scope.search = {}; //查询
     $scope.sort = {'orderCol': '', 'order': ''};
@@ -61,7 +61,7 @@ angular.module('com.table')
         }
     };
     $scope.sql = 'select * from STUDENT';
-    $scope.list = function(){ 
+    $scope.list = function(){
         var page = $scope.page;
         page["order"] = $scope.sort.orderCol ? $scope.sort.orderCol + ($scope.sort.order ? ' desc': '') : ''
         var params = $.extend({"sql":$scope.sql}, page);
@@ -75,10 +75,10 @@ angular.module('com.table')
                 $scope.err = data["info"];
         }, function(error){
         	$scope.err = error["info"];
-        });   
+        });
     };
-    
-    
+
+
 }])
 .controller('com.table.addCtrl', ['$scope', '$rootScope', 'tableService', function ($scope, $rootScope, tableService) {
     $scope.httpget = {};
@@ -88,7 +88,7 @@ angular.module('com.table')
             function (data) {
                 info("操作数据:" + data + "条");
 //                $scope.goHome();
-        }, error); 
+        }, error);
     };
 }])
 .controller('com.table.updateCtrl', ['$scope', '$rootScope', '$stateParams', 'tableService', function ($scope, $rootScope, $stateParams, tableService) {
@@ -102,21 +102,21 @@ angular.module('com.table')
     params[$rootScope.cols[0]] = $scope.params.id;
     tableService.get(params).then(
         function (data) {
-            $scope.httpget = data; 
+            $scope.httpget = data;
     }, error);
- 
+
 
     $scope.update = function(){
         var params = $scope.httpget;
         tableService.update(params).then(
             function (data) {
                 info("操作数据:" + data + "条");
-                $scope.goHome(); 
-            }, error);  
+                $scope.goHome();
+            }, error);
 
     };
 }])
-.controller('com.table.listCtrl', ['$scope', '$rootScope', '$state', 'tableService', function ($scope, $rootScope, $state, tableService) { 
+.controller('com.table.listCtrl', ['$scope', '$rootScope', '$state', 'tableService', function ($scope, $rootScope, $state, tableService) {
 
     //加载页面
     var loadPage = function(){
@@ -132,7 +132,7 @@ angular.module('com.table')
                 $scope.order = '';
             }
         };
-        $scope.list = function(){ 
+        $scope.list = function(){
             var page = $scope.page;
             var search = $scope.search;
             var params = $.extend({}, page, search);
@@ -144,22 +144,22 @@ angular.module('com.table')
 
                     $scope.sums =  listSums($scope.httplist, $rootScope.cols);
 
-            }, error);   
+            }, error);
         };
         $scope.list();
         $scope.keydown = function(event){
             if (event.keyCode == 13) {
                 $scope.list();
-            }   
+            }
         };
         $scope.delete = function(id){
             var params = {};
             params[$rootScope.cols[0]] = id;
             tableService.del(params).then(
-                function (data) { 
+                function (data) {
                     info("操作数据:" + data + "条");
-                    $scope.list(); 
-            }, error);  
+                    $scope.list();
+            }, error);
 
         };
 
