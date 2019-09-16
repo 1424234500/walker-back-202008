@@ -1,6 +1,6 @@
 package com.walker.dao;
 
-import com.walker.ApplicationTests;
+import com.walker.ApplicationProviderTests;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.mode.Teacher;
@@ -13,9 +13,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
-public class TeacherRepositoryTest extends ApplicationTests {
+public class TeacherRepositoryTest extends ApplicationProviderTests {
     @Autowired
     TeacherRepository teacherRepository;
     @Test

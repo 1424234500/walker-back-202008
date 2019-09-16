@@ -18,7 +18,7 @@
     <!-- 注册中心 -->
 
     <!-- zookeeper 版本可配？ enable="true" ,122.10.1.12:2182 register="false" 只订阅-->
-    <dubbo:registry address="127.0.0.1:2181" protocol="zookeeper"  />
+    <dubbo:registry address="localhost:2181" protocol="zookeeper"  />
     <!-- redis -->
 
     <!-- 监控中心 -->
@@ -28,38 +28,27 @@
     <!-- <dubbo:monitor address="122.21.21.12:2213" /> -->
 
     <!-- 指定了集群容错模式，此处为快速失败 -->
-    <dubbo:provider cluster="failfast"/>
+<!--    <dubbo:provider cluster="failfast"/>-->
 
 
-    <!-- 服务提供 1 可同时提供和消费 -->
+    <!-- 1.提供者 服务提供 ref：指向注解定义的本地dubbo-bean而非spring-bean?（多实现分组） interface：指向接口-->
 
-    <!-- service implementation, as same as regular local bean
-    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImpl"/>
-        declare the service interface to be exported
-    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
-     -->
+    <bean id="echoService" class="com.walker.service.impl.EchoServiceImpl" />
+    <dubbo:service ref="echoService" interface="com.walker.service.EchoService" timeout="2048" version="1.0"  />
 
-<!--    &lt;!&ndash; 配置暴露服务接口 alias="hello-dubbo"  &ndash;&gt;-->
+<!--    <bean id="logService" class="com.walker.service.impl.LogServiceImpl" />-->
+<!--    <dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="2048" version="1.0"  />-->
+<!--    <dubbo:service ref="loginService" interface="com.walker.service.LoginService" timeout="2048" version="1.0" />-->
+
+<!--    <dubbo:service ref="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="2048" version="1.0" />-->
+<!--    <dubbo:service ref="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="2048" version="1.0" />-->
+
 <!--    <dubbo:service ref="messageService" interface="com.walker.service.MessageService" timeout="2048" version="1.0" />-->
-<!--    &lt;!&ndash; 配置暴露服务接口 实现类 &ndash;&gt;-->
-<!--    <bean id="messageService" class="com.walker.service.impl.MessageServiceImpl" />-->
-
-    <dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="2048" version="1.0"  />
-    <dubbo:service ref="messageService" interface="com.walker.service.MessageService" timeout="2048" version="1.0" />
-    <dubbo:service ref="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="2048" version="1.0" />
-
-    <dubbo:service ref="loginService" interface="com.walker.service.LoginService" timeout="2048" version="1.0" />
-    <dubbo:service ref="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="2048" version="1.0" />
-    <dubbo:service ref="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="2048" version="1.0" />
+<!--    <dubbo:service ref="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="2048" version="1.0" />-->
 
 
-    <!-- 服务消费 2 -->
-
-    <!-- 指向远程服务代理,和provider中相同-->
-    <!--
-<dubbo:reference id="serviceClassConsumer" interface="com.walker.core.service.service.ServiceClass" version="1.0" check="false" />
-<dubbo:reference id="serviceDubboConsumer" interface="com.walker.core.service.service.ServiceDubbo" version="1.0" check="false" />
-    -->
+    <!-- 2.消费者 消费服务 id:bean名字 interface:指向远程接口 group:多实现分组区分 -->
+<!--    <dubbo:reference id="echoServiceDubbo" interface="com.walker.service.EchoService" version="1.0" timeout="1024"></dubbo:reference>-->
 
 
 </beans>

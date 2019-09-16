@@ -1,8 +1,7 @@
 package com.walker.config;
 
-import com.walker.ApplicationTests;
+import com.walker.ApplicationProviderTests;
 import com.walker.common.util.Tools;
-import com.walker.mode.Teacher;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,9 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
-import static org.junit.Assert.*;
-
-public class DataSourceConfigTest extends ApplicationTests {
+public class DataSourceConfigTest extends ApplicationProviderTests {
     @Autowired
     @Qualifier("dataSource")
     DataSource dataSource;

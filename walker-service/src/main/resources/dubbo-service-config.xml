@@ -18,7 +18,7 @@
 	<!-- 注册中心 -->
 
 	<!-- zookeeper 版本可配？ enable="true" ,122.10.1.12:2182 register="false" 只订阅-->
-	<dubbo:registry address="127.0.0.1:2181" protocol="zookeeper" register="true" />
+	<dubbo:registry address="localhost:2181" protocol="zookeeper" register="false" />
 	<!-- redis -->		
 	
 	<!-- 监控中心 -->
@@ -30,18 +30,11 @@
 	<!-- 指定了集群容错模式，此处为快速失败 -->
     <dubbo:provider cluster="failfast"/>
 
+	<!-- 1.提供者 服务提供 ref：指向注解定义的本地bean（多实现分组） interface：指向接口-->
+<!--	<dubbo:service ref="echoService" interface="com.walker.service.EchoService" timeout="2048" version="1.0"  />-->
 
-	<!-- 服务提供 1 可同时提供和消费 -->
-
-	<!-- 服务消费 2 -->
-	
-    <!-- 指向远程服务代理,和provider中相同-->
-	<dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="2048" version="1.0"  />
-<!--	<dubbo:service ref="messageService" interface="com.walker.service.MessageService" timeout="2048" version="1.0" />-->
-<!--	<dubbo:service ref="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="2048" version="1.0" />-->
-
-<!--	<dubbo:service ref="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="2048" version="1.0" />-->
-<!--	<dubbo:service ref="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="2048" version="1.0" />-->
+	<!-- 2.消费者 消费服务 id:bean名字 interface:指向远程接口 group:多实现分组区分 -->
+	<dubbo:reference id="echoService" interface="com.walker.service.EchoService" version="1.0" timeout="1024"></dubbo:reference>
 
 
 </beans>
