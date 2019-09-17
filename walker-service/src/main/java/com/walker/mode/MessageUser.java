@@ -1,28 +1,28 @@
 package com.walker.mode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+
 
 /**
  * 消息表的实体W_MSG_USER
  */
-
 @Entity
+@IdClass(MessageUserPK.class)
 @Table(name = "W_SHARDING_MSG_USER")
 public class MessageUser implements Cloneable, Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id     //主键
 	@Column(name="ID", nullable = false, length = 200)
 	private String id;
+	@Id		//主键
+	@Column(name="MSG_ID", nullable = false, length = 40)
+	private String msgId;
+
 	@Column(name="USER_FROM", nullable = false, length = 40)
 	private String userFrom;
 	@Column(name="USER_TO", nullable = false, length = 40)
 	private String userTo;
-	@Column(name="MSG_ID", nullable = false, length = 40)
-	private String msgId;
 	@Column(name="S_MTIME", nullable = false, length = 32)
 	private String smtime;
 

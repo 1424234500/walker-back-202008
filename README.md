@@ -50,10 +50,17 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 	W_MSG_USER  W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
 
 ###端口分配
-socket_port_netty=8093
-port_rmi=8090
-port_webservice=8091
-port_dubbo=8092
+
+环境8080+
+tomcat=8080
+socket_port_netty=8083
+port_rmi=8084
+service_provider_swagger=8085
+ 
+
+
+zookeeper=2181
+port_dubbo=20880+
 
 
 
@@ -93,7 +100,7 @@ port_dubbo=8092
 ## walker-service-provider
 
     使用springboot搭建的web项目 浏览器使用swagger用于接口测试
-    http://localhost:8080/swagger-ui.html
+    http://localhost:8085/swagger-ui.html
     使用dubbo/springcloud提供服务化接口
     具体实现service模块 用于socket/web模块存储调用
     

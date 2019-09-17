@@ -5,7 +5,7 @@ server:
     max-connections: 1000
     max-threads: 200
     min-spare-threads: 10
-  port: 8092
+  port: 8085
 
 spring:
 

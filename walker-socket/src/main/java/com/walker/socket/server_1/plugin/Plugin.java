@@ -22,7 +22,7 @@ public abstract class Plugin<T> {
 	protected Logger log = Logger.getLogger(Plugin.class); 
 
 	final public static String KEY_LOGIN = "login";
-	final public static String KEY_SERVICE= "service";
+	final public static String KEY_SERVICE= "messageService";
 	final public static String KEY_MESSAGE = "message";
 	final public static String KEY_OFFLINEMSG= "offlinemsg";
 

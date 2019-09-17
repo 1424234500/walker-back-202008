@@ -3,6 +3,7 @@ package com.walker.dao;
 import com.walker.mode.Message;
 import com.walker.mode.MessageUser;
 import com.walker.mode.MessageUser;
+import com.walker.mode.MessageUserPK;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * sharding 分表
  */
 @Repository
-public interface MessageUserRepository extends JpaRepository<MessageUser, String> {//实体类 主键类型
+public interface MessageUserRepository extends JpaRepository<MessageUser, MessageUserPK> {//实体类 主键类型
 //    List<T> findAll();
 //    List<T> findAll(Sort var1);
 //    List<T> findAllById(Iterable<ID> var1);

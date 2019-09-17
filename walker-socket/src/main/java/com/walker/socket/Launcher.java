@@ -1,5 +1,7 @@
 package com.walker.socket;
 
+import com.walker.dubbo.DubboMgr;
+import com.walker.service.EchoService;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.walker.common.util.Context;
@@ -12,6 +14,11 @@ public class Launcher {
 		System.setProperty("path_conf", "conf");
 		PropertyConfigurator.configure(Context.getPathConf("log4j.properties"));
 
+		try {
+			DubboMgr.getInstance().setDubboXml("dubbo-service-config.xml").start();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		new SocketNetty().start();
 	}
 

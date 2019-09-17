@@ -3,6 +3,7 @@ package com.walker.dubbo;
 
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.walker.core.aop.TestAdapter;
+import com.walker.service.EchoService;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,13 +33,22 @@ public class DubboMgr extends TestAdapter {
         return SingletonFactory.instance;
     }
     public boolean doTest() {
-        return DubboMgr.getInstance() == null;
+        if( DubboMgr.getInstance() == null){
+            log.error("dubbo is not started!!!");
+            return false;
+        }else{
+            log.info(("dubbo is started "));
+            EchoService echoService = DubboMgr.getService("echoService");
+            log.info(echoService.echo("hello!"));
+            return true;
+        }
     }
 
 
 
     public DubboMgr setDubboXml(String path){
         this.path = path;
+        log.info("dubbo xml : " + path);
         return this;
     }
     public void start(){
@@ -47,12 +57,15 @@ public class DubboMgr extends TestAdapter {
             context = new ClassPathXmlApplicationContext(path.split(","));
             context.start();
 
+
             Runtime.getRuntime().addShutdownHook(new Thread(){
                 public void run(){
                     log.warn("dubbo shutdownhook");
                     context.stop();
                 }
             });
+
+            test();
 
         }else{
             log.warn("have started " + context.toString());

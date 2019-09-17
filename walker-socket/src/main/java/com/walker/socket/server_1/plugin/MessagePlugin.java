@@ -1,13 +1,15 @@
 package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
+import com.walker.dubbo.DubboMgr;
 import com.walker.mode.Msg;
 import com.walker.service.MessageService;
-import com.walker.socket.service.redis.MessageServiceImpl;
 
 public  class MessagePlugin<T> extends Plugin<T>{
 
-	MessageService service = new MessageServiceImpl();
+//	MessageService messageService = new MessageServiceImpl();
+	MessageService messageService = DubboMgr.getService("messageServiceSharding");
+
 
 	MessagePlugin(Bean params) {
 		super(params);
@@ -27,7 +29,7 @@ public  class MessagePlugin<T> extends Plugin<T>{
 		//发送方设置去向 接收方只看到发送给自己
 
 		//离线消息记录
-		service.save(msg.getUserTo(), msg);
+		messageService.save(msg.getUserTo(), msg);
 
 		//广播
 		publish(msg);
