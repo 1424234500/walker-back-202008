@@ -3,6 +3,20 @@
 	
 使用Maven多模块项目结构分离
 
+
+
+###端口分配
+
+环境火墙8090+
+8090    tomcat  dubbo-monitor   walker-web
+8091    webservice
+8092    rmi
+8093    socket netty
+8094    service provider    swagger
+8095    dubbo-port
+8096    zookeeper-port
+
+
 ## 编程习惯
 ```
 异常	？	状态值返回
@@ -49,18 +63,6 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 	W_MSG       W_MSG_0		    W_MSG_1
 	W_MSG_USER  W_MSG_USER_0	W_MSG_USER_1	W_MSG_USER_2	W_MSG_USER_3
 
-###端口分配
-
-环境8080+
-tomcat=8080
-socket_port_netty=8083
-port_rmi=8084
-service_provider_swagger=8085
- 
-
-
-zookeeper=2181
-port_dubbo=20880+
 
 
 

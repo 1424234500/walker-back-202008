@@ -13,11 +13,11 @@
 	<dubbo:application name="dubbo_service_consumer" owner="walker" logger="log4j"  />
 
 	<!-- 提供服务端口 -->
-<!--	<dubbo:protocol name="dubbo" port="20881" />-->
+<!--	<dubbo:protocol name="dubbo" port="8095" />-->
 
 	<!-- 注册中心 -->
 	<!-- zookeeper 版本可配？ enable="true" ,122.10.1.12:2182 register="false" 只订阅-->
-	<dubbo:registry protocol="zookeeper" address="zookeeper://localhost:2181" />
+	<dubbo:registry protocol="zookeeper" address="zookeeper://localhost:8096" />
 
 	<!-- redis -->
 

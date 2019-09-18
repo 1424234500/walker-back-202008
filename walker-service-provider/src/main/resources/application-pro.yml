@@ -78,13 +78,13 @@ spring:
 #      name: service-provider
 #      id: service-provider
 #    registry:                 #注册中心配置，用于配置连接注册中心相关信息。
-#      address: zookeeper://127.0.0.1:2181
+#      address: zookeeper://127.0.0.1:8096
 ##      address: redis://39.106.111.11:6379
 #    #    server: true
 #
 #    protocol:     #协议配置，用于配置提供服务的协议信息，协议由提供方指定，消费方被动接受。
 #      name: dubbo
-#      port: 20880
+#      port: 8095
 #    scan: com.walker.service.impl  #服务暴露与发现消费所在的package
 
 

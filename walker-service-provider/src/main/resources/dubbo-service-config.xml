@@ -13,12 +13,13 @@
     <dubbo:application name="dubbo_service_provider" owner="walker" logger="log4j" />
 
     <!-- 提供服务端口 -->
-    <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:protocol name="dubbo" port="8095" />
 
     <!-- 注册中心 -->
 
     <!-- zookeeper 版本可配？ 多ip问题汉注意！ enable="true" ,122.10.1.12:2182 register="false" 只订阅 -->
-    <dubbo:registry address="localhost:2181" protocol="zookeeper"  timeout="30000"/>
+<!--    <dubbo:registry address="39.106.111.11:8096" protocol="zookeeper"  timeout="30000"/>-->
+    <dubbo:registry address="localhost:8096" protocol="zookeeper"  timeout="30000"/>
     <!-- redis -->
 
     <!-- 监控中心 从注册中心获取监控地址 address version-->
@@ -77,9 +78,9 @@ dubbo.owner=dzm
 #组织名称(BU或部门)，用于注册中心区分服务来源
 dubbo.organization=dzmsoft
 #注册中心地址
-dubbo.registry.address=zookeeper://192.168.5.122:2181?backup=192.168.5.122:2182,192.168.5.122:2183
+dubbo.registry.address=zookeeper://192.168.5.122:8096?backup=192.168.5.122:2182,192.168.5.122:2183
 #端口号，同一电脑不可复用
-dubbo.protocol=20881
+dubbo.protocol=8095
 #是否启用JSR303标准注解验证
 dubbo.service.validation=true
 #服务版本，通常在接口不兼容时版本号才需要升级
