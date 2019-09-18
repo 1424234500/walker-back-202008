@@ -21,11 +21,11 @@ public class TeacherRepositoryTest extends ApplicationProviderTests {
         Teacher obj = teacherRepository.save(new Teacher().setId("1").setName("hello").setTime(TimeUtil.getTimeYmdHmss()));
         Tools.out("save", obj);
         List<Teacher> mans = new ArrayList<>();
-        for(int i = 0; i < 32; i++){
+        for(int i = 0; i < size; i++){
             mans.add(new Teacher().setId("id_" + i).setName("hello" + i  ).setTime(TimeUtil.getTimeYmdHmss()));
         }
         Tools.out("saveAll", teacherRepository.saveAll(mans));
-        Pageable pageable = PageRequest.of(0, 33);
+        Pageable pageable = PageRequest.of(0, size);
         Page<Teacher> pageRes = teacherRepository.findAll(pageable);
         Tools.out(pageRes.getTotalElements());
         Tools.formatOut(pageRes.getContent());

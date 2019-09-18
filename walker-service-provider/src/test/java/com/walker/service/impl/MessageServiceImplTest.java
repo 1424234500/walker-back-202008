@@ -83,10 +83,10 @@ public class MessageServiceImplTest {
                 messageService.findBefore(id, id1, scores.get(scores.size() - 1), i % 20);
             }
             w.costln("findBefore",size);
-            for(int i = 0;i < size; i++) {
-//                Tools.out(i);
-                messageService.findBeforeByMerge(id, id1, scores.get(scores.size() - 1), i % 20);
-            }
+//            for(int i = 0;i < size; i++) {
+////                Tools.out(i);
+//                messageService.findBeforeByMerge(id, id1, scores.get(scores.size() - 1), i % 20);
+//            }
             w.costln("findBeforeByMerge",size);
             w.res();
             Tools.out(w);

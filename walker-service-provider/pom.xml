@@ -23,13 +23,118 @@
         <sharding.jdbc.version>3.0.0</sharding.jdbc.version>
         <mybatis.version>1.2.0</mybatis.version>
         <druid.version>1.1.6</druid.version>
+
+
+        <dir_name_resource>src/main/resources</dir_name_resource>
+        <dir_name_bin>bin</dir_name_bin>
+        <dir_name_conf>conf</dir_name_conf>
+        <dir_name_lib>lib</dir_name_lib>
+        <dir_release>${basedir}/release</dir_release>
+
     </properties>
 
 
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <!--
+            将打包后生成的jar复制到指定路径 命令mvn package后，才生成jar的包，如果单纯的用resources方法复制文件，是无法在package时复制一个还未存在的东西到某地的
+            -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources-jar</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <!-- <delete dir="src/main/webapp/WEB-INF/lib" />-->
+                                <copy todir="${dir_release}">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="*.*ar" />
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <!-- 打包前资源复制 构建项目部署结构 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+
+                <executions>
+
+                    <execution>
+                        <id>copy-resources-jar-conf</id>
+                        <!-- 触发阶段 process-resources 执行resources插件的copy-resources目标 -->
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 指定resources插件处理资源文件到哪个目录下 -->
+                            <outputDirectory>${dir_release}/${dir_name_conf}</outputDirectory>
+                            <!-- 待处理的资源定义 -->
+                            <resources>
+                                <resource>
+                                    <!-- 指定resources插件处理哪个目录下的资源文件 -->
+                                    <directory>${dir_name_conf}</directory>
+                                    <!--  <filtering>true</filtering> -->
+                                    <!-- <excludes> <exclude>WEB-INF/*.*</exclude> </excludes> -->
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources-jar</id>
+                        <!-- 触发阶段 process-resources 执行resources插件的copy-resources目标 -->
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 资源拷贝到release路径 -->
+                            <outputDirectory>${dir_release}</outputDirectory>
+                            <resources>
+                                <!-- bin文件 -->
+                                <resource>
+                                    <directory>${dir_name_bin}</directory>
+                                    <!--  <filtering>true</filtering> -->
+                                    <!-- <excludes> <exclude>WEB-INF/*.*</exclude> </excludes> -->
+                                </resource>
+                                <!-- 配置文件 -->
+                                <resource>
+                                    <directory>${dir_name_resource}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
-
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -174,21 +279,5 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

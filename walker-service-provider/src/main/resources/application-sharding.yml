@@ -1,6 +1,6 @@
 #分表mysql  shardingsphere
 spring:
-  spring.sch
+#  spring.sch
 sharding:
   jdbc:
     datasource:

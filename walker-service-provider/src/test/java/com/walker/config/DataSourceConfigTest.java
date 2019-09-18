@@ -28,19 +28,24 @@ public class DataSourceConfigTest extends ApplicationProviderTests {
 
     @Test
     public void test(){
-        Tools.out("walker normarl ds");
-        Tools.out(dataSource);
-        Tools.out(jdbcTemplate);
-        jdbcTemplate.execute("insert into TEACHER values('id','name','pwd','time' ) ");
-        Tools.out(jdbcTemplate.queryForList( "select * from TEACHER "));
+        try {
+            Tools.out("walker normarl ds");
+            Tools.out(dataSource);
+            Tools.out(jdbcTemplate);
+            jdbcTemplate.execute("delete from TEACHER where id=id");
+            jdbcTemplate.execute("insert into TEACHER values('id','name','pwd','time' ) ");
+            Tools.out(jdbcTemplate.queryForList("select * from TEACHER where id=id"));
 
-        Tools.out("walker0,walker1 sharding ds");
-        Tools.out(shardingDataSource);
-        Tools.out(shardingJdbcTemplate);
-        shardingJdbcTemplate.execute("insert into TEACHER values('id1','name','pwd','time' ) ");
-        Tools.out(shardingJdbcTemplate.queryForList( "select * from TEACHER " ));
+            Tools.out("walker0,walker1 sharding ds");
+            Tools.out(shardingDataSource);
+            Tools.out(shardingJdbcTemplate);
+            shardingJdbcTemplate.execute("delete from TEACHER where id=id1");
+            shardingJdbcTemplate.execute("insert into TEACHER values('id1','name','pwd','time' ) ");
+            Tools.out(shardingJdbcTemplate.queryForList("select * from TEACHER where id=id1"));
 
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
 

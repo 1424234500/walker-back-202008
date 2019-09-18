@@ -28,14 +28,19 @@ echo "目标服务器路径 todir ${server} ${todir}"
 
 
 about="
-Ctrl deploy all || just src jar.    \n
+Ctrl deploy all || just src jar with restart auto or server control  \n
 Usage: 
-./deploy.sh [ all | default ] [other args]   \n
-    \t  just    \t  default only upload src jar    \n
-    \t  walker    \t  only upload walker-* jar    \n
-    \t  conf \t  upload except lib/*  \n
-    \t  all   \t  upload all jar lib conf    \n
-    \t  help    \t  show this   \n
+./deploy.sh [ just | all | default ] [server restart|start|log]   \n
+./deploy.sh just
+./deploy.sh server log  \t  show log
+    \t  just \t default only upload src jar    \n
+    \t  walker \t only upload walker-* jar    \n
+    \t  conf \t upload except lib/*  \n
+    \t  all \t upload all jar lib conf    \n
+
+    \t  server \t ctrl server [start | restart | log | pid ]    \n
+
+    \t  help \t show this   \n
 "
 #压缩 
 #[ 备份服务端 ] 
@@ -45,31 +50,43 @@ Usage:
 
 function just(){
 	tar -czvf ${fromfile_temp}  *.jar
-	upAndTar
+	upAndTar $@
 }
 function walker(){
 	tar -czvf ${fromfile_temp} lib/walker*
-	upAndTar
+	upAndTar $@
 }
 
 function conf(){
 	rm lib -r
 	tar -czvf ${fromfile_temp}  * 
-	upAndTar
+	upAndTar $@
 }
 
 function all(){
-	tar -czvf ${fromfile_temp}  * 
-	upAndTar
+	tar -czvf ${fromfile_temp}  *
+
+	echo "all 上传清空旧文件夹  rm ${todir} -r"
+    ssh ${server}  " rm ${todir} -r"
+
+	upAndTar $@
 }
 function upAndTar(){
+    #创建日志目录
 	ssh ${server}  " [ ! -d ${todir} ] && mkdir -p ${todir}"
-	scp -p ${fromfile_temp}  ${server}:${todir}/${tofile_name}
-	ssh ${server}  " cd ${todir} && tar -xvf ${tofile_name}  " 
 
-	
+    echo "ssh ${server}  \"cd ${todir} && ./server.sh restart \"  "
+    #上传
+	scp -p ${fromfile_temp}  ${server}:${todir}/${tofile_name}
+    #解压&重启
+    ssh ${server}  " cd ${todir} && tar -xvf ${tofile_name} && ./server.sh restart "
+
 }
 
+function server(){
+    #解压&重启
+	ssh ${server}  " cd ${todir}  && ./server.sh $@ "
+}
 
 function help(){
     line
@@ -88,7 +105,7 @@ function do_main(){
 
 function do_init(){
     method=$1
-    if [[ "$method" != "" ]]
+    if [[ "${method}" != "" ]]
     then
         rootParams=($@)
         params=(${rootParams[@]:1})

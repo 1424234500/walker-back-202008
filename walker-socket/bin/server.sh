@@ -16,9 +16,10 @@ echo "项目名 name_proj ${name_proj}"
 
 ##-----------------------------------------
 jarf="${name_proj}-0.0.1.jar"
-echo "jar file $jarf"
+echo "jar文件 $jarf"
 cmd="java -jar ${jarf}"
-logfile='/home/walker/logs/socket.log'
+logfile="/home/walker/logs/${name_proj}.log"
+
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
 greparg=${jarf}
 about="
@@ -40,57 +41,62 @@ var=${logfile%/*}
 taillog='tail -n 200 -f '"$logfile"
 #如何将变量中的值取出来作为绝对字符串'' 所以暂用直接获取pids
 pids="ps -ef | grep "$greparg" | grep -v grep | cut -c 9-15"
+pidsDetail="ps -ef | grep "$greparg" | grep -v grep "
 #通过ps管道删除接收
 # ps -ef | grep $greparg | grep -v grep | cut -c 9-15 | xargs kill -9
   
 ##------------------------------------------
 function start(){
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    echo "now pid [${ids}] "
+    if [[ "${ids}" != "" ]]
     then
         pid
     else
-        tcmd="nohup $cmd  &"	# > $logfile 启动日志不存储 交由log4j自动存入文件
+        tcmd="nohup $cmd >/dev/null &"	# > $logfile 启动日志不存储 交由log4j自动存入文件
         line
-        echo $tcmd
-        eval $tcmd
+        echo ${tcmd}
+        eval ${tcmd}
         pid
         log
     fi
 }
 function stop(){    
-    ids=`eval $pids`
-    tcmd="kill -9 $ids"
+    ids=`eval ${pids}`
+    tcmd="kill -9 ${ids}"
     line
-    echo $tcmd
-    eval $tcmd
+    echo ${tcmd}
+    eval ${tcmd}
     pid
 }
 function restart(){
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    if [[ "${ids}" != "" ]]
     then
         stop
+        start
     else
         pid
     fi
-    start
 }
 
 function log(){
     line
-    echo $taillog
-    eval $taillog
+    echo ${taillog}
+    eval ${taillog}
 }
 function pid(){
+    line
     # echo $pids
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    if [[ "${ids}" != "" ]]
     then
+        eval ${pidsDetail}
+        line
         echo 'Have been started, Pids:'
-        echo $ids
+        echo ${ids}
     else
-        echo 'Stoped ! '
+        echo 'have Stoped ! '
     fi
 }
 function help(){
@@ -111,7 +117,7 @@ function do_main(){
 
 function do_init(){
     method=$1
-    if [[ "$method" != "" ]]
+    if [[ "${method}" != "" ]]
     then
         rootParams=($@)
         params=(${rootParams[@]:1})

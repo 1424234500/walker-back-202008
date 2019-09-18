@@ -73,8 +73,8 @@ function all(){
 function upAndTar(){
 	ssh ${server}  " [ ! -d ${todir} ] && mkdir -p ${todir}"
 	scp -p ${fromfile_temp}  ${server}:${todir}/${tofile_name}
-	ssh ${server}  " cd ${todir} && tar -xvf ${tofile_name}  " 
-	
+    ssh ${server}  " cd ${todir} && tar -xvf ${tofile_name} && ./server.sh restart "
+
 	
 }
 

@@ -91,7 +91,7 @@ spring:
 
 
 logging:
-  file: /home/walker/logs/sb.log
+  file: /home/walker/logs/walker-service-provider.log
   #  pattern:
   #    console: "%date{HH:mm:ss.SSS} %-5level %-30.30logger{29} : %msg%n"
   Root:

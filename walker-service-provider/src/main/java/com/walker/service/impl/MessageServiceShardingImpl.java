@@ -65,9 +65,9 @@ public class MessageServiceShardingImpl implements MessageService {
 	 */
 	public List<Integer> sizeMsg() {
 		List<Integer> res = new ArrayList<>();
-		for(int i = 0; i < COUNT_MSG; i++) {
-			res.add(jdbcDao.count( "select * from " + TABLE_MSG_ + i));
-		}
+
+		res.add((int) messageRepository.count());
+
 		log.info(res);
 		return res;
 	}
@@ -76,10 +76,7 @@ public class MessageServiceShardingImpl implements MessageService {
 	 */
 	public List<Integer> sizeMsgUser(){
 		List<Integer> res = new ArrayList<>();
-		for(int i = 0; i < COUNT_MSG_USER; i++) {
-			res.add(jdbcDao.count( "select * from " + TABLE_MSG_USER_ + i));
-
-		}
+		res.add((int) messageUserRepository.count());
 		log.info(res);
 		return res;
 	}
@@ -175,7 +172,6 @@ public class MessageServiceShardingImpl implements MessageService {
 	 */
 	@Override
 	public List<Msg> findBeforeByMerge(String userId, String toId, String before, int count) {
-		log.info(Tools.objects2string("findBefore", userId, toId, before, count  ));
 		log.info(Tools.objects2string("findBefore", userId, toId, before, count  ));
 		List<Msg> list = new ArrayList<Msg>();
 		String id = SqlUtil.makeTableKey(userId, toId);
