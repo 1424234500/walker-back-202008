@@ -17,17 +17,17 @@ echo "项目名 name_proj ${name_proj}"
 ##-----------------------------------------
 jarf="${name_proj}-0.0.1.jar"
 echo "jar file $jarf"
-cmd=". startup.sh"
+cmd="./startup.sh"
 tomcat="/home/walker/apache-tomcat-8.5.42"
-
+cd ${tomcat}
 logfile="/home/walker/logs/${name_proj}.log"
-#logfile='logs/start.log'
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
 greparg='tomcat'
 about="
 Ctrl the server start/stop/log/pid/help.    \n
 Usage: 
 ./server.sh [ start | stop | restart | log | pid | help ] [other args]   \n
+    \t  test   \t  test server with stdout    \n
     \t  start   \t  start server with log/system.log    \n
     \t  stop    \t  stop server kill pid    \n
     \t  restart \t  stop & start    \n
@@ -37,66 +37,76 @@ Usage:
 "
 
 
-var=${logfile%/*} 
+var=${logfile%/*}
 [ ! -d ${var} ] && mkdir -p ${var}
 
 taillog='tail -n 200 -f '"$logfile"
-#taillog='tail -n 200 -f '"/home/walker/logs/web.log"
 #如何将变量中的值取出来作为绝对字符串'' 所以暂用直接获取pids
 pids="ps -ef | grep "$greparg" | grep -v grep | cut -c 9-15"
+pidsDetail="ps -ef | grep "$greparg" | grep -v grep "
 #通过ps管道删除接收
 # ps -ef | grep $greparg | grep -v grep | cut -c 9-15 | xargs kill -9
-  
+
 ##------------------------------------------
 function start(){
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    echo "now pid [${ids}] "
+    if [[ "${ids}" != "" ]]
     then
         pid
     else
-    	echo "${tomcat}/bin"
-    	cd ${tomcat}/bin
-        tcmd=" $cmd "
+        tcmd="nohup $cmd >/dev/null &"	# > $logfile 启动日志不存储 交由log4j自动存入文件
         line
-        echo $tcmd
-        eval $tcmd
+        echo ${tcmd}
+        eval ${tcmd}
         pid
         log
     fi
 }
-function stop(){    
-    ids=`eval $pids`
-    tcmd="kill -9 $ids"
+function test(){
+    stop
+    tcmd=" $cmd  "	# 日志输出
     line
-    echo $tcmd
-    eval $tcmd
+    echo ${tcmd}
+    eval ${tcmd}
+
+}
+function stop(){
+    ids=`eval ${pids}`
+    tcmd="kill -9 ${ids}"
+    line
+    echo ${tcmd}
+    eval ${tcmd}
     pid
 }
 function restart(){
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    if [[ "${ids}" != "" ]]
     then
         stop
+        start
     else
         pid
     fi
-    start
 }
 
 function log(){
     line
-    echo $taillog
-    eval $taillog
+    echo ${taillog}
+    eval ${taillog}
 }
 function pid(){
+    line
     # echo $pids
-    ids=`eval $pids`
-    if [[ "$ids" != "" ]]
+    ids=`eval ${pids}`
+    if [[ "${ids}" != "" ]]
     then
+        eval ${pidsDetail}
+        line
         echo 'Have been started, Pids:'
-        echo $ids
+        echo ${ids}
     else
-        echo 'Stoped ! '
+        echo 'have Stoped ! '
     fi
 }
 function help(){
@@ -115,21 +125,26 @@ function do_main(){
     echo
 }
 
+
+
 function do_init(){
     method=$1
-    if [[ "$method" != "" ]]
+    if [[ "${method}" != "" ]]
     then
         rootParams=($@)
         params=(${rootParams[@]:1})
         $method ${params[@]}
     else
-        help 
+        help
     fi
-} 
+}
 
 
 #start
 do_main $@
+
+
+
 
 
 

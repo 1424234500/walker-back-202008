@@ -26,6 +26,7 @@ about="
 Ctrl the server start/stop/log/pid/help.    \n
 Usage: 
 ./server.sh [ start | stop | restart | log | pid | help ] [other args]   \n
+    \t  test   \t  test server with stdout    \n
     \t  start   \t  start server with log/system.log    \n
     \t  stop    \t  stop server kill pid    \n
     \t  restart \t  stop & start    \n
@@ -60,6 +61,14 @@ function start(){
         pid
         log
     fi
+}
+function test(){
+    stop
+    tcmd=" $cmd  "	# 日志输出
+    line
+    echo ${tcmd}
+    eval ${tcmd}
+
 }
 function stop(){    
     ids=`eval ${pids}`
