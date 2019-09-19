@@ -168,8 +168,10 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
     intercept 拦截器 登录拦截 日志拦截 环绕监控
     listener 系统启动监听OnLoad
     task 定时任务调度器
-``
-* mode 基本数据模型
+`` 
+
+
+* 前端 vue adminLTE 
 
 
 

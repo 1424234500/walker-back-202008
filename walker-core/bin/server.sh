@@ -39,7 +39,7 @@ Usage:
 var=${logfile%/*} 
 [ ! -d ${var} ] && mkdir -p ${var}
 
-taillog='tail -n 200 -f '"$logfile"
+taillog='tail -n 10 -f '"$logfile"
 #如何将变量中的值取出来作为绝对字符串'' 所以暂用直接获取pids
 pids="ps -ef | grep "$greparg" | grep -v grep | cut -c 9-15"
 pidsDetail="ps -ef | grep "$greparg" | grep -v grep "

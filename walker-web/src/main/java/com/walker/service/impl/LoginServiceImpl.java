@@ -4,9 +4,9 @@ import com.walker.common.util.Bean;
 import com.walker.common.util.MD5;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
+import com.walker.dao.JdbcDao;
+import com.walker.event.Context;
 import com.walker.service.LoginService;
-import com.walker.web.controller.Context;
-import com.walker.web.dao.hibernate.BaseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,13 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 @Transactional
 @Service("loginService")
 //@Scope("prototype") 
 public class LoginServiceImpl implements LoginService,Serializable {
 	private static final long serialVersionUID = 8304941820771045214L;
     @Autowired
-    private BaseDao baseDao;    
+    private com.walker.dao.JdbcDao JdbcDao;
 
 	private Cache<String> cache = CacheMgr.getInstance();
 
@@ -37,6 +38,8 @@ public class LoginServiceImpl implements LoginService,Serializable {
 		map.put(token, bean);
 		cache.put(CACHE_KEY, map);	
 		log.info("登录" + id + "." + pwd + "." + token);
+		Context.setToken(token);
+//		Context.getRequest().getSession().setAttribute("TOKEN", token);
 		return true;
 	}
     

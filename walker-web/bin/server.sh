@@ -16,13 +16,12 @@ echo "项目名 name_proj ${name_proj}"
 
 ##-----------------------------------------
 jarf="${name_proj}-0.0.1.jar"
-echo "jar file $jarf"
-cmd="./startup.sh"
-tomcat="/home/walker/apache-tomcat-8.5.42"
-cd ${tomcat}
+echo "jar文件 $jarf"
+cmd="java -jar ${jarf}"
 logfile="/home/walker/logs/${name_proj}.log"
+
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
-greparg='tomcat'
+greparg=${jarf}
 about="
 Ctrl the server start/stop/log/pid/help.    \n
 Usage: 
@@ -37,16 +36,16 @@ Usage:
 "
 
 
-var=${logfile%/*}
+var=${logfile%/*} 
 [ ! -d ${var} ] && mkdir -p ${var}
 
-taillog='tail -n 200 -f '"$logfile"
+taillog='tail -n 10 -f '"$logfile"
 #如何将变量中的值取出来作为绝对字符串'' 所以暂用直接获取pids
 pids="ps -ef | grep "$greparg" | grep -v grep | cut -c 9-15"
 pidsDetail="ps -ef | grep "$greparg" | grep -v grep "
 #通过ps管道删除接收
 # ps -ef | grep $greparg | grep -v grep | cut -c 9-15 | xargs kill -9
-
+  
 ##------------------------------------------
 function start(){
     ids=`eval ${pids}`
@@ -71,7 +70,7 @@ function test(){
     eval ${tcmd}
 
 }
-function stop(){
+function stop(){    
     ids=`eval ${pids}`
     tcmd="kill -9 ${ids}"
     line
@@ -125,8 +124,6 @@ function do_main(){
     echo
 }
 
-
-
 function do_init(){
     method=$1
     if [[ "${method}" != "" ]]
@@ -135,16 +132,13 @@ function do_init(){
         params=(${rootParams[@]:1})
         $method ${params[@]}
     else
-        help
+        help 
     fi
-}
+} 
 
 
 #start
 do_main $@
-
-
-
 
 
 

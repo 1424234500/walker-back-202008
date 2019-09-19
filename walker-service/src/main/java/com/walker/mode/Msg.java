@@ -146,7 +146,7 @@ public class Msg extends Bean implements Cloneable, Serializable {
 		return this;
 	}
 	public Msg addUserTo(String to) {
-		Set<String> list = new HashSet<>();
+		Set<String> list = new HashSet<String>();
 		String tos[] = this.getUserTo();
 		for(String str : tos) {
 			list.add(str);
