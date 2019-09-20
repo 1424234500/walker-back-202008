@@ -14,9 +14,9 @@
 	<modules>
 		<module>walker-core</module>
 		<module>walker-socket</module>
-		<module>walker-web</module>
 		<module>walker-service</module>
 		<module>walker-service-provider</module>
+		<module>walker-web</module>
     </modules>
 
 
@@ -90,5 +90,5 @@ ${project.xxx} 当前pom文件的任意节点的内容
 			<version>3.8</version>
 
 		</dependency>
-	</dependencies>
+    </dependencies>
 </project>

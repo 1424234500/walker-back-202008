@@ -10,7 +10,7 @@
 
 
     <!-- name提供方应用名 owner负责人 aa-->
-    <dubbo:application name="dubbo_service_provider" owner="walker" logger="log4j" />
+    <dubbo:application name="service-provider" owner="walker" logger="log4j" />
 
     <!-- 提供服务端口 -->
     <dubbo:protocol name="dubbo" port="8095" />

@@ -5,13 +5,16 @@ server:
     max-connections: 1000
     max-threads: 200
     min-spare-threads: 10
-  port: 8094
+  port: 8090
+#  前缀
+#  servlet:
+#    context-path: /service
 
 spring:
 
 
   profiles:
-    active: pro ,sharding #加载多个模块配置文件yml pro,test,log4j
+    active: pro #加载多个模块配置文件yml pro,test,log4j
 
 
 

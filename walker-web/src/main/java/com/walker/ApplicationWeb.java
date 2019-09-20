@@ -3,10 +3,10 @@ package com.walker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
-public class ApplicationProvider {
+public class ApplicationWeb {
 
     public static void main(String[] args) {
-        SpringApplication.run(ApplicationProvider.class, args);
+        SpringApplication.run(ApplicationWeb.class, args);
     }
 
 }

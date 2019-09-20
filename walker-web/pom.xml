@@ -10,9 +10,9 @@
         <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <artifactId>walker-service-provider</artifactId>
-    <name>service-provider</name>
-    <description>service impl and dubbo service provider via Spring Boot</description>
+    <artifactId>walker-web</artifactId>
+    <name>web</name>
+    <description> j2ee project, user,role,dpet,controll </description>
     <groupId>com.walker</groupId>
     <version>0.0.1</version>
 
@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <spring_boot.version>2.0.3.RELEASE</spring_boot.version>
-        <sharding.jdbc.version>3.0.0</sharding.jdbc.version>
+<!--        <sharding.jdbc.version>3.0.0</sharding.jdbc.version>-->
         <mybatis.version>1.2.0</mybatis.version>
         <druid.version>1.1.6</druid.version>
 
@@ -251,18 +251,17 @@
         </dependency>
 
         <!-- sharding jdbc依赖 -->
+<!--        <dependency>-->
+<!--            <groupId>io.shardingsphere</groupId>-->
+<!--            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>-->
+<!--            <version>${sharding.jdbc.version}</version>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>io.shardingsphere</groupId>
-            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-            <version>${sharding.jdbc.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.shardingsphere</groupId>
-            <artifactId>sharding-jdbc-spring-namespace</artifactId>
-            <version>${sharding.jdbc.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.shardingsphere</groupId>-->
+<!--            <artifactId>sharding-jdbc-spring-namespace</artifactId>-->
+<!--            <version>${sharding.jdbc.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Configuration
 @ImportResource({"classpath:dubbo-service-config.xml"})
-//@PropertySource({"classpath:dubbo-service-config.xml"})
+//@PropertySource("classpath:dubbo.properties")
 public class DubboConfig {
 
     private Logger log = LoggerFactory.getLogger(getClass());

@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ApplicationProviderTests {
+public class ApplicationWebTests {
     public static int size = 8;
 
 

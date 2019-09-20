@@ -1,15 +1,14 @@
 package com.walker.service.impl;
 
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.walker.ApplicationProviderTests;
-import com.walker.common.util.Tools;
+import com.walker.ApplicationWebTests;
 import com.walker.service.MessageService;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class DubboTest extends ApplicationProviderTests {
+public class DubboTest extends ApplicationWebTests {
 
-    @Reference(version = "1.0.0")
-    public MessageService messageService;
+    @Autowired
+    MessageService messageService;
     @Test
     public void testDubboConsumer(){
 //        Tools.out("dubbo-comsumer-sizeMsg", messageService.sizeMsg());

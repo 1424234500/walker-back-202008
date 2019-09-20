@@ -72,25 +72,25 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         log.info(Config.PRE + "-------------addInterceptors");
         registry.addInterceptor(new LogInterceptors() )
+                .addPathPatterns("/**")
                 .excludePathPatterns(
                         Arrays.asList(new String[]{
                                 "/webjars/*"
+                                ,"/html/*"
+
                         })
                 )
-//            .addPathPatterns(
+        ;
+
+
+//        registry.addInterceptor(new LoginInterceptors())
+//            .excludePathPatterns(
 //                Arrays.asList(new String[]{
-//                        "*.do",
+//                        "/*/*onlogin.do",
+//                        "/*/*loginin.do"
 //                })
 //            )
-        ;
-        registry.addInterceptor(new LoginInterceptors())
-            .excludePathPatterns(
-                Arrays.asList(new String[]{
-                        "/*/*onlogin.do",
-                        "/*/*loginin.do"
-                })
-            )
-        ;
+//        ;
 
 
 //        <!-- 拦截器已采用url过滤.do模式只拦截controller，此处无效？ -->
