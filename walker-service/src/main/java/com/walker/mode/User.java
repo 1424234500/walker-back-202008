@@ -65,8 +65,8 @@ public class User extends Bean implements Cloneable, Serializable {
 //json序列化异常
 //	@Override
 //	public boolean equals(Object obj) {
-////		User user = (User)obj;
-//		User user = new User((Bean)obj);
+////		mode user = (mode)obj;
+//		mode user = new mode((Bean)obj);
 //
 //		return this.getId().equals(user.getId());
 //	}

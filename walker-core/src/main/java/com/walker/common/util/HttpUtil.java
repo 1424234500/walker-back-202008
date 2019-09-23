@@ -128,7 +128,7 @@ public class HttpUtil {
 	 */
 	public static void makeHeader(HttpMessage httpMessage, Map<?, ?> headers) {
 		httpMessage.addHeader("Connection", "keep-alive");
-		httpMessage.addHeader("User-Agent", DEFAULT_BROWSER);
+		httpMessage.addHeader("mode-Agent", DEFAULT_BROWSER);
 		if (headers != null && headers.size() > 0) {
 			for (Entry<?, ?> item : headers.entrySet()) {
 				httpMessage.addHeader(String.valueOf(item.getKey()), String.valueOf(item.getValue()));

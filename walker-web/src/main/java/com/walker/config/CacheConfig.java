@@ -57,14 +57,14 @@ public class CacheConfig extends CachingConfigurerSupport {
      @Cacheable
      注解会先查询是否已经有缓存，有会使用缓存，没有则会执行方法并缓存。
      @Cacheable(value = "emp" ,key = "targetClass + methodName +#p0")
-     public List<NewJob> queryAll(User uid) {
+     public List<NewJob> queryAll(mode uid) {
      return newJobDao.findAllByUid(uid);
      }
      此处的value是必需的，它指定了你的缓存存放在哪块命名空间。
      此处的key是使用的spEL表达式，参考上章。这里有一个小坑，如果你把methodName换成method运行会报错，
      观察它们的返回类型，原因在于methodName是String而methoh是Method。
      此处的User实体类一定要实现序列化
-     public class User implements Serializable
+     public class mode implements Serializable
      ，否则会报java.io.NotSerializableException异常。
      */
     /**

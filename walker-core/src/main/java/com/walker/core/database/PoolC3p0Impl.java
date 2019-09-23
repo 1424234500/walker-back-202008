@@ -32,7 +32,7 @@ class PoolC3p0Impl extends Pool {
 //			###----------------- Oracle -----------------  
 //			jdbc.oracle.DriverClass=oracle.jdbc.driver.OracleDriver
 //			jdbc.oracle.JdbcUrl=jdbc\:oracle\:thin\:@127.0.0.1\:1521\:xe
-//			jdbc.oracle.User=walker
+//			jdbc.oracle.mode=walker
 //			jdbc.oracle.Password=qwer
 //			-------------->>>>>>>>>>>>>>>
 //			ds.setDriverClass(driverClass);

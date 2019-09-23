@@ -55,7 +55,7 @@ class FactoryMethod{
 	/**
 	 * 修改参数化
 	 * @param type
-	 * @return User
+	 * @return mode
 	 */
 	public static User getUser(Type type) { 
 		switch (type) {

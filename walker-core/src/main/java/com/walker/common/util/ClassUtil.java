@@ -836,7 +836,7 @@ public class ClassUtil {
 		out("testDocode", ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "testDocode"));
 
 //		Tools.formatOut(ClassUtil.getPackageClassBean("", true));
-//		Tools.formatOut(ClassUtil.getMethod("com.mode.User"));
+//		Tools.formatOut(ClassUtil.getMethod("com.mode.mode"));
 		
 //		Tools.formatOut(ClassUtil.getClassName("util", true));
 //		Tools.formatOut(ClassUtil.getClassName("org.dom4j", true));
