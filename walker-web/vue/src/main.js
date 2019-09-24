@@ -15,6 +15,12 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+
+//将方法挂载到Vue原型上
+import { get, post } from './utils/http'
+Vue.prototype.get = get
+Vue.prototype.post = post
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
