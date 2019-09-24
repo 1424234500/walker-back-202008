@@ -16,6 +16,7 @@
 8095    dubbo-port
 8096    zookeeper-port
 
+8099    vue node proxy
 
 ## 编程习惯
 ```

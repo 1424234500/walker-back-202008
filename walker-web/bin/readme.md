@@ -13,6 +13,10 @@ npm run dev
 # 打包压缩
 npm run build:prod
 
+##前端vue模块配置
+1.事件触发调用 this.$store.dispatch('user/login', this.loginForm).then
+2.模块方法配置 /store/modules/user.js 配置导入api import { login, logout, getInfo } from '@/api/shiro'
+3.实现api
 
 ###部署 复制
 /walker-web/release/*

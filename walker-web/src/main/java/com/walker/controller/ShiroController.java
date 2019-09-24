@@ -61,41 +61,41 @@ public class ShiroController {
 
     @ApiOperation(value="登录shiro")
     @ResponseBody
-    @RequestMapping(value="/login.do",method= RequestMethod.POST)
+    @RequestMapping(value="/login",method= RequestMethod.POST)
     public Response login(
-            @RequestParam(value = "id", required = true, defaultValue = "guest") String id,
-            @RequestParam(value = "pwd", required = true, defaultValue = "") String pwd
+            @RequestParam(value = "username", required = true, defaultValue = "guest") String username,
+            @RequestParam(value = "password", required = true, defaultValue = "") String password
     ){
-            UsernamePasswordToken token = new UsernamePasswordToken(id, pwd);
-            SecurityUtils.getSubject().login(token);
-            WebUser webUser = (WebUser) SecurityUtils.getSubject().getPrincipal();//登录成功之后，取出用户信息放进session存储域
+//            UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+//            SecurityUtils.getSubject().login(token);
+//            WebUser webUser = (WebUser) SecurityUtils.getSubject().getPrincipal();//登录成功之后，取出用户信息放进session存储域
 //            this.getRequest().getSession().setAttribute("webUser",webUser);
 
-        log.info("token:" + token);
-        log.info("webUser:" + webUser);
+//        log.info("token:" + token);
+//        log.info("webUser:" + webUser);
 
-        return Response.makeTrue("登录成功", webUser);
+        return Response.makeTrue("登录成功", "1");
     }
 
 
 
     @ApiOperation(value="游客")
     @ResponseBody
-    @RequestMapping(value="/getGuest.do",method= RequestMethod.GET)
+    @RequestMapping(value="/getGuest",method= RequestMethod.GET)
     public String getGuest(){
         log.info("guest");
         return "guest";
     }
     @ApiOperation(value="普通用户")
     @ResponseBody
-    @RequestMapping(value="/getNormal.do",method= RequestMethod.GET)
+    @RequestMapping(value="/getNormal",method= RequestMethod.GET)
     public String getNormal(){
         log.info("normal");
         return "normal";
     }
     @ApiOperation(value="管理员")
     @ResponseBody
-    @RequestMapping(value="/getAdmin.do",method= RequestMethod.GET)
+    @RequestMapping(value="/getAdmin",method= RequestMethod.GET)
     public String getAdmin(){
         log.info("admin");
         return "admin";

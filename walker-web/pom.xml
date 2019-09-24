@@ -29,7 +29,9 @@
         <dir_name_bin>bin</dir_name_bin>
         <dir_name_conf>conf</dir_name_conf>
         <dir_name_lib>lib</dir_name_lib>
+        <dir_name_vue>vue/dist</dir_name_vue>
         <dir_release>${basedir}/release</dir_release>
+
 
     </properties>
 
@@ -83,6 +85,22 @@
                 <version>2.6</version>
 
                 <executions>
+<!--拷贝压缩前端文件部署为资源-->
+                    <execution>
+                        <id>copy-resources-vue</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${dir_name_resource}/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${dir_name_vue}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
 
                     <execution>
                         <id>copy-resources-jar-conf</id>
