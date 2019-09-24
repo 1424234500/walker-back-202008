@@ -1,6 +1,6 @@
 package com.walker.config;
 
-import com.walker.mode.User;
+import com.walker.mode.WebUser;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -15,16 +15,12 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * 权限管理
@@ -35,57 +31,73 @@ public class ShiroConfig {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
+    @Autowired
+    SecurityManager securityManager;
 
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean shiroFilter() {
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(authRealm);
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 
+        // 必须设置 SecurityManager
+        shiroFilterFactoryBean.setSecurityManager(securityManager);
 
-        ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
-        filterFactoryBean.setSecurityManager(securityManager);
+        /*重要，设置自定义拦截器，当访问某些自定义url时，使用这个filter进行验证*/
+//        Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
+        //如果map里面key值为authc,表示所有名为authc的过滤条件使用这个自定义的filter
+        //map里面key值为myFilter,表示所有名为myFilter的过滤条件使用这个自定义的filter，具体见下方
+//        filters.put("myFilter", new MyFilter());
+//        shiroFilterFactoryBean.setFilters(filters);
+        /*---------------------------------------------------*/
 
-        filterFactoryBean.setLoginUrl("/loginPage");
+        //拦截器
+        Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
+        //配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了
+        filterChainDefinitionMap.put("/logout", "logout");
+        //　　anon:所有url都都可以匿名访问;
+        //　　authc: 需要认证才能进行访问;
+        //　　user:配置记住我或认证通过可以访问；
+        //放开静态资源的过滤
+        filterChainDefinitionMap.put("/css/**", "anon");
+        filterChainDefinitionMap.put("/js/**", "anon");
+        filterChainDefinitionMap.put("/img/**", "anon");
+        //放开登录url的过滤
+        filterChainDefinitionMap.put("/login*", "anon");
+        ///////////////////////////////////////////////////////
+        //对于指定的url，使用自定义filter进行验证
+//        filterChainDefinitionMap.put("/my/**", "myFilter");
+        //可以配置多个filter，用逗号分隔，按顺序过滤，下方表示先通过自定义filter的验证，再通过shiro默认过滤器的验证
+        //filterChainDefinitionMap.put("/targetUrl", "myFilter,authc");
+        ///////////////////////////////////////////////////////
+        //过滤链定义，从上向下顺序执行，一般将 /**放在最为下边
+        //url从上向下匹配，当条件匹配成功时，就会进入指定filter并return(不会判断后续的条件)，因此这句需要在最下边
+        filterChainDefinitionMap.put("/**", "anon");//authc
 
-        // 成功登陆后的界面
-        //filterFactoryBean.setSuccessUrl("/indexPage");
+        //如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
+        shiroFilterFactoryBean.setLoginUrl("/login.html");
+        // 登录成功后要跳转的链接
+        shiroFilterFactoryBean.setSuccessUrl("/index.html");
+        // 未授权界面
+        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
 
-        // 没有权限访问的界面
-        //filterFactoryBean.setUnauthorizedUrl("/unauthorized");
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
-        HashMap<String, String> filterMap = new HashMap<>();
-
-        // 配置不会被拦截的链接 顺序判断
-        filterMap.put("/static/**", "anon");
-        filterMap.put("/login", "anon");
-        filterMap.put("/SubmitRegistInformation", "anon");
-        filterMap.put("/SendMessageCode", "anon");
-        // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了
-        filterMap.put("/logout", "logout");
-
-        // <!-- 过滤链定义，从上向下顺序执行，一般将 /**放在最为下边 -->:这是一个坑呢，一不小心代码就不好使了;
-        // <!-- authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问-->
-        filterMap.put("/**", "authc");
-        // 所有的页面都需要user这个角色
-        filterMap.put("/**", "roles[user]");
-
-        filterFactoryBean.setFilterChainDefinitionMap(filterMap);
-        return filterFactoryBean;
+        return shiroFilterFactoryBean;
     }
 
 
     @Bean("securityManager")
     public SecurityManager securityManager() {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
-        manager.setRealm(new AuthorizingRealm() {
-
+        AuthorizingRealm authorizingRealm = new AuthorizingRealm() {
             //添加角色权限
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
                 //获取用户
-                User user = (User) principalCollection.getPrimaryPrincipal();
+                WebUser webUser = (WebUser) principalCollection.getPrimaryPrincipal();
                 //获取权限列表
                 List<String> roles = Arrays.asList("role01");
+                log.info("doGetAuthorizationInfo role  " + webUser + " " + roles);
+
                 //添加角色和权限
                 SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
                 roles.forEach(item -> simpleAuthorizationInfo.addRole(item));
@@ -99,19 +111,40 @@ public class ShiroConfig {
 
                 String username = usernamePasswordToken.getUsername();
 
-                User user = new User().setName(username);
-                if (user == null) {
+                WebUser webUser = new WebUser().setName(username);
+                log.info("doGetAuthenticationInfo " + webUser);
+
+                if (webUser == null) {
                     return null;
                 } else {
-                    SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(user, user.getPwd(), getName());
+                    SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(webUser, webUser.getPwd(), getName());
                     return simpleAuthenticationInfo;
                 }
+            }
+        };
+        //设置缓存
+        authorizingRealm.setCacheManager(new MemoryConstrainedCacheManager());
+        //设置密码校验规则
+        authorizingRealm.setCredentialsMatcher(new SimpleCredentialsMatcher() {
+            @Override
+            public boolean doCredentialsMatch (AuthenticationToken token, AuthenticationInfo info){
+                WebUser webUser = (WebUser) info.getPrincipals().getPrimaryPrincipal(); //这里取出的是我们在认证方法中放入的用户信息也就是我们从数据库查询出的用户信息
+                UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;//这里是前端发送的用户名密码信息
+                String requestPwd = new String(usernamePasswordToken.getPassword());
+                String requestPwdEncryption = getEncryptionPassword(requestPwd, webUser.getId());//获取加密后的密码
+                log.info("SimpleCredentialsMatcher " + webUser + " pwd " + requestPwdEncryption);
+                String dbPwd = webUser.getPwd();
+                return requestPwdEncryption.equals(dbPwd);
             }
 
 
         });
+        manager.setRealm(authorizingRealm);
         return manager;
     }
+
+
+
 
 
     @Value("${password.algorithmName:md5}") //这个可以在application.properites里自行配置 如（md5，sha，base64）等等

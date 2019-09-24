@@ -2,7 +2,7 @@ package com.walker.controller;
 
 
 import com.walker.Response;
-import com.walker.mode.User;
+import com.walker.mode.WebUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
@@ -68,13 +68,13 @@ public class ShiroController {
     ){
             UsernamePasswordToken token = new UsernamePasswordToken(id, pwd);
             SecurityUtils.getSubject().login(token);
-            User user = (User) SecurityUtils.getSubject().getPrincipal();//登录成功之后，取出用户信息放进session存储域
-//            this.getRequest().getSession().setAttribute("user",user);
+            WebUser webUser = (WebUser) SecurityUtils.getSubject().getPrincipal();//登录成功之后，取出用户信息放进session存储域
+//            this.getRequest().getSession().setAttribute("webUser",webUser);
 
         log.info("token:" + token);
-        log.info("user:" + user);
+        log.info("webUser:" + webUser);
 
-        return Response.makeTrue("登录成功", user);
+        return Response.makeTrue("登录成功", webUser);
     }
 
 

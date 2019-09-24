@@ -1,6 +1,6 @@
 package com.walker.mode;
 
-public class User {
+public class WebUser {
 
     String id;
     String pwd;
@@ -12,7 +12,7 @@ public class User {
         return id;
     }
 
-    public User setId(String id) {
+    public WebUser setId(String id) {
         this.id = id;
         return this;
     }
@@ -21,7 +21,7 @@ public class User {
         return pwd;
     }
 
-    public User setPwd(String pwd) {
+    public WebUser setPwd(String pwd) {
         this.pwd = pwd;
         return this;
     }
@@ -30,7 +30,7 @@ public class User {
         return name;
     }
 
-    public User setName(String name) {
+    public WebUser setName(String name) {
         this.name = name;
         return this;
     }
@@ -39,7 +39,7 @@ public class User {
         return about;
     }
 
-    public User setAbout(String about) {
+    public WebUser setAbout(String about) {
         this.about = about;
         return this;
     }

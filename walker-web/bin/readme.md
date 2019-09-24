@@ -2,10 +2,22 @@
 ###打包
 mvn clean package -Dmaven.test.skip=true
 
+###前端打包压缩 dist
+# 进入前端项目目录
+cd src/main/resources/vue
+
+# 安装环境
+npm install --registry=https://registry.npm.taobao.org
+# 启动服务 开发
+npm run dev
+# 打包压缩
+npm run build:prod
+
+
 ###部署 复制
-/walker-socket/release/*
-/walker-socket/release/conf/*
-/walker-socket/release/lib/*
+/walker-web/release/*
+/walker-web/release/conf/*
+/walker-web/release/lib/*
 
 [ ssh 免密码配置key上传注册 ]
 方案1 自动差异化增量压缩打包 上传 备份 解压覆盖 重启
@@ -15,5 +27,10 @@ mvn clean package -Dmaven.test.skip=true
 ###启动
 ./server.sh
 
+
+
+
 ###打包&上传
-./do [ socket | core ]
+./do [ web | core ]
+
+

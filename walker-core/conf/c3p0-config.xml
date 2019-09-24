@@ -16,7 +16,7 @@
      <named-config name="mysql">  
         <property name="driverClass">com.mysql.jdbc.Driver</property>  
         <property name="jdbcUrl">jdbc:mysql://localhost:3306/CoupleSpace</property>  
-        <property name="user">root</property>  
+        <property name="webUser">root</property>
         <property name="password">root</property>  
     </named-config>  
     -->

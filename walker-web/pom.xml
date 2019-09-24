@@ -12,7 +12,7 @@
     </parent>
     <artifactId>walker-web</artifactId>
     <name>web</name>
-    <description> j2ee project, user,role,dpet,controll </description>
+    <description> j2ee project, webUser,role,dpet,controll </description>
     <groupId>com.walker</groupId>
     <version>0.0.1</version>
 

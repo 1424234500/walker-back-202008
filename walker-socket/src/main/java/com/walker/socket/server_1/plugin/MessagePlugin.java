@@ -24,7 +24,7 @@ public  class MessagePlugin<T> extends Plugin<T>{
 //		 *					message 发给user/group 请求转发
 //		 *						data.to		发给目标用户	u_123,u_2323,g_xxx,s_all,s_online
 //		 *						data.from	发送方来源	u_123,s_admin
-//		 *						data.type	具体消息类型	text,image,voice,video,map
+//		 *						data.type	具体消息类型	text,img,voice,video,map
 //		 *						data.body
 		//发送方设置去向 接收方只看到发送给自己
 
