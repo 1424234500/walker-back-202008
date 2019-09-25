@@ -205,7 +205,6 @@ public class SqlUtil{
 	}
 	/**
 	 * 根据不同数据源构造不同分页sql
-	 * @param dao
 	 * @param sql
 	 * @param page
 	 * @param rows
@@ -243,16 +242,43 @@ public class SqlUtil{
 	
 		
 		String sql = "";
-			if(dsName.equals("mysql")) {
-				sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '" + tableName + "' ORDER BY COLUMN_NAME";
-			}else if(dsName.equals("oracle")) {
-				sql = "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
-			}else{
-				throw new ErrorException("no implements  " + dsName);
-			}		
-			return sql;
+		if(dsName.equals("mysql")) {
+			sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '" + tableName + "' ORDER BY COLUMN_NAME";
+		}else if(dsName.equals("oracle")) {
+			sql = "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
+		}else{
+			throw new ErrorException("no implements  " + dsName);
+		}
+		return sql;
 	}
-	
+	/**
+	 * 表列查询 sql
+	 * @param dsName
+	 * @param tableName
+	 * @return
+	 */
+	public static String makeSqlColumnNickname(String dsName, String tableName) {
+		dsName = String.valueOf(dsName);
+/*
+oracle
+SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
+sqlserver
+SELECT A.name AS table_name, B.name AS name, C.value AS nickname FROM sys.tables A INNER JOIN sys.columns B ON B.object_id = A.object_id LEFT JOIN sys.extended_properties C ON C.major_id = B.object_id AND C.minor_id = B.column_id WHERE A.name = 'TEACHER'
+mysql
+select COLUMN_NAME,COLUMN_COMMENT from INFORMATION_SCHEMA.COLUMNS where table_name = 'TEACHER'
+;
+*/
+
+		String sql = "";
+		if(dsName.equals("mysql")) {
+			sql = "select COLUMN_NAME,COLUMN_COMMENT from INFORMATION_SCHEMA.COLUMNS where table_name = '" + tableName + "' ";
+		}else if(dsName.equals("oracle")) {
+			sql = "select COLUMN_NAME,COLUMN_COMMENT from INFORMATION_SCHEMA.COLUMNS where table_name = '" + tableName + "' ";
+		}else{
+			throw new ErrorException("no implements  " + dsName);
+		}
+		return sql;
+	}
 	/**
 	 * 结果集转换 列 值
 	 * @param rs

@@ -94,6 +94,9 @@ export default {
       immediate: true
     }
   },
+  created() {
+    this.fetchData()
+  },
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -109,19 +112,20 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.post('/shiro/login',{}).then((res)=>{
-            console.log(res)
-
+          this.post('/shiro/login', this.loginForm).then((res)=>{
+            res = {token:111, name:this.loginForm.username}
+            this.$store.dispatch('user/loginin', res)
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
-        }).catch((err)=>{
+          }).catch(()=>{
             this.loading = false
-            console.log(err)
           })
-          // this.$store.dispatch('user/login', this.loginForm).then(() => {
+          // this.$store.dispatch('user/login', this.loginForm).then((res) => {
+          //   console.info("index.vue user ")
+          //   console.info(res)
           //   this.$router.push({ path: this.redirect || '/' })
           //   this.loading = false
-          // }).catch(() => {
+          // }).catch((error) => {
           //   this.loading = false
           // })
         } else {

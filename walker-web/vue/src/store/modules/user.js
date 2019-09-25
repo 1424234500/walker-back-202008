@@ -1,13 +1,15 @@
-import { login, logout, getInfo } from '@/api/shiro'
+// import { login, logout, getInfo } from '@/api/shiro'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import { get, post } from '@/utils/http'
 
+//属性私有?
 const state = {
   token: getToken(),
   name: '',
   avatar: ''
 }
-
+//数据操作函数set?
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -19,44 +21,24 @@ const mutations = {
     state.avatar = avatar
   }
 }
-
+//other异步 方法?
 const actions = {
-  // user login
-  login({ commit }, userInfo) {
-    console.info("module/user.js/action/login")
-    console.info(userInfo)
-    const { username, password } = userInfo
+  loginin({ commit, state }, data){
+    console.info("module/user/loginOn设置当前用户信息 " + data)
+
+    const {token, name} = data
+    commit('SET_TOKEN', token)
+    commit('SET_NAME', name)
+    setToken(token)
     return new Promise((resolve, reject) => {
-      login({ username: username, password: password }).then(response => {
-        console.info("module/user.js/action/login/response")
-        console.info(response)
-        commit('SET_TOKEN', response.data)
-        setToken(response.data)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      resolve(token)
     })
   },
 
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
+      resolve({name:state.name, avatar:stat.avatar})
     })
   },
 

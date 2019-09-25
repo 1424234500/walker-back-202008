@@ -15,11 +15,11 @@ public class Teacher implements Cloneable,Serializable{
 //    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
 //    @GeneratedValue(generator = "system-uuid")
 //    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(name="ID", nullable = false, length = 32)
+    @Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
     private String id;
-    @Column(name = "NAME", nullable = false, length = 256)    //255
+    @Column(name = "NAME", columnDefinition = "varchar(512) default '' comment '姓名' ")    //255
     private String name;
-    @Column(name = "TIME", nullable = false, length = 32)
+    @Column(name = "TIME", columnDefinition = "varchar(32) default '' comment '修改时间' ")
     private String time;
     @Column(name = "PWD", nullable = true, length = 64)
     private String pwd;

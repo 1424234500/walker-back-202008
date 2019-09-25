@@ -19,7 +19,6 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-
   if (hasToken) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
@@ -37,6 +36,7 @@ router.beforeEach(async(to, from, next) => {
           next()
         } catch (error) {
           // remove token and go to login page to re-login
+          console.error("permission.js/route.before/cache")
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
@@ -46,6 +46,7 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     /* has no token*/
+    console.error("permission.js/route.before/has no token")
 
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly

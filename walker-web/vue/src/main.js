@@ -17,7 +17,8 @@ import '@/permission' // permission control
 
 
 //将方法挂载到Vue原型上
-import { get, post } from './utils/http'
+// import { get, post } from './utils/http'
+import { get, post } from '@/utils/http'
 Vue.prototype.get = get
 Vue.prototype.post = post
 

@@ -5,6 +5,7 @@ import com.walker.common.util.Page;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,22 @@ public abstract class BaseDaoAdapter implements BaseDao {
 			res = list.get(0);
 		} else {
 			res = new ArrayList<String>();
+		}
+		return res;
+	}
+
+	@Override
+	public Map<String, String> getColumnsMapByTableName(String tableName) {
+		Map<String, String> res = new HashMap<String, String>();
+
+		List<Map<String, Object>> list = this.find(SqlUtil.makeSqlColumnNickname(getDs(), tableName));
+		if (list.size() > 0) {
+//			COLUMN_NAME COLUMN_COMMENT
+			for(Map<String, Object> item : list){
+				res.put(String.valueOf(item.get("COLUMN_NAME")), String.valueOf(item.get("COLUMN_COMMENT")));
+			}
+
+		} else {
 		}
 		return res;
 	}

@@ -3,6 +3,7 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Page;
+import com.walker.dao.JdbcDao;
 import com.walker.mode.Teacher;
 import com.walker.service.TeacherService;
 import io.swagger.annotations.Api;
@@ -26,7 +27,8 @@ import java.util.List;
 public class TeacherController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
-
+    @Autowired
+    JdbcDao jdbcDao;
     @Autowired
     @Qualifier("teacherJpaService")
     private TeacherService teacherService;
@@ -92,7 +94,7 @@ public class TeacherController {
 
     @ApiOperation(value = "get 分页查询", notes = "url restful参数 PathVariable")
     @ResponseBody
-    @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/findPage.do", method = RequestMethod.POST)
     public Response findPage(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
@@ -106,6 +108,16 @@ public class TeacherController {
         List<Teacher> list = teacherService.finds(new Teacher("", name == null ? "" : name, "", ""), page1);
         log.info(page1.toString());
         return Response.makePage(res, page1, list);
+    }
+
+
+    @ApiOperation(value = "获取需要前段展示的表列名 备注名", notes = "url restful参数 PathVariable")
+    @ResponseBody
+    @RequestMapping(value = "/getColsMap.do", method = RequestMethod.POST)
+    public Response findPage(
+            @RequestParam(value = "tableName", required = true, defaultValue = "TEACHER") String tableName
+    ) {
+        return Response.makeTrue(tableName, jdbcDao.getColumnsMapByTableName(tableName));
     }
 
 

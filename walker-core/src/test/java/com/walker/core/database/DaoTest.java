@@ -11,6 +11,10 @@ import com.walker.common.util.Tools;
 import com.walker.core.encode.Pinyin;
 
 public class DaoTest {
+	@Test
+	public void testGetColumnMap(){
+		Tools.out(new Dao().getColumnsMapByTableName("TEACHER"));
+	}
 
 	@Test
 	public void testEF() {

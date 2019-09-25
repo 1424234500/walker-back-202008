@@ -16,6 +16,13 @@ import com.walker.common.util.Page;
 public interface BaseDao extends BaseJdbc{
 
 
+	/**
+	 * 获取表的列和备注map
+	 *
+	 * @param tableName
+	 * @return
+	 */
+	public Map<String, String> getColumnsMapByTableName(String tableName);
 
 	/**
 	 * 获取表的列数组
