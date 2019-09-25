@@ -68,9 +68,12 @@ export function post(url, params) {
       afterReject(url, params, 'post', err)
       reject(err.data)
     })
+  })
 }
 
+//环绕监控  缓存设计  aop
 var pre = "http.js "
+
 function before(url, params, type){
   console.info(pre + " before " + type + " " + url + " " + JSON.stringify(params) )
 
@@ -83,6 +86,5 @@ function afterResolve(url, params, type, res){
 function afterReject(url, params, type, err){
   console.info(pre + " afterReject " + type + " " + url + " " + JSON.stringify(params) )
   console.info(err)
-
 
 }
