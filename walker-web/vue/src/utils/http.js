@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Message } from 'element-ui';
 
 import qs from 'qs'
 //
@@ -81,10 +82,15 @@ function before(url, params, type){
 function afterResolve(url, params, type, res){
   console.info(pre + " afterResolve " + type + " " + url + " " + JSON.stringify(params) )
   console.info(res)
-
+  Message({
+    message: 'Done ' + res.data.info + ' ' + res.data.costTime,
+    type: 'success'
+  });
 }
 function afterReject(url, params, type, err){
   console.info(pre + " afterReject " + type + " " + url + " " + JSON.stringify(params) )
   console.info(err)
+  Message.error(err);
+
 
 }

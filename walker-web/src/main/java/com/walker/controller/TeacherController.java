@@ -96,7 +96,7 @@ public class TeacherController {
     @ResponseBody
     @RequestMapping(value = "/findPage.do", method = RequestMethod.POST)
     public Response findPage(
-            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum
     ) {
@@ -105,7 +105,9 @@ public class TeacherController {
 
         Page page1 = new Page().setNowpage(nowPage).setShownum(showNum);
 
-        List<Teacher> list = teacherService.finds(new Teacher("", name == null ? "" : name, "", ""), page1);
+        Teacher teacher = new Teacher().setName(name);
+        List<Teacher> list = teacherService.finds(teacher, page1);
+        page1.setNum(teacherService.count(teacher));
         log.info(page1.toString());
         return Response.makePage(res, page1, list);
     }

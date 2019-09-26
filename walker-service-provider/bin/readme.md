@@ -1,4 +1,3 @@
-###mvn 指令依赖环境变量 需要和 配置的pom里面的相同  否则使用eclipse自带install也可
 ###打包
 mvn clean package -Dmaven.test.skip=true
 
@@ -17,3 +16,9 @@ mvn clean package -Dmaven.test.skip=true
 
 ###打包&上传
 ./do [ socket | core ]
+
+###dubbo使用注意
+对象参数传递 是复制传递 不会实现引用传递! dubbo远程修改 
+
+
+
