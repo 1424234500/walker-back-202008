@@ -60,7 +60,7 @@ public class TeacherController {
     ) {
         String res = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
         log.info(res);
-        Integer model = teacherService.update(new Teacher(id, name, time, pwd));
+        Teacher model = teacherService.save(new Teacher(id, name, time, pwd));
         return Response.makeTrue(res, model);
     }
 
@@ -98,12 +98,13 @@ public class TeacherController {
     public Response findPage(
             @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
-            @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum
-    ) {
+            @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum,
+            @RequestParam(value = "order", required = false, defaultValue = "") String order
+            ) {
         String res = "get   name:" + name;
         log.info(res);
 
-        Page page1 = new Page().setNowpage(nowPage).setShownum(showNum);
+        Page page1 = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
 
         Teacher teacher = new Teacher().setName(name);
         List<Teacher> list = teacherService.finds(teacher, page1);
@@ -116,7 +117,7 @@ public class TeacherController {
     @ApiOperation(value = "获取需要前段展示的表列名 备注名", notes = "url restful参数 PathVariable")
     @ResponseBody
     @RequestMapping(value = "/getColsMap.do", method = RequestMethod.POST)
-    public Response findPage(
+    public Response getColsMap(
             @RequestParam(value = "tableName", required = true, defaultValue = "TEACHER") String tableName
     ) {
         return Response.makeTrue(tableName, jdbcDao.getColumnsMapByTableName(tableName));

@@ -65,7 +65,7 @@ export const constantRoutes = [
       {
         path: 'student',
         name: 'Student',
-        component: () => import('@/views/student/index'),
+        component: () => import('@/views/tables/student'),
         meta: { title: 'Student', icon: 'table' }
       },
       {
@@ -149,11 +149,36 @@ export const constantRoutes = [
   },
 
   {
+    path: '/template',
+    component: Layout,
+    redirect: '/template/popover',
+    name: 'Template',
+    meta: { title: 'Template', icon: 'example' },
+    children: [
+      {
+        path: 'https://cloud.tencent.com/developer/doc/1270',
+        meta: { title: 'Vue-el-doc', icon: 'link' }
+      },
+      {
+        path: 'popover',
+        name: 'Popover',
+        component: () => import('@/views/template/popover'),
+        meta: { title: 'Popover', icon: 'table' }
+      },
+      {
+        path: 'button',
+        name: 'Button',
+        component: () => import('@/views/template/button'),
+        meta: { title: 'Button', icon: 'table' }
+      },
+    ]
+  },
+  {
     path: 'external-link',
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+        path: 'https://baidu.com',
         meta: { title: 'External Link', icon: 'link' }
       }
     ]

@@ -40,6 +40,15 @@ public class TeacherRepositoryTest extends ApplicationProviderTests {
         Tools.out(teacherRepository.selfCount("1"));
         Tools.out(teacherRepository.count());
 
+    }
+    @Test
+    public void testFindName(){
+        Pageable pageable = PageRequest.of(0, size);
+
+        Tools.out(teacherRepository.selfFindPage(null, pageable));
+        Tools.out(teacherRepository.selfFindPage("", pageable));
+        Tools.out(teacherRepository.selfFindPage("1", pageable));
+        Tools.out(teacherRepository.selfFindPage("add", pageable));
 
     }
 }

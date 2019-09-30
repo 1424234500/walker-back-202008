@@ -2,6 +2,7 @@ package com.walker.core.database;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -15,7 +16,21 @@ public class DaoTest {
 	public void testGetColumnMap(){
 		Tools.out(new Dao().getColumnsMapByTableName("TEACHER"));
 	}
+	@Test
+	public void testPo(){
+		BaseDao  dao = new Dao();
+		List<Object> list = new ArrayList<>();
+//		list.add(new String[]{"0", "3"});
+		list.add("0");
+		list.add("3");
+		Tools.out(dao.findPage("select * from TEACHER where ID in (?, ?) ", 1, 10,  list.toArray()));
 
+		list.clear();
+		list.add("ID ");
+		Tools.out(dao.findPage("select * from TEACHER where 1=1 order by ? ", 1, 10,  list.toArray()));
+
+
+	}
 	@Test
 	public void testEF() {
 		BaseDao dao = new Dao();

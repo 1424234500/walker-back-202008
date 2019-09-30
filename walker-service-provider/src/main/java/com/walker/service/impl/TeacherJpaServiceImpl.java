@@ -17,6 +17,11 @@ public class TeacherJpaServiceImpl implements TeacherService {
 
 
     @Override
+    public Teacher save(Teacher teacher) {
+        return teacherRepository.save(teacher);
+    }
+
+    @Override
     public Teacher add(Teacher test) {
         return teacherRepository.save(test);
     }
@@ -47,6 +52,6 @@ public class TeacherJpaServiceImpl implements TeacherService {
 
     @Override
     public Integer count(Teacher test) {
-        return Integer.valueOf(Long.valueOf(teacherRepository.count()).intValue());
+        return Integer.valueOf(Long.valueOf(teacherRepository.selfCount(test.getName())).intValue());
     }
 }

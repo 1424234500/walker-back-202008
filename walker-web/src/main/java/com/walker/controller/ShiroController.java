@@ -61,7 +61,7 @@ public class ShiroController {
 
     @ApiOperation(value="登录shiro")
     @ResponseBody
-    @RequestMapping(value="/login",method= RequestMethod.POST)
+    @RequestMapping(value="/login.do",method= RequestMethod.POST)
     public Response login(
             @RequestParam(value = "username", required = true, defaultValue = "guest") String username,
             @RequestParam(value = "password", required = true, defaultValue = "") String password
@@ -81,21 +81,21 @@ public class ShiroController {
 
     @ApiOperation(value="游客")
     @ResponseBody
-    @RequestMapping(value="/getGuest",method= RequestMethod.GET)
+    @RequestMapping(value="/getGuest.do",method= RequestMethod.GET)
     public String getGuest(){
         log.info("guest");
         return "guest";
     }
     @ApiOperation(value="普通用户")
     @ResponseBody
-    @RequestMapping(value="/getNormal",method= RequestMethod.GET)
+    @RequestMapping(value="/getNormal.do",method= RequestMethod.GET)
     public String getNormal(){
         log.info("normal");
         return "normal";
     }
     @ApiOperation(value="管理员")
     @ResponseBody
-    @RequestMapping(value="/getAdmin",method= RequestMethod.GET)
+    @RequestMapping(value="/getAdmin.do",method= RequestMethod.GET)
     public String getAdmin(){
         log.info("admin");
         return "admin";

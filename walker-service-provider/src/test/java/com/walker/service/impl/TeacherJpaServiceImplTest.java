@@ -20,15 +20,34 @@ public class TeacherJpaServiceImplTest extends ApplicationProviderTests {
     TeacherService teacherJdbcService;
 
     @Test
-    public void finds() {
-        Page page = new Page().setNowpage(1).setShownum(2);
+    public void findsJpa() {
+        Page page = null;
+        page = new Page().setNowpage(1).setShownum(2);
         out(teacherJpaService.finds(new Teacher().setName(""), page));
+        out(page);
+
+        out(teacherJpaService.finds(new Teacher().setName("1"), page));
+        out(page);
+
+        out(teacherJpaService.finds(new Teacher().setName("add"), page));
+        out(page);
+
+        out(teacherJpaService.finds(new Teacher().setName("test"), page));
         out(page);
     }
     @Test
     public void findsJdbc() {
         Page page = new Page().setNowpage(1).setShownum(2);
         out(teacherJdbcService.finds(new Teacher().setName(""), page));
+        out(page);
+
+        out(teacherJdbcService.finds(new Teacher().setName("1"), page));
+        out(page);
+
+        out(teacherJdbcService.finds(new Teacher().setName("add"), page));
+        out(page);
+
+        out(teacherJdbcService.finds(new Teacher().setName("test"), page));
         out(page);
     }
 }

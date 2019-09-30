@@ -1,5 +1,8 @@
 package com.walker.common.util;
 
+import com.google.common.html.HtmlEscapers;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,23 +13,23 @@ public class Page implements Serializable{
 	/**
 	 * 总数据条数
 	 */
-	long num = 0;
+	private long num = 0;
 	/**
 	 * 每页数量
 	 */
-	int shownum = 5;
+	private int shownum = 5;
 	/**
 	 * 当前页码
 	 */
-	int nowpage = 1;
+	private int nowpage = 1;
 	/**
 	 * 总页数
 	 */
-	int pagenum = 0;
+	private int pagenum = 0;
 	/**
 	 * 排序	id, name desc, time asc 空则不排序
 	 */
-	String order = "";
+	private String order = "";
 	public String toString() {
 		return this.toBean().toString();
 	}
@@ -130,8 +133,18 @@ public class Page implements Serializable{
 		return order;
 	}
 
+	/**
+	 * 过滤非法字符串 sql注入
+	 * @param order
+	 * @return
+	 */
 	public Page setOrder(String order) {
-		this.order = order;return this;
+		this.order = order;
+		this.order.replace('\'', ' ');
+		this.order.replace('&', ' ');
+		this.order.replace('|', ' ');
+		this.order.replace('"', ' ');
+		return this;
 	}
 
 	

@@ -112,7 +112,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.post('/shiro/login', this.loginForm).then((res)=>{
+          this.post('/shiro/login.do', this.loginForm).then((res)=>{
             res = {token:111, name:this.loginForm.username}
             this.$message({message:'登录成功', type:'success'});
             this.$store.dispatch('user/loginin', res)
@@ -120,10 +120,6 @@ export default {
             this.loading = false
           }).catch(()=>{
             this.loading = false
-            this.$message({
-              message: 'Error ' ,
-              type: 'warning'
-            });
           })
           // this.$store.dispatch('user/login', this.loginForm).then((res) => {
           //   console.info("index.vue user ")

@@ -8,7 +8,7 @@ import java.util.List;
 public interface TeacherService {
 
 
-
+    public Teacher save(Teacher teacher);
     public Teacher add(Teacher test);
     public Integer update(Teacher test);
     public Integer delete(Teacher test);

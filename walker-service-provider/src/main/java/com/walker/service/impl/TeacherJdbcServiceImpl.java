@@ -18,8 +18,19 @@ public class TeacherJdbcServiceImpl implements TeacherService {
     JdbcTemplate jdbcTemplate;
     @Autowired
     JdbcDao jdbcDao;
-    
-    
+
+
+    @Override
+    public Teacher save(Teacher teacher) {
+        List<Teacher> t = this.finds(teacher, new Page().setShownum(1));
+        if(t.size() <= 0){
+            return this.add(teacher);
+        }else{
+            this.update(teacher);
+            return teacher;
+        }
+    }
+
     @Override
     public Teacher add(Teacher test) {
         jdbcDao.executeSql("INSERT INTO TEACHER VALUES(?,?,?,?) ", test.getId(), test.getName(), test.getTime(), test.getPwd());
@@ -48,8 +59,8 @@ public class TeacherJdbcServiceImpl implements TeacherService {
     @Override
     public List<Teacher> finds(Teacher test, Page page) {
         String sql = "SELECT * FROM TEACHER WHERE ID=? " +
-                "OR NAME LIKE  CONCAT('%', ?, '%') ";
-        sql = SqlUtil.makeSqlPage(jdbcDao.getDs(), sql, page.getNowpage(), page.getPagenum());
+                "OR NAME LIKE  CONCAT('%', ?, '%') "  + (page.getOrder().length() > 0 ? " ORDER BY " + page.getOrder().toUpperCase() : "") ;
+        sql = SqlUtil.makeSqlPage(jdbcDao.getDs(), sql, page.getNowpage(), page.getShownum());
         List<Teacher> list = jdbcTemplate.query(
                 sql,
                 new Object[]{test.getId(), test.getName()},
