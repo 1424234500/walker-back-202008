@@ -4,6 +4,10 @@
 @import './element-ui.scss';
 @import './sidebar.scss';
 
+@import './bootstrap/css/bootstrap.min.css';
+@import './bootstrap/css/bootstrap-theme.min.css';
+
+
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -91,3 +95,6 @@ div:focus {
 .div-box-down{
    padding-bottom: 12px;
  }
+.my-input-small{
+  width: 40em;
+}

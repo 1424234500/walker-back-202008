@@ -44,8 +44,13 @@ public class TeacherJpaServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> finds(Teacher test, Page page) {
-        Sort sort = new Sort(Sort.Direction.ASC, "name");
-        Pageable pageable = new PageRequest(page.getNowpage()-1, page.getShownum(), sort);
+        String order = page.getOrder();
+        String[] orders = order.split(" ");
+
+        Sort sort = new Sort(orders.length > 1 && orders[1].equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                orders[0]);
+
+        Pageable pageable = PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
         page.setNum(teacherRepository.selfCount(test.getName()));
         return teacherRepository.selfFindPage(test.getName(), pageable);
     }

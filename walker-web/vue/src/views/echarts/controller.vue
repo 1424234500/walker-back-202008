@@ -2,134 +2,28 @@
   <div class="app-container" >
 
 
-<!--    <div>Student 管理</div>-->
+    <div>mvc统计</div>
 
 <!--搜索-->
     <div class="div-box-down"
          v-loading="loadingCols"
     >
         <form class="form-inline" >
-          <div class="form-group" v-for="(value, key) in colsMap">
-            <label>{{value=='' ? key : value}}</label>
-<!--            for="input"
-id="input"
--->
+          <div class="form-group">
+            <label>label</label>
             <input
               type="text"
               class="form-control"
               style="width: 10em; margin-right: 1em;"
               v-on:keyup.13="getListPage()"
-              :placeholder="key"
-              v-model="colsSearch[key]"
+              :placeholder="start"
+              v-model="colsSearch['start']"
             />
           </div>
 
           <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-          <el-button  class="btn btn-warning" @click="handlerAddColumn()" >添加</el-button>
           <el-button  class="btn btn-default" @click="clearColsSearch();getListPage();" >清除</el-button>
         </form>
-    </div>
-
-    <div
-      v-show="!loadingCols"
-    >
-      <el-table
-        v-loading="loadingList"
-        :data="list"
-        :row-class-name="tableRowClassName"
-        :default-sort = "{prop: 'id', order: 'descending'}"
-        ref="multipleTable"
-        @selection-change="handlerSelectionChange"
-        @sort-change="handlerSortChange"
-        element-loading-text="Loading"
-        border
-        fit
-        stripe
-        show-summary
-        highlight-current-row
-        max-height="360"
-      >
-  <!--      多选框-->
-        <el-table-column
-          type="selection"
-          width="55">
-        </el-table-column>
-  <!--      序号-->
-        <el-table-column align="center" label="$" width="95">
-          <template slot-scope="scope">
-            {{ scope.$index }}
-          </template>
-        </el-table-column>
-  <!--       设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
-        <el-table-column
-          v-for="(value, key) in colsMap"
-          :key="key"
-          :property="key"
-          :label="(value=='' ? key : value)"
-          sortable
-        >
-          <template slot-scope="scope">
-            {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-<!--            scope.$index, -->
-            <el-button size="mini" @click="handlerChange(scope.row)">修改 </el-button>
-
-            <el-button  size="mini" type="danger" @click.native.prevent="handlerDelete(scope.$index, scope.row)" >删除 </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-  <!--    分页-->
-      <el-pagination
-        @current-change="handlerCurrentChange"
-        @size-change="handlerSizeChange"
-        :current-page="page.nowpage"
-        :page-size="page.shownum"
-        :page-sizes="[2, 4, 8, 16, 32, 64, 128]"
-        :pager-count="9"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="page.num"
-        background
-        style="float:right;margin:10px 20px 0 0;">
-      </el-pagination>
-
-
-      <el-dialog
-        title="修改"
-        :visible.sync="loadingUpdate"
-        width="68%"
-        :before-close="handlerCancel"
-      >
-
-        <template>
-            <el-form
-              v-loading="loadingSave"
-              ref="form"
-             :model="colsUpdate"
-             label-width="120px"
-            >
-              <el-form-item
-                v-for="(value, key) in colsMap"
-                :key="key"
-                :property="key"
-                :label="(value=='' ? key : value)"
-              >
-                <el-input v-model="colsUpdate[key]" type="text" />
-              </el-form-item>
-
-              <el-form-item>
-                <el-button type="primary" @click="handlerSave()">确定</el-button>
-                <el-button @click="handlerCancel()">取消</el-button>
-              </el-form-item>
-            </el-form>
-        </template>
-      </el-dialog>
-
-
-
-
     </div>
 
 

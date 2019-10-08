@@ -76,7 +76,27 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/echarts',
+    component: Layout,
+    redirect: '/echarts/Controller',
+    name: 'Echarts',
+    meta: { title: 'Echarts', icon: 'example' },
+    children: [
+      {
+        path: 'controller',
+        name: 'Controller',
+        component: () => import('@/views/echarts/Controller'),
+        meta: { title: 'Controller', icon: 'table' }
+      },
+      {
+        path: 'socket',
+        name: 'Socket',
+        component: () => import('@/views/echarts/socket'),
+        meta: { title: 'Socket', icon: 'tree' }
+      }
+    ]
+  },
   {
     path: '/form',
     component: Layout,

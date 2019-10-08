@@ -139,11 +139,11 @@ public class Page implements Serializable{
 	 * @return
 	 */
 	public Page setOrder(String order) {
+		order = order.replace('\'', ' ');
+		order = order.replace('&', ' ');
+		order = order.replace('|', ' ');
+		order = order.replace('"', ' ');
 		this.order = order;
-		this.order.replace('\'', ' ');
-		this.order.replace('&', ' ');
-		this.order.replace('|', ' ');
-		this.order.replace('"', ' ');
 		return this;
 	}
 
