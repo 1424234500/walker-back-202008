@@ -47,8 +47,8 @@ public class TeacherJpaServiceImpl implements TeacherService {
         String order = page.getOrder();
         String[] orders = order.split(" ");
 
-        Sort sort = new Sort(orders.length > 1 && orders[1].equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC,
-                orders[0]);
+        Sort sort = orders[0].length() > 0 ? new Sort(orders.length > 1 && orders[1].equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                orders[0]) : null;
 
         Pageable pageable = PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
         page.setNum(teacherRepository.selfCount(test.getName()));

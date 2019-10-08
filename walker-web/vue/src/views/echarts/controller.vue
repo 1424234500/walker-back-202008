@@ -19,6 +19,11 @@
               :placeholder="start"
               v-model="colsSearch['start']"
             />
+
+            <select class="form-control" ng-model="query" ng-change="urlChange()" >
+              <option ng-repeat="item in queryUrl track by $index">{{item}}</option>
+            </select>
+
           </div>
 
           <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
@@ -26,44 +31,29 @@
         </form>
     </div>
 
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="echarts_count" class="echart-big-small"></div>
+
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="echarts" class="echart-big-small"></div>
+
 
 
   </div>
 </template>
 
 <script>
-// import { getList } from '@/api/table'
 
 export default {
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
   },
   data() {
     return {
       list: [],
       colsMap: {},      //列名:别名
-      colsSearch: {},   //搜索 列明:搜索值
-      colsUpdate: {},   //更新界面复制 列名:新值
-      colsChangeNow: {},//更新界面源对象 列名:旧值
-      test:"test",
-      page: {
-        nowpage: 1,
-        num: 0,
-        order: "",
-        pagenum: 0,
-        shownum: 8,
-      },
+      colsSearch: '',   //搜索 列明:搜索值
       loadingList: true,
       loadingCols: true,
-      loadingSave: true,
-      loadingUpdate: false,
     }
   },
   created() {
@@ -75,22 +65,8 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.post('/teacher/getColsMap.do', {tableName: 'TEACHER'}).then((res) => {
-        var data = res.data
-
-        for (var key in data) {
-          this.colsMap[key.toLowerCase()] = data[key];
-        }
-        this.clearColsSearch()
-
-        console.info(this.colsSearch)
-
-        this.loadingCols = false
-        this. getListPage()
-      }).catch(() => {
-        this.loadingCols = false
-      })
-
+      this.loadingCols = false
+      this.getListPage()
     },
     //清空搜索条件
     clearColsSearch(){
@@ -102,20 +78,33 @@ export default {
      getListPage() {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.colsSearch)
-      this.post('/teacher/findPage.do', params).then((res) => {
-        this.list = res.data.data
-        this.page = res.data.page
+      var params = {url:this.colsSearch}
+      this.get('/tomcat/statics.do', params).then((res) => {
+        debugger
+        $scope.option = data.option;
+        if($scope.queryUrl == null){
+          data.option.xAxis.data.push("");
+          $scope.queryUrl =  data.option.xAxis.data;
+        }
+        toolSetChart("echarts", data.option);
         this.loadingList = false
       }).catch(() => {
         this.loadingList = false
       })
+       this.get('/tomcat/statics_count.do', params).then((res) => {
+         debugger
+         this.option = data.option;
+         if(this.queryUrlCount == null){
+           data.option.xAxis.data.push("");
+           this.queryUrlCount =  data.option.xAxis.data;
+         }
+         toolSetChart("echarts_count", data.option);
+         this.loadingList = false
+       }).catch(() => {
+         this.loadingList = false
+       })
 
-    },
-    //添加行
-    handlerAddColumn(){
-      this.list.push({})
-      this.handlerChange(this.list[this.list.length - 1])
+
     },
     //修改单行 展示弹框
     handlerChange(val) {
@@ -126,80 +115,9 @@ export default {
       this.colsUpdate = JSON.parse(JSON.stringify(val))
       this.loadingSave = false
     },
-    //取消修改  不做操作
-    handlerCancel(){
-      console.info("handlerCancel "+ JSON.stringify(this.colsUpdate))
-      this.loadingUpdate = ! this.loadingUpdate
-    },
-    //保存修改  保存至表格 和 数据库 ? 还是批量改完后一次存储 先临时选中修改过的
-    handlerSave(){
-      console.info("handlerSave "+ JSON.stringify(this.colsUpdate))
-      this.loadingSave = true
-
-      Object.assign(this.colsChangeNow, this.colsUpdate)
-      var params = this.colsChangeNow
-      this.put('/teacher/action.do', params).then((res) => {
-        this.loadingSave = false
-        this.loadingUpdate = ! this.loadingUpdate
-      }).catch(() => {
-        this.loadingSave = false
-        this.loadingUpdate = ! this.loadingUpdate
-      })
-
-    },
-    //删除单行
-    handlerDelete(index, val) {
-      console.info("handlerDelete " + index + " " + JSON.stringify(val))
-      this.loadingList = true
-      var params = {}
-      this.delet('/teacher/'+val.id+'/action.do', params).then((res) => {
-        this.loadingList = false
-        this.list.splice(index, 1);
-      }).catch(() => {
-        this.loadingList = false
-      })
 
 
-    },
-    //多选改变
-    handlerSelectionChange(val) {
-      console.info("handlerSelectionChange" + JSON.stringify(val))
-      console.info(val)
-      // this.multipleSelection = val;
 
-      // this.$refs.multipleTable.toggleAllSelection()
-      // this.$refs.multipleTable.toggleRowSelection(VAL);
-    },
-    //排序事件
-    handlerSortChange(val) {
-      console.info("handlerSortChange " + JSON.stringify(val))
-      // column: {…}
-      // order: "ascending"
-      // prop: "time"
-      this.page.order = val.prop + (val.order.startsWith("desc") ? " desc" : "")
-
-    },
-    //翻页
-    handlerCurrentChange(val) {
-      console.info("handlerCurrentChange")
-      console.info(val)
-      this.page.nowpage = val
-      this.getListPage()
-    },
-    // 修改每页数量
-    handlerSizeChange(shownum) {
-      this.page.shownum = shownum
-      this. getListPage()
-    },
-    //行高亮各种颜色
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex === 1) {
-        return 'warning-row';
-      } else if (rowIndex === 3) {
-        return 'success-row';
-      }
-      return '';
-    },
   }
 }
 </script>

@@ -79,14 +79,14 @@ export const constantRoutes = [
   {
     path: '/echarts',
     component: Layout,
-    redirect: '/echarts/Controller',
+    redirect: '/echarts/controller',
     name: 'Echarts',
     meta: { title: 'Echarts', icon: 'example' },
     children: [
       {
         path: 'controller',
         name: 'Controller',
-        component: () => import('@/views/echarts/Controller'),
+        component: () => import('@/views/echarts/controller'),
         meta: { title: 'Controller', icon: 'table' }
       },
       {
