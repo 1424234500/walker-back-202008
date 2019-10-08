@@ -52,6 +52,9 @@ export default {
       list: [],
       colsMap: {},      //列名:别名
       colsSearch: '',   //搜索 列明:搜索值
+      option: {},
+      queryUrl: [],
+      queryUrlCount: [],
       loadingList: true,
       loadingCols: true,
     }
@@ -62,6 +65,14 @@ export default {
   filters: {
   },
   methods: {
+    toolSetChart(id, option){
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.getElementById(id))
+      // 使用刚指定的配置项和数据显示图表。
+      //清空画布，防止缓存
+      myChart.clear();
+      myChart.setOption(option);
+    },
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
@@ -79,26 +90,26 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = {url:this.colsSearch}
-      this.get('/tomcat/statics.do', params).then((res) => {
+      this.get('/tomcat/statics.do', params).then((data) => {
         debugger
-        $scope.option = data.option;
-        if($scope.queryUrl == null){
+        this.option = data.option;
+        if(this.queryUrl == null){
           data.option.xAxis.data.push("");
-          $scope.queryUrl =  data.option.xAxis.data;
+          this.queryUrl =  data.option.xAxis.data;
         }
-        toolSetChart("echarts", data.option);
+        this.toolSetChart("echarts", data.option);
         this.loadingList = false
       }).catch(() => {
         this.loadingList = false
       })
-       this.get('/tomcat/statics_count.do', params).then((res) => {
+       this.get('/tomcat/statics_count.do', params).then((data) => {
          debugger
          this.option = data.option;
          if(this.queryUrlCount == null){
            data.option.xAxis.data.push("");
            this.queryUrlCount =  data.option.xAxis.data;
          }
-         toolSetChart("echarts_count", data.option);
+         this.toolSetChart("echarts_count", data.option);
          this.loadingList = false
        }).catch(() => {
          this.loadingList = false
