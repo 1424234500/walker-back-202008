@@ -35,8 +35,10 @@
     <!-- 要暴露的服务接口 -->
     <dubbo:reference id="echoService" interface="com.walker.service.EchoService" timeout="30000" version="1.0"  />
 
-<!--日志服务-->
+<!--    日志服务-->
     <dubbo:reference id="logService" interface="com.walker.service.LogService" timeout="30000" version="1.0"  />
+<!--    文件索引服务-->
+    <dubbo:reference id="fileService" interface="com.walker.service.FileService" timeout="30000" version="1.0"  />
 
 <!--    登录服务-->
     <dubbo:reference id="loginService" interface="com.walker.service.LoginService" timeout="30000" version="1.0" />

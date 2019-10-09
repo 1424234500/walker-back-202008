@@ -39,7 +39,12 @@
     <bean id="logService" class="com.walker.service.impl.LogServiceImpl" />
     <dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="30000" version="1.0"  />
 
-<!--    登录服务-->
+<!--文件索引服务-->
+    <bean id="fileService" class="com.walker.service.impl.FileServiceImpl" />
+    <dubbo:service ref="fileService" interface="com.walker.service.FileService" timeout="30000" version="1.0"  />
+
+
+    <!--    登录服务-->
     <bean id="loginService" class="com.walker.service.impl.LoginServiceImpl" />
     <dubbo:service ref="loginService" interface="com.walker.service.LoginService" timeout="30000" version="1.0" />
 

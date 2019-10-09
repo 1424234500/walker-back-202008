@@ -92,25 +92,26 @@ public class TeacherController {
 //    public Page<Teacher> finds(Teacher test, Pageable page) ;
 
 
-    @ApiOperation(value = "get 分页查询", notes = "url restful参数 PathVariable")
+    @ApiOperation(value = "findPage 分页查询", notes = "")
     @ResponseBody
-    @RequestMapping(value = "/findPage.do", method = RequestMethod.POST)
+    @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)
     public Response findPage(
             @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
-            @RequestParam(value = "showNum", required = false, defaultValue = "3") Integer showNum,
+            @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
             @RequestParam(value = "order", required = false, defaultValue = "") String order
             ) {
+        Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
+
         String res = "get   name:" + name;
         log.info(res);
 
-        Page page1 = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
 
         Teacher teacher = new Teacher().setName(name);
-        List<Teacher> list = teacherService.finds(teacher, page1);
-        page1.setNum(teacherService.count(teacher));
-        log.info(page1.toString());
-        return Response.makePage(res, page1, list);
+        List<Teacher> list = teacherService.finds(teacher, page);
+        page.setNum(teacherService.count(teacher));
+        log.info(page.toString());
+        return Response.makePage(res, page, list);
     }
 
 
