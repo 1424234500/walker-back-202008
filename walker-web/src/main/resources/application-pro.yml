@@ -89,7 +89,7 @@ spring:
 
 
 logging:
-  file: /home/walker/logs/walker-service-provider.log
+  file: /home/walker/logs/walker-web.log
   #  pattern:
   #    console: "%date{HH:mm:ss.SSS} %-5level %-30.30logger{29} : %msg%n"
   Root:

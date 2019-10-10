@@ -1,83 +1,71 @@
 package com.walker.service.impl;
 
 import com.walker.core.database.BaseDaoAdapter;
+import com.walker.dao.JdbcDao;
 import com.walker.service.BaseService;
-import com.walker.service.EchoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
-@org.springframework.stereotype.Service
+@org.springframework.stereotype.Service("baseService")
 @com.alibaba.dubbo.config.annotation.Service
 @Transactional
-//@Scope("prototype")
 public class BaseServiceImpl extends BaseDaoAdapter implements BaseService,Serializable {
 	private static final long serialVersionUID = 8304941820771045214L;
 
+	public BaseServiceImpl(){
+		this.setDs("mysql");
+	}
 
-	/**
-	 * 数据源 不同数据源 不同实现方式 分页 ddl dml
-	 *
-	 * @param ds
-	 */
+	@Autowired
+	JdbcDao jdbcDao;
+
+	String ds = "mysql";
 	@Override
 	public void setDs(String ds) {
-		
+		this.ds = ds;
 	}
 
 	@Override
 	public String getDs() {
-		return null;
+		return ds;
 	}
 
-	/**
-	 * 获得结果集
-	 *
-	 * @param sql    SQL语句
-	 * @param params 参数
-	 * @return 结果集
-	 */
 	@Override
 	public List<Map<String, Object>> find(String sql, Object... params) {
-		return null;
+//		return jdbcDao.queryForList(sql, params);
+		return jdbcDao.find(sql, params);
 	}
 
-	/**
-	 * 执行SQL语句
-	 *
-	 * @param sql
-	 * @param params
-	 * @return 响应行数
-	 */
 	@Override
 	public Integer executeSql(String sql, Object... params) {
-		return null;
+//		return jdbcDao.update(sql, params);
+		return jdbcDao.executeSql(sql, params);
 	}
 
-	/**
-	 * 批量执行sql
-	 *
-	 * @param sql
-	 * @param objs
-	 * @return
-	 */
 	@Override
 	public Integer[] executeSql(String sql, List<List<Object>> objs) {
-		return new Integer[0];
+		List<Object[]> args = new ArrayList<>();
+		for(List<Object> arg : objs){
+			args.add(arg.toArray());
+		}
+//		int resint[] = jdbcDao.batchUpdate(sql, args);
+		Integer resint[] = jdbcDao.executeSql(sql, objs);
+		Integer[] res = new Integer[resint.length];
+		for(int i = 0; i< resint.length; i++){
+			res[i] = resint[i];
+		}
+		return res;
 	}
 
-	/**
-	 * 执行存储过程 最后一个占位?返回值
-	 *
-	 * @param proc    "{call countBySal(?,?)}"
-	 * @param objects
-	 * @return
-	 */
 	@Override
 	public Integer executeProc(String proc, Object... objects) {
-		return null;
+		return 0;
 	}
+
 }

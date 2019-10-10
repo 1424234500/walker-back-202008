@@ -28,6 +28,7 @@ public class TeacherController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
+    @Qualifier("jdbcDao")
     JdbcDao jdbcDao;
     @Autowired
     @Qualifier("teacherJpaService")

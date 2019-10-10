@@ -3,14 +3,15 @@
 	
 使用Maven多模块项目结构分离
 
+mvn clean package -Dmaven.test.skip=true
 
 
 ###端口分配
 
 环境火墙8090+
-8090    tomcat  dubbo-monitor   walker-web
+8090    walker-web
 8091    webservice
-8092    rmi
+8092    tomcat  dubbo-monitor
 8093    socket netty
 8094    service provider    swagger
 8095    dubbo-port

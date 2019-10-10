@@ -19,7 +19,7 @@ import java.util.Map;
 @Service	作用于业务逻辑层
 @Controller	作用于表现层（spring-mvc的注解）
 * */
-@Repository
+@Repository("jdbcDao")
 public class JdbcDao extends BaseDaoAdapter {
 
     @Autowired

@@ -86,6 +86,7 @@ function restart(){
         start
     else
         pid
+        start
     fi
 }
 

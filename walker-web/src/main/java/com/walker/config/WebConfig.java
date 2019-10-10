@@ -75,8 +75,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         Arrays.asList(new String[]{
-                                "/webjars/*"
-                                ,"/html/*"
+                                "/webjars/**",
+                                "/static/**",
+                                "/html/*"
 
                         })
                 )

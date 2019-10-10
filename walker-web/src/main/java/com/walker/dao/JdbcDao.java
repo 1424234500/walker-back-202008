@@ -24,6 +24,12 @@ public class JdbcDao extends BaseDaoAdapter {
     JdbcTemplate jdbcTemplate;
 
     String ds = "mysql";
+    public JdbcDao(){
+//        log.info(jdbcTemplate.getDataSource().toString());
+
+
+    }
+
     @Override
     public void setDs(String ds) {
         this.ds = ds;

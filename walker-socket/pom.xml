@@ -143,6 +143,25 @@
 							</resources>
 						</configuration>
 					</execution>
+<!--					复制resource下文件到release根路径-->
+					<execution>
+						<id>copy-resources-dubbo-xml</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<!-- 指定resources插件处理资源文件到哪个目录下 -->
+							<outputDirectory>${dir_release}</outputDirectory>
+							<!-- 待处理的资源定义 -->
+							<resources>
+								<resource>
+									<!-- 指定resources插件处理哪个目录下的资源文件 -->
+									<directory>${dir_name_resource}</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>

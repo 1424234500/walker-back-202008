@@ -3,14 +3,12 @@ package com.walker.event.intercept;
 import com.walker.common.util.Bean;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
-import com.walker.event.Context;
+import com.walker.config.Context;
 import com.walker.event.RequestUtil;
 import com.walker.event.SpringContextUtil;
 import com.walker.service.LogService;
 import com.walker.service.LoginService;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 

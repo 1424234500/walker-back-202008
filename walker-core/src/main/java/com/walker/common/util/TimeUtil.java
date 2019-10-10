@@ -140,7 +140,9 @@ public class TimeUtil {
 	public static String formatAuto(long time, long deta) {
 		deta = Math.abs(deta);
 		String format = "";
-		if(deta < 1000) {
+		if(deta <= 0) {
+			format = "yyyy-MM-dd HH:mm:ss";
+		}else if(deta < 1000) {
 			format = "SSS";	//:123
 		}else if(deta < 1000 * 60) {
 			format = "ss:SSS";

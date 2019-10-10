@@ -209,7 +209,7 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.colsSearch)
-      this.post('/teacher/findPage.do', params).then((res) => {
+      this.get('/teacher/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
         this.loadingList = false

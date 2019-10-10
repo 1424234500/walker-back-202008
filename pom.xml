@@ -37,9 +37,9 @@ ${project.xxx} 当前pom文件的任意节点的内容
         <dir_name_conf>conf</dir_name_conf>
         <dir_name_lib>lib</dir_name_lib>
         <dir_release>${basedir}/release</dir_release>
-        
-        
-    </properties>
+		<dir_name_resource>src/main/resources</dir_name_resource>
+
+	</properties>
 
 
 

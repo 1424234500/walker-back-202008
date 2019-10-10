@@ -33,10 +33,10 @@ public class RedisController  {
     @ApiOperation(value = "统计socket", notes = "")
     @ResponseBody
     @RequestMapping(value = "/statics.do", method = RequestMethod.GET)
-    public Response findPage(
+    public Response statics(
             @RequestParam(value = "from", required = false, defaultValue = "") String from,
-            @RequestParam(value = "to", required = false, defaultValue = "1") String to,
-            @RequestParam(value = "url", required = false, defaultValue = "3") String url
+            @RequestParam(value = "to", required = false, defaultValue = "") String to,
+            @RequestParam(value = "url", required = false, defaultValue = "") String url
     ) {
         final String format = "yyyy-MM-dd HH:mm";
         final List<String> listXs = new ArrayList();
@@ -54,10 +54,11 @@ public class RedisController  {
                 } else {
                     double min = 0.0D;
                     double max = 0.0D;
-                    double deta = 600000.0D;
+                    double deta = 60 * 60 * 1000.0D;
                     if (from.length() == 0 && to.length() == 0) {
-                        Set<Tuple> set = jedis.zrevrangeWithScores(String.valueOf(keys.toArray()[0]), 0L, 0L);
-                        max = ((Tuple[])set.toArray(new Tuple[0]))[0].getScore();
+//                        Set<Tuple> set = jedis.zrevrangeWithScores(String.valueOf(keys.toArray()[0]), 0L, 0L);
+//                        max = ((Tuple[])set.toArray(new Tuple[0]))[0].getScore();
+                        max = System.currentTimeMillis();
                         min = max - deta;
                         fromNew = TimeUtil.format((long)min, format);
                         toNew = TimeUtil.format((long)max, format);
@@ -75,7 +76,7 @@ public class RedisController  {
                     }
 
                     deta = max - min;
-                    Iterator var27 = keys.iterator();
+                    Iterator iterator = keys.iterator();
 
                     while(true) {
                         String type;
@@ -83,11 +84,11 @@ public class RedisController  {
                         ArrayList line;
                         String name;
                         do {
-                            if (!var27.hasNext()) {
-                                return (new Bean()).put("FROM", fromNew).put("TO", toNew).put("URL", url);
+                            if (!iterator.hasNext()) {
+                                return (new Bean()).put("from", fromNew).put("to", toNew).put("url", url);
                             }
 
-                            String key = (String)var27.next();
+                            String key = (String)iterator.next();
                             type = "bar";
                             if (listXs.size() == 0) {
                                 Set<Tuple> rowWithScore = jedis.zrangeByScoreWithScores(key, min, max);
@@ -97,7 +98,7 @@ public class RedisController  {
                                     Tuple colTuple = (Tuple)var16.next();
                                     double score = colTuple.getScore();
                                     String colx = colTuple.getElement();
-                                    listXs.add(TimeUtil.formatAuto((long)score, (long)deta));
+                                    listXs.add(TimeUtil.formatAuto((long)score, -1));
                                 }
                             }
 
@@ -131,7 +132,7 @@ public class RedisController  {
 
                             name = key.substring(start.length());
                             items.add(name);
-                        } while(url.length() > 0 && !url.equals(name));
+                        } while(url.length() > 0 && !url.contains(name));
 
                         series.add((new Bean()).put("name", name + ":net").put("type", type).put("stack", name).put("data", line.get(0)));
                         series.add((new Bean()).put("name", name + ":wait").put("type", type).put("stack", name).put("data", line.get(1)));

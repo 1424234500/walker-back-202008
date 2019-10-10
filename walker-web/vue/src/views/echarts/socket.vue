@@ -2,7 +2,7 @@
   <div class="app-container" >
 
 
-    <div>mvc统计</div>
+    <div>socket统计</div>
 
 <!--搜索-->
     <div class="div-box-down"
@@ -11,7 +11,7 @@
         <form class="form-inline" >
           <div class="form-group">
             <label>url</label>
-            <el-select v-model="url"
+            <el-select v-model="colsSearch.url"
                        clearable filterable allow-create
                        placeholder="请选择" no-match-text="新建">
               <el-option
@@ -22,7 +22,24 @@
               >
               </el-option>
             </el-select>
-
+            <label>from</label>
+            <input
+              type="text"
+              class="form-control"
+              style="width: 10em; margin-right: 1em;"
+              v-on:keyup.13="getListPage()"
+              placeholder="yyyy-MM-dd HH:mm"
+              v-model="colsSearch.from"
+            />
+            <label>to</label>
+            <input
+              type="text"
+              class="form-control"
+              style="width: 10em; margin-right: 1em;"
+              v-on:keyup.13="getListPage()"
+              placeholder="yyyy-MM-dd HH:mm"
+              v-model="colsSearch.to"
+            />
           </div>
 
           <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
@@ -30,13 +47,11 @@
         </form>
     </div>
 
-
-    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-    <div :id="chartId2" class="echart-big-small" style="width: 100%;height: 26em;"></div>
-
     <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
     <div :id="chartId" class="echart-big-small" style="width: 100%;height: 26em;"></div>
 
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div :id="chartId2" class="echart-big-small" style="width: 100%;height: 26em;"></div>
 
 
   </div>
@@ -50,10 +65,8 @@ export default {
   data() {
     return {
       list: [],
-      colsMap: {},      //列名:别名
-      colsSearch: '',   //搜索 列明:搜索值
+      colsSearch: {},      //列名:别名
       queryUrl: [],
-      url: "",
       queryUrlCount: [],
       urlCount: "",
       loadingList: true,
@@ -61,11 +74,9 @@ export default {
       chart: null,        //chart对象
       chartId: 'chartsId', //对象对应dom id
       option: {},  //对应数据
-
-      chart2: null,
-      chartId2: 'chartId2',
-      option2: {},
-
+      chart2: null,        //chart对象
+      chartId2: 'chartsId2', //对象对应dom id
+      option2: {},  //对应数据
       other: {
         tooltip: {
           trigger: 'axis',
@@ -115,42 +126,35 @@ export default {
     },
     //清空搜索条件
     clearColsSearch(){
-      this.url = "";
+      for (var key in this.colsSearch) {
+        this.colsSearch[key] = '';
+      }
     },
      //分页查询
      getListPage() {
       this.loadingList = true
-      var params = {url:this.url}
-      this.get('/tomcat/statics.do', params).then((data) => {
+      var params = this.colsSearch
+      this.get('/redis/statics.do', params).then((data) => {
         data = data.data
-        if(this.queryUrl == null || this.queryUrl.length <= 0)
-          this.queryUrl =  data.option.xAxis.data;
-
+        this.queryUrl =  data.items
+        this.colsSearch = data.arg
         this.option = Object.assign(data.option, this.other)
         this.chart.setOption(this.option, true)
+
+
+        this.option2 = Object.assign(data.option2, this.other)
+        this.chart2.setOption(this.option2, true)
 
         this.loadingList = false
       }).catch(() => {
         this.loadingList = false
       })
-       this.get('/tomcat/staticscount.do', params).then((data) => {
-         data = data.data
-         this.queryUrlCount =  data.option.xAxis.data;
-
-         this.option2 = Object.assign(data.option, this.other)
-         this.chart2.setOption(this.option2, true)
-         this.loadingList = false
-       }).catch(() => {
-         this.loadingList = false
-       })
-
 
     },
 
     initChart() {
       this.chart = echarts.init(document.getElementById(this.chartId))
       this.chart2 = echarts.init(document.getElementById(this.chartId2))
-      this.option2 = this.option
     },
 
 

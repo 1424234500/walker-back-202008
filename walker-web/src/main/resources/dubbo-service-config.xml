@@ -40,7 +40,12 @@
 <!--    文件索引服务-->
     <dubbo:reference id="fileService" interface="com.walker.service.FileService" timeout="30000" version="1.0"  />
 
-<!--    登录服务-->
+    <!--基础sql-->
+    <dubbo:reference id="baseService" interface="com.walker.service.BaseService" timeout="30000" version="1.0"  />
+
+
+
+    <!--    登录服务-->
     <dubbo:reference id="loginService" interface="com.walker.service.LoginService" timeout="30000" version="1.0" />
 
 <!--    jdbc teacher增删查改-->
