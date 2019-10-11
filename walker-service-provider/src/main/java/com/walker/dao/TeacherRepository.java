@@ -121,6 +121,15 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {//实
      */
     @Query("delete from Teacher t where t.id=?1 ")
     int selfDeleteJPQL(String id);
+    /**
+    * JPQL查询 删除
+     * @Cacheable 缓存方法操作
+     */
+    @Transactional
+    @Modifying
+    @CachePut(keyGenerator="keyGenerator",value="cache-teacher")
+    @Query("delete from Teacher u where u.id in (?1) ")
+    Integer selfDeleteAll(List<String> ids);
 
 
     /**

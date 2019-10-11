@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 @Service("teacherJpaService")
 public class TeacherJpaServiceImpl implements TeacherService {
@@ -59,5 +60,11 @@ public class TeacherJpaServiceImpl implements TeacherService {
     @Override
     public Integer count(Teacher test) {
         return Integer.valueOf(Long.valueOf(teacherRepository.selfCount(test.getName())).intValue());
+    }
+
+    @Override
+    public Integer[] deleteAll(String[] ids) {
+        int res = teacherRepository.selfDeleteAll(Arrays.asList(ids));
+        return new Integer[]{res};
     }
 }

@@ -17,7 +17,7 @@ public interface TeacherService {
     public List<Teacher> finds(Teacher test, Page page);
     public Integer count(Teacher test);
 
-
+    public Integer[] deleteAll(String[] ids);
 
 
 }

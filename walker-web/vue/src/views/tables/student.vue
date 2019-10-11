@@ -9,7 +9,7 @@
          v-loading="loadingCols"
     >
         <form class="form-inline" >
-          <div class="form-group" v-for="(value, key) in colsMap">
+          <div class="form-group" v-for="(value, key) in colMap">
             <label>{{value=='' ? key : value}}</label>
 <!--            for="input"
 id="input"
@@ -20,13 +20,13 @@ id="input"
               style="width: 10em; margin-right: 1em;"
               v-on:keyup.13="getListPage()"
               :placeholder="key"
-              v-model="colsSearch[key]"
+              v-model="rowSearch[key]"
             />
           </div>
 
           <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
           <el-button  class="btn btn-warning" @click="handlerAddColumn()" >添加</el-button>
-          <el-button  class="btn btn-default" @click="clearColsSearch();getListPage();" >清除</el-button>
+          <el-button  class="btn btn-default" @click="clearrowSearch();getListPage();" >清除</el-button>
         </form>
     </div>
 
@@ -47,7 +47,7 @@ id="input"
         stripe
         show-summary
         highlight-current-row
-        max-height="360"
+        max-height="398"
       >
   <!--      多选框-->
         <el-table-column
@@ -62,7 +62,7 @@ id="input"
         </el-table-column>
   <!--       设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
         <el-table-column
-          v-for="(value, key) in colsMap"
+          v-for="(value, key) in colMap"
           :key="key"
           :property="key"
           :label="(value=='' ? key : value)"
@@ -72,16 +72,16 @@ id="input"
             {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" >
           <template slot-scope="scope">
-<!--            scope.$index, -->
-            <el-button size="mini" @click="handlerChange(scope.row)">修改 </el-button>
-
-            <el-button  size="mini" type="danger" @click.native.prevent="handlerDelete(scope.$index, scope.row)" >删除 </el-button>
+            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="handlerChange(scope.row)"></el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="handlerDelete(scope.row, scope.index)"></el-button>
           </template>
         </el-table-column>
       </el-table>
-  <!--    分页-->
+
+      <el-button style="margin-top: 4px;" v-if="rowSelect.length > 0" class="btn btn-danger" @click="handlerDeleteAll()" >删除选中</el-button>
+      <!--    分页-->
       <el-pagination
         @current-change="handlerCurrentChange"
         @size-change="handlerSizeChange"
@@ -104,26 +104,26 @@ id="input"
       >
 
         <template>
-            <el-form
-              v-loading="loadingSave"
-              ref="form"
-             :model="colsUpdate"
-             label-width="120px"
+          <el-form
+            v-loading="loadingSave"
+            ref="form"
+           :model="rowUpdate"
+           label-width="120px"
+          >
+            <el-form-item
+              v-for="(value, key) in colMap"
+              :key="key"
+              :property="key"
+              :label="(value=='' ? key : value)"
             >
-              <el-form-item
-                v-for="(value, key) in colsMap"
-                :key="key"
-                :property="key"
-                :label="(value=='' ? key : value)"
-              >
-                <el-input v-model="colsUpdate[key]" type="text" />
-              </el-form-item>
+              <el-input v-model="rowUpdate[key]" type="text" />
+            </el-form-item>
 
-              <el-form-item>
-                <el-button type="primary" @click="handlerSave()">确定</el-button>
-                <el-button @click="handlerCancel()">取消</el-button>
-              </el-form-item>
-            </el-form>
+            <el-form-item>
+              <el-button type="primary" @click="handlerSave()">确定</el-button>
+              <el-button @click="handlerCancel()">取消</el-button>
+            </el-form-item>
+          </el-form>
         </template>
       </el-dialog>
 
@@ -154,10 +154,11 @@ export default {
   data() {
     return {
       list: [],
-      colsMap: {},      //列名:别名
-      colsSearch: {},   //搜索 列明:搜索值
-      colsUpdate: {},   //更新界面复制 列名:新值
-      colsChangeNow: {},//更新界面源对象 列名:旧值
+      colMap: {},      //列名:别名
+      rowSearch: {},   //搜索 列明:搜索值
+      rowUpdate: {},   //更新界面复制 列名:新值
+      rowUpdateFrom: {},//更新界面源对象 列名:旧值
+      rowSelect: [],   //选中行
       test:"test",
       page: {
         nowpage: 1,
@@ -185,11 +186,11 @@ export default {
         var data = res.data
 
         for (var key in data) {
-          this.colsMap[key.toLowerCase()] = data[key];
+          this.colMap[key.toLowerCase()] = data[key];
         }
-        this.clearColsSearch()
+        this.clearrowSearch()
 
-        console.info(this.colsSearch)
+        console.info(this.rowSearch)
 
         this.loadingCols = false
         this. getListPage()
@@ -199,16 +200,16 @@ export default {
 
     },
     //清空搜索条件
-    clearColsSearch(){
-      for (var key in this.colsMap) {
-        this.colsSearch[key] = '';
+    clearrowSearch(){
+      for (var key in this.colMap) {
+        this.rowSearch[key] = '';
       }
     },
      //分页查询
      getListPage() {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.colsSearch)
+      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
       this.get('/teacher/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
@@ -228,22 +229,22 @@ export default {
       this.loadingUpdate = ! this.loadingUpdate
       this.loadingSave = false
       console.info("handlerChange " + JSON.stringify(val))
-      this.colsChangeNow = val;
-      this.colsUpdate = JSON.parse(JSON.stringify(val))
+      this.rowUpdateFrom = val;
+      this.rowUpdate = JSON.parse(JSON.stringify(val))
       this.loadingSave = false
     },
     //取消修改  不做操作
     handlerCancel(){
-      console.info("handlerCancel "+ JSON.stringify(this.colsUpdate))
+      console.info("handlerCancel "+ JSON.stringify(this.rowUpdate))
       this.loadingUpdate = ! this.loadingUpdate
     },
     //保存修改  保存至表格 和 数据库 ? 还是批量改完后一次存储 先临时选中修改过的
     handlerSave(){
-      console.info("handlerSave "+ JSON.stringify(this.colsUpdate))
+      console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
       this.loadingSave = true
 
-      Object.assign(this.colsChangeNow, this.colsUpdate)
-      var params = this.colsChangeNow
+      Object.assign(this.rowUpdateFrom, this.rowUpdate)
+      var params = this.rowUpdateFrom
       this.put('/teacher/action.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
@@ -254,16 +255,44 @@ export default {
 
     },
     //删除单行
-    handlerDelete(index, val) {
-      console.info("handlerDelete " + index + " " + JSON.stringify(val))
+    handlerDelete(val, index) {
+      console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
-      var params = {}
+      const params = {}
       this.delet('/teacher/'+val.id+'/action.do', params).then((res) => {
         this.loadingList = false
         this.list.splice(index, 1);
       }).catch(() => {
         this.loadingList = false
       })
+    },
+    //删除选中多行
+    handlerDeleteAll(){
+      // const val = this.$refs.multipleTable.data
+      console.info("handlerDeleteAll " + " " + JSON.stringify(this.rowSelect))
+
+      if(this.rowSelect.length > 0){
+        this.loadingList = true
+        let ids = ""
+        for(let i = 0; i < this.rowSelect.length; i++){
+          ids += this.rowSelect[i]["id"] + ","
+        }
+        ids = ids.substring(0, ids.length - 1)
+        const params = {"ids" : ids}
+        this.get('/teacher/deleteAll.do', params).then((res) => {
+          this.loadingList = false
+          for(let i = 0; i < this.rowSelect.length; i++){
+            for(let j = 0; j < this.list.length; j++) {
+              if(this.list[j] == this.rowSelect[i]){
+                this.list.splice(j, 1);
+              }
+            }
+          }
+          this.rowSelect = []
+        }).catch(() => {
+          this.loadingList = false
+        })
+      }
 
 
     },
@@ -271,8 +300,8 @@ export default {
     handlerSelectionChange(val) {
       console.info("handlerSelectionChange" + JSON.stringify(val))
       console.info(val)
+      this.rowSelect = val
       // this.multipleSelection = val;
-
       // this.$refs.multipleTable.toggleAllSelection()
       // this.$refs.multipleTable.toggleRowSelection(VAL);
     },
@@ -283,7 +312,6 @@ export default {
       // order: "ascending"
       // prop: "time"
       this.page.order = val.prop + (val.order.startsWith("desc") ? " desc" : "")
-
     },
     //翻页
     handlerCurrentChange(val) {
@@ -309,3 +337,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  /deep/  .el-table td{
+    padding: 4px 0px;
+  }
+</style>

@@ -50,4 +50,11 @@ public class TeacherJpaServiceImplTest extends ApplicationProviderTests {
         out(teacherJdbcService.finds(new Teacher().setName("test"), page));
         out(page);
     }
+
+    @Test
+    public void deleteAll(){
+        out(teacherJpaService.deleteAll(new String[]{"id_2,id_5"}));
+        out(teacherJdbcService.deleteAll(new String[]{"3,33"}));
+    }
+
 }

@@ -65,7 +65,6 @@ public class TeacherController {
         return Response.makeTrue(res, model);
     }
 
-    //    public void delete(Teacher test);
     @ApiOperation(value = "delete 删除", notes = "delete参数 restful 路径 PathVariable ")
     @ResponseBody
     @RequestMapping(value = "/{id}/action.do", method = RequestMethod.DELETE)
@@ -76,6 +75,15 @@ public class TeacherController {
         log.info(res);
         teacherService.delete(new Teacher(id, "", "", ""));
         return Response.makeTrue(res);
+    }
+    @ApiOperation(value = "deleteAll 删除", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/deleteAll.do", method = RequestMethod.GET)
+    public Response deleteAll(
+            @RequestParam(value = "ids", required = true, defaultValue = "") String ids
+    ) {
+        String res = "delete ids:" + ids;
+        return Response.makeTrue(res, teacherService.deleteAll(ids.split(",")));
     }
 
     //    public Teacher get(Teacher test);

@@ -6,10 +6,14 @@ import com.walker.dao.JdbcDao;
 import com.walker.mode.Teacher;
 import com.walker.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("teacherJdbcService")
@@ -74,6 +78,23 @@ public class TeacherJdbcServiceImpl implements TeacherService {
         ,Integer.class
         )
         ;
+    }
+
+    @Override
+    public Integer[] deleteAll(String[] ids) {
+        int t[] = jdbcTemplate.batchUpdate("DELETE FROM TEACHER WHERE ID=? ", new BatchPreparedStatementSetter() {
+            public int getBatchSize() {
+                return ids.length;
+            }
+            public void setValues(PreparedStatement ps, int i)throws SQLException {
+                ps.setString(1, ids[i]);
+            }
+        });
+        Integer[] res = new Integer[t.length];
+        for(int i = 0; i < t.length; i++){
+            res[i] = t[i];
+        }
+        return res;
     }
 
 }
