@@ -48,12 +48,18 @@
     <!--    登录服务-->
     <dubbo:reference id="loginService" interface="com.walker.service.LoginService" timeout="30000" version="1.0" />
 
-<!--    jdbc teacher增删查改-->
+<!--    jdbc teacher增删查改 同服务不同实现 须分组-->
     <dubbo:reference id="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="30000" version="1.0" />
-<!--    jpa teacher增删查改-->
+<!--    jpa teacher增删查改 同服务不同实现 须分组-->
     <dubbo:reference id="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="30000" version="1.0" />
 
-<!--    消息表服务 手动分表-->
+    <!--    用户user-->
+    <dubbo:reference id="userService" interface="com.walker.service.UserService" timeout="30000" version="1.0" />
+
+
+
+
+    <!--    消息表服务 手动分表-->
     <dubbo:reference id="messageService" interface="com.walker.service.MessageService" timeout="30000" version="1.0" />
 <!--    消息表服务 自动分表-->
     <dubbo:reference id="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="30000" version="1.0" />

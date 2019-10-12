@@ -1,9 +1,11 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.Page;
-import com.walker.dao.TeacherRepository;
-import com.walker.mode.Teacher;
-import com.walker.service.TeacherService;
+import com.walker.dao.UserRepository;
+import com.walker.dao.UserRepository;
+import com.walker.mode.User;
+import com.walker.service.UserService;
+import com.walker.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -15,33 +17,34 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.EntityType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-@Service("teacherService")
-public class TeacherJpaServiceImpl implements TeacherService {
+@Service("userService")
+public class UserServiceImpl implements UserService {
 
     @Autowired
-    private TeacherRepository teacherRepository;
+    private UserRepository userRepository;
 
 
     @Override
-    public List<Teacher> saveAll(List<Teacher> objs) {
-        return teacherRepository.saveAll(objs);
+    public List<User> saveAll(List<User> objs) {
+        return userRepository.saveAll(objs);
     }
 
     @Override
-    public Integer delete(Teacher obj) {
-        teacherRepository.deleteById(obj.getId());
+    public Integer delete(User obj) {
+        userRepository.deleteById(obj.getId());
         return 1;
     }
 
     @Override
-    public Teacher get(Teacher obj) {
-        return teacherRepository.getOne(obj.getId());
+    public User get(User obj) {
+        return userRepository.selfFindOneCacheJPQL(obj.getId());
     }
 
     @Override
-    public List<Teacher> finds(Teacher obj, Page page) {
+    public List<User> finds(User obj, Page page) {
         String order = page.getOrder();
         String[] orders = order.split(" ");
 
@@ -58,15 +61,16 @@ public class TeacherJpaServiceImpl implements TeacherService {
                         : PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
 
 
-        org.springframework.data.domain.Page<Teacher> res = teacherRepository.findAll(new Specification<Teacher>(){
+
+        org.springframework.data.domain.Page<User> res = userRepository.findAll(new Specification<User>(){
             @Override
-            public Predicate toPredicate(Root<Teacher> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 
                 List<Predicate> list = new ArrayList<>();
 
                 Path<String> namepath = root.get("name");
                 Path<String> sexpath =root.get("id");
-                EntityType<Teacher> u = root.getModel();
+                EntityType<User> u = root.getModel();
                 if (StringUtils.isNotEmpty(obj.getName())) {
                     list.add(criteriaBuilder.like(root.get("name"), "%" + obj.getName() + "%"));
                 }
@@ -81,16 +85,16 @@ public class TeacherJpaServiceImpl implements TeacherService {
     }
 
     @Override
-    public Integer count(Teacher obj) {
-        return ((Long)(teacherRepository.count(new Specification<Teacher>(){
+    public Integer count(User obj) {
+        return ((Long)(userRepository.count(new Specification<User>(){
             @Override
-            public Predicate toPredicate(Root<Teacher> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 
                 List<Predicate> list = new ArrayList<>();
 
                 Path<String> namepath = root.get("name");
                 Path<String> sexpath =root.get("id");
-                EntityType<Teacher> u = root.getModel();
+                EntityType<User> u = root.getModel();
                 if (StringUtils.isNotEmpty(obj.getName())) {
                     list.add(criteriaBuilder.like(root.get("name"), "%" + obj.getName() + "%"));
                 }
@@ -105,7 +109,7 @@ public class TeacherJpaServiceImpl implements TeacherService {
 
     @Override
     public Integer[] deleteAll(List<String> ids) {
-        int res = teacherRepository.selfDeleteAll(ids);
+        int res = userRepository.selfDeleteAll(ids);
         return new Integer[]{res};
     }
 }

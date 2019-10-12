@@ -8,16 +8,15 @@ import java.util.List;
 public interface TeacherService {
 
 
-    public Teacher save(Teacher teacher);
-    public Teacher add(Teacher test);
-    public Integer update(Teacher test);
-    public Integer delete(Teacher test);
-    public Teacher get(Teacher test);
+    List<Teacher> saveAll(List<Teacher> obj);
+    Integer[] deleteAll(List<String> ids);
 
-    public List<Teacher> finds(Teacher test, Page page);
-    public Integer count(Teacher test);
+    Teacher get(Teacher obj);
+    Integer delete(Teacher obj);
 
-    public Integer[] deleteAll(String[] ids);
+    List<Teacher> finds(Teacher obj, Page page);
+    Integer count(Teacher obj);
+
 
 
 }

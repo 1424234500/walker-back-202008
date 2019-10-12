@@ -20,7 +20,7 @@ public class Man implements Cloneable, Serializable {
 	private String id;
 	@Column(name = "NAME", nullable = false, length = 256)    //255
     private String name;
-	@Column(name = "SEX", nullable = false)    //255
+	@Column(name = "SEX", nullable = false, length = 4)    //255
 	private Integer sex;
 	@Column(name = "PWD", nullable = false, length = 200)    //255
 	private String pwd;

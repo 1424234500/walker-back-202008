@@ -346,7 +346,7 @@ public class FileController  {
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Disposition", "attchement;filename=" + name);
-            String userbrowser = request.getHeader("User-Agent");
+            String userbrowser = request.getHeader("UserSocket-Agent");
             w.put(userbrowser);
 //            headers.add("Content-Disposition", RequestUtil.getDispo(userbrowser, name));
             ResponseEntity<byte[]> entity = new ResponseEntity(body, headers, HttpStatus.OK);

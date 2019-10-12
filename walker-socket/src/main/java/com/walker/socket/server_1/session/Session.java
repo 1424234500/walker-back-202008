@@ -8,12 +8,12 @@ import com.walker.core.route.SubPub.Res;
 import com.walker.core.route.SubPubMgr;
 import com.walker.mode.Key;
 import com.walker.mode.Msg;
-import com.walker.mode.User;
+import com.walker.mode.UserSocket;
 import com.walker.socket.server_1.plugin.Plugin;
 import org.apache.log4j.Logger;
 
 /**
- * 会话 关联socket user
+ * 会话 关联socket userSocket
  * 
  * 订阅模式管理分发
  * 
@@ -28,7 +28,7 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	private static Logger log = Logger.getLogger(Session.class); 
 	
 
-	User user = new User();
+	UserSocket userSocket = new UserSocket();
 	/**
 	 * socket ip:port
 	 */
@@ -65,8 +65,8 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 		this.time = time;
 		return this;
 	}
-	public User getUser() {
-		return this.user;
+	public UserSocket getUserSocket() {
+		return this.userSocket;
 	}
 	/**
 	 * 判定session是否相同
@@ -81,12 +81,12 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 
 	@Override
 	public String toString() {
-		return "Session[" + getKey() + "." + getUser() + "]";
+		return "Session[" + getKey() + "." + getUserSocket() + "]";
 	}
 	
 	 
 	public Boolean isLogin() {
-		return getUser().getId().length() != 0;
+		return getUserSocket().getId().length() != 0;
 	}
 	/**
 	 * 长连接成功后 订阅socket消息
@@ -107,27 +107,27 @@ public class Session<T> implements OnSubscribe<Msg,Session<T>> {
 	 */
 	public void onLogin(Bean bean) {
 		this.onUnLogin(bean);
-		User user = getUser();
-		user.setId(bean.get(Key.ID, ""));
-		user.setName(bean.get(Key.NAME, ""));
-		user.setPwd(bean.get(Key.PWD, ""));
+		UserSocket userSocket = getUserSocket();
+		userSocket.setId(bean.get(Key.ID, ""));
+		userSocket.setName(bean.get(Key.NAME, ""));
+		userSocket.setPwd(bean.get(Key.PWD, ""));
 		this.setTime(TimeUtil.getTimeYmdHms());
-		sub.subscribe(user.getId(), this);	//订阅当前登录用户userid
+		sub.subscribe(userSocket.getId(), this);	//订阅当前登录用户userid
 		sub.subscribe("all_user", this);		//订阅所有登录用户
 		log.info("login ok " + this.toString() );
 		
 
-		bean.set(Key.USER, getUser());
+		bean.set(Key.USER, getUserSocket());
 		String beforeStr = bean.get(Key.BEFORE, TimeUtil.getTimeYmdHmss());
 
 	}
 	public void onUnLogin(Bean bean) {
-		User user = getUser();
-		sub.unSubscribe(user.getId(), this);	//订阅当前登录用户userid
+		UserSocket userSocket = getUserSocket();
+		sub.unSubscribe(userSocket.getId(), this);	//订阅当前登录用户userid
 		sub.unSubscribe("all_user", this);		//订阅所有登录用户
-		user.setId("");
-		user.setName("");
-		user.setPwd("");
+		userSocket.setId("");
+		userSocket.setName("");
+		userSocket.setPwd("");
 		this.setTime("");
 		log.info("unlogin ok " + this.toString() );
 	}

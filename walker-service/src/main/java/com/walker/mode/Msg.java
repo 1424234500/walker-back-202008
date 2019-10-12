@@ -171,8 +171,8 @@ public class Msg extends Bean implements Cloneable, Serializable {
 	public String[] getUserTo() {
 		return this.get(KEY_USER_TO, "").split(SPLIT);
 	}
-	public User getUserFrom() {
-		return new User(this.get(KEY_USER_FROM, new Bean()));
+	public UserSocket getUserFrom() {
+		return new UserSocket(this.get(KEY_USER_FROM, new Bean()));
 	}
 	
 

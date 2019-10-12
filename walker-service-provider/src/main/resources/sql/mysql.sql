@@ -2,6 +2,7 @@
 
 ---
 ---S_MTIME  VARCHAR2(32)	 long/字符串ymdhms 修改时间 自动设置	YYYY-MM-DD HH24:MM-SS:SSS
+---S_ATIME  VARCHAR2(32)	 long/字符串ymdhms 添加时间 自动设置	YYYY-MM-DD HH24:MM-SS:SSS
 ---S_FLAG   VARCHAR2(2)      0/1     假删除 配合S_MTIME增量查询
 ---
 
@@ -26,14 +27,19 @@ drop table W_MAN_3;
 
 
 
--- 用户 分表
+-- 用户 数据库 分表
 -- CREATE DATABASE IF NOT EXISTS walker default charset utf8 COLLATE utf8_general_ci;
 -- GRANT ALL PRIVILEGES ON *.* TO 'walker'@'%' IDENTIFIED BY 'qwer' WITH GRANT OPTION;
+
+
 
 
 --测试表
 --DROP TABLE STUDENT;
 CREATE TABLE  IF NOT EXISTS  STUDENT (ID VARCHAR(40), NAME VARCHAR(200), S_MTIME VARCHAR(32), S_FLAG VARCHAR(4));
+
+
+--y用户表
 
 
 ---

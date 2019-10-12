@@ -6,7 +6,7 @@ import com.walker.common.util.Tools;
 import com.walker.core.route.SubPub;
 import com.walker.core.route.SubPubMgr;
 import com.walker.mode.Msg;
-import com.walker.mode.User;
+import com.walker.mode.UserSocket;
 import com.walker.socket.server_1.netty.handler.SessionHandler;
 import com.walker.socket.server_1.session.Session;
 import org.apache.log4j.Logger;
@@ -106,8 +106,8 @@ public abstract class Plugin<T> {
 	public Session<?> getNowSession(Msg msg){
 		return SessionHandler.sessionService.getSession(msg.getFrom(), "");
 	}
-	public User getNowUser(Msg msg){
-		return getNowSession(msg).getUser();
+	public UserSocket getNowUser(Msg msg){
+		return getNowSession(msg).getUserSocket();
 	}
 	abstract void onData(Msg bean);
 	

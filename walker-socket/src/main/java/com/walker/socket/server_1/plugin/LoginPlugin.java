@@ -4,7 +4,7 @@ import com.walker.common.util.Bean;
 import com.walker.core.exception.ErrorException;
 import com.walker.mode.Key;
 import com.walker.mode.Msg;
-import com.walker.mode.User;
+import com.walker.mode.UserSocket;
 import com.walker.socket.server_1.netty.handler.SessionHandler;
 import com.walker.socket.server_1.session.Session;
 
@@ -32,9 +32,9 @@ public class LoginPlugin<T> extends Plugin<T>{
 		if(session == null) {
 			throw new ErrorException("该用户已掉线", data);
 		}else {
-			User user = session.getUser();
+			UserSocket userSocket = session.getUserSocket();
 			//查表? token 验证机制 公钥 私钥
-			if(user.getId().length()==0) { 	//初次登录
+			if(userSocket.getId().length()==0) { 	//初次登录
 				publish(msg.getFrom(), MsgBuilder.makeOnLogin().setData(data).setInfo("初次登录"));
 			}  else {
 				if(sessionId != null) {

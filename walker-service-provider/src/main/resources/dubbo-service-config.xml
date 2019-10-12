@@ -52,14 +52,21 @@
     <bean id="loginService" class="com.walker.service.impl.LoginServiceImpl" />
     <dubbo:service ref="loginService" interface="com.walker.service.LoginService" timeout="30000" version="1.0" />
 
-<!--    jdbc teacher增删查改-->
+<!--    jdbc teacher增删查改 同服务不同实现 须分组-->
     <bean id="teacherJdbcService" class="com.walker.service.impl.TeacherJdbcServiceImpl" />
     <dubbo:service ref="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="30000" version="1.0" />
-<!--    jpa teacher增删查改-->
+<!--    jpa teacher增删查改 同服务不同实现 须分组-->
     <bean id="teacherJpaService" class="com.walker.service.impl.TeacherJpaServiceImpl" />
     <dubbo:service ref="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="30000" version="1.0" />
+<!--    用户user-->
+    <bean id="userService" class="com.walker.service.impl.UserServiceImpl" />
+    <dubbo:service ref="userService" interface="com.walker.service.UserService" timeout="30000" version="1.0" />
 
-<!--    消息表服务 手动分表-->
+
+
+
+
+    <!--    消息表服务 手动分表-->
     <bean id="messageService" class="com.walker.service.impl.MessageServiceImpl" />
     <dubbo:service ref="messageService" interface="com.walker.service.MessageService" timeout="30000" version="1.0" />
 <!--    消息表服务 自动分表-->

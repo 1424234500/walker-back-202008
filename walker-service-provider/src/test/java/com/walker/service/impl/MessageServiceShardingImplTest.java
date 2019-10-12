@@ -5,7 +5,7 @@ import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.common.util.Watch;
 import com.walker.mode.Msg;
-import com.walker.mode.User;
+import com.walker.mode.UserSocket;
 import com.walker.service.MessageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +49,7 @@ public class MessageServiceShardingImplTest {
                 msg.setType("TEST_" + getClass().getSimpleName());
                 msg.setTo("");
                 msg.setData(new Bean().set("count", i));
-                msg.setUserFrom(new User().setId(id).setName("name"));
+                msg.setUserFrom(new UserSocket().setId(id).setName("name"));
                 msg.setTimeDo(System.currentTimeMillis());
                 msg.addUserTo(id1);
                 msg.addUserTo(id2);

@@ -4,7 +4,7 @@ package com.walker.controller;
 import com.walker.Response;
 import com.walker.common.util.Bean;
 import com.walker.mode.Msg;
-import com.walker.mode.User;
+import com.walker.mode.UserSocket;
 import com.walker.service.MessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,7 +69,7 @@ public class MessageShardingController {
         msg.setType("TEST_" + getClass().getSimpleName());
         msg.setTo(toId);
         msg.setData(new Bean().set("data", data));
-        msg.setUserFrom(new User().setId(toIds[0]).setName("name"));
+        msg.setUserFrom(new UserSocket().setId(toIds[0]).setName("name"));
         msg.setTimeDo(System.currentTimeMillis());
 
         Long score = messageService.save(msg.getUserTo(), msg);

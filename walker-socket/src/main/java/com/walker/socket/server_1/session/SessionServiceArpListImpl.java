@@ -102,12 +102,12 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		String key = socket.key();
 		Session<T> session = index.get(key);
 		if(session != null) {
-			log.error("add user have exist?" + key + " " + session);
+			log.error("add userSocket have exist?" + key + " " + session);
 		}else {
 			session = new Session<T>(socket);
 			session.onConnect();
 			index.put(key, session);
-			log.debug("add user " + session);
+			log.debug("add userSocket " + session);
 		}
 	}
 	@Override
@@ -117,9 +117,9 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		if(session != null) {
 			session.onUnConnect();
 			index.remove(key);
-			log.debug("add user " + session);
+			log.debug("add userSocket " + session);
 		}else {
-			log.error("remove no user " + key + " " + index.get(key));
+			log.error("remove no userSocket " + key + " " + index.get(key));
 		}		
 	}
 	@Override
@@ -131,10 +131,10 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 			//设置来源socket key session<T>
 			msg.setFrom(session.getKey());
 			//设置userFrom当前用户 若消息包含了from 则不设置 允许顶替发消息
-			msg.setUserFrom(session.getUser());
+			msg.setUserFrom(session.getUserSocket());
 			//默认发给自己
 			if(msg.getTo().length() == 0) {
-				msg.setTo(session.getUser().getId());
+				msg.setTo(session.getUserSocket().getId());
 			}
 
 			msg.setWaitSize(pipe.size());
@@ -143,8 +143,8 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 			pipe.put(msg.toString());
 			
 		}else {//异常请求
-			log.error("receive msg from no user ? " + socket);
-			socket.send("receive msg from no user ? " + socket);
+			log.error("receive msg from no userSocket ? " + socket);
+			socket.send("receive msg from no userSocket ? " + socket);
 		}
 	}
 
@@ -153,7 +153,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		List<Bean> res = new ArrayList<Bean>();
 		for(String key : index.keySet()) {
 			Session<T> session = index.get(key);
-			res.add(new Bean().set(Key.USER, session.getUser()).set(Key.KEY, session.getKey()).set(Key.TIME, session.getTime()));
+			res.add(new Bean().set(Key.USER, session.getUserSocket()).set(Key.KEY, session.getKey()).set(Key.TIME, session.getTime()));
 		}
 		return res;
 	}
@@ -165,7 +165,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 		}else if(userId.length() > 0) {
 			for(String key : index.keySet()) {
 				Session<T> session = index.get(key);
-				if(session.getUser().getId().equals(userId)) {
+				if(session.getUserSocket().getId().equals(userId)) {
 					res = session;
 					break;
 				}

@@ -1,13 +1,11 @@
 package com.walker.service.impl;
 
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.walker.common.util.Bean;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.common.util.Watch;
-import com.walker.mode.Message;
 import com.walker.mode.Msg;
-import com.walker.mode.User;
+import com.walker.mode.UserSocket;
 import com.walker.service.MessageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,12 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.AssertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -53,7 +47,7 @@ public class MessageServiceImplTest {
                 msg.setType("TEST_" + getClass().getSimpleName());
                 msg.setTo("");
                 msg.setData(new Bean().set("count", i));
-                msg.setUserFrom(new User().setId(id).setName("name"));
+                msg.setUserFrom(new UserSocket().setId(id).setName("name"));
                 msg.setTimeDo(System.currentTimeMillis());
                 msg.addUserTo(id1);
                 msg.addUserTo(id2);

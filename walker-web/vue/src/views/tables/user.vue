@@ -182,7 +182,7 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.get('/common/getColsMap.do', {tableName: 'TEACHER'}).then((res) => {
+      this.get('/common/getColsMap.do', {tableName: 'W_USER'}).then((res) => {
         var data = res.data
 
         for (var key in data) {
@@ -211,7 +211,7 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      this.get('/teacher/findPage.do', params).then((res) => {
+      this.get('/user/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
         this.loadingList = false
@@ -246,7 +246,7 @@ export default {
 
       Object.assign(this.rowUpdateFrom, this.rowUpdate)
       var params = this.rowUpdateFrom
-      this.put('/teacher/action.do', params).then((res) => {
+      this.post('/user/save.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
@@ -260,7 +260,7 @@ export default {
       console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
       const params = {}
-      this.delet('/teacher/'+val.id+'/action.do', params).then((res) => {
+      this.delet('/user/'+val.id+'/action.do', params).then((res) => {
         this.loadingList = false
         this.list.splice(index, 1);
       }).catch(() => {
@@ -280,7 +280,7 @@ export default {
         }
         ids = ids.substring(0, ids.length - 1)
         const params = {}
-        this.delet('/teacher/'+ids+'/action.do', params).then((res) => {
+        this.delet('/user/'+ids+'/action.do', params).then((res) => {
           this.loadingList = false
           for(let i = 0; i < this.rowSelect.length; i++){
             for(let j = 0; j < this.list.length; j++) {

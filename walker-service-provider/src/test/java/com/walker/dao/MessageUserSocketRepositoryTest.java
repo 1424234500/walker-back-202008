@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageUserRepositoryTest extends ApplicationProviderTests {
+public class MessageUserSocketRepositoryTest extends ApplicationProviderTests {
     @Autowired
     MessageUserRepository messageUserRepository;
 

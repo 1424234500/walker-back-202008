@@ -8,7 +8,7 @@
 
       <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon icon-class="userSocket" />
         </span>
         <el-input
           ref="username"
@@ -60,7 +60,7 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('Please enter the correct userSocket name'))
       } else {
         callback()
       }
@@ -122,7 +122,7 @@ export default {
             this.loading = false
           })
           // this.$store.dispatch('user/login', this.loginForm).then((res) => {
-          //   console.info("index.vue user ")
+          //   console.info("index.vue userSocket ")
           //   console.info(res)
           //   this.$router.push({ path: this.redirect || '/' })
           //   this.loading = false
@@ -245,7 +245,7 @@ $light_gray:#eee;
     font-size: 16px;
     color: $dark_gray;
     cursor: pointer;
-    user-select: none;
+    userSocket-select: none;
   }
 }
 </style>

@@ -3,10 +3,11 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Page;
-import com.walker.dao.JdbcDao;
-import com.walker.mode.Teacher;
+import com.walker.mode.User;
+import com.walker.mode.User;
 import com.walker.service.BaseService;
-import com.walker.service.TeacherService;
+import com.walker.service.UserService;
+import com.walker.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -20,43 +21,35 @@ import java.util.Arrays;
 import java.util.List;
 
 /*
-测试 jap teacherService
+测试 jap userService
 
  */
-@Api(value = "测试 service层 TEACHER表 实体类对象 ")
+@Api(value = "service层 USER 实体类对象 ")
 @Controller
-@RequestMapping("/teacher")
-public class TeacherController {
+@RequestMapping("/user")
+public class UserController {
     private Logger log = LoggerFactory.getLogger(getClass());
+    @Autowired
+    @Qualifier("baseService")
+    private BaseService baseService;
 
     @Autowired
-    @Qualifier("teacherJpaService")
-    private TeacherService teacherService;
+    @Qualifier("userService")
+    private UserService userService;
 
-    @ApiOperation(value = "post 添加", notes = "post参数 RequestParam ")
+    @ApiOperation(value = "post 保存 更新/添加 ", notes = "")
     @ResponseBody
-    @RequestMapping(value = "/action.do", method = RequestMethod.POST)
-    public Response add(
-            @RequestParam(value = "id", required = true) String id,
-            @RequestParam(value = "name", required = true, defaultValue = "default") String name,
-            @RequestParam(value = "time", required = false, defaultValue = "default") String time
+    @RequestMapping(value = "/save.do", method = RequestMethod.POST)
+    public Response save(
+            @RequestParam(value = "id", required = false, defaultValue = "") String id,
+            @RequestParam(value = "name", required = false, defaultValue = "") String name
     ) {
-        String info = "post id:" + id + " name:" + name + " time:" + time;
-        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher(id, name, time, "")));
-        return Response.makeTrue(info, res);
-    }
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
 
-    @ApiOperation(value = "put 更新", notes = "put参数 RequestParam ")
-    @ResponseBody
-    @RequestMapping(value = "/action.do", method = RequestMethod.PUT)
-    public Response update(
-            @RequestParam(value = "id", required = true) String id,
-            @RequestParam(value = "name", required = false, defaultValue = "default") String name,
-            @RequestParam(value = "time", required = false, defaultValue = "default") String time,
-            @RequestParam(value = "pwd", required = false, defaultValue = "default") String pwd
-    ) {
-        String info = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
-        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher(id, name, time, "")));
+        String info = "post user:" +user.toString();
+        List<User> res = userService.saveAll(Arrays.asList(user));
         return Response.makeTrue(info, res);
     }
 
@@ -66,8 +59,8 @@ public class TeacherController {
     public Response delete(
             @PathVariable(value = "ids", required = true) String ids
     ) {
-        String info = "delete id:" + ids;
-        Object res = teacherService.deleteAll(Arrays.asList(ids.split(",")));
+        String info = "delete ids:" + ids;
+        Object res = userService.deleteAll(Arrays.asList(ids.split(",")));
         return Response.makeTrue(info, res);
     }
 
@@ -78,7 +71,7 @@ public class TeacherController {
             @RequestParam(value = "id", required = true) String id
     ) {
         String info = "get id:" + id;
-        Teacher model = teacherService.get(new Teacher(id, "", "", ""));
+        User model = userService.get(new User().setId(id));
         return Response.makeTrue(info, model);
     }
 
@@ -93,14 +86,14 @@ public class TeacherController {
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
             @RequestParam(value = "order", required = false, defaultValue = "") String order
-            ) {
+    ) {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
 
         String info = "get   name:" + name;
 
-        Teacher teacher = new Teacher().setName(name);
-        List<Teacher> list = teacherService.finds(teacher, page);
-        page.setNum(teacherService.count(teacher));
+        User user = new User().setName(name);
+        List<User> list = userService.finds(user, page);
+        page.setNum(userService.count(user));
         return Response.makePage(info, page, list);
     }
 

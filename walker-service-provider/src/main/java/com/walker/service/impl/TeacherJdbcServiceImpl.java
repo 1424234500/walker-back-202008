@@ -25,25 +25,19 @@ public class TeacherJdbcServiceImpl implements TeacherService {
 
 
     @Override
-    public Teacher save(Teacher teacher) {
-        List<Teacher> t = this.finds(teacher, new Page().setShownum(1));
-        if(t.size() <= 0){
-            return this.add(teacher);
-        }else{
-            this.update(teacher);
-            return teacher;
+    public List<Teacher> saveAll(List<Teacher> teachers) {
+        List<Teacher> res = new ArrayList<>();
+        for(Teacher teacher : teachers) {
+            List<Teacher> t = this.finds(teacher, new Page().setShownum(1));
+            if (t.size() <= 0) {
+                int i = jdbcDao.executeSql("INSERT INTO TEACHER VALUES(?,?,?,?) ", teacher.getId(), teacher.getName(), teacher.getTime(), teacher.getPwd());
+                if(i > 0) res.add(teacher);
+            } else {
+                int i = jdbcDao.executeSql("UPDATE TEACHER SET ID=?,NAME=?,PWD=? WHERE ID=? ", teacher.getId(), teacher.getName(), teacher.getTime(), teacher.getPwd());
+                if(i > 0) res.add(teacher);
+            }
         }
-    }
-
-    @Override
-    public Teacher add(Teacher test) {
-        jdbcDao.executeSql("INSERT INTO TEACHER VALUES(?,?,?,?) ", test.getId(), test.getName(), test.getTime(), test.getPwd());
-        return test;
-    }
-
-    @Override
-    public Integer update(Teacher test) {
-        return null;
+        return res;
     }
 
     @Override
@@ -81,13 +75,13 @@ public class TeacherJdbcServiceImpl implements TeacherService {
     }
 
     @Override
-    public Integer[] deleteAll(String[] ids) {
+    public Integer[] deleteAll(List<String> ids) {
         int t[] = jdbcTemplate.batchUpdate("DELETE FROM TEACHER WHERE ID=? ", new BatchPreparedStatementSetter() {
             public int getBatchSize() {
-                return ids.length;
+                return ids.size();
             }
             public void setValues(PreparedStatement ps, int i)throws SQLException {
-                ps.setString(1, ids[i]);
+                ps.setString(1, ids.get(i));
             }
         });
         Integer[] res = new Integer[t.length];

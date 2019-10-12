@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 public class TeacherJpaServiceImplTest extends ApplicationProviderTests {
@@ -53,8 +55,8 @@ public class TeacherJpaServiceImplTest extends ApplicationProviderTests {
 
     @Test
     public void deleteAll(){
-        out(teacherJpaService.deleteAll(new String[]{"id_2,id_5"}));
-        out(teacherJdbcService.deleteAll(new String[]{"3,33"}));
+        out(teacherJpaService.deleteAll(Arrays.asList(new String[]{"id_2,id_5"})));
+        out(teacherJdbcService.deleteAll(Arrays.asList(new String[]{"3,33"})));
     }
 
 }
