@@ -104,7 +104,24 @@ public class Watch {
 		}
 		return this;
 	}
-	
+	/**
+	 * 总耗时存入
+	 * 若传入log则记录日志
+	 * @return
+	 */
+	public Watch resSlf4j( org.slf4j.Logger...logs) {
+		long now =  System.currentTimeMillis();
+		long last = times.get(times.size() - 1);
+		long deta = now - last;
+		this.put("total", deta + "");
+
+		for( org.slf4j.Logger log : logs) {
+			log.info(this.toPrettyString());
+		}
+		return this;
+	}
+
+
 	/**
 	 * 正常结果
 	 * @param res
@@ -113,6 +130,16 @@ public class Watch {
 	public Watch res(Object res,  Logger...logs) {
 		this.put("res", res);
 		this.res(logs);
+		return this;
+	}
+	/**
+	 * 正常结果
+	 * @param res
+	 * @return
+	 */
+	public Watch resSlf4j(Object res,  org.slf4j.Logger...logs) {
+		this.put("res", res);
+		this.resSlf4j(logs);
 		return this;
 	}
 	/**
@@ -125,7 +152,6 @@ public class Watch {
 		this.res(log);
 		throw new ErrorException(this);
 	}
-
 	/**
 	 * 异常结果 不抛出异常
 	 * @param e

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -40,10 +41,9 @@ public class TeacherController {
             @RequestParam(value = "name", required = true, defaultValue = "default") String name,
             @RequestParam(value = "time", required = false, defaultValue = "default") String time
     ) {
-        String res = "post id:" + id + " name:" + name + " time:" + time;
-        log.info(res);
-        Teacher model = teacherService.add(new Teacher(id, name, time, ""));
-        return Response.makeTrue(res, model);
+        String info = "post id:" + id + " name:" + name + " time:" + time;
+        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher(id, name, time, "")));
+        return Response.makeTrue(info, res);
     }
 
     //    public Integer update(Teacher test);
@@ -56,10 +56,9 @@ public class TeacherController {
             @RequestParam(value = "time", required = false, defaultValue = "default") String time,
             @RequestParam(value = "pwd", required = false, defaultValue = "default") String pwd
     ) {
-        String res = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
-        log.info(res);
-        Integer model = teacherService.update(new Teacher(id, name, time, pwd));
-        return Response.makeTrue(res, model);
+        String info = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
+        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher(id, name, time, "")));
+        return Response.makeTrue(info, res);
     }
 
     //    public void delete(Teacher test);

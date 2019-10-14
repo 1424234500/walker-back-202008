@@ -1,9 +1,6 @@
 <template>
   <div class="app-container" >
 
-
-    <div>mvc统计</div>
-
 <!--搜索-->
     <div class="div-box-down"
          v-loading="loadingList"
@@ -51,7 +48,7 @@ export default {
     return {
       list: [],
       colsMap: {},      //列名:别名
-      colsSearch: '',   //搜索 列明:搜索值
+      rowSearch: '',   //搜索 列明:搜索值
       queryUrl: [],
       url: "",
       queryUrlCount: [],

@@ -255,8 +255,7 @@ public class HttpUtil {
 			res = parseHttpEntity(entity, decode);
 
 			w.cost( " \nparseResponse");
-			w.put(" \ndata", res.substring(0, Math.min(res.length(), SHOW_STRING_LEN)));
-			w.res(log);
+			w.res(res.substring(0, Math.min(res.length(), SHOW_STRING_LEN)), log);
 		} catch (Exception e) {
 			w.exceptionWithThrow(e, log);
 		} finally {
@@ -349,7 +348,7 @@ public class HttpUtil {
 			is = ur.openStream();
 			length = FileUtil.saveFile(is, file, false);
 			w.put("size", Tools.calcSize(length));
-			w.res(log);
+			w.res(null, log);
 		} catch(IOException e){
 			w.exceptionWithThrow(e, log);
 		} finally {

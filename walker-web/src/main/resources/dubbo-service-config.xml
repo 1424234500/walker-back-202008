@@ -52,6 +52,8 @@
     <dubbo:reference id="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="30000" version="1.0" />
 <!--    jpa teacher增删查改 同服务不同实现 须分组-->
     <dubbo:reference id="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="30000" version="1.0" />
+    <!--    用户student-->
+    <dubbo:reference id="studentService" interface="com.walker.service.StudentService" timeout="30000" version="1.0" />
 
     <!--    用户user-->
     <dubbo:reference id="userService" interface="com.walker.service.UserService" timeout="30000" version="1.0" />

@@ -15,9 +15,9 @@ public class TestFastJson {
     public void test(){
 
         Student stu = new Student();
-        stu.setId("id");
-        stu.setName("name");
-        stu.setTime("time");
+        stu.setID("id");
+        stu.setNAME("name");
+        stu.setS_MTIME("time");
         Response res = Response.makeTrue("info", Arrays.asList(stu,new Bean().set("tc", "tc")));
         String str = JSON.toJSONString(res);
         System.out.println(str);

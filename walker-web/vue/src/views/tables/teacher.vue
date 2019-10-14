@@ -185,9 +185,12 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.get('/common/getColsMap.do', {tableName: 'W_USER'}).then((res) => {
+      this.get('/common/getColsMap.do', {tableName: 'W_TEACHER'}).then((res) => {
+        var data = res.data
 
-        this.colMap = res.data
+        for (var key in data) {
+          this.colMap[key.toLowerCase()] = data[key];
+        }
         this.clearRowSearch()
 
         console.info(this.rowSearch)
@@ -211,7 +214,7 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      this.get('/user/findPage.do', params).then((res) => {
+      this.get('/teacher/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
         this.loadingList = false
@@ -222,7 +225,7 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-      this.list.push(Object.assign({}, this.rowSearch))
+      this.list.push({})
       this.handlerChange(this.list[this.list.length - 1])
     },
     //修改单行 展示弹框
@@ -246,7 +249,7 @@ export default {
 
       Object.assign(this.rowUpdateFrom, this.rowUpdate)
       var params = this.rowUpdateFrom
-      this.post('/user/save.do', params).then((res) => {
+      this.put('/teacher/action.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
@@ -259,8 +262,8 @@ export default {
     handlerDelete(val, index) {
       console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
-      const params = {ids: val.ID}
-      this.get('/user/delet.do', params).then((res) => {
+      const params = {}
+      this.delet('/teacher/'+val.id+'/action.do', params).then((res) => {
         for(let j = 0; j < this.list.length; j++) {
           if(this.list[j] == val){
             this.list.splice(j, 1);
@@ -280,11 +283,11 @@ export default {
         this.loadingList = true
         let ids = ""
         for(let i = 0; i < this.rowSelect.length; i++){
-          ids += this.rowSelect[i]["ID"] + ","
+          ids += this.rowSelect[i]["id"] + ","
         }
         ids = ids.substring(0, ids.length - 1)
-        const params = {ids: ids}
-        this.get('/user/delet.do', params).then((res) => {
+        const params = {}
+        this.delet('/teacher/'+ids+'/action.do', params).then((res) => {
           this.loadingList = false
           for(let i = 0; i < this.rowSelect.length; i++){
             for(let j = 0; j < this.list.length; j++) {

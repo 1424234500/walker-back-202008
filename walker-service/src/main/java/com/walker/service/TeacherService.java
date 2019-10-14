@@ -8,7 +8,7 @@ import java.util.List;
 public interface TeacherService {
 
 
-    List<Teacher> saveAll(List<Teacher> obj);
+    List<Teacher> saveAll(List<Teacher> objs);
     Integer[] deleteAll(List<String> ids);
 
     Teacher get(Teacher obj);

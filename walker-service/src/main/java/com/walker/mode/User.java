@@ -19,164 +19,162 @@ public class User implements Cloneable,Serializable{
 //    @GeneratedValue(generator = "system-uuid")
 //    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
-    private String id;
+    private String ID;
     @Column(name = "S_MTIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
-    private String sMtime;
+    private String S_MTIME;
     @Column(name = "S_ATIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '添加时间' ")
-    private String sAtime;
-    @Column(name = "S_FLAG", columnDefinition = "varchar(4) default '0' comment '是1否0有效' ")
-
-
-    private String sFlag;
+    private String S_ATIME;
+    @Column(name = "S_FLAG", columnDefinition = "varchar(4) default '0' comment '1是0否' ")
+    private String S_FLAG;
     @Column(name = "NAME", columnDefinition = "varchar(512) default 'name' comment '姓名' ")    //255
-    private String name;
+    private String NAME;
+    @Column(name = "SEX", columnDefinition = "varchar(4) default '0' comment '1男0女' ")
+    private String SEX;
     @Column(name = "NICK_NAME", columnDefinition = "varchar(512) default '' comment '昵称' ")    //255
-    private String nickName;
+    private String NICK_NAME;
     @Column(name = "SIGN", columnDefinition = "varchar(512) default '' comment '个性签名' ")    //255
-    private String sign;
-
+    private String SIGN;
     @Column(name = "EMAIL", columnDefinition = "varchar(512) default '' comment '邮箱' ")    //255
-    private String email;
+    private String EMAIL;
     @Column(name = "MOBILE", columnDefinition = "varchar(32) default '' comment '电话' ")    //255
-    private String mobile;
+    private String MOBILE;
 
 
     @Column(name = "DEPT_CODE", columnDefinition = "varchar(32) default 'name' comment '部门' ")    //255
-    private String deptCode;
-
+    private String DEPT_CODE;
 
     @Column(name = "PWD", columnDefinition = "varchar(128) default '' comment '密码' ")
-    private String pwd;
+    private String PWD;
 
     public User(){
-        
-    }
-    public User(String id, String sMtime, String sAtime, String sFlag, String name, String nickName, String sign, String email, String mobile, String deptCode, String pwd) {
-        this.id = id;
-        this.sMtime = sMtime;
-        this.sAtime = sAtime;
-        this.sFlag = sFlag;
-        this.name = name;
-        this.nickName = nickName;
-        this.sign = sign;
-        this.email = email;
-        this.mobile = mobile;
-        this.deptCode = deptCode;
-        this.pwd = pwd;
+
     }
 
-    public String getId() {
-        return id;
+    public String getS_MTIME() {
+        return S_MTIME;
     }
 
-    public User setId(String id) {
-        this.id = id;
+    public User setS_MTIME(String S_MTIME) {
+        this.S_MTIME = S_MTIME;
         return this;
     }
 
-    public String getsMtime() {
-        return sMtime;
+    public String getS_ATIME() {
+        return S_ATIME;
     }
 
-    public User setsMtime(String sMtime) {
-        this.sMtime = sMtime;
+    public User setS_ATIME(String S_ATIME) {
+        this.S_ATIME = S_ATIME;
         return this;
     }
 
-    public String getsAtime() {
-        return sAtime;
+    public String getS_FLAG() {
+        return S_FLAG;
     }
 
-    public User setsAtime(String sAtime) {
-        this.sAtime = sAtime;
+    public User setS_FLAG(String S_FLAG) {
+        this.S_FLAG = S_FLAG;
         return this;
     }
 
-    public String getsFlag() {
-        return sFlag;
+    public String getSEX() {
+        return SEX;
     }
 
-    public User setsFlag(String sFlag) {
-        this.sFlag = sFlag;
+    public User setSEX(String SEX) {
+        this.SEX = SEX;
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getID() {
+        return ID;
     }
 
-    public User setName(String name) {
-        this.name = name;
+    public User setID(String ID) {
+        this.ID = ID;
         return this;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNAME() {
+        return NAME;
     }
 
-    public User setNickName(String nickName) {
-        this.nickName = nickName;
+    public User setNAME(String NAME) {
+        this.NAME = NAME;
         return this;
     }
 
-    public String getSign() {
-        return sign;
+    public String getNICK_NAME() {
+        return NICK_NAME;
     }
 
-    public User setSign(String sign) {
-        this.sign = sign;
+    public User setNICK_NAME(String NICK_NAME) {
+        this.NICK_NAME = NICK_NAME;
         return this;
     }
 
-    public String getEmail() {
-        return email;
+    public String getSIGN() {
+        return SIGN;
     }
 
-    public User setEmail(String email) {
-        this.email = email;
+    public User setSIGN(String SIGN) {
+        this.SIGN = SIGN;
         return this;
     }
 
-    public String getMobile() {
-        return mobile;
+    public String getEMAIL() {
+        return EMAIL;
     }
 
-    public User setMobile(String mobile) {
-        this.mobile = mobile;
+    public User setEMAIL(String EMAIL) {
+        this.EMAIL = EMAIL;
         return this;
     }
 
-    public String getDeptCode() {
-        return deptCode;
+    public String getMOBILE() {
+        return MOBILE;
     }
 
-    public User setDeptCode(String deptCode) {
-        this.deptCode = deptCode;
-        return this;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public User setPwd(String pwd) {
-        this.pwd = pwd;
+    public User setMOBILE(String MOBILE) {
+        this.MOBILE = MOBILE;
         return this;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id='" + id + '\'' +
-                ", sMtime='" + sMtime + '\'' +
-                ", sAtime='" + sAtime + '\'' +
-                ", sFlag='" + sFlag + '\'' +
-                ", name='" + name + '\'' +
-                ", nickName='" + nickName + '\'' +
-                ", sign='" + sign + '\'' +
-                ", email='" + email + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", deptCode='" + deptCode + '\'' +
+                "ID='" + ID + '\'' +
+                ", S_MTIME='" + S_MTIME + '\'' +
+                ", S_ATIME='" + S_ATIME + '\'' +
+                ", S_FLAG='" + S_FLAG + '\'' +
+                ", NAME='" + NAME + '\'' +
+                ", SEX='" + SEX + '\'' +
+                ", NICK_NAME='" + NICK_NAME + '\'' +
+                ", SIGN='" + SIGN + '\'' +
+                ", EMAIL='" + EMAIL + '\'' +
+                ", MOBILE='" + MOBILE + '\'' +
+                ", DEPT_CODE='" + DEPT_CODE + '\'' +
+                ", PWD='" + PWD + '\'' +
                 '}';
     }
+
+    public String getDEPT_CODE() {
+        return DEPT_CODE;
+    }
+
+    public User setDEPT_CODE(String DEPT_CODE) {
+        this.DEPT_CODE = DEPT_CODE;
+        return this;
+    }
+
+    public String getPWD() {
+        return PWD;
+    }
+
+    public User setPWD(String PWD) {
+        this.PWD = PWD;
+        return this;
+    }
+
+
 }

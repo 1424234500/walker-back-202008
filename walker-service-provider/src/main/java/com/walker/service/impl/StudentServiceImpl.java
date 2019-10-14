@@ -1,11 +1,9 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.Page;
-import com.walker.dao.UserRepository;
-import com.walker.dao.UserRepository;
-import com.walker.mode.User;
-import com.walker.service.UserService;
-import com.walker.service.UserService;
+import com.walker.dao.StudentRepository;
+import com.walker.mode.Student;
+import com.walker.service.StudentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -14,37 +12,38 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-@Service("userService")
-public class UserServiceImpl implements UserService {
+@Service("studentService")
+public class StudentServiceImpl implements StudentService {
 
     @Autowired
-    private UserRepository userRepository;
+    private StudentRepository studentRepository;
 
 
     @Override
-    public List<User> saveAll(List<User> objs) {
-        return userRepository.saveAll(objs);
+    public List<Student> saveAll(List<Student> objs) {
+        return studentRepository.saveAll(objs);
     }
 
     @Override
-    public Integer delete(User obj) {
-        userRepository.deleteById(obj.getID());
+    public Integer delete(Student obj) {
+        studentRepository.deleteById(obj.getID());
         return 1;
     }
 
     @Override
-    public User get(User obj) {
-        return userRepository.selfFindOneCacheJPQL(obj.getID());
+    public Student get(Student obj) {
+        return studentRepository.selfFindOneCacheJPQL(obj.getID());
     }
 
     @Override
-    public List<User> finds(User obj, Page page) {
+    public List<Student> finds(Student obj, Page page) {
         String order = page.getOrder();
         String[] orders = order.split(" ");
 
@@ -60,24 +59,24 @@ public class UserServiceImpl implements UserService {
                         ? PageRequest.of(page.getNowpage()-1, page.getShownum())
                         : PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
 
-        org.springframework.data.domain.Page<User> res = userRepository.findAll(this.getSpecification(obj), pageable);
+        org.springframework.data.domain.Page<Student> res = studentRepository.findAll(this.getSpecification(obj), pageable);
         page.setNum(res.getTotalElements());
         return res.getContent();
     }
 
     @Override
-    public Integer count(User obj) {
-        long res = userRepository.count(this.getSpecification(obj));
+    public Integer count(Student obj) {
+        long res = studentRepository.count(this.getSpecification(obj));
         return new Long(res).intValue();
     }
-    private Specification getSpecification(User obj){
-        return new Specification<User>(){
+    private Specification getSpecification(Student obj){
+        return new Specification<Student>(){
             @Override
-            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 
                 List<Predicate> list = new ArrayList<>();
                 if (StringUtils.isNotEmpty(obj.getID())) {
-                    list.add(criteriaBuilder.like(root.get("ID"), "%" + obj.getID() + "%"));
+                    list.add(criteriaBuilder.like(root.get("ID"), obj.getID() + "%"));
                 }
                 if (StringUtils.isNotEmpty(obj.getS_MTIME())) {
                     list.add(criteriaBuilder.greaterThan(root.get("S_MTIME"), obj.getS_MTIME()));
@@ -94,23 +93,9 @@ public class UserServiceImpl implements UserService {
                 if (StringUtils.isNotEmpty(obj.getNAME())) {
                     list.add(criteriaBuilder.like(root.get("NAME"), "%" + obj.getNAME() + "%"));
                 }
-                if (StringUtils.isNotEmpty(obj.getNICK_NAME())) {
-                    list.add(criteriaBuilder.like(root.get("NICK_NAME"), "%" + obj.getNICK_NAME() + "%"));
-                }
-                if (StringUtils.isNotEmpty(obj.getSIGN())) {
-                    list.add(criteriaBuilder.like(root.get("SIGN"), "%" + obj.getSIGN() + "%"));
-                }
-                if (StringUtils.isNotEmpty(obj.getEMAIL())) {
-                    list.add(criteriaBuilder.like(root.get("EMAIL"), "%" + obj.getEMAIL() + "%"));
-                }
-                if (StringUtils.isNotEmpty(obj.getMOBILE())) {
-                    list.add(criteriaBuilder.like(root.get("MOBILE"), "%" + obj.getMOBILE() + "%"));
-                }
-                if (StringUtils.isNotEmpty(obj.getDEPT_CODE())) {
-                    list.add(criteriaBuilder.like(root.get("DEPT_CODE"), "%" + obj.getDEPT_CODE() + "%"));
-                }
-                if (StringUtils.isNotEmpty(obj.getPWD())) {
-                    list.add(criteriaBuilder.like(root.get("PWD"), "%" + obj.getPWD() + "%"));
+
+                if (StringUtils.isNotEmpty(obj.getCLASS_CODE())) {
+                    list.add(criteriaBuilder.like(root.get("CLASS_CODE"), "%" + obj.getCLASS_CODE() + "%"));
                 }
                 return criteriaBuilder.and(list.toArray(new Predicate[0]));
             }
@@ -119,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer[] deleteAll(List<String> ids) {
-        int res = userRepository.selfDeleteAll(ids);
+        int res = studentRepository.selfDeleteAll(ids);
         return new Integer[]{res};
     }
 }

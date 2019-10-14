@@ -8,7 +8,7 @@ import java.io.Serializable;
  * jpa实体类测试
  */
 @Entity
-@Table(name = "TEACHER")
+@Table(name = "W_TEACHER")
 public class Teacher implements Cloneable,Serializable{
 
     @Id     //主键

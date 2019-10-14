@@ -51,7 +51,7 @@ class PoolC3p0Impl extends Pool {
 	//			ds.setDataSourceName(name);
 				setDataSource(ds, map);
 				dataSource.put(name, ds);
-				w.res(log);
+				w.res(null, log);
 			}catch (Exception e) {
 				w.exception(e, log);
 			}

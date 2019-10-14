@@ -1,8 +1,57 @@
 <template>
   <div class="app-container" >
 
+    <!--搜索 table-->
+    <div class="div-box-down"
+         v-loading="loadingTables"
+    >
+      <form class="form-inline" >
+        <div class="form-group">
+          <label>database</label>
+          <el-select v-model="database"
+                     clearable
+                     filterable
+                     allow-create
+                     default-first-option
+                     placeholder="请选择"
+                     no-match-text="新建">
+            <el-option
+              v-for="item in queryDatabase"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
+          <el-button  class="btn btn-primary" @click="getTables()" >查询</el-button>
+        </div>
+        <br>
+        <div class="form-group">
+          <label>table</label>
+          <el-select v-model="table"
+                     clearable
+                     filterable
+                     allow-create
+                     default-first-option
+                     placeholder="请选择"
+                     no-match-text="新建">
+            <el-option
+              v-for="item in queryTable"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
+          <el-button  class="btn btn-primary" @click="getColumns()" >查询</el-button>
+
+        </div>
+      </form>
+    </div>
+
     <!--搜索-->
     <div class="div-box-down"
+         v-show="!loadingTables"
          v-loading="loadingCols"
     >
       <form class="form-inline" >
@@ -162,7 +211,14 @@
         rowUpdate: {},   //更新界面复制 列名:新值
         rowUpdateFrom: {},//更新界面源对象 列名:旧值
         rowSelect: [],   //选中行
-        test:"test",
+
+        queryDatabase: [],  //db列表
+        database: "", //选中db
+
+        queryTable: [], //table列表
+        table: "",      //选中table
+
+
         page: {
           nowpage: 1,
           num: 0,
@@ -170,6 +226,7 @@
           pagenum: 0,
           shownum: 8,
         },
+        loadingTables: true,
         loadingList: true,
         loadingCols: true,
         loadingSave: true,
@@ -177,15 +234,44 @@
       }
     },
     created() {
-      this.getColumns()
+      this.getDatabases()
     },
     filters: {
     },
     methods: {
+      getDatabases() {
+        this.loadingTables = true
+        var params = Object.assign({}, {})
+        this.get('/common/getDatabases.do', params).then((res) => {
+          this.queryDatabase = res.data
+          this.database = res.data != null && res.data.length > 0 ? res.data[0] : 'walker'
+          this.loadingTables = false
+          this.getTables()
+        }).catch(() => {
+          this.loadingTables = false
+        })
+
+      },
+      //查询展示的行列信息 备注
+      getTables() {
+        this.loadingTables = true
+        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
+        this.get('/common/getTables.do', params).then((res) => {
+          this.queryTable = res.data
+          this.table = res.data != null && res.data.length > 0 ? res.data[0] : ''
+          // this.table = ""
+          this.loadingTables = false
+          this. getColumns()
+        }).catch(() => {
+          this.loadingTables = false
+        })
+
+      },
       //查询展示的行列信息 备注
       getColumns() {
         this.loadingCols = true
-        this.get('/common/getColsMap.do', {tableName: 'W_STUDENT'}).then((res) => {
+        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
+        this.get('/common/getColsMap.do', {tableName: this.table}).then((res) => {
 
           this.colMap = res.data
           this.clearRowSearch()
@@ -201,17 +287,17 @@
       },
       //清空搜索条件
       clearRowSearch(){
-        for (var key in this.colMap) {
-          this.rowSearch[key] = ''
-        }
+        this.rowSearch = {}
         this.page.nowpage = 1
+        this.page.order = ''
       },
       //分页查询
       getListPage() {
         this.loadingList = true
         // name/nowPage/showNum
-        var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-        this.get('/student/findPage.do', params).then((res) => {
+        var obj = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, obj)
+        this.get('/common/findPage.do', params).then((res) => {
           this.list = res.data.data
           this.page = res.data.page
           this.loadingList = false
@@ -245,8 +331,8 @@
         this.loadingSave = true
 
         Object.assign(this.rowUpdateFrom, this.rowUpdate)
-        var params = this.rowUpdateFrom
-        this.post('/student/save.do', params).then((res) => {
+        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, this.rowUpdateFrom)
+        this.post('/common/save.do', params).then((res) => {
           this.loadingSave = false
           this.loadingUpdate = ! this.loadingUpdate
         }).catch(() => {
@@ -259,8 +345,8 @@
       handlerDelete(val) {
         console.info("handlerDelete " + " " + JSON.stringify(val))
         this.loadingList = true
-        const params = {ids: val.ID}
-        this.get('/student/delet.do', params).then((res) => {
+        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, val)
+        this.get('/common/delet.do', params).then((res) => {
           for(let j = 0; j < this.list.length; j++) {
             if(this.list[j] == val){
               this.list.splice(j, 1);
@@ -277,26 +363,9 @@
         console.info("handlerDeleteAll " + " " + JSON.stringify(this.rowSelect))
 
         if(this.rowSelect.length > 0){
-          this.loadingList = true
-          let ids = ""
           for(let i = 0; i < this.rowSelect.length; i++){
-            ids += this.rowSelect[i]["ID"] + ","
+            this.handlerDelete(this.rowSelect[i])
           }
-          ids = ids.substring(0, ids.length - 1)
-          const params = {ids: ids}
-          this.get('/student/delet.do', params).then((res) => {
-            this.loadingList = false
-            for(let i = 0; i < this.rowSelect.length; i++){
-              for(let j = 0; j < this.list.length; j++) {
-                if(this.list[j] == this.rowSelect[i]){
-                  this.list.splice(j, 1);
-                }
-              }
-            }
-            this.rowSelect = []
-          }).catch(() => {
-            this.loadingList = false
-          })
         }
 
 

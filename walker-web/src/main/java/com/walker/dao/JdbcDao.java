@@ -1,11 +1,14 @@
 package com.walker.dao;
 
+import com.walker.common.util.Watch;
 import com.walker.core.database.BaseDaoAdapter;
+import com.walker.core.database.SqlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -42,24 +45,47 @@ public class JdbcDao extends BaseDaoAdapter {
 
     @Override
     public List<Map<String, Object>> find(String sql, Object... params) {
-        return jdbcTemplate.queryForList(sql, params);
+        List<Map<String, Object>> res = null;
+        Watch w = new Watch(SqlUtil.makeSql(sql, params));
+        try {
+            res = jdbcTemplate.queryForList(sql, params);
+            w.res(res, log);
+        }catch (Exception e){
+            w.exceptionWithThrow(e, log);
+        }
+        return res;
     }
 
     @Override
     public Integer executeSql(String sql, Object... params) {
-        return jdbcTemplate.update(sql, params);
+        Integer res = null;
+        Watch w = new Watch(SqlUtil.makeSql(sql, params));
+        try {
+            res = jdbcTemplate.update(sql, params);
+            w.res(res, log);
+        }catch (Exception e){
+            w.exceptionWithThrow(e, log);
+        }
+        return res;
     }
 
     @Override
     public Integer[] executeSql(String sql, List<List<Object>> objs) {
-        List<Object[]> args = new ArrayList<>();
-        for(List<Object> arg : objs){
-            args.add(arg.toArray());
-        }
-        int resint[] = jdbcTemplate.batchUpdate(sql, args);
-        Integer[] res = new Integer[resint.length];
-        for(int i = 0; i< resint.length; i++){
-            res[i] = resint[i];
+        Watch w = new Watch(sql).put("size", objs.size()).put("eg", objs.get(0));
+        Integer[] res = {};
+        try {
+            List<Object[]> args = new ArrayList<>();
+            for(List<Object> arg : objs){
+                args.add(arg.toArray());
+            }
+            int resint[] = jdbcTemplate.batchUpdate(sql, args);
+            res = new Integer[resint.length];
+            for(int i = 0; i< resint.length; i++){
+                res[i] = resint[i];
+            }
+            w.res(Arrays.toString(res), log);
+        } catch (Exception e) {
+            w.exceptionWithThrow(e, log);
         }
         return res;
     }

@@ -4,11 +4,9 @@ package com.walker.controller;
 import com.walker.Response;
 import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
-import com.walker.mode.User;
-import com.walker.mode.User;
+import com.walker.mode.Student;
 import com.walker.service.BaseService;
-import com.walker.service.UserService;
-import com.walker.service.UserService;
+import com.walker.service.StudentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -16,27 +14,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
 import java.util.List;
 
 /*
-测试 jap userService
+测试 jap studentService
 
  */
-@Api(value = "service层 USER 实体类对象 ")
+@Api(value = "service层 W_STUDENT 实体类对象 ")
 @Controller
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/student")
+public class StudentController {
     private Logger log = LoggerFactory.getLogger(getClass());
     @Autowired
     @Qualifier("baseService")
     private BaseService baseService;
 
     @Autowired
-    @Qualifier("userService")
-    private UserService userService;
+    @Qualifier("studentService")
+    private StudentService studentService;
 
     @ApiOperation(value = "post 保存 更新/添加 ", notes = "")
     @ResponseBody
@@ -48,29 +49,19 @@ public class UserController {
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "0") String sFlag,
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
             @RequestParam(value = "SEX", required = false, defaultValue = "") String sex,
-            @RequestParam(value = "NICK_NAME", required = false, defaultValue = "") String nickName,
-            @RequestParam(value = "SIGN", required = false, defaultValue = "") String sign,
-            @RequestParam(value = "EMAIL", required = false, defaultValue = "") String email,
-            @RequestParam(value = "MOBILE", required = false, defaultValue = "") String mobile,
-            @RequestParam(value = "DEPT_CODE", required = false, defaultValue = "") String deptCode,
-            @RequestParam(value = "PWD", required = false, defaultValue = "") String pwd
+            @RequestParam(value = "CLASS_CODE", required = false, defaultValue = "") String classCode
     ) {
-        User user = new User();
-        user.setID(id);
-        user.setS_MTIME(TimeUtil.getTimeYmdHms());
-        user.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
-        user.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
-        user.setNAME(name);
-        user.setSEX(sex);
-        user.setNICK_NAME(nickName);
-        user.setSIGN(sign);
-        user.setEMAIL(email);
-        user.setMOBILE(mobile);
-        user.setDEPT_CODE(deptCode);
-        user.setPWD(pwd);
+        Student student = new Student();
+        student.setID(id);
+        student.setS_MTIME(TimeUtil.getTimeYmdHms());
+        student.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
+        student.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
+        student.setNAME(name);
+        student.setSEX(sex.equalsIgnoreCase("1") ? "1" : "0");
+        student.setCLASS_CODE(classCode);
 
-        String info = "post user:" +user.toString();
-        List<User> res = userService.saveAll(Arrays.asList(user));
+        String info = "post student:" +student.toString();
+        List<Student> res = studentService.saveAll(Arrays.asList(student));
         return Response.makeTrue(info, res);
     }
 
@@ -81,7 +72,7 @@ public class UserController {
             @RequestParam(value = "ids", required = false, defaultValue = "") String ids
     ) {
         String info = "delete ids:" + ids;
-        Object res = userService.deleteAll(Arrays.asList(ids.split(",")));
+        Object res = studentService.deleteAll(Arrays.asList(ids.split(",")));
         return Response.makeTrue(info, res);
     }
 
@@ -92,7 +83,7 @@ public class UserController {
             @RequestParam(value = "id", required = true) String id
     ) {
         String info = "get id:" + id;
-        User model = userService.get(new User().setID(id));
+        Student model = studentService.get(new Student().setID(id));
         return Response.makeTrue(info, model);
     }
 
@@ -109,36 +100,25 @@ public class UserController {
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
             @RequestParam(value = "SEX", required = false, defaultValue = "") String sex,
-            @RequestParam(value = "NICK_NAME", required = false, defaultValue = "") String nickName,
-            @RequestParam(value = "SIGN", required = false, defaultValue = "") String sign,
-            @RequestParam(value = "EMAIL", required = false, defaultValue = "") String email,
-            @RequestParam(value = "MOBILE", required = false, defaultValue = "") String mobile,
-            @RequestParam(value = "DEPT_CODE", required = false, defaultValue = "") String deptCode,
-            @RequestParam(value = "PWD", required = false, defaultValue = "") String pwd,
-
+            @RequestParam(value = "CLASS_CODE", required = false, defaultValue = "") String classCode,
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
             @RequestParam(value = "order", required = false, defaultValue = "") String order
     ) {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
-        User user = new User();
-        user.setID(id);
-        user.setS_MTIME(sMtime);
-        user.setS_ATIME(sAtime);
-        user.setS_FLAG(sFlag);
-        user.setNAME(name);
-        user.setSEX(sex);
-        user.setNICK_NAME(nickName);
-        user.setSIGN(sign);
-        user.setEMAIL(email);
-        user.setMOBILE(mobile);
-        user.setDEPT_CODE(deptCode);
-        user.setPWD(pwd);
+        Student student = new Student();
+        student.setID(id);
+        student.setS_MTIME(sMtime);
+        student.setS_ATIME(sAtime);
+        student.setS_FLAG(sFlag);
+        student.setNAME(name);
+        student.setSEX(sex);
+        student.setCLASS_CODE(classCode);
 
-        String info = "get   user:" + user;
+        String info = "get   student:" + student;
 
-        List<User> list = userService.finds(user, page);
-        page.setNum(userService.count(user));
+        List<Student> list = studentService.finds(student, page);
+        page.setNum(studentService.count(student));
         return Response.makePage(info, page, list);
     }
 

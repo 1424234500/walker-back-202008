@@ -1,6 +1,7 @@
 package com.walker.service;
 
 import com.walker.common.util.Page;
+import com.walker.mode.Student;
 
 import java.util.List;
 import java.util.Map;
@@ -11,11 +12,17 @@ import java.util.Map;
  *
  */
 public interface StudentService  {
-	public List<Map<String, Object>>  finds(String id, String name, String sFlag, String timefrom, String timeto, Page page) ;
-	public int update(String id, String name, String time);
-	public int delete(String id);
-	public int add( String name, String time);
-
-	public Map<String, Object> find(String id);
 	
+
+    List<Student> saveAll(List<Student> objs);
+    Integer[] deleteAll(List<String> ids);
+
+    Student get(Student obj);
+    Integer delete(Student obj);
+
+    List<Student> finds(Student obj, Page page);
+    Integer count(Student obj);
+
+
+
 }

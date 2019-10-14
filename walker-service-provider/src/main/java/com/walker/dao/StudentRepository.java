@@ -1,6 +1,6 @@
 package com.walker.dao;
 
-import com.walker.mode.User;
+import com.walker.mode.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,7 +14,7 @@ import java.util.List;
  * sharding 分库 & 分表
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor {//实体类 主键类型 自定义查询
+public interface StudentRepository extends JpaRepository<Student, String>, JpaSpecificationExecutor {//实体类 主键类型 自定义查询
 //    List<T> findAll();
 //    List<T> findAll(Sort var1);
 //    List<T> findAllById(Iterable<ID> var1);
@@ -33,12 +33,12 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
      */
     @Transactional
     @Modifying
-    @Query("delete from User u where u.ID in (?1) ")
+    @Query("delete from Student u where u.ID in (?1) ")
     Integer selfDeleteAll(List<String> ids);
 
 
 
-    @Query("select u from User u where u.ID=?1")
-    User selfFindOneCacheJPQL(String id);
+    @Query("select u from Student u where u.ID=?1")
+    Student selfFindOneCacheJPQL(String id);
 
 }
