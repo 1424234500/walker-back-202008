@@ -14,7 +14,17 @@ import com.walker.core.encode.Pinyin;
 public class DaoTest {
 	@Test
 	public void testGetColumnMap(){
-		Tools.out(new Dao().getColumnsMapByTableName("TEACHER"));
+		Tools.out(new Dao().getDatabasesOrUsers());
+		Tools.out(new Dao().getTables(""));
+		Tools.out(new Dao().getTables("walker"));
+
+		Tools.out(new Dao().getColumnsByTableName("", "W_TEACHER"));
+		Tools.out(new Dao().getColumnsByTableName("walker", "W_TEACHER"));
+
+		Tools.out(new Dao().getColumnsMapByTableName("", "W_TEACHER"));
+		Tools.out(new Dao().getColumnsMapByTableName("walker", "W_TEACHER"));
+
+
 	}
 	@Test
 	public void testPo(){
@@ -36,7 +46,7 @@ public class DaoTest {
 		BaseDao dao = new Dao();
 
 		Tools.out(dao.executeSql("CREATE TABLE  IF NOT EXISTS  junit (code VARCHAR(20), name VARCHAR(20)); "));
-		Tools.out(dao.getColumnsByTableName("junit"));
+		Tools.out(dao.getColumnsByTableName("", "junit"));
 		Tools.out(dao.getColumnsBySql("select t.*, 'addCol' from junit t "));
 		for(int i = 0; i < 3; i++)
 			Tools.out(dao.executeSql("insert into junit values(?,?)", i , Pinyin.getRandomName(1, null)));
@@ -47,7 +57,8 @@ public class DaoTest {
 		
 		Tools.out(dao.executeSql("delete from junit  where code like ?", "%1%"));
 		Tools.out(dao.executeSql("delete from junit  where code like ?", "%2%"));
-		
+		Tools.out(dao.executeSql("drop table junit"));
+
 	}
 
 	

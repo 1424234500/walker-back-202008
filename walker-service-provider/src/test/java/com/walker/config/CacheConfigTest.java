@@ -1,7 +1,6 @@
 package com.walker.config;
 
 import com.walker.common.util.Tools;
-import com.walker.common.util.Watch;
 import com.walker.dao.TeacherRepository;
 import com.walker.mode.Teacher;
 import org.junit.Test;
@@ -11,9 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
 
-import javax.tools.Tool;
 import java.util.Arrays;
-import java.util.List;
 
 
 @RunWith(SpringRunner.class)

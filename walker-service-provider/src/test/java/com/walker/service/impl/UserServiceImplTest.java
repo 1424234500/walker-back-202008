@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 public class UserServiceImplTest extends ApplicationProviderTests {
     @Autowired
     UserService userService;

@@ -141,208 +141,197 @@
 
 
 <script>
-// import { getList } from '@/api/table'
+  // import { getList } from '@/api/table'
 
-export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
+  export default {
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          published: 'success',
+          draft: 'gray',
+          deleted: 'danger'
+        }
+        return statusMap[status]
       }
-      return statusMap[status]
-    }
-  },
-  data() {
-    return {
-      list: [],
-      colMap: {},      //列名:别名
-      rowSearch: {},   //搜索 列明:搜索值
-      rowUpdate: {},   //更新界面复制 列名:新值
-      rowUpdateFrom: {},//更新界面源对象 列名:旧值
-      rowSelect: [],   //选中行
-      test:"test",
-      page: {
-        nowpage: 1,
-        num: 0,
-        order: "",
-        pagenum: 0,
-        shownum: 8,
+    },
+    data() {
+      return {
+        list: [],
+        colMap: {},      //列名:别名
+        colKey: "",     //主键名
+        rowSearch: {},   //搜索 列明:搜索值
+        rowUpdate: {},   //更新界面复制 列名:新值
+        rowUpdateFrom: {},//更新界面源对象 列名:旧值
+        rowSelect: [],   //选中行
+        page: {
+          nowpage: 1,
+          num: 0,
+          order: "",
+          pagenum: 0,
+          shownum: 8,
+        },
+        loadingList: true,
+        loadingCols: true,
+        loadingSave: true,
+        loadingUpdate: false,
+      }
+    },
+    created() {
+      this.getColumns()
+    },
+    filters: {
+    },
+    methods: {
+      //查询展示的行列信息 备注
+      getColumns() {
+        this.loadingCols = true
+        this.get('/common/getColsMap.do', {tableName: 'W_USER'}).then((res) => {
+          this.colMap = res.data.colMap
+          this.colKey = res.data.colKey
+          this.clearRowSearch()
+          this.loadingCols = false
+          this. getListPage()
+        }).catch(() => {
+          this.loadingCols = false
+        })
+
       },
-      loadingList: true,
-      loadingCols: true,
-      loadingSave: true,
-      loadingUpdate: false,
-    }
-  },
-  created() {
-    this.getColumns()
-  },
-  filters: {
-  },
-  methods: {
-    //查询展示的行列信息 备注
-    getColumns() {
-      this.loadingCols = true
-      this.get('/common/getColsMap.do', {tableName: 'W_TEACHER'}).then((res) => {
-        var data = res.data
-
-        for (var key in data) {
-          this.colMap[key.toLowerCase()] = data[key];
+      //清空搜索条件
+      clearRowSearch(){
+        for (var key in this.colMap) {
+          this.rowSearch[key] = ''
         }
-        this.clearRowSearch()
-
-        console.info(this.rowSearch)
-
-        this.loadingCols = false
-        this. getListPage()
-      }).catch(() => {
-        this.loadingCols = false
-      })
-
-    },
-    //清空搜索条件
-    clearRowSearch(){
-      for (var key in this.colMap) {
-        this.rowSearch[key] = ''
-      }
-      this.page.nowpage = 1
-    },
-     //分页查询
-     getListPage() {
-      this.loadingList = true
-      // name/nowPage/showNum
-      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      this.get('/teacher/findPage.do', params).then((res) => {
-        this.list = res.data.data
-        this.page = res.data.page
-        this.loadingList = false
-      }).catch(() => {
-        this.loadingList = false
-      })
-
-    },
-    //添加行
-    handlerAddColumn(){
-      this.list.push({})
-      this.handlerChange(this.list[this.list.length - 1])
-    },
-    //修改单行 展示弹框
-    handlerChange(val) {
-      this.loadingUpdate = ! this.loadingUpdate
-      this.loadingSave = false
-      console.info("handlerChange " + JSON.stringify(val))
-      this.rowUpdateFrom = val;
-      this.rowUpdate = JSON.parse(JSON.stringify(val))
-      this.loadingSave = false
-    },
-    //取消修改  不做操作
-    handlerCancel(){
-      console.info("handlerCancel "+ JSON.stringify(this.rowUpdate))
-      this.loadingUpdate = ! this.loadingUpdate
-    },
-    //保存修改  保存至表格 和 数据库 ? 还是批量改完后一次存储 先临时选中修改过的
-    handlerSave(){
-      console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
-      this.loadingSave = true
-
-      Object.assign(this.rowUpdateFrom, this.rowUpdate)
-      var params = this.rowUpdateFrom
-      this.put('/teacher/action.do', params).then((res) => {
-        this.loadingSave = false
-        this.loadingUpdate = ! this.loadingUpdate
-      }).catch(() => {
-        this.loadingSave = false
-        this.loadingUpdate = ! this.loadingUpdate
-      })
-
-    },
-    //删除单行
-    handlerDelete(val, index) {
-      console.info("handlerDelete " + " " + JSON.stringify(val))
-      this.loadingList = true
-      const params = {}
-      this.delet('/teacher/'+val.id+'/action.do', params).then((res) => {
-        for(let j = 0; j < this.list.length; j++) {
-          if(this.list[j] == val){
-            this.list.splice(j, 1);
-          }
-        }
-        this.loadingList = false
-      }).catch(() => {
-        this.loadingList = false
-      })
-    },
-    //删除选中多行
-    handlerDeleteAll(){
-      // const val = this.$refs.multipleTable.data
-      console.info("handlerDeleteAll " + " " + JSON.stringify(this.rowSelect))
-
-      if(this.rowSelect.length > 0){
+        this.page.nowpage = 1
+      },
+      //分页查询
+      getListPage() {
         this.loadingList = true
-        let ids = ""
-        for(let i = 0; i < this.rowSelect.length; i++){
-          ids += this.rowSelect[i]["id"] + ","
-        }
-        ids = ids.substring(0, ids.length - 1)
-        const params = {}
-        this.delet('/teacher/'+ids+'/action.do', params).then((res) => {
+        // name/nowPage/showNum
+        var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+        this.get('/teacher/findPage.do', params).then((res) => {
+          this.list = res.data.data
+          this.page = res.data.page
           this.loadingList = false
-          for(let i = 0; i < this.rowSelect.length; i++){
-            for(let j = 0; j < this.list.length; j++) {
-              if(this.list[j] == this.rowSelect[i]){
-                this.list.splice(j, 1);
-              }
-            }
-          }
-          this.rowSelect = []
         }).catch(() => {
           this.loadingList = false
         })
-      }
+      },
+      //添加行
+      handlerAddColumn(){
+        this.list.push(Object.assign({}, this.rowSearch))
+        this.handlerChange(this.list[this.list.length - 1])
+      },
+      //修改单行 展示弹框
+      handlerChange(val) {
+        this.loadingUpdate = ! this.loadingUpdate
+        this.loadingSave = false
+        console.info("handlerChange " + JSON.stringify(val))
+        this.rowUpdateFrom = val;
+        this.rowUpdate = JSON.parse(JSON.stringify(val))
+        this.loadingSave = false
+      },
+      //取消修改  不做操作
+      handlerCancel(){
+        console.info("handlerCancel "+ JSON.stringify(this.rowUpdate))
+        this.loadingUpdate = ! this.loadingUpdate
+      },
+      //保存修改  保存至表格 和 数据库 ? 还是批量改完后一次存储 先临时选中修改过的
+      handlerSave(){
+        console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
+        this.loadingSave = true
 
-
-    },
-    //多选改变
-    handlerSelectionChange(val) {
-      console.info("handlerSelectionChange" + JSON.stringify(val))
-      console.info(val)
-      this.rowSelect = val
-      // this.multipleSelection = val;
-      // this.$refs.multipleTable.toggleAllSelection()
-      // this.$refs.multipleTable.toggleRowSelection(VAL);
-    },
-    //排序事件
-    handlerSortChange(val) {
-      console.info("handlerSortChange " + JSON.stringify(val))
-      // column: {…}
-      // order: "ascending"
-      // prop: "time"
-      this.page.order = val.prop + (val.order.startsWith("desc") ? " desc" : "")
-    },
-    //翻页
-    handlerCurrentChange(val) {
-      console.info("handlerCurrentChange")
-      console.info(val)
-      this.page.nowpage = val
-      this.getListPage()
-    },
-    // 修改每页数量
-    handlerSizeChange(shownum) {
-      this.page.shownum = shownum
-      this. getListPage()
-    },
-    //行高亮各种颜色
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex === 1) {
-        return 'warning-row';
-      } else if (rowIndex === 3) {
-        return 'success-row';
-      }
-      return '';
-    },
+        Object.assign(this.rowUpdateFrom, this.rowUpdate)
+        var params = this.rowUpdateFrom
+        this.post('/teacher/save.do', params).then((res) => {
+          this.loadingSave = false
+          this.loadingUpdate = ! this.loadingUpdate
+        }).catch(() => {
+          this.loadingSave = false
+          this.loadingUpdate = ! this.loadingUpdate
+        })
+      },
+      //删除单行
+      handlerDelete(val, index) {
+        console.info("handlerDelete " + " " + JSON.stringify(val))
+        this.loadingList = true
+        const params = {ids: val[this.colKey]}
+        this.get('/teacher/delet.do', params).then((res) => {
+          for(let j = 0; j < this.list.length; j++) {
+            if(this.list[j] == val){
+              this.list.splice(j, 1);
+            }
+          }
+          this.loadingList = false
+        }).catch(() => {
+          this.loadingList = false
+        })
+      },
+      //删除选中多行
+      handlerDeleteAll(){
+        // const val = this.$refs.multipleTable.data
+        console.info("handlerDeleteAll " + " " + JSON.stringify(this.rowSelect))
+        if(this.rowSelect.length > 0){
+          this.loadingList = true
+          let ids = ""
+          for(let i = 0; i < this.rowSelect.length; i++){
+            ids += this.rowSelect[i][this.colKey] + ","
+          }
+          ids = ids.substring(0, ids.length - 1)
+          const params = {ids: ids}
+          this.get('/teacher/delet.do', params).then((res) => {
+            this.loadingList = false
+            for(let i = 0; i < this.rowSelect.length; i++){
+              for(let j = 0; j < this.list.length; j++) {
+                if(this.list[j] == this.rowSelect[i]){
+                  this.list.splice(j, 1);
+                }
+              }
+            }
+            this.rowSelect = []
+          }).catch(() => {
+            this.loadingList = false
+          })
+        }
+      },
+      //多选改变
+      handlerSelectionChange(val) {
+        console.info("handlerSelectionChange" + JSON.stringify(val))
+        console.info(val)
+        this.rowSelect = val
+        // this.multipleSelection = val;
+        // this.$refs.multipleTable.toggleAllSelection()
+        // this.$refs.multipleTable.toggleRowSelection(VAL);
+      },
+      //排序事件
+      handlerSortChange(val) {
+        console.info("handlerSortChange " + JSON.stringify(val))
+        // column: {…}
+        // order: "ascending"
+        // prop: "time"
+        this.page.order = val.prop + (val.order.startsWith("desc") ? " desc" : "")
+      },
+      //翻页
+      handlerCurrentChange(val) {
+        console.info("handlerCurrentChange")
+        console.info(val)
+        this.page.nowpage = val
+        this.getListPage()
+      },
+      // 修改每页数量
+      handlerSizeChange(shownum) {
+        this.page.shownum = shownum
+        this. getListPage()
+      },
+      //行高亮各种颜色
+      tableRowClassName({row, rowIndex}) {
+        if (rowIndex === 1) {
+          return 'warning-row';
+        } else if (rowIndex === 3) {
+          return 'success-row';
+        }
+        return '';
+      },
+    }
   }
-}
 </script>
 

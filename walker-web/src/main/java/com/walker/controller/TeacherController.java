@@ -3,9 +3,7 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Page;
-import com.walker.dao.JdbcDao;
 import com.walker.mode.Teacher;
-import com.walker.service.BaseService;
 import com.walker.service.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

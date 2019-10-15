@@ -48,26 +48,31 @@ public class CommonController {
     @ResponseBody
     @RequestMapping(value = "/getColsMap.do", method = RequestMethod.GET)
     public Response getColsMap(
+            @RequestParam(value = "dbOrUser", required = false, defaultValue = "") String dbOrUser,
             @RequestParam(value = "tableName", required = true, defaultValue = "W_TEACHER") String tableName
     ) {
-        return Response.makeTrue(tableName, this.getColsMapCache(tableName));
+        Map<String, String> colMap = this.getColsMapCache(dbOrUser, tableName);
+        Map<String, Object> res = new HashMap<>();
+        res.put("colMap", colMap);
+        res.put("colKey", colMap.keySet().toArray()[0]);
+        return Response.makeTrue(tableName, res);
     }
-    public Map<String, String> getColsMapCache(String tableName){
-        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsMapByTableName:" + tableName, new Cache.Function() {
+    public Map<String, String> getColsMapCache(String dbOrUser, String tableName){
+        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsMapByTableName:" + dbOrUser + ":" + tableName, new Cache.Function() {
             @Override
             public Map<String, String> cache() {
-                Map<String, String> map = jdbcDao.getColumnsMapByTableName(tableName);
-                Map<String, String> res = new LinkedHashMap<>();
-                for(String key : map.keySet()){
-                    res.put(key.toUpperCase(), map.get(key));
-                }
-                log.info(tableName);
-                log.info(res.toString());
-                return res;
+                return jdbcDao.getColumnsMapByTableName(dbOrUser, tableName);
             }
         });
     }
-
+    public List<String> getColsCache(String dbOrUser, String tableName){
+        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsByTableName:" + dbOrUser + ":" + tableName, new Cache.Function() {
+            @Override
+            public List<String> cache() {
+                return jdbcDao.getColumnsByTableName(dbOrUser, tableName);
+            }
+        });
+    }
 
     @ApiOperation(value = "获取表列表", notes = "")
     @ResponseBody
@@ -75,18 +80,10 @@ public class CommonController {
     public Response getTables(
             @RequestParam(value = "_DATABASE_", required = true, defaultValue = "") String database
     ) {
-        Object res = CacheMgr.getInstance().getFun("jdbcDao.showTables:" + database , new Cache.Function() {
+        Object res = CacheMgr.getInstance().getFun("jdbcDao.getTables:" + database , new Cache.Function() {
             @Override
             public Object cache() {
-                List<Map<String, Object>> t = jdbcDao.find(
-                        "SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA =? "
-                        , database);
-                List<Object> res = new ArrayList<>();
-                for(Map<String, Object> item : t){
-                    res.add(item.get("table_name"));
-                }
-                log.info(res.toString());
-                return res;
+                return jdbcDao.getTables(database);
             }
         });
 
@@ -95,15 +92,12 @@ public class CommonController {
 
     @ApiOperation(value = "获取数据库/用户列表", notes = "")
     @ResponseBody
-    @RequestMapping(value = "/getDatabases.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/getDatabasesOrUsers.do", method = RequestMethod.GET)
     public Response getDatabases(  ) {
-        Object res = CacheMgr.getInstance().getFun("jdbcDao.showDatabases:" , new Cache.Function() {
+        Object res = CacheMgr.getInstance().getFun("jdbcDao.getDatabasesOrUsers:" , new Cache.Function() {
             @Override
             public Object cache() {
-//                List<String> res = jdbcDao.getColumnsBySql("show databases ");
-//                log.info(res.toString());
-//                return res;
-                return Arrays.asList("walker,walker0,walker1,walker2,walker3".split(","));
+                return jdbcDao.getDatabasesOrUsers();
             }
         });
 
@@ -124,17 +118,18 @@ public class CommonController {
             return Response.makeFalse(KEY_TABLE + "为空");
         }
         this.delet(request);    //先删除再插入
-        if(database.length() > 0) tableName = database + "." + tableName;
         bean.remove(KEY_TABLE);
         bean.remove(KEY_DB);
 
-        Bean colsMap = new Bean(this.getColsMapCache(tableName));
+
+        List<String> cols = this.getColsCache(database, tableName);
+        String keyId = cols.get(0);
         //insert into student(ID, NAME, TIME) values(?,?,?)
-        StringBuilder sb = new StringBuilder("insert into " + tableName + "(");
+        StringBuilder sb = new StringBuilder("insert into " + (database.length() > 0 ? database+"." : "") + tableName + "(");
         StringBuilder info = new StringBuilder();
         List<Object> args = new ArrayList<>();
         for(Object key : bean.keySet()){
-            if(!colsMap.containsKey(key)){
+            if(!cols.contains(key)){
                 info.append(key + ",");
             }
             sb.append(key + ",");
@@ -164,26 +159,28 @@ public class CommonController {
         if(tableName.length() <= 0){
             return Response.makeFalse(KEY_TABLE + "为空");
         }
-        if(database.length() > 0) tableName = database + "." + tableName;
         bean.remove(KEY_TABLE);
         bean.remove(KEY_DB);
-        Bean colsMap = new Bean(this.getColsMapCache(tableName));
+        List<String> cols = this.getColsCache(database, tableName);
+        String keyId = cols.get(0);
         //delete from student where 1=1 and id=? and name=?
-        StringBuilder sb = new StringBuilder("delete from " + tableName + " where 1=1 ");
+        StringBuilder sb = new StringBuilder("delete from " + (database.length() > 0 ? database+"." : "") + tableName + " where 1=1 ");
         StringBuilder info = new StringBuilder();
         List<Object> args = new ArrayList<>();
-        for(Object key : bean.keySet()){
-            if(!colsMap.containsKey(key)){
-                info.append(key + ",");
-            }
-            sb.append("and " + key + "=? ");
-            args.add(bean.get(key));
-        }
-        if(args.size() <= 0){
-            return Response.makeFalse("没有参数");
-        }else {
-            sb.setLength(sb.length() - 1);
-        }
+        sb.append(" and ").append(keyId).append( "=? ");
+        args.add(bean.get(keyId));
+//        for(Object key : bean.keySet()){
+//            if(!colsMap.containsKey(key)){
+//                info.append(key + ",");
+//            }
+//            sb.append("and " + key + "=? ");
+//            args.add(bean.get(key));
+//        }
+//        if(args.size() <= 0){
+//            return Response.makeFalse("没有参数");
+//        }else {
+//            sb.setLength(sb.length() - 1);
+//        }
         log.info("make sql " + sb.toString());
         int res = jdbcDao.executeSql(sb.toString(), args.toArray());
         return Response.makeTrue((info.length() > 0 ? "WARING 不存在的键值" + info : "") + SqlUtil.makeSql(sb.toString(), args.toArray()), res);
@@ -208,22 +205,24 @@ public class CommonController {
         if(tableName.length() <= 0){
             return Response.makeFalse(KEY_TABLE + "为空");
         }
-        if(database.length() > 0) tableName = database + "." + tableName;
         bean.remove(KEY_TABLE);
         bean.remove(KEY_DB);
 
-        Bean colsMap = new Bean(this.getColsMapCache(tableName));
+
+        List<String> cols = this.getColsCache(database, tableName);
+        String keyId = cols.get(0);
+
         //select * from student where 1=1 and id=? and name=?
-        StringBuilder sb = new StringBuilder("select * from " + tableName + " where 1=1 ");
+        StringBuilder sb = new StringBuilder("select * from " + (database.length() > 0 ? database+"." : "") + tableName + " where 1=1 ");
         StringBuilder info = new StringBuilder();
         List<Object> args = new ArrayList<>();
         for(Object key : bean.keySet()){
-            if(!colsMap.containsKey(key)){
+            if(!cols.contains(key)){
                 info.append(key + ",");
             }
             if(String.valueOf(bean.get(key)).length() > 0) {
-                sb.append("and " + key + "=? ");
-                args.add(bean.get(key));
+                sb.append("and " + key + " like ? ");
+                args.add(bean.get("%" + key + "%"));
             }
         }
         if(args.size() <= 0){

@@ -31,7 +31,7 @@
         v-loading="loadingList"
         :data="list"
         :row-class-name="tableRowClassName"
-        :default-sort = "{prop: 'S_MTIME', order: 'descending'}"
+        :default-sort = "{prop: 'time', order: 'descending'}"
         ref="multipleTable"
         @selection-change="handlerSelectionChange"
         @sort-change="handlerSortChange"
@@ -158,11 +158,11 @@
       return {
         list: [],
         colMap: {},      //列名:别名
+        colKey: "",     //主键名
         rowSearch: {},   //搜索 列明:搜索值
         rowUpdate: {},   //更新界面复制 列名:新值
         rowUpdateFrom: {},//更新界面源对象 列名:旧值
         rowSelect: [],   //选中行
-        test:"test",
         page: {
           nowpage: 1,
           num: 0,
@@ -186,12 +186,9 @@
       getColumns() {
         this.loadingCols = true
         this.get('/common/getColsMap.do', {tableName: 'W_STUDENT'}).then((res) => {
-
-          this.colMap = res.data
+          this.colMap = res.data.colMap
+          this.colKey = res.data.colKey
           this.clearRowSearch()
-
-          console.info(this.rowSearch)
-
           this.loadingCols = false
           this. getListPage()
         }).catch(() => {
@@ -218,7 +215,6 @@
         }).catch(() => {
           this.loadingList = false
         })
-
       },
       //添加行
       handlerAddColumn(){
@@ -253,13 +249,12 @@
           this.loadingSave = false
           this.loadingUpdate = ! this.loadingUpdate
         })
-
       },
       //删除单行
-      handlerDelete(val) {
+      handlerDelete(val, index) {
         console.info("handlerDelete " + " " + JSON.stringify(val))
         this.loadingList = true
-        const params = {ids: val.ID}
+        const params = {ids: val[this.colKey]}
         this.get('/student/delet.do', params).then((res) => {
           for(let j = 0; j < this.list.length; j++) {
             if(this.list[j] == val){
@@ -275,12 +270,11 @@
       handlerDeleteAll(){
         // const val = this.$refs.multipleTable.data
         console.info("handlerDeleteAll " + " " + JSON.stringify(this.rowSelect))
-
         if(this.rowSelect.length > 0){
           this.loadingList = true
           let ids = ""
           for(let i = 0; i < this.rowSelect.length; i++){
-            ids += this.rowSelect[i]["ID"] + ","
+            ids += this.rowSelect[i][this.colKey] + ","
           }
           ids = ids.substring(0, ids.length - 1)
           const params = {ids: ids}
@@ -298,8 +292,6 @@
             this.loadingList = false
           })
         }
-
-
       },
       //多选改变
       handlerSelectionChange(val) {

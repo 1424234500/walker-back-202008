@@ -4,8 +4,6 @@ import com.walker.ApplicationProviderTests;
 import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
 import com.walker.mode.Teacher;
-import com.walker.mode.User;
-import com.walker.service.MessageService;
 import com.walker.service.TeacherService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class TeacherJpaServiceImplTest extends ApplicationProviderTests {
     @Autowired

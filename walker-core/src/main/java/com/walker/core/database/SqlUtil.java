@@ -225,55 +225,20 @@ public class SqlUtil{
 		}		
 		return sql;
 	}
+
 	/**
-	 * 表列查询 sql
+	 * 用户/数据库列表sql
 	 * @param dsName
-	 * @param tableName
 	 * @return
 	 */
-	public static String makeSqlColumn(String dsName, String tableName) {
+	public static String makeSqlDbsOrUsers(String dsName) {
 		dsName = String.valueOf(dsName);
-//oracle
-//SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
-//sqlserver
-//select name COLUMN_NAME from syscolumns where id=object_id('表名');
-//mysql
-//select COLUMN_NAME from information_schema.columns where table_name='tablename'
-	
-		
-		String sql = "";
-		if(dsName.equals("mysql")) {
-			sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '" + tableName + "' ORDER BY COLUMN_NAME";
-		}else if(dsName.equals("oracle")) {
-			sql = "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
-		}else{
-			throw new ErrorException("no implements  " + dsName);
-		}
-		return sql;
-	}
-	/**
-	 * 表列查询 sql
-	 * @param dsName
-	 * @param tableName
-	 * @return
-	 */
-	public static String makeSqlColumnNickname(String dsName, String tableName) {
-		dsName = String.valueOf(dsName);
-/*
-oracle
-SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = upper('" + tableName + "') ORDER BY COLUMN_ID";
-sqlserver
-SELECT A.name AS table_name, B.name AS name, C.value AS nickname FROM sys.tables A INNER JOIN sys.columns B ON B.object_id = A.object_id LEFT JOIN sys.extended_properties C ON C.major_id = B.object_id AND C.minor_id = B.column_id WHERE A.name = 'TEACHER'
-mysql
-select COLUMN_NAME,COLUMN_COMMENT from INFORMATION_SCHEMA.COLUMNS where table_name = 'TEACHER'
-;
-*/
 
 		String sql = "";
 		if(dsName.equals("mysql")) {
-			sql = "select COLUMN_NAME,COLUMN_COMMENT from INFORMATION_SCHEMA.COLUMNS where table_name = '" + tableName + "' ";
+				sql = "SELECT schema_name name FROM INFORMATION_SCHEMA.SCHEMATA ";
 		}else if(dsName.equals("oracle")) {
-			sql = "select COLUMN_NAME,COLUMN_COMMENT from INFORMATION_SCHEMA.COLUMNS where table_name = '" + tableName + "' ";
+				sql = " select username name from all_users ";
 		}else{
 			throw new ErrorException("no implements  " + dsName);
 		}
@@ -283,7 +248,7 @@ select COLUMN_NAME,COLUMN_COMMENT from INFORMATION_SCHEMA.COLUMNS where table_na
 	 * 结果集转换 列 值
 	 * @param rs
 	 * @return [ { id:1,name:n1}, {id:2,name:n2}  ]
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public static List<Map<String, Object>> toListMap(ResultSet rs) throws SQLException {
 		List<Map<String, Object>> res = new ArrayList<Map<String, Object>>();

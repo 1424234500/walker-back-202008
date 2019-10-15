@@ -242,7 +242,7 @@
       getDatabases() {
         this.loadingTables = true
         var params = Object.assign({}, {})
-        this.get('/common/getDatabases.do', params).then((res) => {
+        this.get('/common/getDatabasesOrUsers.do', params).then((res) => {
           this.queryDatabase = res.data
           this.database = res.data != null && res.data.length > 0 ? res.data[0] : 'walker'
           this.loadingTables = false
@@ -259,7 +259,9 @@
         this.get('/common/getTables.do', params).then((res) => {
           this.queryTable = res.data
           this.table = res.data != null && res.data.length > 0 ? res.data[0] : ''
-          // this.table = ""
+          this.list = []
+          this.colMap = {}
+          this.clearRowSearch()
           this.loadingTables = false
           this. getColumns()
         }).catch(() => {

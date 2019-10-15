@@ -17,20 +17,45 @@ public interface BaseDao extends BaseJdbc{
 
 
 	/**
+	 *获取 mysql数据库列表 oracle用户列表
+	 *
+	 * @return String List数组
+	 */
+	public List<String> getDatabasesOrUsers();
+	/**
+	 *获取指定用户/db的表列表
+	 *
+	 * @param userOrDb oracle用户 or mysql数据库db	为空则查当前用户/db
+	 * @return String List数组
+	 */
+	public List<String> getTables(String userOrDb);
+
+
+	/**
 	 * 获取表的列和备注map
 	 *
 	 * @param tableName
 	 * @return
 	 */
-	public Map<String, String> getColumnsMapByTableName(String tableName);
+	public Map<String, String> getColumnsMapByTableName(String dbOrUser, String tableName);
+		/**
+         * 获取表的列数组
+         *
+         * @param tableName
+         * @return
+         */
+	public List<String> getColumnsByTableName(String dbOrUser, String tableName);
+		/**
+         *获取查询结果的列数组
+         *
+         * @param sql SQL语句
+         * @return String List数组
+         */
+	public List<String> getColumnsBySql(String sql);
 
-	/**
-	 * 获取表的列数组
-	 * 
-	 * @param tableName
-	 * @return
-	 */
-	public List<String> getColumnsByTableName(String tableName);
+
+
+
 
 	/**
 	 * 获取单条记录
@@ -74,15 +99,6 @@ public interface BaseDao extends BaseJdbc{
 	
 	
 	
-
-	/**
-	 *获取查询结果的列数组
-	 * 
-	 * @param sql SQL语句
-	 * @return String List数组
-	 */
-	public List<String> getColumnsBySql(String sql);
-
 
 
 }

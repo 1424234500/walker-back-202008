@@ -15,13 +15,13 @@ public class Teacher implements Cloneable,Serializable{
 //    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
 //    @GeneratedValue(generator = "system-uuid")
 //    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
+    @Column(name="id", columnDefinition = "varchar(32) default '' comment '主键' ")
     private String id;
-    @Column(name = "NAME", columnDefinition = "varchar(512) default '' comment '姓名' ")    //255
+    @Column(name = "name", columnDefinition = "varchar(512) default '' comment '姓名' ")    //255
     private String name;
-    @Column(name = "TIME", columnDefinition = "varchar(32) default '' comment '修改时间' ")
+    @Column(name = "time", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
     private String time;
-    @Column(name = "PWD", nullable = true, length = 64)
+    @Column(name = "pwd", columnDefinition = "varchar(32) default '' comment '密码' ")
     private String pwd;
 
     public String getId() {

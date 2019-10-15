@@ -16,16 +16,16 @@ import java.util.Objects;
 public class Man implements Cloneable, Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id     //主键
-	@Column(name="ID", nullable = false, length = 32)
+	@Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
 	private String id;
-	@Column(name = "NAME", nullable = false, length = 256)    //255
+	@Column(name = "NAME", columnDefinition = "varchar(256) default '' comment '姓名' ")    //255
     private String name;
-	@Column(name = "SEX", nullable = false, length = 4)    //255
+	@Column(name = "SEX", columnDefinition = "varchar(4) default '' comment '性别' ")    //255
 	private Integer sex;
-	@Column(name = "PWD", nullable = false, length = 200)    //255
+	@Column(name = "PWD", columnDefinition = "varchar(32) default '' comment '密码' ")    //255
 	private String pwd;
-	@Column(name = "S_MTIME", nullable = true, length = 32)    //255
-    private String time;
+	@Column(name = "TIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
+	private String time;
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
