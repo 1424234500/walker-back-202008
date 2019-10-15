@@ -80,7 +80,6 @@
         v-loading="loadingList"
         :data="list"
         :row-class-name="tableRowClassName"
-        :default-sort = "{prop: 'S_MTIME', order: 'descending'}"
         ref="multipleTable"
         @selection-change="handlerSelectionChange"
         @sort-change="handlerSortChange"

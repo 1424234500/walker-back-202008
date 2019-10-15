@@ -31,13 +31,13 @@ public class TeacherJpaServiceImpl implements TeacherService {
 
     @Override
     public Integer delete(Teacher obj) {
-        teacherRepository.deleteById(obj.getId());
+        teacherRepository.deleteById(obj.getID());
         return 1;
     }
 
     @Override
     public Teacher get(Teacher obj) {
-        return teacherRepository.getOne(obj.getId());
+        return teacherRepository.getOne(obj.getID());
     }
 
     @Override
@@ -58,54 +58,37 @@ public class TeacherJpaServiceImpl implements TeacherService {
                         : PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
 
 
-        org.springframework.data.domain.Page<Teacher> res = teacherRepository.findAll(new Specification<Teacher>(){
-            @Override
-            public Predicate toPredicate(Root<Teacher> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-
-                List<Predicate> list = new ArrayList<>();
-
-                Path<String> namepath = root.get("name");
-                Path<String> sexpath =root.get("id");
-                EntityType<Teacher> u = root.getModel();
-                if (StringUtils.isNotEmpty(obj.getName())) {
-                    list.add(criteriaBuilder.like(root.get("name"), "%" + obj.getName() + "%"));
-                }
-                if (StringUtils.isNotEmpty(obj.getId())) {
-                    list.add(criteriaBuilder.like(root.get("id"), "%" + obj.getId() + "%"));
-                }
-                return criteriaBuilder.and(list.toArray(new Predicate[0]));
-            }
-        }, pageable);
+        org.springframework.data.domain.Page<Teacher> res = teacherRepository.findAll(this.getSpecification(obj), pageable);
         page.setNum(res.getTotalElements());
         return res.getContent();
     }
 
     @Override
     public Integer count(Teacher obj) {
-        return ((Long)(teacherRepository.count(new Specification<Teacher>(){
-            @Override
-            public Predicate toPredicate(Root<Teacher> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-
-                List<Predicate> list = new ArrayList<>();
-
-                Path<String> namepath = root.get("name");
-                Path<String> sexpath =root.get("id");
-                EntityType<Teacher> u = root.getModel();
-                if (StringUtils.isNotEmpty(obj.getName())) {
-                    list.add(criteriaBuilder.like(root.get("name"), "%" + obj.getName() + "%"));
-                }
-                if (StringUtils.isNotEmpty(obj.getId())) {
-                    list.add(criteriaBuilder.like(root.get("id"), "%" + obj.getId() + "%"));
-                }
-                return criteriaBuilder.and(list.toArray(new Predicate[0]));
-
-            }
-        }))).intValue();
+        return ((Long)(teacherRepository.count(this.getSpecification(obj)))).intValue();
     }
 
     @Override
     public Integer[] deleteAll(List<String> ids) {
         int res = teacherRepository.selfDeleteAll(ids);
         return new Integer[]{res};
+    }
+
+
+
+    private Specification getSpecification(Teacher obj){
+        return new Specification<Teacher>(){
+            @Override
+            public Predicate toPredicate(Root<Teacher> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                if (StringUtils.isNotEmpty(obj.getNAME())) {
+                    list.add(criteriaBuilder.like(root.get("NAME"), "%" + obj.getNAME() + "%"));
+                }
+                if (StringUtils.isNotEmpty(obj.getID())) {
+                    list.add(criteriaBuilder.like(root.get("ID"), "%" + obj.getID() + "%"));
+                }
+                return criteriaBuilder.and(list.toArray(new Predicate[0]));
+            }
+        };
     }
 }

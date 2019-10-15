@@ -30,10 +30,28 @@ public class TeacherJdbcServiceImpl implements TeacherService {
         for(Teacher teacher : teachers) {
             List<Teacher> t = this.finds(teacher, new Page().setShownum(1));
             if (t.size() <= 0) {
-                int i = jdbcDao.executeSql("INSERT INTO TEACHER VALUES(?,?,?,?) ", teacher.getId(), teacher.getName(), teacher.getTime(), teacher.getPwd());
+                int i = jdbcDao.executeSql("INSERT INTO W_TEACHER(ID,LEVEL,NAME,S_ATIME,S_MTIME,S_FLAG,SEX) VALUES(?,?,?,?,?,?,?) ",
+                        teacher.getID(),
+                        teacher.getLEVEL(),
+                        teacher.getNAME(),
+                        teacher.getS_ATIME(),
+                        teacher.getS_MTIME(),
+                        teacher.getS_FLAG(),
+                        teacher.getSEX()
+                        );
                 if(i > 0) res.add(teacher);
             } else {
-                int i = jdbcDao.executeSql("UPDATE TEACHER SET ID=?,NAME=?,PWD=? WHERE ID=? ", teacher.getId(), teacher.getName(), teacher.getTime(), teacher.getPwd());
+                int i = jdbcDao.executeSql("UPDATE TEACHER SET " +
+                        "ID=?,LEVEL=?,NAME=?,S_ATIME=?,S_MTIME=?,S_FLAG=?,SEX=? WHERE ID=? ",
+                        teacher.getID(),
+                        teacher.getLEVEL(),
+                        teacher.getNAME(),
+                        teacher.getS_ATIME(),
+                        teacher.getS_MTIME(),
+                        teacher.getS_FLAG(),
+                        teacher.getSEX(),
+                        teacher.getID()
+                );
                 if(i > 0) res.add(teacher);
             }
         }
@@ -42,12 +60,12 @@ public class TeacherJdbcServiceImpl implements TeacherService {
 
     @Override
     public Integer delete(Teacher test) {
-        return jdbcDao.executeSql("DELETE FROM TEACHER WHERE ID=? ", test.getId());
+        return jdbcDao.executeSql("DELETE FROM TEACHER WHERE ID=? ", test.getID());
     }
 
     @Override
     public Teacher get(Teacher test) {
-        List<Teacher> list = jdbcTemplate.query("SELECT * FROM TEACHER WHERE ID=? OR NAME LIKE  CONCAT('%', ?, '%') ", new Object[]{test.getId(), test.getName()}, new BeanPropertyRowMapper<Teacher>(Teacher.class));
+        List<Teacher> list = jdbcTemplate.query("SELECT * FROM TEACHER WHERE ID=? OR NAME LIKE  CONCAT('%', ?, '%') ", new Object[]{test.getID(), test.getNAME()}, new BeanPropertyRowMapper<Teacher>(Teacher.class));
         if(list.size() > 0){
             return list.get(0);
         }
@@ -61,14 +79,14 @@ public class TeacherJdbcServiceImpl implements TeacherService {
         sql = SqlUtil.makeSqlPage(jdbcDao.getDs(), sql, page.getNowpage(), page.getShownum());
         List<Teacher> list = jdbcTemplate.query(
                 sql,
-                new Object[]{test.getId(), test.getName()},
+                new Object[]{test.getID(), test.getNAME()},
                 new BeanPropertyRowMapper<Teacher>(Teacher.class));
         return list;
      }
     @Override
     public Integer count(Teacher test){
-        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM TEACHER WHERE ID=? OR NAME LIKE CONCAT('%', ?, '%'"
-        ,new Object[]{test.getId(), test.getName()}
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM TEACHER WHERE ID=? OR NAME LIKE CONCAT('%', ?, '%')"
+        ,new Object[]{test.getID(), test.getNAME()}
         ,Integer.class
         )
         ;

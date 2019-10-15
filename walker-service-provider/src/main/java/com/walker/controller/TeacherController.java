@@ -42,7 +42,7 @@ public class TeacherController {
             @RequestParam(value = "time", required = false, defaultValue = "default") String time
     ) {
         String info = "post id:" + id + " name:" + name + " time:" + time;
-        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher(id, name, time, "")));
+        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher().setID(id).setNAME(name)));
         return Response.makeTrue(info, res);
     }
 
@@ -57,7 +57,7 @@ public class TeacherController {
             @RequestParam(value = "pwd", required = false, defaultValue = "default") String pwd
     ) {
         String info = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
-        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher(id, name, time, "")));
+        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher().setID(id).setNAME(name)));
         return Response.makeTrue(info, res);
     }
 
@@ -70,7 +70,7 @@ public class TeacherController {
     ) {
         String res = "delete id:" + id;
         log.info(res);
-        teacherService.delete(new Teacher(id, "", "", ""));
+        teacherService.delete(new Teacher().setID(id));
         return Response.makeTrue(res);
     }
 
@@ -82,7 +82,7 @@ public class TeacherController {
     ) {
         String res = "get id:" + id;
         log.info(res);
-        Teacher model = teacherService.get(new Teacher(id, "", "", ""));
+        Teacher model = teacherService.get(new Teacher().setID(id));
         return Response.makeTrue(res, model);
     }
 //
@@ -102,7 +102,7 @@ public class TeacherController {
 
         Page page1 = new Page().setNowpage(nowPage).setShownum(showNum);
 
-        List<Teacher> list = teacherService.finds(new Teacher("", name == null ? "" : name, "", ""), page1);
+        List<Teacher> list = teacherService.finds(new Teacher().setNAME(name), page1);
         log.info(page1.toString());
         return Response.makePage(res, page1, list);
     }

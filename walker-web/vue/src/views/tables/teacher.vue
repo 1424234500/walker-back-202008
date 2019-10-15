@@ -31,7 +31,6 @@
         v-loading="loadingList"
         :data="list"
         :row-class-name="tableRowClassName"
-        :default-sort = "{prop: 'S_MTIME', order: 'descending'}"
         ref="multipleTable"
         @selection-change="handlerSelectionChange"
         @sort-change="handlerSortChange"
@@ -185,7 +184,7 @@
       //查询展示的行列信息 备注
       getColumns() {
         this.loadingCols = true
-        this.get('/common/getColsMap.do', {tableName: 'W_USER'}).then((res) => {
+        this.get('/common/getColsMap.do', {tableName: 'W_TEACHER'}).then((res) => {
           this.colMap = res.data.colMap
           this.colKey = res.data.colKey
           this.clearRowSearch()

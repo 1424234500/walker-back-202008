@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * jpa实体类 用户
+ * jpa实体类 学生
  */
 @Entity
 @Table(name = "W_STUDENT")

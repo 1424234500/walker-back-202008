@@ -86,7 +86,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
      */
     @Transactional
     @Modifying
-    @Query(value = "UPDATE TEST_MODE T SET T.NAME =?1 WHERE T.ID=?2", nativeQuery = true)   //占位符传值形式
+    @Query(value = "UPDATE W_TEACHER t SET t.NAME =?1 WHERE t.ID=?2", nativeQuery = true)   //占位符传值形式
     int selfUpdateSql(String name, String id);
 
 
@@ -98,7 +98,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
     @Modifying
 //    @CachePut(value = "cache-key", key="#root.targetClass.name + #p0")
     @CachePut(keyGenerator="keyGenerator",value="cache-teacher")
-    @Query(value = "update Teacher t set t.name =?1 where t.id=?2")   //占位符传值形式
+    @Query(value = "update Teacher t set t.NAME =?1 where t.ID=?2")   //占位符传值形式
     int selfUpdateCacheJPQL(String name, String id);
 
     /**
@@ -106,7 +106,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
      * @Cacheable 缓存方法操作
      */
     @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
-    @Query("select u from Teacher u where u.id=?1")
+    @Query("select t from Teacher t where t.ID=?1")
     Teacher selfFindOneCacheJPQL(String id);
 
     /**
@@ -114,14 +114,14 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
      * @Cacheable 缓存方法操作
      */
     @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
-    @Query("select u from Teacher u where u.id in (?1) ")
+    @Query("select t from Teacher t where t.ID in (?1) ")
     List<Teacher> selfFindListCacheJPQL(List<String> ids);
 
     /**
      * JPQL删除
      */
-    @Query("delete from Teacher t where t.id=?1 ")
-    int selfDeleteJPQL(String id);
+    @Query("delete from Teacher t where t.ID=?1 ")
+    Integer selfDeleteJPQL(String id);
     /**
     * JPQL查询 删除
      * @Cacheable 缓存方法操作
@@ -129,40 +129,40 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
     @Transactional
     @Modifying
     @CachePut(keyGenerator="keyGenerator",value="cache-teacher")
-    @Query("delete from Teacher u where u.id in (?1) ")
+    @Query("delete from Teacher t where t.ID in (?1) ")
     Integer selfDeleteAll(List<String> ids);
 
 
     /**
      * JPQL  别名
      */
-    @Query("from Teacher u where u.name=:name")
+    @Query("from Teacher t where t.NAME=:name")
     Teacher selfFindByName(@Param("name") String name);
 
     /**
      * JPQL查询数量
      */
-    @Query("select count(t.id) from Teacher t where t.name like CONCAT('%', ?1, '%') ")
+    @Query("select count(t.id) from Teacher t where t.NAME like CONCAT('%', ?1, '%') ")
     int selfCount(String name);
 
     /**
      * JPQL 分页查询定制 只获取数据
      */
-    @Query("select t from Teacher t where t.name like CONCAT('%', ?1, '%') ")
+    @Query("select t from Teacher t where t.NAME like CONCAT('%', ?1, '%') ")
     List<Teacher> selfFindPage(String name, Pageable page);
 
     /**
      * 分页查询 native    同时获取分页信息  cost 900
      */
-    @Query(value = "select t.* from TEACHER t where t.name like CONCAT('%', ?1, '%')",
-            countQuery = "select count(t.id) from TEACHER t where t.name like CONCAT('%', ?1, '%')",
+    @Query(value = "select t.* from W_TEACHER t where t.NAME like CONCAT('%', ?1, '%')",
+            countQuery = "select count(t.id) from W_TEACHER t where t.NAME like CONCAT('%', ?1, '%')",
             nativeQuery = true)
     Page<Teacher> selfFindPageOnceSql(String name, Pageable pageable);
 
     /**
      * 分页查询 JPQL    同时获取分页信息    cost 500
      */
-    @Query(value = "select t from Teacher t where t.name like CONCAT('%', ?1, '%')")
+    @Query(value = "select t from Teacher t where t.NAME like CONCAT('%', ?1, '%')")
     Page<Teacher> selfFindPageOnceJpql(String name, Pageable pageable);
 
 

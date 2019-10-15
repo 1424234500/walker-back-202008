@@ -1,5 +1,6 @@
 package com.walker.config;
 
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.dao.TeacherRepository;
 import com.walker.mode.Teacher;
@@ -25,7 +26,7 @@ public class CacheConfigTest {
         StopWatch sw = new StopWatch();
         for(int i = 0; i < 5; i++){
             sw.start("save" + i);
-            Tools.out("save" + i, teacherRepository.save(new Teacher().setId(i+"").setName("name" + i).setPwd("pwd").setTime("time")));
+            Tools.out("save" + i, teacherRepository.save(new Teacher().setID(i+"").setNAME("name" + i).setS_ATIME(TimeUtil.getTimeYmdHms())));
             sw.stop();
         }
         for(int i = 0; i < 3; i++) {

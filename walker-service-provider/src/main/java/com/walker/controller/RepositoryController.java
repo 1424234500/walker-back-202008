@@ -155,7 +155,7 @@ public class RepositoryController {
             @RequestParam(value = "name", required = true, defaultValue = "default") String name,
             @RequestParam(value = "time", required = false, defaultValue = "default") String time
     ) {
-        Teacher model = teacherRepository.save(new Teacher(id, name, time, ""));
+        Teacher model = teacherRepository.save(new Teacher().setID(id).setNAME(name));
         return Response.makeTrue("", model);
     }
     @ApiOperation(value = "existsById 查询")
@@ -192,7 +192,7 @@ public class RepositoryController {
             @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @RequestParam(value = "time", required = false, defaultValue = "") String time
     ) {
-        Teacher model = new Teacher(id, name, time, "");
+        Teacher model = new Teacher().setID(id).setNAME(name);
         teacherRepository.delete(model);
         return Response.makeTrue("", model);
     }

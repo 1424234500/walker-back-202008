@@ -3,7 +3,9 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Page;
+import com.walker.common.util.TimeUtil;
 import com.walker.mode.Teacher;
+import com.walker.service.BaseService;
 import com.walker.service.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,50 +26,52 @@ import java.util.List;
 测试 jap teacherService
 
  */
-@Api(value = "测试 service层 TEACHER表 实体类对象 ")
+@Api(value = "service层 W_STUDENT 实体类对象 ")
 @Controller
 @RequestMapping("/teacher")
 public class TeacherController {
     private Logger log = LoggerFactory.getLogger(getClass());
+    @Autowired
+    @Qualifier("baseService")
+    private BaseService baseService;
 
     @Autowired
     @Qualifier("teacherJpaService")
     private TeacherService teacherService;
 
-    @ApiOperation(value = "post 添加", notes = "post参数 RequestParam ")
+    @ApiOperation(value = "post 保存 更新/添加 ", notes = "")
     @ResponseBody
-    @RequestMapping(value = "/action.do", method = RequestMethod.POST)
-    public Response add(
-            @RequestParam(value = "id", required = true) String id,
-            @RequestParam(value = "name", required = true, defaultValue = "default") String name,
-            @RequestParam(value = "time", required = false, defaultValue = "default") String time
+    @RequestMapping(value = "/save.do", method = RequestMethod.POST)
+    public Response save(
+            @RequestParam(value = "ID", required = false, defaultValue = "") String id,
+            @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
+            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
+            @RequestParam(value = "S_FLAG", required = false, defaultValue = "0") String sFlag,
+            @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
+            @RequestParam(value = "SEX", required = false, defaultValue = "") String sex,
+            @RequestParam(value = "LEVEL", required = false, defaultValue = "") String level
     ) {
-        String info = "post id:" + id + " name:" + name + " time:" + time;
-        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher(id, name, time, "")));
-        return Response.makeTrue(info, res);
-    }
+        Teacher teacher = new Teacher();
+        teacher.setID(id);
+        teacher.setS_MTIME(TimeUtil.getTimeYmdHms());
+        teacher.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
+        teacher.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
+        teacher.setNAME(name);
+        teacher.setSEX(sex.equalsIgnoreCase("1") ? "1" : "0");
+        teacher.setLEVEL(level);
 
-    @ApiOperation(value = "put 更新", notes = "put参数 RequestParam ")
-    @ResponseBody
-    @RequestMapping(value = "/action.do", method = RequestMethod.PUT)
-    public Response update(
-            @RequestParam(value = "id", required = true) String id,
-            @RequestParam(value = "name", required = false, defaultValue = "default") String name,
-            @RequestParam(value = "time", required = false, defaultValue = "default") String time,
-            @RequestParam(value = "pwd", required = false, defaultValue = "default") String pwd
-    ) {
-        String info = "update id:" + id + " name:" + name + " time:" + time + " pwd:" + pwd;
-        List<Teacher> res = teacherService.saveAll(Arrays.asList(new Teacher(id, name, time, "")));
+        String info = "post teacher:" +teacher.toString();
+        List<Teacher> res = teacherService.saveAll(Arrays.asList(teacher));
         return Response.makeTrue(info, res);
     }
 
     @ApiOperation(value = "delete 删除", notes = "delete参数 restful 路径 PathVariable ")
     @ResponseBody
-    @RequestMapping(value = "/{ids}/action.do", method = RequestMethod.DELETE)
-    public Response delete(
-            @PathVariable(value = "ids", required = true) String ids
+    @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
+    public Response delet(
+            @RequestParam(value = "ids", required = false, defaultValue = "") String ids
     ) {
-        String info = "delete id:" + ids;
+        String info = "delete ids:" + ids;
         Object res = teacherService.deleteAll(Arrays.asList(ids.split(",")));
         return Response.makeTrue(info, res);
     }
@@ -76,7 +83,7 @@ public class TeacherController {
             @RequestParam(value = "id", required = true) String id
     ) {
         String info = "get id:" + id;
-        Teacher model = teacherService.get(new Teacher(id, "", "", ""));
+        Teacher model = teacherService.get(new Teacher().setID(id));
         return Response.makeTrue(info, model);
     }
 
@@ -87,16 +94,29 @@ public class TeacherController {
     @ResponseBody
     @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)
     public Response findPage(
-            @RequestParam(value = "name", required = false, defaultValue = "") String name,
+            @RequestParam(value = "ID", required = false, defaultValue = "") String id,
+            @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
+            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
+            @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
+            @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
+            @RequestParam(value = "SEX", required = false, defaultValue = "") String sex,
+            @RequestParam(value = "LEVEL", required = false, defaultValue = "") String level,
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
             @RequestParam(value = "order", required = false, defaultValue = "") String order
-            ) {
+    ) {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
+        Teacher teacher = new Teacher();
+        teacher.setID(id);
+        teacher.setS_MTIME(sMtime);
+        teacher.setS_ATIME(sAtime);
+        teacher.setS_FLAG(sFlag);
+        teacher.setNAME(name);
+        teacher.setSEX(sex);
+        teacher.setLEVEL(level);
 
-        String info = "get   name:" + name;
+        String info = "get   teacher:" + teacher;
 
-        Teacher teacher = new Teacher().setName(name);
         List<Teacher> list = teacherService.finds(teacher, page);
         page.setNum(teacherService.count(teacher));
         return Response.makePage(info, page, list);

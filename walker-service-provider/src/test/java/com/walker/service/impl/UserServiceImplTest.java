@@ -65,10 +65,8 @@ public class UserServiceImplTest extends ApplicationProviderTests {
             }
             String seri = TimeUtil.getTime("SSS");
             list.add(new Teacher()
-                    .setId("id_" + seri)
-                    .setName("name_" + seri)
-                    .setPwd("pwd_" + seri)
-                    .setTime("" + seri)
+                    .setID("id_" + seri)
+                    .setNAME("name_" + seri)
 
             );
         }
