@@ -145,6 +145,15 @@
       >
       </el-pagination>
 
+<!--      提示sql-->
+      <el-input
+        type="textarea"
+        :rows="4"
+        placeholder="执行sql"
+        v-model="info">
+      </el-input>
+
+
       <el-dialog
         title="修改"
         :visible.sync="loadingUpdate"
@@ -164,7 +173,7 @@
               :property="key"
               :label="(value=='' ? key : value)"
             >
-              <el-input v-model="rowUpdate[key]" type="text" />
+              <el-input v-model="rowUpdate[key]" type="textarea" />
             </el-form-item>
 
             <el-form-item>
@@ -206,11 +215,12 @@
       return {
         list: [],
         colMap: {},      //列名:别名
+        colKey: "",     //主键名
         rowSearch: {},   //搜索 列明:搜索值
         rowUpdate: {},   //更新界面复制 列名:新值
         rowUpdateFrom: {},//更新界面源对象 列名:旧值
         rowSelect: [],   //选中行
-
+        info: "",       //执行sql 提示
         queryDatabase: [],  //db列表
         database: "", //选中db
 
@@ -261,8 +271,8 @@
           this.list = []
           this.colMap = {}
           this.clearRowSearch()
-          this.loadingTables = false
           this. getColumns()
+          this.loadingTables = false
         }).catch(() => {
           this.loadingTables = false
         })
@@ -274,13 +284,11 @@
         var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
         this.get('/common/getColsMap.do', {tableName: this.table}).then((res) => {
 
-          this.colMap = res.data
+          this.colMap = res.data.colMap
+          this.colKey = res.data.colKey
           this.clearRowSearch()
-
-          console.info(this.rowSearch)
-
-          this.loadingCols = false
           this. getListPage()
+          this.loadingCols = false
         }).catch(() => {
           this.loadingCols = false
         })
@@ -301,6 +309,7 @@
         this.get('/common/findPage.do', params).then((res) => {
           this.list = res.data.data
           this.page = res.data.page
+          this.info = res.info
           this.loadingList = false
         }).catch(() => {
           this.loadingList = false
@@ -336,6 +345,7 @@
         this.post('/common/save.do', params).then((res) => {
           this.loadingSave = false
           this.loadingUpdate = ! this.loadingUpdate
+          this.info = res.info
         }).catch(() => {
           this.loadingSave = false
           this.loadingUpdate = ! this.loadingUpdate
@@ -353,6 +363,7 @@
               this.list.splice(j, 1);
             }
           }
+          this.info = res.info
           this.loadingList = false
         }).catch(() => {
           this.loadingList = false

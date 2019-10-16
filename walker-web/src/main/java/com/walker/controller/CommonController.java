@@ -143,7 +143,7 @@ public class CommonController {
         sb.append(") values(").append(SqlUtil.makePosition("?", args.size())).append(")");
         log.info("make sql " + sb.toString());
         int res = jdbcDao.executeSql(sb.toString(), args.toArray());
-        return Response.makeTrue((info.length() > 0 ? "WARING 不存在的键值" + info : "") + SqlUtil.makeSql(sb.toString(), args.toArray()), res);
+        return Response.makeTrue((info.length() > 0 ? "WARING 不存在的键值" + info + " \n" : "") + SqlUtil.makeSql(sb.toString(), args.toArray()), res);
     }
 
     @ApiOperation(value = "delete 删除", notes = "delete参数 restful 路径 PathVariable ")
@@ -183,7 +183,7 @@ public class CommonController {
 //        }
         log.info("make sql " + sb.toString());
         int res = jdbcDao.executeSql(sb.toString(), args.toArray());
-        return Response.makeTrue((info.length() > 0 ? "WARING 不存在的键值" + info : "") + SqlUtil.makeSql(sb.toString(), args.toArray()), res);
+        return Response.makeTrue((info.length() > 0 ? "WARING 不存在的键值" + info + " \n" : "") + SqlUtil.makeSql(sb.toString(), args.toArray()), res);
     }
 
     @ApiOperation(value = "get findPage 分页查询", notes = "")
@@ -220,9 +220,10 @@ public class CommonController {
             if(!cols.contains(key)){
                 info.append(key + ",");
             }
-            if(String.valueOf(bean.get(key)).length() > 0) {
+            String value = String.valueOf(bean.get(key));
+            if(value != null && value.length() > 0) {
                 sb.append("and " + key + " like ? ");
-                args.add(bean.get("%" + key + "%"));
+                args.add("%" + value  + "%");
             }
         }
         if(args.size() <= 0){
@@ -231,7 +232,7 @@ public class CommonController {
         }
         log.info("make sql " + sb.toString());
         List<?> res = jdbcDao.findPage(page, sb.toString(), args.toArray());
-        return Response.makePage((info.length() > 0 ? "WARING 不存在的键值" + info : "") + SqlUtil.makeSql(sb.toString(), args.toArray()), page, res);
+        return Response.makePage((info.length() > 0 ? "WARING 不存在的键值" + info + " \n" + " \n" : "") + SqlUtil.makeSql(sb.toString(), args.toArray()), page, res);
     }
 
 
