@@ -146,13 +146,6 @@ public class FileController {
         return Response.makeTrue("file", res);
     }
 
-    @ApiOperation(value = "统计socket", notes = "")
-    @ResponseBody
-    @RequestMapping(value = "/fileDirUpload.do", method = RequestMethod.GET)
-    public Response fileDirUpload() {
-        return Response.makeTrue("", Config.getUploadDir());
-    }
-
     @ApiOperation(value = "文件上传下载分页查询", notes = "")
     @ResponseBody
     @RequestMapping(value = "/list.do", method = RequestMethod.GET, produces = "application/json")
@@ -285,7 +278,7 @@ public class FileController {
     @ApiOperation(value = "上传文件", notes = "")
     @ResponseBody
     @RequestMapping(value = "/upload.do", method = RequestMethod.POST)
-    public Response save(
+    public Response upload(
             @RequestParam(value = "file", required = true) CommonsMultipartFile file,
             @RequestParam(value = "key", required = false, defaultValue = "") String key,
             @RequestParam(value = "dir", required = false, defaultValue = "") String dir

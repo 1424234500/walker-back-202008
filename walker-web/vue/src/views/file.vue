@@ -6,41 +6,40 @@
          v-loading="loadingCols"
     >
       <form class="form-inline" >
-        <div class="form-group" v-for="(value, key) in colMap">
-          <label>{{value=='' ? key : value}}</label>
-          <input
-            type="text"
-            class="form-control"
-            style="width: 10em; margin-right: 1em;"
-            v-on:keyup.13="getListPage()"
-            :placeholder="key"
-            v-model="rowSearch[key]"
-          />
-        </div>
+<!--        <div class="form-group" v-for="(value, key) in colMap">-->
+<!--          <label>{{value=='' ? key : value}}</label>-->
+<!--          <input-->
+<!--            type="text"-->
+<!--            class="form-control"-->
+<!--            style="width: 10em; margin-right: 1em;"-->
+<!--            v-on:keyup.13="getListPage()"-->
+<!--            :placeholder="key"-->
+<!--            v-model="rowSearch[key]"-->
+<!--          />-->
+<!--        </div>-->
+<!--        <br>-->
 
+        <label>路径</label>
+        <input
+          type="text"
+          class="form-control"
+          style="width: 50%; margin-right: 1em;"
+          v-on:keyup.13="getListPage()"
+          :placeholder="dir"
+          v-model="dir"
+        />
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+        <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >清除</el-button>
 
         <el-upload
-          class="upload-demo"
-          ref="upload"
-          action="doUpload"
-          :limit="1"
-          :file-list="fileList"
-          :before-upload="beforeUpload">
-          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-          <a href="./static/moban.xlsx" rel="external nofollow" download="模板">
-            <el-button size="small" type="success">下载模板</el-button>
-          </a>
-          <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
-          <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过5MB</div>
-          <div slot="tip" class="el-upload-list__item-name">{{fileName}}</div>
+          :action="getUploadUrl()"
+          :on-success="handlerUploadSuccess"
+          :data="{dir:dir}"
+          :file-list="fileList">
+          <el-button size="small" type="primary" >点击上传</el-button>
         </el-upload>
-        <span slot="footer" class="dialog-footer">
-         <el-button type="primary" @click="submitUpload()">确定</el-button>
-        </span>
 
-        <el-button  class="btn btn-warning" @click="handlerAddColumn()" >上传</el-button>
-        <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >清除</el-button>
+
       </form>
     </div>
 
@@ -223,6 +222,7 @@ export default {
         this.rowSearch[key] = ''
       }
       this.page.nowpage = 1
+      this.files = null
     },
      //分页查询
      getListPage() {
@@ -355,55 +355,13 @@ export default {
       return '';
     },
 
-    beforeUpload(file){
-      debugger
-      console.log(file,'文件');
-      this.files = file;
-      const extension = file.name.split('.')[1] === 'xls'
-      const extension2 = file.name.split('.')[1] === 'xlsx'
-      const isLt2M = file.size / 1024 / 1024 < 5
-      if (!extension && !extension2) {
-        this.$message.warning('上传模板只能是 xls、xlsx格式!')
-        return
-      }
-      if (!isLt2M) {
-        this.$message.warning('上传模板大小不能超过 5MB!')
-        return
-      }
-      this.fileName = file.name;
-      return false // 返回false不会自动上传
+    // js 代码在 methods中写入需要调用的方法
+    getUploadUrl:function(){
+      return "file/upload.do";
     },
-    submitUpload() {
-      debugger
-      console.log('上传'+this.files.name)
-      if(this.fileName == ""){
-        this.$message.warning('请选择要上传的文件！')
-        return false
-      }
-      let fileFormData = new FormData();
-      fileFormData.append('file', this.files, this.fileName);//filename是键，file是值，就是要传的文件，test.zip是要传的文件名
-      let requestConfig = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-      }
-      this.$http.post(`/basedata/oesmembers/upload?companyId=`+this.company, fileFormData, requestConfig).then((res) => {
-        debugger
-        if (data && data.code === 0) {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.visible = false
-              this.$emit('refreshDataList')
-            }
-          })
-        } else {
-          this.$message.error(data.msg)
-        }
-      })
-    },
+    handlerUploadSuccess:function (val) {
+      this.$message.success('上传成功' + val)
+    }
 
   }
 }

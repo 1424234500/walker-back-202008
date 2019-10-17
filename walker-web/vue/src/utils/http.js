@@ -132,6 +132,7 @@ function afterResolve(url, params, type, res){
   console.info(res)
   Message({
     message: 'Done ' + res.data.info + ' ' + res.data.costTime,
+    duration:1000,
     type: 'success'
   });
 }
@@ -160,3 +161,6 @@ function afterReject(url, params, type, err){
   }
 
 }
+
+
+// this.$message.warning('请选择要上传的文件！')

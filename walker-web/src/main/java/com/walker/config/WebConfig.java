@@ -67,6 +67,15 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
     private Logger log = LoggerFactory.getLogger(getClass());
 
+    @Bean(name = "multipartResolver")
+    public MultipartResolver multipartResolver(){
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setDefaultEncoding("UTF-8");
+        resolver.setResolveLazily(true); //resolveLazily属性启用是为了推迟文件解析，以在在UploadAction中捕获文件大小异常
+        resolver.setMaxInMemorySize(1024 * 1024);
+        resolver.setMaxUploadSize(100 * 1024 * 1024);//上传文件大小 5M 5*1024*1024
+        return resolver;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -142,16 +151,6 @@ public class WebConfig implements WebMvcConfigurer {
 //        converters.add(marshallingHttpMessageConverter);
 //    }
 
-    //配置文件上传
-    @Bean//(name = {"multipartResolver"})
-    public MultipartResolver multipartResolver(){
-        log.info(Config.PRE + "-----------multipartResolver init");
-        CommonsMultipartResolver commonsMultipartResolver=new org.springframework.web.multipart.commons.CommonsMultipartResolver();
-        commonsMultipartResolver.setDefaultEncoding("utf-8");
-        commonsMultipartResolver.setMaxUploadSize(1024 * 1024 * 1024);
-        commonsMultipartResolver.setMaxInMemorySize(1024 * 1024 * 64);
-        return commonsMultipartResolver;
-    }
 //    //异常处理
 //    @Bean
 //    public ExceptionHandler exceptionResolver(){
