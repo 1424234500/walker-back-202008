@@ -1,6 +1,7 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.Page;
+import com.walker.config.Config;
 import com.walker.dao.UserRepository;
 import com.walker.dao.UserRepository;
 import com.walker.mode.User;
@@ -19,6 +20,7 @@ import javax.persistence.metamodel.EntityType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -40,26 +42,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User get(User obj) {
-        return userRepository.selfFindOneCacheJPQL(obj.getID());
+        Optional<User> result = userRepository.findById(obj.getID());
+        return result.isPresent()?result.get():null;
     }
 
     @Override
     public List<User> finds(User obj, Page page) {
-        String order = page.getOrder();
-        String[] orders = order.split(" ");
-
-        Sort sort = orders[0].length() > 0
-                ? new Sort(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC, orders[0])
-                : null;
-
-        //jpa分页从0开始
-        Pageable pageable =
-                sort == null
-                        ? PageRequest.of(page.getNowpage()-1, page.getShownum())
-                        : PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
-
+        Pageable pageable = Config.turnTo(page);
         org.springframework.data.domain.Page<User> res = userRepository.findAll(this.getSpecification(obj), pageable);
         page.setNum(res.getTotalElements());
         return res.getContent();

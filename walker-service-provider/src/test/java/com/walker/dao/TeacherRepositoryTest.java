@@ -40,6 +40,9 @@ public class TeacherRepositoryTest extends ApplicationProviderTests {
     }
     @Test
     public void testFindPage(){
+        out("findById", teacherRepository.findById("1"));
+        out("findAllById", teacherRepository.findAllById(Arrays.asList("1,2,3".split(","))));
+
         out(teacherRepository.selfCount(""));
         out(teacherRepository.selfCount(null));
         out(teacherRepository.selfCount("1"));

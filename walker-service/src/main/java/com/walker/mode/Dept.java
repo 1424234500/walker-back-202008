@@ -8,17 +8,17 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * jpa实体类 学生
+ * jpa实体类 部门
  */
 @Entity
-@Table(name = "W_TEACHER")
-public class Teacher implements Cloneable,Serializable{
+@Table(name = "W_DEPT")
+public class Dept implements Cloneable,Serializable {
 
     @Id     //主键
 //    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
 //    @GeneratedValue(generator = "system-uuid")
 //    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
+    @Column(name = "ID", columnDefinition = "varchar(32) default '' comment '主键' ")
     private String ID;
     @Column(name = "S_MTIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
     private String S_MTIME;
@@ -26,37 +26,43 @@ public class Teacher implements Cloneable,Serializable{
     private String S_ATIME;
     @Column(name = "S_FLAG", columnDefinition = "varchar(4) default '0' comment '1是0否' ")
     private String S_FLAG;
+
+
     @Column(name = "NAME", columnDefinition = "varchar(512) default 'name' comment '名字' ")    //255
     private String NAME;
-    @Column(name = "SEX", columnDefinition = "varchar(4) default '0' comment '1男0女' ")
-    private String SEX;
+    @Column(name = "P_ID", columnDefinition = "varchar(32) default '' comment '上级部门' ")
+    private String P_ID;
+    @Column(name = "PATH", columnDefinition = "varchar(512) default '' comment '机构树' ")
+    private String PATH;
 
-    @Column(name = "LEVEL", columnDefinition = "varchar(16) default '0' comment '级别' ")
-    private String LEVEL;
-
-    
-    public Teacher(){
-
-    }
 
     @Override
     public String toString() {
-        return "Teacher{" +
+        return "Dept{" +
                 "ID='" + ID + '\'' +
                 ", S_MTIME='" + S_MTIME + '\'' +
                 ", S_ATIME='" + S_ATIME + '\'' +
                 ", S_FLAG='" + S_FLAG + '\'' +
                 ", NAME='" + NAME + '\'' +
-                ", SEX='" + SEX + '\'' +
-                ", LEVEL='" + LEVEL + '\'' +
+                ", P_ID='" + P_ID + '\'' +
+                ", PATH='" + PATH + '\'' +
                 '}';
+    }
+
+    public String getPATH() {
+        return PATH;
+    }
+
+    public Dept setPATH(String PATH) {
+        this.PATH = PATH;
+        return this;
     }
 
     public String getID() {
         return ID;
     }
 
-    public Teacher setID(String ID) {
+    public Dept setID(String ID) {
         this.ID = ID;
         return this;
     }
@@ -65,8 +71,8 @@ public class Teacher implements Cloneable,Serializable{
         return S_MTIME;
     }
 
-    public Teacher setS_MTIME(String S_MTIME) {
-        this.S_MTIME = S_MTIME;
+    public Dept setS_MTIME(String s_MTIME) {
+        S_MTIME = s_MTIME;
         return this;
     }
 
@@ -74,8 +80,8 @@ public class Teacher implements Cloneable,Serializable{
         return S_ATIME;
     }
 
-    public Teacher setS_ATIME(String S_ATIME) {
-        this.S_ATIME = S_ATIME;
+    public Dept setS_ATIME(String s_ATIME) {
+        S_ATIME = s_ATIME;
         return this;
     }
 
@@ -83,7 +89,7 @@ public class Teacher implements Cloneable,Serializable{
         return S_FLAG;
     }
 
-    public Teacher setS_FLAG(String s_FLAG) {
+    public Dept setS_FLAG(String s_FLAG) {
         S_FLAG = s_FLAG;
         return this;
     }
@@ -92,26 +98,17 @@ public class Teacher implements Cloneable,Serializable{
         return NAME;
     }
 
-    public Teacher setNAME(String NAME) {
+    public Dept setNAME(String NAME) {
         this.NAME = NAME;
         return this;
     }
 
-    public String getSEX() {
-        return SEX;
+    public String getP_ID() {
+        return P_ID;
     }
 
-    public Teacher setSEX(String SEX) {
-        this.SEX = SEX;
-        return this;
-    }
-
-    public String getLEVEL() {
-        return LEVEL;
-    }
-
-    public Teacher setLEVEL(String LEVEL) {
-        this.LEVEL = LEVEL;
+    public Dept setP_ID(String p_ID) {
+        P_ID = p_ID;
         return this;
     }
 }

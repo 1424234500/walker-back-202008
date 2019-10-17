@@ -33,12 +33,8 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
      */
     @Transactional
     @Modifying
-    @Query("delete from Student u where u.ID in (?1) ")
+    @Query("delete from Student t where t.ID in (?1) ")
     Integer selfDeleteAll(List<String> ids);
 
-
-
-    @Query("select u from Student u where u.ID=?1")
-    Student selfFindOneCacheJPQL(String id);
 
 }

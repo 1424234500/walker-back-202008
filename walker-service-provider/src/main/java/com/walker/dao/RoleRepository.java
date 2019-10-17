@@ -1,6 +1,6 @@
 package com.walker.dao;
 
-import com.walker.mode.User;
+import com.walker.mode.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,7 +14,7 @@ import java.util.List;
  * sharding 分库 & 分表
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor {//实体类 主键类型 自定义查询
+public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecificationExecutor {//实体类 主键类型 自定义查询
 //    List<T> findAll();
 //    List<T> findAll(Sort var1);
 //    List<T> findAllById(Iterable<ID> var1);
@@ -29,14 +29,11 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
 
     /**
      * JPQL查询 删除
-     * @Cacheable 缓存方法操作
      */
     @Transactional
     @Modifying
-    @Query("delete from User t where t.ID in (?1) ")
+    @Query("delete from Role t where t.ID in (?1) ")
     Integer selfDeleteAll(List<String> ids);
-
-
 
 
 }

@@ -1,6 +1,7 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.Page;
+import com.walker.config.Config;
 import com.walker.dao.TeacherRepository;
 import com.walker.mode.Teacher;
 import com.walker.service.TeacherService;
@@ -42,22 +43,7 @@ public class TeacherJpaServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> finds(Teacher obj, Page page) {
-        String order = page.getOrder();
-        String[] orders = order.split(" ");
-
-        Sort sort = orders[0].length() > 0
-                ? new Sort(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC, orders[0])
-                : null;
-
-        //jpa分页从0开始
-        Pageable pageable =
-                sort == null
-                        ? PageRequest.of(page.getNowpage()-1, page.getShownum())
-                        : PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
-
-
+        Pageable pageable = Config.turnTo(page);
         org.springframework.data.domain.Page<Teacher> res = teacherRepository.findAll(this.getSpecification(obj), pageable);
         page.setNum(res.getTotalElements());
         return res.getContent();

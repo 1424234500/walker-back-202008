@@ -18,7 +18,7 @@ public class Man implements Cloneable, Serializable {
 	@Id     //主键
 	@Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
 	private String id;
-	@Column(name = "NAME", columnDefinition = "varchar(256) default '' comment '姓名' ")    //255
+	@Column(name = "NAME", columnDefinition = "varchar(256) default '' comment '名字' ")    //255
     private String name;
 	@Column(name = "SEX", columnDefinition = "varchar(4) default '' comment '性别' ")    //255
 	private Integer sex;

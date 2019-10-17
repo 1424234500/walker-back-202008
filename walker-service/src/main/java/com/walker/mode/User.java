@@ -26,7 +26,7 @@ public class User implements Cloneable,Serializable{
     private String S_ATIME;
     @Column(name = "S_FLAG", columnDefinition = "varchar(4) default '0' comment '1是0否' ")
     private String S_FLAG;
-    @Column(name = "NAME", columnDefinition = "varchar(512) default 'name' comment '姓名' ")    //255
+    @Column(name = "NAME", columnDefinition = "varchar(512) default 'name' comment '名字' ")    //255
     private String NAME;
     @Column(name = "SEX", columnDefinition = "varchar(4) default '0' comment '1男0女' ")
     private String SEX;

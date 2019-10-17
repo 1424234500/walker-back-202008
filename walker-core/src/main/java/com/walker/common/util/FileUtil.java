@@ -15,11 +15,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -635,15 +631,14 @@ public class FileUtil {
 	/**
 	 * 获取文件 map样式键集合
 	 */
-	public static List<?> getFileMap() {
-		List<String> res = new ArrayList<String>();
-		res.add("PATH");
-		res.add("NAME");
-		res.add("SIZE");
-		res.add("LENGTH");
-		res.add("TIME");
-		res.add("TYPE");
-		res.add("CHILDS");
+	public static Map<String, String> getFileMap() {
+		Map<String, String> res = new LinkedHashMap<>();
+		res.put("PATH", "路径");
+		res.put("NAME", "名字");
+		res.put("LENGTH", "大小");
+		res.put("S_MTIME", "修改时间");
+		res.put("EXT", "类型");
+		res.put("CHILDS", "子文件数");
 		return res;
 	}
 
@@ -653,7 +648,7 @@ public class FileUtil {
 		map.put("NAME", coder.getName());
 		map.put("SIZE", calcSize(coder.length()));
 		map.put("LENGTH", coder.length());
-		map.put("TIME", coder.lastModified());
+		map.put("S_MTIME", coder.lastModified());
 
 		String type = "";
 		int dirfiles = 0;
@@ -665,7 +660,7 @@ public class FileUtil {
 			if (f != null)
 				dirfiles = f.length;
 		}
-		map.put("TYPE", type);
+		map.put("EXT", type);
 		map.put("CHILDS", dirfiles);
 
 		return map;
@@ -763,7 +758,7 @@ public class FileUtil {
 
 	/**
 	 * 获取文件后缀名 ext
-	 * 
+	 * 无.则无密码
 	 * @param path /sdcard/mycc/record/test.amr
 	 * @return	amr
 	 */
@@ -772,6 +767,8 @@ public class FileUtil {
 		int index1 = name.lastIndexOf(".");
 		if(index1 >= 0) {
 			name = name.substring(index1 +1, name.length());
+		}else{
+			name = "";
 		}
 		return name;
 	}

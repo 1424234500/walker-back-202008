@@ -81,6 +81,12 @@ export const constantRoutes = [
         meta: { title: 'User', icon: 'table' }
       },
       {
+        path: 'file',
+        name: 'File',
+        component: () => import('@/views/tables/file'),
+        meta: { title: 'File', icon: 'table' }
+      },
+      {
         path: 'table',
         name: 'Table',
         component: () => import('@/views/tables/table'),
@@ -93,6 +99,17 @@ export const constantRoutes = [
         meta: { title: 'Tree', icon: 'tree' }
       }
     ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/file',
+    children: [{
+      path: 'file',
+      name: 'File',
+      component: () => import('@/views/file'),
+      meta: { title: 'File', icon: 'tree' }
+    }]
   },
   {
     path: '/echarts',

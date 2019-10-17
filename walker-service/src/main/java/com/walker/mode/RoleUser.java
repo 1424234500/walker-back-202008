@@ -8,11 +8,11 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * jpa实体类 学生
+ * jpa实体类 角色关联用户/部门
  */
 @Entity
-@Table(name = "W_TEACHER")
-public class Teacher implements Cloneable,Serializable{
+@Table(name = "W_ROLE_USER")
+public class RoleUser implements Cloneable,Serializable{
 
     @Id     //主键
 //    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
@@ -26,29 +26,25 @@ public class Teacher implements Cloneable,Serializable{
     private String S_ATIME;
     @Column(name = "S_FLAG", columnDefinition = "varchar(4) default '0' comment '1是0否' ")
     private String S_FLAG;
-    @Column(name = "NAME", columnDefinition = "varchar(512) default 'name' comment '名字' ")    //255
-    private String NAME;
-    @Column(name = "SEX", columnDefinition = "varchar(4) default '0' comment '1男0女' ")
-    private String SEX;
 
-    @Column(name = "LEVEL", columnDefinition = "varchar(16) default '0' comment '级别' ")
-    private String LEVEL;
+    @Column(name = "USER_ID", columnDefinition = "varchar(32) default 'name' comment '用户/部门ID' ")    //255
+    private String USER_ID;
+    @Column(name = "ROLE_ID", columnDefinition = "varchar(32) default '0' comment '角色ID' ")
+    private String ROLE_ID;
 
-    
-    public Teacher(){
+    public RoleUser(){
 
     }
 
     @Override
     public String toString() {
-        return "Teacher{" +
+        return "RoleUser{" +
                 "ID='" + ID + '\'' +
                 ", S_MTIME='" + S_MTIME + '\'' +
                 ", S_ATIME='" + S_ATIME + '\'' +
                 ", S_FLAG='" + S_FLAG + '\'' +
-                ", NAME='" + NAME + '\'' +
-                ", SEX='" + SEX + '\'' +
-                ", LEVEL='" + LEVEL + '\'' +
+                ", USER_ID='" + USER_ID + '\'' +
+                ", ROLE_ID='" + ROLE_ID + '\'' +
                 '}';
     }
 
@@ -56,7 +52,7 @@ public class Teacher implements Cloneable,Serializable{
         return ID;
     }
 
-    public Teacher setID(String ID) {
+    public RoleUser setID(String ID) {
         this.ID = ID;
         return this;
     }
@@ -65,8 +61,8 @@ public class Teacher implements Cloneable,Serializable{
         return S_MTIME;
     }
 
-    public Teacher setS_MTIME(String S_MTIME) {
-        this.S_MTIME = S_MTIME;
+    public RoleUser setS_MTIME(String s_MTIME) {
+        S_MTIME = s_MTIME;
         return this;
     }
 
@@ -74,8 +70,8 @@ public class Teacher implements Cloneable,Serializable{
         return S_ATIME;
     }
 
-    public Teacher setS_ATIME(String S_ATIME) {
-        this.S_ATIME = S_ATIME;
+    public RoleUser setS_ATIME(String s_ATIME) {
+        S_ATIME = s_ATIME;
         return this;
     }
 
@@ -83,35 +79,26 @@ public class Teacher implements Cloneable,Serializable{
         return S_FLAG;
     }
 
-    public Teacher setS_FLAG(String s_FLAG) {
+    public RoleUser setS_FLAG(String s_FLAG) {
         S_FLAG = s_FLAG;
         return this;
     }
 
-    public String getNAME() {
-        return NAME;
+    public String getUSER_ID() {
+        return USER_ID;
     }
 
-    public Teacher setNAME(String NAME) {
-        this.NAME = NAME;
+    public RoleUser setUSER_ID(String USER_ID) {
+        this.USER_ID = USER_ID;
         return this;
     }
 
-    public String getSEX() {
-        return SEX;
+    public String getROLE_ID() {
+        return ROLE_ID;
     }
 
-    public Teacher setSEX(String SEX) {
-        this.SEX = SEX;
-        return this;
-    }
-
-    public String getLEVEL() {
-        return LEVEL;
-    }
-
-    public Teacher setLEVEL(String LEVEL) {
-        this.LEVEL = LEVEL;
+    public RoleUser setROLE_ID(String ROLE_ID) {
+        this.ROLE_ID = ROLE_ID;
         return this;
     }
 }

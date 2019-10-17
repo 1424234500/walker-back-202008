@@ -1,6 +1,7 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.Page;
+import com.walker.config.Config;
 import com.walker.dao.StudentRepository;
 import com.walker.mode.Student;
 import com.walker.service.StudentService;
@@ -18,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service("studentService")
 public class StudentServiceImpl implements StudentService {
@@ -39,26 +41,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student get(Student obj) {
-        return studentRepository.selfFindOneCacheJPQL(obj.getID());
+        Optional<Student> result = studentRepository.findById(obj.getID());
+        return result.isPresent()?result.get():null;
     }
 
     @Override
     public List<Student> finds(Student obj, Page page) {
-        String order = page.getOrder();
-        String[] orders = order.split(" ");
-
-        Sort sort = orders[0].length() > 0
-                ? new Sort(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC, orders[0])
-                : null;
-
-        //jpa分页从0开始
-        Pageable pageable =
-                sort == null
-                        ? PageRequest.of(page.getNowpage()-1, page.getShownum())
-                        : PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
-
+        Pageable pageable = Config.turnTo(page);
         org.springframework.data.domain.Page<Student> res = studentRepository.findAll(this.getSpecification(obj), pageable);
         page.setNum(res.getTotalElements());
         return res.getContent();

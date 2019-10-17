@@ -96,9 +96,6 @@ public class UserController {
         return Response.makeTrue(info, model);
     }
 
-
-
-
     @ApiOperation(value = "get findPage 分页查询", notes = "")
     @ResponseBody
     @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)

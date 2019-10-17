@@ -5,6 +5,11 @@ public class Config {
     public static final String PRE = "init--------";
 
     public static String getUploadDir() {
-        return "uploadDir";
+        return "/home/walker/files";
     }
+    public static String getDownloadDir() {
+        return "/home";
+    }
+
+
 }
