@@ -6,40 +6,21 @@
          v-loading="loadingCols"
     >
       <form class="form-inline" >
-<!--        <div class="form-group" v-for="(value, key) in colMap">-->
-<!--          <label>{{value=='' ? key : value}}</label>-->
-<!--          <input-->
-<!--            type="text"-->
-<!--            class="form-control"-->
-<!--            style="width: 10em; margin-right: 1em;"-->
-<!--            v-on:keyup.13="getListPage()"-->
-<!--            :placeholder="key"-->
-<!--            v-model="rowSearch[key]"-->
-<!--          />-->
-<!--        </div>-->
-<!--        <br>-->
+        <div class="form-group" v-for="(value, key) in colMap">
+          <label>{{value=='' ? key : value}}</label>
+          <input
+            type="text"
+            class="form-control"
+            style="width: 10em; margin-right: 1em;"
+            v-on:keyup.13="getListPage()"
+            :placeholder="key"
+            v-model="rowSearch[key]"
+          />
+        </div>
 
-        <label>路径</label>
-        <input
-          type="text"
-          class="form-control"
-          style="width: 50%; margin-right: 1em;"
-          v-on:keyup.13="getListPage()"
-          :placeholder="dir"
-          v-model="dir"
-        />
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+        <el-button  class="btn btn-warning" @click="handlerAddColumn()" >添加</el-button>
         <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >清除</el-button>
-
-        <el-upload
-          :action="getUploadUrl()"
-          :on-success="handlerUploadSuccess"
-          :data="{dir:dir}"
-          :file-list="fileList">
-          <el-button size="small" type="primary" >点击上传</el-button>
-        </el-upload>
-
-
       </form>
     </div>
 
@@ -88,8 +69,8 @@
           min-width="90px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="handlerDelete(scope.row)"></el-button>
+            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -177,10 +158,8 @@ export default {
       list: [],
       colMap: {},      //列名:别名
       colKey: "",     //主键名
-      dir: "",        //目录
-      fileList: [],
       rowSearch: {},   //搜索 列明:搜索值
-      rowUpdate: {},   //更新界面复制 列名: 新值
+      rowUpdate: {},   //更新界面复制 列名:新值
       rowUpdateFrom: {},//更新界面源对象 列名:旧值
       rowSelect: [],   //选中行
       page: {
@@ -205,7 +184,7 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.get('/file/getColsMap.do', {}).then((res) => {
+      this.get('/common/getColsMap.do', {tableName: 'W_USER'}).then((res) => {
         this.colMap = res.data.colMap
         this.colKey = res.data.colKey
         this.clearRowSearch()
@@ -222,16 +201,15 @@ export default {
         this.rowSearch[key] = ''
       }
       this.page.nowpage = 1
-      this.files = null
     },
      //分页查询
      getListPage() {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({dir : this.dir}, this.rowSearch)
-      this.get('/file/dir.do', params).then((res) => {
-        this.list = res.data.list
-        this.dir = res.data.dir
+      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+      this.get('/user/findPage.do', params).then((res) => {
+        this.list = res.data.data
+        this.page = res.data.page
         this.loadingList = false
       }).catch(() => {
         this.loadingList = false
@@ -239,10 +217,8 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-
-
-
-
+      this.list.push(Object.assign({}, this.rowSearch))
+      this.handlerChange(this.list[this.list.length - 1])
     },
     //修改单行 展示弹框
     handlerChange(val) {
@@ -265,7 +241,7 @@ export default {
 
       Object.assign(this.rowUpdateFrom, this.rowUpdate)
       var params = this.rowUpdateFrom
-      this.post('/file/save.do', params).then((res) => {
+      this.post('/user/save.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
@@ -278,7 +254,7 @@ export default {
       console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
       const params = {ids: val[this.colKey]}
-      this.get('/file/delet.do', params).then((res) => {
+      this.get('/user/delet.do', params).then((res) => {
         for(let j = 0; j < this.list.length; j++) {
           if(this.list[j] == val){
             this.list.splice(j, 1);
@@ -301,7 +277,7 @@ export default {
         }
         ids = ids.substring(0, ids.length - 1)
         const params = {ids: ids}
-        this.get('/file/delet.do', params).then((res) => {
+        this.get('/user/delet.do', params).then((res) => {
           this.loadingList = false
           for(let i = 0; i < this.rowSelect.length; i++){
             for(let j = 0; j < this.list.length; j++) {
@@ -354,15 +330,6 @@ export default {
       }
       return '';
     },
-
-    // js 代码在 methods中写入需要调用的方法
-    getUploadUrl:function(){
-      return "file/upload.do";
-    },
-    handlerUploadSuccess:function (val) {
-      this.$message.success('上传成功' + val)
-    }
-
   }
 }
 </script>

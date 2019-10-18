@@ -1,57 +1,8 @@
 <template>
   <div class="app-container" >
 
-    <!--搜索 table-->
-    <div class="div-box-down"
-         v-loading="loadingTables"
-    >
-      <form class="form-inline" >
-        <div class="form-group">
-          <label>database</label>
-          <el-select v-model="database"
-                     clearable
-                     filterable
-                     allow-create
-                     default-first-option
-                     placeholder="请选择"
-                     no-match-text="新建">
-            <el-option
-              v-for="item in queryDatabase"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
-            </el-option>
-          </el-select>
-          <el-button  class="btn btn-primary" @click="getTables()" >查询</el-button>
-        </div>
-        <br>
-        <div class="form-group">
-          <label>table</label>
-          <el-select v-model="table"
-                     clearable
-                     filterable
-                     allow-create
-                     default-first-option
-                     placeholder="请选择"
-                     no-match-text="新建">
-            <el-option
-              v-for="item in queryTable"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
-            </el-option>
-          </el-select>
-          <el-button  class="btn btn-primary" @click="getColumns()" >查询</el-button>
-
-        </div>
-      </form>
-    </div>
-
     <!--搜索-->
     <div class="div-box-down"
-         v-show="!loadingTables"
          v-loading="loadingCols"
     >
       <form class="form-inline" >
@@ -118,8 +69,8 @@
           min-width="90px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="handlerDelete(scope.row)"></el-button>
+            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -145,15 +96,6 @@
       >
       </el-pagination>
 
-<!--      提示sql-->
-      <el-input
-        type="textarea"
-        :rows="4"
-        placeholder="执行sql"
-        v-model="info">
-      </el-input>
-
-
       <el-dialog
         title="修改"
         :visible.sync="loadingUpdate"
@@ -173,7 +115,7 @@
               :property="key"
               :label="(value=='' ? key : value)"
             >
-              <el-input v-model="rowUpdate[key]" type="textarea" />
+              <el-input v-model="rowUpdate[key]" type="text" />
             </el-form-item>
 
             <el-form-item>
@@ -220,14 +162,6 @@
         rowUpdate: {},   //更新界面复制 列名:新值
         rowUpdateFrom: {},//更新界面源对象 列名:旧值
         rowSelect: [],   //选中行
-        info: "",       //执行sql 提示
-        queryDatabase: [],  //db列表
-        database: "", //选中db
-
-        queryTable: [], //table列表
-        table: "",      //选中table
-
-
         page: {
           nowpage: 1,
           num: 0,
@@ -235,7 +169,6 @@
           pagenum: 0,
           shownum: 8,
         },
-        loadingTables: true,
         loadingList: true,
         loadingCols: true,
         loadingSave: true,
@@ -243,52 +176,20 @@
       }
     },
     created() {
-      this.getDatabases()
+      this.getColumns()
     },
     filters: {
     },
     methods: {
-      getDatabases() {
-        this.loadingTables = true
-        var params = Object.assign({}, {})
-        this.get('/common/getDatabasesOrUsers.do', params).then((res) => {
-          this.queryDatabase = res.data
-          this.database = res.data != null && res.data.length > 0 ? res.data[0] : 'walker'
-          this.loadingTables = false
-          this.getTables()
-        }).catch(() => {
-          this.loadingTables = false
-        })
-
-      },
-      //查询展示的行列信息 备注
-      getTables() {
-        this.loadingTables = true
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
-        this.get('/common/getTables.do', params).then((res) => {
-          this.queryTable = res.data
-          this.table = res.data != null && res.data.length > 0 ? res.data[0] : ''
-          this.list = []
-          this.colMap = {}
-          this.clearRowSearch()
-          this. getColumns()
-          this.loadingTables = false
-        }).catch(() => {
-          this.loadingTables = false
-        })
-
-      },
       //查询展示的行列信息 备注
       getColumns() {
         this.loadingCols = true
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
-        this.get('/common/getColsMap.do', {tableName: this.table}).then((res) => {
-
+        this.get('/common/getColsMap.do', {tableName: 'W_TEACHER'}).then((res) => {
           this.colMap = res.data.colMap
           this.colKey = res.data.colKey
           this.clearRowSearch()
-          this. getListPage()
           this.loadingCols = false
+          this. getListPage()
         }).catch(() => {
           this.loadingCols = false
         })
@@ -296,25 +197,23 @@
       },
       //清空搜索条件
       clearRowSearch(){
-        this.rowSearch = {}
+        for (var key in this.colMap) {
+          this.rowSearch[key] = ''
+        }
         this.page.nowpage = 1
-        this.page.order = ''
       },
       //分页查询
       getListPage() {
         this.loadingList = true
         // name/nowPage/showNum
-        var obj = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, obj)
-        this.get('/common/findPage.do', params).then((res) => {
+        var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+        this.get('/teacher/findPage.do', params).then((res) => {
           this.list = res.data.data
           this.page = res.data.page
-          this.info = res.info
           this.loadingList = false
         }).catch(() => {
           this.loadingList = false
         })
-
       },
       //添加行
       handlerAddColumn(){
@@ -341,29 +240,26 @@
         this.loadingSave = true
 
         Object.assign(this.rowUpdateFrom, this.rowUpdate)
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, this.rowUpdateFrom)
-        this.post('/common/save.do', params).then((res) => {
+        var params = this.rowUpdateFrom
+        this.post('/teacher/save.do', params).then((res) => {
           this.loadingSave = false
           this.loadingUpdate = ! this.loadingUpdate
-          this.info = res.info
         }).catch(() => {
           this.loadingSave = false
           this.loadingUpdate = ! this.loadingUpdate
         })
-
       },
       //删除单行
-      handlerDelete(val) {
+      handlerDelete(val, index) {
         console.info("handlerDelete " + " " + JSON.stringify(val))
         this.loadingList = true
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, val)
-        this.get('/common/delet.do', params).then((res) => {
+        const params = {ids: val[this.colKey]}
+        this.get('/teacher/delet.do', params).then((res) => {
           for(let j = 0; j < this.list.length; j++) {
             if(this.list[j] == val){
               this.list.splice(j, 1);
             }
           }
-          this.info = res.info
           this.loadingList = false
         }).catch(() => {
           this.loadingList = false
@@ -373,14 +269,28 @@
       handlerDeleteAll(){
         // const val = this.$refs.multipleTable.data
         console.info("handlerDeleteAll " + " " + JSON.stringify(this.rowSelect))
-
         if(this.rowSelect.length > 0){
+          this.loadingList = true
+          let ids = ""
           for(let i = 0; i < this.rowSelect.length; i++){
-            this.handlerDelete(this.rowSelect[i])
+            ids += this.rowSelect[i][this.colKey] + ","
           }
+          ids = ids.substring(0, ids.length - 1)
+          const params = {ids: ids}
+          this.get('/teacher/delet.do', params).then((res) => {
+            this.loadingList = false
+            for(let i = 0; i < this.rowSelect.length; i++){
+              for(let j = 0; j < this.list.length; j++) {
+                if(this.list[j] == this.rowSelect[i]){
+                  this.list.splice(j, 1);
+                }
+              }
+            }
+            this.rowSelect = []
+          }).catch(() => {
+            this.loadingList = false
+          })
         }
-
-
       },
       //多选改变
       handlerSelectionChange(val) {

@@ -110,7 +110,7 @@ public class FileUtil {
 	/**
 	 * 获取或操作 所有文件夹和文件 dir可,分割多个dir
 	 * 
-	 * @param dir  aaa,bbb,ccc
+	 * @param dire  aaa,bbb,ccc
 	 * @param funFileOrDir
 	 */
 	public static List<File> showDir(String dire, Fun<File> funFileOrDir) {
@@ -648,7 +648,7 @@ public class FileUtil {
 		map.put("NAME", coder.getName());
 		map.put("SIZE", calcSize(coder.length()));
 		map.put("LENGTH", coder.length());
-		map.put("S_MTIME", coder.lastModified());
+		map.put("S_MTIME", TimeUtil.format(coder.lastModified(), "yyyy-MM-dd HH:mm:ss"));
 
 		String type = "";
 		int dirfiles = 0;

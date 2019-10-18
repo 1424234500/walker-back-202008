@@ -2,7 +2,6 @@ package com.walker.config;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.Page;
-import com.walker.event.ContextSystem;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 @Component
-public class Context extends ContextSystem {
+public class Context  {
 	
 	
 	private final static String STR_REQUEST = "_REQUEST_";

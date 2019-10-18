@@ -1,6 +1,11 @@
 package com.walker.config;
 
-import com.walker.service.FileService;
+import com.walker.common.util.FileUtil;
+import com.walker.common.util.TimeUtil;
+import com.walker.common.util.Watch;
+import com.walker.core.aop.Fun;
+import com.walker.mode.FileIndex;
+import com.walker.service.FileIndexService;
 import com.walker.service.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +16,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 定时器任务
@@ -29,20 +39,70 @@ public class ScheduleConfig {
 	static private long count = 0;
 	@Autowired
 	LogService logService;
+	@Autowired
+	FileIndexService fileIndexService;
 
 	@Scheduled(cron = "59 59 23 ? * *") //每天
 	public void everyDay() {
 	    log.info("[eachDay 23:59][每天任务]");
 	}
 
-	
-	@Scheduled(cron = "0 0/60 * * * ?") //每小时
+	@Scheduled(cron = "0 0/59 * * * ?") //每小时
 	public void everyHour() {
 	    log.info("[eachHour 59m][每小时任务]");
 	    
-	    log.info("扫描同步上传文件"); 
+	    log.info("扫描同步上传文件");
+		Watch w = new Watch("scan");
 	    //刷新上传文件集合的 文件数据到 内存数据库？ 文件管理系统 展示文件 介绍（图片），
-//	    fileService.saveScan();
+		String root = Config.getUploadDir();
+		List<FileIndex> listSave = new ArrayList<>();
+		List<File> list = FileUtil.showDir(root, new Fun<File>(){
+			@Override
+			public <T> T make(File obj) {
+				if(obj.isFile()){
+					String key = "";
+					try {
+						key = "" + FileUtil.checksumCrc32(obj);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					String name = obj.getName();
+					String ext = FileUtil.getFileType(name);
+					FileIndex fileIndex = fileIndexService.get(new FileIndex().setID(key));
+					if (fileIndex == null) {
+						fileIndex = new FileIndex();
+						fileIndex
+								.setID(key)
+								.setINFO("scan")
+								.setOWNER("001")
+								.setS_FLAG("1")
+								.setS_ATIME(TimeUtil.getTimeYmdHms())
+						;
+					}
+					fileIndex
+							.setPATH(obj.getAbsolutePath())
+							.setNAME(name)
+							.setEXT(ext)
+							.setS_MTIME(TimeUtil.getTimeYmdHms())
+							.setLENGTH(obj.length() + "")
+					;
+
+					listSave.add(fileIndex);
+					if(listSave.size() > Config.getDbsize()){
+						fileIndexService.saveAll(listSave);
+						listSave.clear();
+					}
+ 				}
+				return null;
+			}
+		});
+		if(listSave.size() > 0){
+			fileIndexService.saveAll(listSave);
+		}
+
+		w.cost("扫描完毕");
+		w.put("扫描文件数", list.size());
+		log.info(w.toPrettyString());
 	}
 
 	/**

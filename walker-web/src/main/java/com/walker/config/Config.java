@@ -11,5 +11,8 @@ public class Config {
         return "/home";
     }
 
+    public static int getDbsize(){
+        return 500;
+    }
 
 }

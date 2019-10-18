@@ -75,14 +75,18 @@ public class FileController {
         return Response.makeTrue("", res);
     }
 
-    @ApiOperation(value = "delete 删除", notes = "delete参数 restful 路径 PathVariable ")
+    @ApiOperation(value = "根据crc id删除文件", notes = "只能删除文件")
     @ResponseBody
-    @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
-    public Response delet(
+    @RequestMapping(value = "/deleteByIds.do", method = RequestMethod.GET)
+    public Response deleteByIds(
             @RequestParam(value = "ids", required = false, defaultValue = "") String ids
     ) {
         String info = "delete ids:" + ids;
+        List<FileIndex> fileIndexList = fileIndexService.findsAllById(Arrays.asList(ids.split(",")));
         Object res = fileIndexService.deleteAll(Arrays.asList(ids.split(",")));
+        for(FileIndex fileIndex : fileIndexList){
+            FileUtil.delete(fileIndex.getPATH());
+        }
         return Response.makeTrue(info, res);
     }
 
@@ -104,7 +108,7 @@ public class FileController {
             @RequestParam(value = "ID", required = false, defaultValue = "") String id,
             @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
             @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
-            @RequestParam(value = "S_FLAG", required = false, defaultValue = "0") String sFlag,
+            @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
             @RequestParam(value = "INFO", required = false, defaultValue = "") String info,
             @RequestParam(value = "LENGTH", required = false, defaultValue = "") String length,
@@ -164,23 +168,27 @@ public class FileController {
         return Response.makePage("", page, res);
     }
 
-    @ApiOperation(value = "删除文件", notes = "")
+    @ApiOperation(value = "删除文件或文件夹 同步更新索引", notes = "")
     @ResponseBody
-    @RequestMapping(value = "/delete.do", method = RequestMethod.GET)
-    public Response delete(
-            @RequestParam(value = "path", required = true, defaultValue = "") String path
+    @RequestMapping(value = "/deleteByPath.do", method = RequestMethod.GET)
+    public Response deleteByPath(
+            @RequestParam(value = "paths", required = true, defaultValue = "") String paths
     ) {
         int count = 0;
         String info = "";
-        if (path.length() > 0) {
-            if (path.startsWith(Config.getUploadDir())) {
-                count += FileUtil.delete(path) ? 1 : 0;
-                info = "影响数量" + count;
+        List<String> pathList = Arrays.asList(paths.split(","));
+        for(String path : pathList) {
+            if (path.length() > 0) {
+                if (path.startsWith(Config.getUploadDir())) {
+                    count += FileUtil.delete(path) ? 1 : 0;
+                    //更新该文件及其子文件索引
+                    fileIndexService.deleteAllByStartPath(path);
+                } else {
+                    info = "无修改权限" + path + ",";
+                }
             } else {
-                info = "无修改权限" + path;
+                info = "路径为null,";
             }
-        } else {
-            info = "路径为null";
         }
         return Response.make(info.length() == 0, info, count);
     }
@@ -189,22 +197,24 @@ public class FileController {
     @ResponseBody
     @RequestMapping(value = "/update.do", method = RequestMethod.GET)
     public Response update(
-            @RequestParam(value = "path", required = true, defaultValue = "") String path,
-            @RequestParam(value = "oldPath", required = false, defaultValue = "") String oldPath,
-            @RequestParam(value = "oldName", required = false, defaultValue = "") String oldName,
-            @RequestParam(value = "name", required = true, defaultValue = "") String name
+            @RequestParam(value = "newPath", required = true, defaultValue = "") String newPath,
+            @RequestParam(value = "oldPath", required = false, defaultValue = "") String oldPath
     ) {
-        if (name == null || name.length() == 0) {
-            name = FileUtil.getFileName(oldPath);
-        }
-
         int count = 0;
         String info = "";
-        if (path.length() > 0) {
-            if ((path + File.separator).startsWith(Config.getUploadDir()) && oldPath.startsWith(Config.getUploadDir()) && Tools.notNull(new Object[]{oldPath, path})) {
-                FileUtil.mv(oldPath, path + File.separator + name);
+        if (oldPath.length() > 0 && newPath.length() > 0) {
+            if (newPath.startsWith(Config.getUploadDir()) && oldPath.startsWith(Config.getUploadDir())) {
+                FileUtil.mv(oldPath, newPath);
+                //更新该文件及其子文件索引
+                List<FileIndex> fileIndexList = fileIndexService.findsAllByStartPath(oldPath);
+                for(FileIndex fileIndex : fileIndexList){
+                    fileIndex.setPATH(fileIndex.getPATH().replace(oldPath, newPath));
+                    fileIndex.setNAME(FileUtil.getFileName(fileIndex.getPATH()));
+                    fileIndex.setEXT(FileUtil.getFileType(fileIndex.getPATH()));
+                }
+                fileIndexService.saveAll(fileIndexList);
             } else {
-                info = "无修改权限" + path;
+                info = "无修改权限" + newPath + " <- " + oldPath;
             }
         } else {
             info = "路径为null";
@@ -299,7 +309,7 @@ public class FileController {
             File tempFile = new File(pathTemp + File.separator + name);
             file.transferTo(tempFile);
             if (key.length() == 0) {
-                key = "k_" + FileUtil.checksumCrc32(tempFile);
+                key = "" + FileUtil.checksumCrc32(tempFile);
             }
             String path = pathTo + File.separator + key;
             FileIndex fileIndex = fileIndexService.get(new FileIndex().setID(key));
@@ -313,6 +323,7 @@ public class FileController {
                         .setEXT(type)
                         .setINFO("upload")
                         .setOWNER("000")
+                        .setS_FLAG("1")
                         .setS_ATIME(TimeUtil.getTimeYmdHms())
                         .setS_MTIME(TimeUtil.getTimeYmdHms())
                         .setLENGTH(tempFile.length() + "")
@@ -342,15 +353,22 @@ public class FileController {
     public Response dir(
             @RequestParam(value = "dir", required = false, defaultValue = "") String dir
     ) {
-        dir = dir.length() > 0 ? dir : Context.getUploadDir();
+        dir = dir.length() > 0 ? dir : Config.getUploadDir();
         if (FileUtil.check(dir) == 1) {
             List<?> list = FileUtil.ls(dir);
             Map<String, Object> res = new HashMap<>();
-            res.put("list", res);
+            res.put("list", list);
             res.put("dir", dir);
             return Response.makeTrue("", res);
-        } else {
-            return Response.makeFalse("dir 不是一个有效的文件夹" + dir);
+        } else if(FileUtil.check(dir) == 0) {
+            return Response.makeFalse("这是一个文件" + dir);
+        }else{
+            if(dir.startsWith(Config.getDownloadDir())){
+                FileUtil.mkdir(dir);
+                return Response.makeTrue("不存在 创建文件夹" + dir);
+            }else{
+                return Response.makeFalse("不存在 无权限创建" + dir);
+            }
         }
     }
 }

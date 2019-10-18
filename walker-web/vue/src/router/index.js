@@ -56,60 +56,66 @@ export const constantRoutes = [
   },
 
   {
-    path: '/tables',
+    path: '/db',
     component: Layout,
-    redirect: '/tables/Student',
-    name: 'Tables',
+    redirect: '/db/Student',
+    name: 'Db',
     meta: { title: 'Tables', icon: 'example' },
     children: [
       {
         path: 'student',
         name: 'Student',
-        component: () => import('@/views/tables/student'),
+        component: () => import('@/views/db/student'),
         meta: { title: 'Student', icon: 'table' }
       },
       {
         path: 'teacher',
         name: 'Teacher',
-        component: () => import('@/views/tables/teacher'),
+        component: () => import('@/views/db/teacher'),
         meta: { title: 'Teacher', icon: 'table' }
       },
       {
         path: 'user',
         name: 'User',
-        component: () => import('@/views/tables/user'),
+        component: () => import('@/views/db/user'),
         meta: { title: 'User', icon: 'table' }
-      },
-      {
-        path: 'file',
-        name: 'File',
-        component: () => import('@/views/tables/file'),
-        meta: { title: 'File', icon: 'table' }
       },
       {
         path: 'table',
         name: 'Table',
-        component: () => import('@/views/tables/table'),
+        component: () => import('@/views/db/table'),
         meta: { title: 'Table', icon: 'table' }
+      },
+    ]
+  },
+
+
+  {
+    path: '/file',
+    component: Layout,
+    redirect: '/file/file',
+    name: 'File',
+    meta: { title: 'File', icon: 'example' },
+    children: [
+      {
+        path: 'fileindex',
+        name: 'Fileindex',
+        component: () => import('@/views/file/fileindex'),
+        meta: { title: 'Fileindex', icon: 'table' }
+      },
+      {
+        path: 'file',
+        name: 'File',
+        component: () => import('@/views/file/file'),
+        meta: {title: 'File', icon: 'table'}
       },
       {
         path: 'tree',
         name: 'Tree',
-        component: () => import('@/views/tree/index'),
+        component: () => import('@/views/file/tree'),
         meta: { title: 'Tree', icon: 'tree' }
-      }
+      },
     ]
-  },
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/file',
-    children: [{
-      path: 'file',
-      name: 'File',
-      component: () => import('@/views/file'),
-      meta: { title: 'File', icon: 'tree' }
-    }]
   },
   {
     path: '/echarts',

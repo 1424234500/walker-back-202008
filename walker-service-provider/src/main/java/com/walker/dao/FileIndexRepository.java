@@ -36,7 +36,21 @@ public interface FileIndexRepository extends JpaRepository<FileIndex, String>, J
     @Query("delete from FileIndex t where t.ID in (?1) ")
     Integer selfDeleteAll(List<String> ids);
 
+    @Query("select t from FileIndex t where t.PATH in (?1) ")
+    List<FileIndex> findsAllByPath(List<String> ids);
+
+    @Query("select t from FileIndex t where t.PATH like CONCAT('', ?1, '%')  ")
+    List<FileIndex> findsAllByStartPath(String startPath);
 
 
+    @Transactional
+    @Modifying
+    @Query("delete from FileIndex t where t.PATH like CONCAT('', ?1, '%') ")
+    Integer deleteAllByStartPath(String startPath);
+
+    @Transactional
+    @Modifying
+    @Query("delete from FileIndex t where t.PATH in (?1) ")
+    Integer deleteAllByPath(List<String> paths);
 
 }

@@ -55,6 +55,26 @@ public class FileIndexServiceImpl implements FileIndexService {
 	}
 
 	@Override
+	public List<FileIndex> findsAllById(List<String> ids) {
+		return fileIndexrRepository.findAllById(ids);
+	}
+
+	@Override
+	public List<FileIndex> findsAllByPath(List<String> paths) {
+		return fileIndexrRepository.findsAllByPath(paths);
+	}
+
+	@Override
+	public List<FileIndex> findsAllByStartPath(String startPath) {
+		return fileIndexrRepository.findsAllByStartPath(startPath);
+	}
+
+	@Override
+	public Integer deleteAllByStartPath(String startPath) {
+		return fileIndexrRepository.deleteAllByStartPath(startPath);
+	}
+
+	@Override
 	public Integer count(FileIndex obj) {
 		long res = fileIndexrRepository.count(this.getSpecification(obj));
 		return new Long(res).intValue();
@@ -106,6 +126,11 @@ public class FileIndexServiceImpl implements FileIndexService {
 	@Override
 	public Integer[] deleteAll(List<String> ids) {
 		int res = fileIndexrRepository.selfDeleteAll(ids);
+		return new Integer[]{res};
+	}
+	@Override
+	public Integer[] deleteAllByPath(List<String> paths) {
+		int res = fileIndexrRepository.deleteAllByPath(paths);
 		return new Integer[]{res};
 	}
 }

@@ -69,8 +69,8 @@
           min-width="90px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="handlerDelete(scope.row)"></el-button>
+            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -184,7 +184,7 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.get('/common/getColsMap.do', {tableName: 'W_USER'}).then((res) => {
+      this.get('/common/getColsMap.do', {tableName: 'W_FILE_INDEX'}).then((res) => {
         this.colMap = res.data.colMap
         this.colKey = res.data.colKey
         this.clearRowSearch()
@@ -207,7 +207,7 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      this.get('/user/findPage.do', params).then((res) => {
+      this.get('/file/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
         this.loadingList = false
@@ -241,7 +241,7 @@ export default {
 
       Object.assign(this.rowUpdateFrom, this.rowUpdate)
       var params = this.rowUpdateFrom
-      this.post('/user/save.do', params).then((res) => {
+      this.post('/file/save.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
@@ -254,7 +254,7 @@ export default {
       console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
       const params = {ids: val[this.colKey]}
-      this.get('/user/delet.do', params).then((res) => {
+      this.get('/file/deleteByIds.do', params).then((res) => {
         for(let j = 0; j < this.list.length; j++) {
           if(this.list[j] == val){
             this.list.splice(j, 1);
@@ -277,7 +277,7 @@ export default {
         }
         ids = ids.substring(0, ids.length - 1)
         const params = {ids: ids}
-        this.get('/user/delet.do', params).then((res) => {
+        this.get('/file/deleteByIds.do', params).then((res) => {
           this.loadingList = false
           for(let i = 0; i < this.rowSelect.length; i++){
             for(let j = 0; j < this.list.length; j++) {
