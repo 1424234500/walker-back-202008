@@ -9,14 +9,14 @@
       :data="data"
       lazy
       :load="loadNode"
-      show-checkbox
       v-loading="loadingList"
       :props="defaultProps"
-      @check-change="handleCheckChange"
       @node-click="handleNodeClick"
       :filter-node-method="filterNode"
       class="filter-tree"
     />
+<!--    show-checkbox-->
+<!--    @check-change="handleCheckChange"-->
 <!--    default-expand-all-->
 
 

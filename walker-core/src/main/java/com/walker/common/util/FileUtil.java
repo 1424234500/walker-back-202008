@@ -17,6 +17,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -691,9 +692,18 @@ public class FileUtil {
 	 * crc校验文件唯一
 	 * @throws IOException 
 	 */
-	public static long checksumCrc32(File file) throws IOException {
-		return FileUtils.checksumCRC32(file);
+	public static String checksumCrc32(File file) throws IOException {
+		return "" + FileUtils.checksumCRC32(file);
 	}
+	/**
+	 * crc校验文件唯一
+	 * @throws IOException
+	 */
+	public static String checksumMd5(File file) throws IOException {
+		return 	DigestUtils.md5Hex(new FileInputStream(file));
+
+	}
+
 	/**
 	 * 检查文件类型
 	 * 

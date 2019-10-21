@@ -62,7 +62,7 @@ public class ScheduleConfig {
 				if(obj.isFile()){
 					String key = "";
 					try {
-						key = "" + FileUtil.checksumCrc32(obj);
+						key = "" + FileUtil.checksumMd5(obj);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

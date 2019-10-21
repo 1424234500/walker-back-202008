@@ -66,12 +66,13 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="90px"
+          min-width="140px"
         >
           <template slot-scope="scope">
+            <el-button size="mini" type="success" icon="el-icon-download" circle @click.stop="download(scope.row)"></el-button>
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
-          </template>
+          </template>success
         </el-table-column>
       </el-table>
 
@@ -329,6 +330,13 @@ export default {
         return 'success-row';
       }
       return '';
+    },
+    download(row){
+      this.$message.success('下载文件' + row.NAME);
+      let a = document.createElement('a')
+      a.href ="/file/download.do?key=" + row.ID
+      a.click();
+      // window.open("/file/download.do?path=" + row.PATH,"height=100,width=100,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no")
     },
   }
 }

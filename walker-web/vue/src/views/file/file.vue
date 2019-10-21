@@ -31,8 +31,10 @@
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
         <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >home</el-button>
         <el-button  class="btn btn-default" @click="goParent()" >上级目录</el-button>
+
       </form>
     </div>
+
 
     <div
       v-show="!loadingCols"
@@ -106,6 +108,28 @@
       >
       </el-pagination>
 
+
+      <el-upload
+        class="upload-demo"
+        multiple
+        drag
+        action="/file/upload.do"
+        :before-upload="handlerBeforeUpload"
+        :on-preview="handlerOnPreview"
+        :on-remove="handlerOnRemove"
+        :on-change="handlerOnChange"
+        :before-remove="handlerBeforeRemove"
+        :limit="16"
+        :on-exceed="handlerOnExceed"
+        :on-success="handlerOnSuccess"
+        :on-error="handlerOnError"
+        :data="{dir:dir}"
+        :file-list="fileList">
+        <el-button size="small" type="primary">点击/拖动上传</el-button>
+        <div slot="tip" class="el-upload__tip">最多上传16个文件 每个不超过100MB</div>
+      </el-upload>
+
+
       <el-dialog
         title="修改"
         :visible.sync="loadingUpdate"
@@ -138,26 +162,6 @@
     </div>
 
 
-
-    <el-upload
-      class="upload-demo"
-      multiple
-      drag
-      action="/file/upload.do"
-      :before-upload="handlerBeforeUpload"
-      :on-preview="handlerOnPreview"
-      :on-remove="handlerOnRemove"
-      :on-change="handlerOnChange"
-      :before-remove="handlerBeforeRemove"
-      :limit="16"
-      :on-exceed="handlerOnExceed"
-      :on-success="handlerOnSuccess"
-      :on-error="handlerOnError"
-      :data="{dir:dir}"
-      :file-list="fileList">
-      <el-button size="small" type="primary">点击上传</el-button>
-      <div slot="tip" class="el-upload__tip">最多上传16个文件 每个不超过100MB</div>
-    </el-upload>
 
 
 
@@ -198,7 +202,7 @@ export default {
       colMapShow: {},      //列名:别名
       colKey: "",     //主键名
       dir: "",        //目录
-      fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+      fileList: [],
       rowSearch: {},   //搜索 列明:搜索值
       rowUpdate: {},   //更新界面复制 列名: 新值
       rowUpdateFrom: {},//更新界面源对象 列名:旧值

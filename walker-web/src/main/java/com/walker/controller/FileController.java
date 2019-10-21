@@ -1,13 +1,17 @@
 package com.walker.controller;
 
 import com.walker.Response;
-import com.walker.common.util.*;
+import com.walker.common.util.FileUtil;
+import com.walker.common.util.Page;
+import com.walker.common.util.TimeUtil;
+import com.walker.common.util.Watch;
 import com.walker.config.Config;
-import com.walker.config.Context;
 import com.walker.dao.JdbcDao;
+import com.walker.event.RequestUtil;
 import com.walker.mode.FileIndex;
 import com.walker.service.FileIndexService;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,11 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+import sun.security.krb5.Checksum;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -226,11 +231,15 @@ public class FileController {
     @ApiOperation(value = "下载文件 ", notes = "")
     @ResponseBody
     @RequestMapping(value = "/download.do")
-    public ResponseEntity<byte[]> download(
-            @RequestParam(value = "key", required = false, defaultValue = "") String key,
-            @RequestParam(value = "path", required = false, defaultValue = "") String path
+    public Response downloadFile(HttpServletRequest request,
+                               HttpServletResponse response,
+                               @RequestParam(value = "key", required = false, defaultValue = "") String key,
+                               @RequestParam(value = "path", required = false, defaultValue = "") String path
     ) throws IOException {
         Watch w = new Watch(new Object[]{"download"});
+        w.put(key);
+        w.put(path);
+
         Boolean res = false;
         path = path.startsWith(Config.getDownloadDir()) ? path : Config.getUploadDir() + File.separator + path;
         path = new String(path.getBytes("iso-8859-1"), "utf-8");
@@ -239,48 +248,49 @@ public class FileController {
         if (key.length() > 0) {
             fileIndex = fileIndexService.get(new FileIndex().setID(key));
             path = fileIndex == null ? path : fileIndex.getPATH();
+        }else if(path.length() > 0){
+            List<FileIndex> list = fileIndexService.findsAllByPath(Arrays.asList(path));
+            if(list.size() > 0){
+                fileIndex = list.get(0);
+            }
         }
 
         if (path.length() > 0) {
             int type = FileUtil.check(path);
             if (type == 1) {
-                info = path + " 是文件夹";
+                info = key + " " + path + " is dir";
             } else if (type == 0) {
-                info = path + " 存在";
+                info = key + " " + path + " exists";
                 res = true;
             } else {
-                info = path + " 不存在";
+                info = key + " " + path + " not exists";
             }
         } else {
             info = "path is null ?";
         }
 
-        w.put("path", new Object[]{path});
-        w.put("info", new Object[]{info});
+        w.put("path", path);
+        w.put("info", info);
         if (!res) {
             w.res();
-            return ResponseEntity.notFound().eTag(res.toString()).build();
+            return Response.makeFalse(w.toPrettyString());
         } else {
             String name = fileIndex == null ? FileUtil.getFileName(path) : fileIndex.getNAME();
+
             File file = new File(path);
-            byte[] body = null;
-            FileInputStream is = null;
+
+            RequestUtil.setHeaderDownFile(request, response, name);
+
+            InputStream inputStream = new FileInputStream(file);
+            OutputStream outputStream = response.getOutputStream();
             try {
-                is = new FileInputStream(file);
-                body = new byte[is.available()];
-                is.read(body);
-            } catch (Exception var16) {
-                w.exception(var16);
-            } finally {
-                if (is != null) {
-                    is.close();
-                }
+                FileUtil.copyStream(inputStream, outputStream);
+            }finally {
+                if(inputStream != null) inputStream.close();
+                if(outputStream != null) outputStream.close();
             }
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attchement;filename=" + name);
-            ResponseEntity<byte[]> entity = new ResponseEntity(body, headers, HttpStatus.OK);
-            w.res(log);
-            return entity;
+            w.cost("copyStream");
+            return Response.makeTrue(w.toPrettyString());
         }
     }
 
@@ -289,7 +299,7 @@ public class FileController {
     @ResponseBody
     @RequestMapping(value = "/upload.do", method = RequestMethod.POST)
     public Response upload(
-            @RequestParam(value = "file", required = true) CommonsMultipartFile file,
+            @RequestParam(value = "file", required = true) MultipartFile file,
             @RequestParam(value = "key", required = false, defaultValue = "") String key,
             @RequestParam(value = "dir", required = false, defaultValue = "") String dir
     ) {
@@ -299,9 +309,16 @@ public class FileController {
 
         String uploadDir = Config.getUploadDir();
         //按文件后缀名存储 日期存储
-        String saveDir = dir.length() > 0 ? dir : (type.length() > 0 ? type + File.separator + TimeUtil.getTimeYmd() : TimeUtil.getTimeYmd());
+        String pathTo = dir.length() > 0 && dir.startsWith(uploadDir)?
+                dir
+                :
+                uploadDir + File.separator +  (
+                        type.length() > 0 ?
+                        type + File.separator + TimeUtil.getTimeYmd()
+                        :
+                        TimeUtil.getTimeYmd()
+                );
         String pathTemp = uploadDir + File.separator + "temp";
-        String pathTo = uploadDir + File.separator + saveDir;
         FileUtil.mkdir(pathTemp);
         FileUtil.mkdir(pathTo);
 
@@ -309,12 +326,12 @@ public class FileController {
             File tempFile = new File(pathTemp + File.separator + name);
             file.transferTo(tempFile);
             if (key.length() == 0) {
-                key = "" + FileUtil.checksumCrc32(tempFile);
+                key = "" + FileUtil.checksumMd5(tempFile);
             }
             String path = pathTo + File.separator + key;
             FileIndex fileIndex = fileIndexService.get(new FileIndex().setID(key));
             if (fileIndex == null) {
-                w.put("新上传文件");
+                w.put("new file");
                 FileUtil.mv(tempFile.getAbsolutePath(), path);
                 fileIndex = new FileIndex();
                 fileIndex.setID(key)
@@ -329,10 +346,10 @@ public class FileController {
                         .setLENGTH(tempFile.length() + "")
                 ;
             } else {
-                w.put("更新文件");
+                w.put("update file");
 //                FileUtil.delete(tempFile.getAbsolutePath());
                 fileIndex
-                        .setINFO("更新")
+                        .setINFO("update")
                         .setS_MTIME(TimeUtil.getTimeYmdHms())
                 ;
             }

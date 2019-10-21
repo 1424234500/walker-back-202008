@@ -1,6 +1,6 @@
 package com.walker.config;
 
-import com.walker.mode.WebUser;
+import com.walker.mode.User;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -20,7 +20,10 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 权限管理
@@ -93,10 +96,10 @@ public class ShiroConfig {
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
                 //获取用户
-                WebUser webUser = (WebUser) principalCollection.getPrimaryPrincipal();
+                User user = (User) principalCollection.getPrimaryPrincipal();
                 //获取权限列表
                 List<String> roles = Arrays.asList("role01");
-                log.info("doGetAuthorizationInfo role  " + webUser + " " + roles);
+                log.info("doGetAuthorizationInfo role  " + user + " " + roles);
 
                 //添加角色和权限
                 SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
@@ -111,13 +114,13 @@ public class ShiroConfig {
 
                 String username = usernamePasswordToken.getUsername();
 
-                WebUser webUser = new WebUser().setName(username);
-                log.info("doGetAuthenticationInfo " + webUser);
+                User user = new User().setNAME(username);
+                log.info("doGetAuthenticationInfo " + user);
 
-                if (webUser == null) {
+                if (user == null) {
                     return null;
                 } else {
-                    SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(webUser, webUser.getPwd(), getName());
+                    SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(user, user.getPWD(), getName());
                     return simpleAuthenticationInfo;
                 }
             }
@@ -128,12 +131,12 @@ public class ShiroConfig {
         authorizingRealm.setCredentialsMatcher(new SimpleCredentialsMatcher() {
             @Override
             public boolean doCredentialsMatch (AuthenticationToken token, AuthenticationInfo info){
-                WebUser webUser = (WebUser) info.getPrincipals().getPrimaryPrincipal(); //这里取出的是我们在认证方法中放入的用户信息也就是我们从数据库查询出的用户信息
+                User user = (User) info.getPrincipals().getPrimaryPrincipal(); //这里取出的是我们在认证方法中放入的用户信息也就是我们从数据库查询出的用户信息
                 UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;//这里是前端发送的用户名密码信息
                 String requestPwd = new String(usernamePasswordToken.getPassword());
-                String requestPwdEncryption = getEncryptionPassword(requestPwd, webUser.getId());//获取加密后的密码
-                log.info("SimpleCredentialsMatcher " + webUser + " pwd " + requestPwdEncryption);
-                String dbPwd = webUser.getPwd();
+                String requestPwdEncryption = getEncryptionPassword(requestPwd, user.getID());//获取加密后的密码
+                log.info("SimpleCredentialsMatcher " + user + " pwd " + requestPwdEncryption);
+                String dbPwd = user.getPWD();
                 return requestPwdEncryption.equals(dbPwd);
             }
 

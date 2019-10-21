@@ -1,35 +1,14 @@
 package com.walker.config;
 
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.walker.event.intercept.LogInterceptors;
-import com.walker.event.intercept.LoginInterceptors;
-import com.walker.event.listener.ContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
-import org.springframework.oxm.xstream.XStreamMarshaller;
-import org.springframework.stereotype.Component;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * 配置mvc web.xml spring-mvc.xml
@@ -67,15 +46,15 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    @Bean(name = "multipartResolver")
-    public MultipartResolver multipartResolver(){
-        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setDefaultEncoding("UTF-8");
-        resolver.setResolveLazily(true); //resolveLazily属性启用是为了推迟文件解析，以在在UploadAction中捕获文件大小异常
-        resolver.setMaxInMemorySize(1024 * 1024);
-        resolver.setMaxUploadSize(100 * 1024 * 1024);//上传文件大小 5M 5*1024*1024
-        return resolver;
-    }
+//    @Bean(name = "multipartResolver")
+//    public MultipartResolver multipartResolver(){
+//        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+//        resolver.setDefaultEncoding("UTF-8");
+//        resolver.setResolveLazily(true); //resolveLazily属性启用是为了推迟文件解析，以在在UploadAction中捕获文件大小异常
+//        resolver.setMaxInMemorySize(1024 * 1024);
+//        resolver.setMaxUploadSize(100 * 1024 * 1024);//上传文件大小 5M 5*1024*1024
+//        return resolver;
+//    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
