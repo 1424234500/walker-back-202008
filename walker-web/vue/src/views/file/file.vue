@@ -81,6 +81,7 @@
           min-width="90px"
         >
           <template slot-scope="scope">
+            <el-button v-if=" scope.row.EXT!='dir' " size="mini" type="success" icon="el-icon-download" circle @click.stop="download(scope.row)"></el-button>
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
@@ -119,14 +120,14 @@
         :on-remove="handlerOnRemove"
         :on-change="handlerOnChange"
         :before-remove="handlerBeforeRemove"
-        :limit="16"
+        :limit="998"
         :on-exceed="handlerOnExceed"
         :on-success="handlerOnSuccess"
         :on-error="handlerOnError"
         :data="{dir:dir}"
         :file-list="fileList">
         <el-button size="small" type="primary">点击/拖动上传</el-button>
-        <div slot="tip" class="el-upload__tip">最多上传16个文件 每个不超过100MB</div>
+        <div slot="tip" class="el-upload__tip">最多上传998个文件 每个不超过100MB</div>
       </el-upload>
 
 
@@ -296,7 +297,7 @@ export default {
         this.dir = row.PATH
         this.getListPage()
       }else{
-        this.download(row)
+        // this.download(row)
       }
     },
     //修改单行 展示弹框

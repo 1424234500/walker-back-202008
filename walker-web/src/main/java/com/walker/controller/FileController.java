@@ -298,7 +298,7 @@ public class FileController {
     @ApiOperation(value = "上传文件", notes = "")
     @ResponseBody
     @RequestMapping(value = "/upload.do", method = RequestMethod.POST)
-    public Response upload(
+    public Response     upload(
             @RequestParam(value = "file", required = true) MultipartFile file,
             @RequestParam(value = "key", required = false, defaultValue = "") String key,
             @RequestParam(value = "dir", required = false, defaultValue = "") String dir

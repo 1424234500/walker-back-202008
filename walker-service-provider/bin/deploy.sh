@@ -16,6 +16,7 @@ dir_proj_parent=${dir_proj%/*}  #/walker
 tofile_name="${name_proj}.tar.gz"
 #临时文件全路径
 fromfile_temp=~/temp/${tofile_name}
+[ ! -d ~/temp ] && mkdir -p ~/temp
 #目标服务器路径
 server='walker@39.106.111.11'
 todir="/home/walker/${name_proj}"
