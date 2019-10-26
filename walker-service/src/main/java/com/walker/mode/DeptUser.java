@@ -8,11 +8,11 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * jpa实体类 角色
+ * jpa实体类 角色关联用户/部门
  */
 @Entity
-@Table(name = "W_ROLE")
-public class Role implements Cloneable,Serializable{
+@Table(name = "W_DEPT_USER")
+public class DeptUser implements Cloneable,Serializable{
 
     @Id     //主键
 //    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
@@ -27,39 +27,32 @@ public class Role implements Cloneable,Serializable{
     @Column(name = "S_FLAG", columnDefinition = "varchar(4) default '0' comment '1是0否' ")
     private String S_FLAG;
 
-    @Column(name = "NAME", columnDefinition = "varchar(512) default 'name' comment '名字' ")    //255
-    private String NAME;
-    /**
-     * 最多分配给多少个用户
-     */
-    @Column(name = "NUM", columnDefinition = "varchar(32) default '998' comment '分配上限' ")
-    private String NUM;
-    /**
-     * 角色级别 高级低级优先级
-     */
-    @Column(name = "LEVEL", columnDefinition = "varchar(32) default '0' comment '级别' ")
-    private String LEVEL;
+    @Column(name = "USER_ID", columnDefinition = "varchar(32) default 'name' comment '用户ID' ")    //255
+    private String USER_ID;
+    @Column(name = "DEPT_ID", columnDefinition = "varchar(32) default '0' comment '部门ID' ")
+    private String ROLE_ID;
+
+    public DeptUser(){
+
+    }
 
     @Override
     public String toString() {
-        return "Role{" +
+        return "RoleUser{" +
                 "ID='" + ID + '\'' +
                 ", S_MTIME='" + S_MTIME + '\'' +
                 ", S_ATIME='" + S_ATIME + '\'' +
                 ", S_FLAG='" + S_FLAG + '\'' +
-                ", NAME='" + NAME + '\'' +
-                ", NUM='" + NUM + '\'' +
-                ", LEVEL='" + LEVEL + '\'' +
+                ", USER_ID='" + USER_ID + '\'' +
+                ", ROLE_ID='" + ROLE_ID + '\'' +
                 '}';
     }
-
-
 
     public String getID() {
         return ID;
     }
 
-    public Role setID(String ID) {
+    public DeptUser setID(String ID) {
         this.ID = ID;
         return this;
     }
@@ -68,7 +61,7 @@ public class Role implements Cloneable,Serializable{
         return S_MTIME;
     }
 
-    public Role setS_MTIME(String s_MTIME) {
+    public DeptUser setS_MTIME(String s_MTIME) {
         S_MTIME = s_MTIME;
         return this;
     }
@@ -77,7 +70,7 @@ public class Role implements Cloneable,Serializable{
         return S_ATIME;
     }
 
-    public Role setS_ATIME(String s_ATIME) {
+    public DeptUser setS_ATIME(String s_ATIME) {
         S_ATIME = s_ATIME;
         return this;
     }
@@ -86,35 +79,26 @@ public class Role implements Cloneable,Serializable{
         return S_FLAG;
     }
 
-    public Role setS_FLAG(String s_FLAG) {
+    public DeptUser setS_FLAG(String s_FLAG) {
         S_FLAG = s_FLAG;
         return this;
     }
 
-    public String getNAME() {
-        return NAME;
+    public String getUSER_ID() {
+        return USER_ID;
     }
 
-    public Role setNAME(String NAME) {
-        this.NAME = NAME;
+    public DeptUser setUSER_ID(String USER_ID) {
+        this.USER_ID = USER_ID;
         return this;
     }
 
-    public String getNUM() {
-        return NUM;
+    public String getROLE_ID() {
+        return ROLE_ID;
     }
 
-    public Role setNUM(String NUM) {
-        this.NUM = NUM;
-        return this;
-    }
-
-    public String getLEVEL() {
-        return LEVEL;
-    }
-
-    public Role setLEVEL(String LEVEL) {
-        this.LEVEL = LEVEL;
+    public DeptUser setROLE_ID(String ROLE_ID) {
+        this.ROLE_ID = ROLE_ID;
         return this;
     }
 }

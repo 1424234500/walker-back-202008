@@ -348,7 +348,6 @@
           this.info = res.info
         }).catch(() => {
           this.loadingSave = false
-          this.loadingUpdate = ! this.loadingUpdate
         })
 
       },

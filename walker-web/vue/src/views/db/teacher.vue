@@ -246,7 +246,6 @@
           this.loadingUpdate = ! this.loadingUpdate
         }).catch(() => {
           this.loadingSave = false
-          this.loadingUpdate = ! this.loadingUpdate
         })
       },
       //删除单行

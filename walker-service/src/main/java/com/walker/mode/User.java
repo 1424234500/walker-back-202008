@@ -40,8 +40,8 @@ public class User implements Cloneable,Serializable{
     private String MOBILE;
 
 
-    @Column(name = "DEPT_CODE", columnDefinition = "varchar(32) default 'name' comment '部门' ")    //255
-    private String DEPT_CODE;
+    @Column(name = "DEPT_ID", columnDefinition = "varchar(32) default 'name' comment '部门' ")    //255
+    private String DEPT_ID;
 
     @Column(name = "PWD", columnDefinition = "varchar(128) default '' comment '密码' ")
     private String PWD;
@@ -153,17 +153,17 @@ public class User implements Cloneable,Serializable{
                 ", SIGN='" + SIGN + '\'' +
                 ", EMAIL='" + EMAIL + '\'' +
                 ", MOBILE='" + MOBILE + '\'' +
-                ", DEPT_CODE='" + DEPT_CODE + '\'' +
+                ", DEPT_ID='" + DEPT_ID + '\'' +
                 ", PWD='" + PWD + '\'' +
                 '}';
     }
 
-    public String getDEPT_CODE() {
-        return DEPT_CODE;
+    public String getDEPT_ID() {
+        return DEPT_ID;
     }
 
-    public User setDEPT_CODE(String DEPT_CODE) {
-        this.DEPT_CODE = DEPT_CODE;
+    public User setDEPT_ID(String DEPT_ID) {
+        this.DEPT_ID = DEPT_ID;
         return this;
     }
 

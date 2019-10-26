@@ -8,7 +8,8 @@ import org.springframework.data.domain.Sort;
 public class Config {
 
     public static final String PRE = "init--------";
-
+    public static final String TRUE = "1";
+    public static final String FALSE = "0";
 
 
     public static Pageable turnTo(Page page){

@@ -4,6 +4,7 @@ import com.walker.common.util.Page;
 import com.walker.config.Config;
 import com.walker.dao.UserRepository;
 import com.walker.dao.UserRepository;
+import com.walker.mode.Role;
 import com.walker.mode.User;
 import com.walker.service.UserService;
 import com.walker.service.UserService;
@@ -59,6 +60,8 @@ public class UserServiceImpl implements UserService {
         long res = userRepository.count(this.getSpecification(obj));
         return new Long(res).intValue();
     }
+
+
     private Specification getSpecification(User obj){
         return new Specification<User>(){
             @Override
@@ -95,8 +98,8 @@ public class UserServiceImpl implements UserService {
                 if (StringUtils.isNotEmpty(obj.getMOBILE())) {
                     list.add(criteriaBuilder.like(root.get("MOBILE"), "%" + obj.getMOBILE() + "%"));
                 }
-                if (StringUtils.isNotEmpty(obj.getDEPT_CODE())) {
-                    list.add(criteriaBuilder.like(root.get("DEPT_CODE"), "%" + obj.getDEPT_CODE() + "%"));
+                if (StringUtils.isNotEmpty(obj.getDEPT_ID())) {
+                    list.add(criteriaBuilder.like(root.get("DEPT_ID"), "%" + obj.getDEPT_ID() + "%"));
                 }
                 if (StringUtils.isNotEmpty(obj.getPWD())) {
                     list.add(criteriaBuilder.like(root.get("PWD"), "%" + obj.getPWD() + "%"));

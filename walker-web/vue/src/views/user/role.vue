@@ -6,35 +6,23 @@
          v-loading="loadingCols"
     >
       <form class="form-inline" >
-<!--        <div class="form-group" v-for="(value, key) in colMap">-->
-<!--          <label>{{value=='' ? key : value}}</label>-->
-<!--          <input-->
-<!--            type="text"-->
-<!--            class="form-control"-->
-<!--            style="width: 10em; margin-right: 1em;"-->
-<!--            v-on:keyup.13="getListPage()"-->
-<!--            :placeholder="key"-->
-<!--            v-model="rowSearch[key]"-->
-<!--          />-->
-<!--        </div>-->
-<!--        <br>-->
+        <div class="form-group" v-for="(value, key) in colMap">
+          <label>{{value=='' ? key : value}}</label>
+          <input
+            type="text"
+            class="form-control"
+            style="width: 10em; margin-right: 1em;"
+            v-on:keyup.13="getListPage()"
+            :placeholder="key"
+            v-model="rowSearch[key]"
+          />
+        </div>
 
-        <label>路径</label>
-        <input
-          type="text"
-          class="form-control"
-          style="width: 50%; margin-right: 1em;"
-          v-on:keyup.13="getListPage()"
-          :placeholder="dir"
-          v-model="dir"
-        />
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >home</el-button>
-        <el-button  class="btn btn-default" @click="goParent()" >上级目录</el-button>
-
+        <el-button  class="btn btn-warning" @click="handlerAddColumn()" >添加</el-button>
+        <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >清除</el-button>
       </form>
     </div>
-
 
     <div
       v-show="!loadingCols"
@@ -44,12 +32,12 @@
         :data="list"
         :row-class-name="tableRowClassName"
         ref="multipleTable"
-        @row-click="handlerRowClick"
         @selection-change="handlerSelectionChange"
         @sort-change="handlerSortChange"
         element-loading-text="Loading"
         border
         fit
+        stripe
         show-summary
         sum-text="S"
         highlight-current-row
@@ -62,13 +50,13 @@
 
         <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
         <el-table-column
-          v-for="(value, key) in colMapShow"
+          v-for="(value, key) in colMap"
           :key="key"
           :property="key"
           :label="(value=='' ? key : value)"
           sortable
           show-overflow-tooltip
-          min-width="60px"
+          min-width="100px"
         >
           <template slot-scope="scope">
             {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
@@ -81,7 +69,6 @@
           min-width="90px"
         >
           <template slot-scope="scope">
-            <el-button v-if=" scope.row.EXT!='dir' " size="mini" type="success" icon="el-icon-download" circle @click.stop="download(scope.row)"></el-button>
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
@@ -108,28 +95,6 @@
         style="float:right;margin:10px 20px 0 0;"
       >
       </el-pagination>
-
-
-      <el-upload
-        class="upload-demo"
-        multiple
-        drag
-        action="/file/upload.do"
-        :before-upload="handlerBeforeUpload"
-        :on-preview="handlerOnPreview"
-        :on-remove="handlerOnRemove"
-        :on-change="handlerOnChange"
-        :before-remove="handlerBeforeRemove"
-        :limit="998"
-        :on-exceed="handlerOnExceed"
-        :on-success="handlerOnSuccess"
-        :on-error="handlerOnError"
-        :data="{dir:dir}"
-        :file-list="fileList">
-        <el-button size="small" type="primary">点击/拖动上传</el-button>
-        <div slot="tip" class="el-upload__tip">最多上传998个文件 每个不超过100MB</div>
-      </el-upload>
-
 
       <el-dialog
         title="修改"
@@ -164,19 +129,11 @@
 
 
 
-
-
   </div>
 </template>
 <style scoped>
   /deep/  .el-table td{
     padding: 4px 0px;
-  }
-  /deep/ .row-table-dir{
-    background: #5bc0de;
-  }
-  /deep/ .row-table-sh{
-    color: #761c19;
   }
 </style>
 
@@ -189,9 +146,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        dir: 'success',
-        sh: 'gray',
-        ddeleted: 'danger'
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
       }
       return statusMap[status]
     }
@@ -200,12 +157,9 @@ export default {
     return {
       list: [],
       colMap: {},      //列名:别名
-      colMapShow: {},      //列名:别名
       colKey: "",     //主键名
-      dir: "",        //目录
-      fileList: [],
       rowSearch: {},   //搜索 列明:搜索值
-      rowUpdate: {},   //更新界面复制 列名: 新值
+      rowUpdate: {},   //更新界面复制 列名:新值
       rowUpdateFrom: {},//更新界面源对象 列名:旧值
       rowSelect: [],   //选中行
       page: {
@@ -230,12 +184,8 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.get('/file/getColsMap.do', {}).then((res) => {
+      this.get('/common/getColsMap.do', {tableName: 'W_ROLE'}).then((res) => {
         this.colMap = res.data.colMap
-        this.colMapShow = Object.assign({}, this.colMap)
-        delete this.colMapShow["PATH"]
-        delete this.colMapShow["EXT"]
-
         this.colKey = res.data.colKey
         this.clearRowSearch()
         this.loadingCols = false
@@ -251,17 +201,15 @@ export default {
         this.rowSearch[key] = ''
       }
       this.page.nowpage = 1
-      this.files = null
-      this.dir = ''
     },
      //分页查询
      getListPage() {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({dir : this.dir}, this.rowSearch)
-      this.get('/file/dir.do', params).then((res) => {
-        this.list = res.data.list
-        this.dir = res.data.dir
+      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+      this.get('/role/findPage.do', params).then((res) => {
+        this.list = res.data.data
+        this.page = res.data.page
         this.loadingList = false
       }).catch(() => {
         this.loadingList = false
@@ -269,36 +217,8 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-
-    },
-    //上一级目录
-    goParent(){
-      console.info("goParent ", this.dir)
-      if(this.dir.endsWith('/'))
-        this.dir = this.dir.substring(0, this.dir.length - 1)
-      var dd = this.dir.split('/')
-      if(dd.length > 1 ){
-        var last = dd[dd.length - 1]
-        if(last.length > 0)
-          this.dir = this.dir.substring(0, this.dir.length - last.length - 1)
-        if(this.dir.length <= 0){
-          this.dir = '/'
-        }
-      }else{
-        this.dir = '/'
-      }
-      this.getListPage()
-
-    },
-    //点击进入子目录或者下载
-    handlerRowClick(row, event,column){
-      console.info("handlerRowClick ", row, event, column)
-      if(row.EXT === 'dir'){
-        this.dir = row.PATH
-        this.getListPage()
-      }else{
-        // this.download(row)
-      }
+      this.list.push(Object.assign({}, this.rowSearch))
+      this.handlerChange(this.list[this.list.length - 1])
     },
     //修改单行 展示弹框
     handlerChange(val) {
@@ -319,10 +239,9 @@ export default {
       console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
       this.loadingSave = true
 
-      var params = {oldPath: this.rowUpdateFrom.PATH, newPath: this.rowUpdate.PATH}
       Object.assign(this.rowUpdateFrom, this.rowUpdate)
-
-      this.get('/file/update.do', params).then((res) => {
+      var params = this.rowUpdateFrom
+      this.post('/role/save.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
@@ -333,9 +252,8 @@ export default {
     handlerDelete(val, index) {
       console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
-
-      const params = {paths: val[this.colKey]}
-      this.get('/file/deleteByPath.do', params).then((res) => {
+      const params = {ids: val[this.colKey]}
+      this.get('/role/delet.do', params).then((res) => {
         for(let j = 0; j < this.list.length; j++) {
           if(this.list[j] == val){
             this.list.splice(j, 1);
@@ -357,8 +275,8 @@ export default {
           ids += this.rowSelect[i][this.colKey] + ","
         }
         ids = ids.substring(0, ids.length - 1)
-        const params = {paths: ids}
-        this.get('/file/deleteByPath.do', params).then((res) => {
+        const params = {ids: ids}
+        this.get('/role/delet.do', params).then((res) => {
           this.loadingList = false
           for(let i = 0; i < this.rowSelect.length; i++){
             for(let j = 0; j < this.list.length; j++) {
@@ -404,59 +322,13 @@ export default {
     },
     //行高亮各种颜色
     tableRowClassName({row, rowIndex}) {
-      return 'row-table-' + row['EXT'];
+      if (rowIndex === 1) {
+        return 'warning-row';
+      } else if (rowIndex === 3) {
+        return 'success-row';
+      }
+      return '';
     },
-
-    handlerOnRemove(file, fileList) {
-      console.log("handlerOnRemove", file, fileList);
-    },
-    handlerOnPreview(file) {
-      console.log("handlerOnPreview", file);
-    },
-    handlerOnExceed(files, fileList) {
-      this.$message.warning(`当前限制选择10个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-    },
-    handlerBeforeRemove(file, fileList) {
-      console.log("handlerBeforeRemove ", file, fileList )
-
-      return this.$confirm(`确定移除 ${ file.name }？`);
-    },
-    handlerOnSuccess(res, file, fileList) {
-      console.log("handlerOnSuccess ", res, file, fileList )
-
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-    handlerOnError(res, file, fileList) {
-      console.log("handlerOnError ", res, file, fileList )
-
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-    handlerBeforeUpload(file) {
-      console.log("handlerBeforeUpload ", file )
-      // const isJPG = file.type === 'image/jpeg';
-      // const isLt2M = file.size / 1024 / 1024 < 2;
-      //
-      // if (!isJPG) {
-      //   this.$message.error('上传头像图片只能是 JPG 格式!');
-      // }
-      // if (!isLt2M) {
-      //   this.$message.error('上传头像图片大小不能超过 2MB!');
-      // }
-      // return isJPG && isLt2M;
-      return true
-    },
-    handlerOnChange(file, fileList) {
-      console.log("handlerOnChange ", file, fileList)
-      // this.fileList3 = fileList.slice(-3);
-    },
-    download(row){
-      this.$message.success('下载文件' + row.NAME);
-      let a = document.createElement('a')
-      a.href ="/file/download.do?path=" + row.PATH
-      a.click();
-      // window.open("/file/download.do?path=" + row.PATH,"height=100,width=100,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no")
-    },
-
   }
 }
 </script>

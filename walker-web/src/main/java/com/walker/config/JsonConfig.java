@@ -31,7 +31,7 @@ public class JsonConfig {
     https://segmentfault.com/a/1190000015634321?utm_source=tag-newest
         Json数据的时候经常有首字母是大写
         根据get方法获取字段名异常
-        DEPT_CODE       dEPT_CODE
+        DEPT_ID       DEPT_ID
         S_MTIME         s_MTIME
         lombok注解 get方法异常
 */

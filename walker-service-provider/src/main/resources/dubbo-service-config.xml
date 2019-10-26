@@ -62,9 +62,15 @@
     <bean id="studentService" class="com.walker.service.impl.StudentServiceImpl" />
     <dubbo:service ref="studentService" interface="com.walker.service.StudentService" timeout="30000" version="1.0" />
 
-<!--    用户user-->
+    <!--    用户user-->
     <bean id="userService" class="com.walker.service.impl.UserServiceImpl" />
     <dubbo:service ref="userService" interface="com.walker.service.UserService" timeout="30000" version="1.0" />
+    <!--    部门dept-->
+    <bean id="deptService" class="com.walker.service.impl.DeptServiceImpl" />
+    <dubbo:service ref="deptService" interface="com.walker.service.DeptService" timeout="30000" version="1.0" />
+    <!--    角色role-->
+    <bean id="roleService" class="com.walker.service.impl.RoleServiceImpl" />
+    <dubbo:service ref="roleService" interface="com.walker.service.RoleService" timeout="30000" version="1.0" />
 
 
 

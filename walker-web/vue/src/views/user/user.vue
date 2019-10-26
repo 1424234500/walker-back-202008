@@ -66,13 +66,14 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="140px"
+          min-width="180px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="success" icon="el-icon-download" circle @click.stop="download(scope.row)"></el-button>
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+            <el-button size="mini" type="primary" icon="el-icon-tickets" circle @click.stop="handlerShowDept(scope.row)"></el-button>
+            <el-button size="mini" type="primary" icon="el-icon-menu" circle @click.stop="handlerShowRole(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
-          </template>success
+          </template>
         </el-table-column>
       </el-table>
 
@@ -126,6 +127,119 @@
           </el-form>
         </template>
       </el-dialog>
+
+
+      <el-dialog
+        title="所在部门"
+        :visible.sync="loadingUpdateDept"
+        width="86%"
+      >
+        <template>
+          <el-form
+            v-loading="loadingDept"
+            ref="form"
+            :model="rowDept"
+            label-width="100px"
+          >
+            <el-form-item
+              v-for="(value, key) in colMapDept"
+              :key="key"
+              disable
+              :property="key"
+              :label="(value=='' ? key : value)"
+            >
+              <el-input disabled v-model="rowDept[key]" type="text" />
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-dialog>
+
+      <el-dialog
+        title="拥有的角色"
+        :visible.sync="loadingUpdateRole"
+        width="86%"
+      >
+        <template>
+          用户角色:
+          <el-table
+            v-loading="loadingRole"
+            :data="listRole"
+            :row-class-name="tableRowClassName"
+            ref="multipleTable"
+            element-loading-text="Loading"
+            border
+            fit
+            stripe
+            show-summary
+            sum-text="S"
+            highlight-current-row
+            max-height="86%"
+          >
+            <!--      多选框-->
+            <el-table-column fixed="left" aligin="center" type="selection" min-width="12px"> </el-table-column>
+            <!--      序号-->
+            <el-table-column fixed="left" align="center" type="index" min-width="12px"></el-table-column>
+
+            <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
+            <el-table-column
+              v-for="(value, key) in colMapRole"
+              :key="key"
+              :property="key"
+              :label="(value=='' ? key : value)"
+              sortable
+              show-overflow-tooltip
+              min-width="100px"
+            >
+              <template slot-scope="scope">
+                {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-button
+            class="btn btn-danger"
+            @click="handlerSaveAllRoles()"
+            style="float:left;margin:4px 0px 0 2px;"
+          >保存新增的和删除的角色</el-button>
+
+          部门角色：
+          <el-table
+            v-loading="loadingRole"
+            :data="listRoleDept"
+            :row-class-name="tableRowClassName"
+            ref="multipleTable"
+            element-loading-text="Loading"
+            border
+            fit
+            stripe
+            show-summary
+            sum-text="S"
+            highlight-current-row
+            max-height="86%"
+          >
+            <!--      多选框-->
+            <el-table-column fixed="left" aligin="center" type="selection" min-width="12px"> </el-table-column>
+            <!--      序号-->
+            <el-table-column fixed="left" align="center" type="index" min-width="12px"></el-table-column>
+            <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
+            <el-table-column
+              v-for="(value, key) in colMapRole"
+              :key="key"
+              :property="key"
+              :label="(value=='' ? key : value)"
+              sortable
+              show-overflow-tooltip
+              min-width="100px"
+            >
+              <template slot-scope="scope">
+                {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
+              </template>
+            </el-table-column>
+          </el-table>
+
+        </template>
+      </el-dialog>
+
+
     </div>
 
 
@@ -172,8 +286,26 @@ export default {
       },
       loadingList: true,
       loadingCols: true,
+
       loadingSave: true,
       loadingUpdate: false,
+
+      loadingDept: false,
+      loadingUpdateDept: false,
+      rowDept: null,
+      colMapDept: {},
+      colKeyDept: {},
+
+      loadingRole: false,
+      loadingUpdateRole: false,
+      colMapDept: {},
+      colKeyDept: {},
+      listRole: [],
+      listRoleDept: [],
+      rowSelectRole: [],
+
+
+
     }
   },
   created() {
@@ -185,7 +317,7 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.get('/common/getColsMap.do', {tableName: 'W_FILE_INDEX'}).then((res) => {
+      this.get('/common/getColsMap.do', {tableName: 'W_USER'}).then((res) => {
         this.colMap = res.data.colMap
         this.colKey = res.data.colKey
         this.clearRowSearch()
@@ -208,7 +340,7 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      this.get('/file/findPage.do', params).then((res) => {
+      this.get('/user/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
         this.loadingList = false
@@ -224,15 +356,67 @@ export default {
     //修改单行 展示弹框
     handlerChange(val) {
       this.loadingUpdate = ! this.loadingUpdate
-      this.loadingSave = false
+      this.loadingSave = true
       console.info("handlerChange " + JSON.stringify(val))
       this.rowUpdateFrom = val;
       this.rowUpdate = JSON.parse(JSON.stringify(val))
       this.loadingSave = false
     },
-    //取消修改  不做操作
+    //展示 只读 关联表属性 部门  一个用户只属于一个部门 使用修改弹窗
+    handlerShowDept(val) {
+      this.loadingUpdateDept = ! this.loadingUpdateDept
+      this.loadingDept = true
+      this.rowDept = {}
+      this.get('/common/getColsMap.do', {tableName: 'W_DEPT'}).then((res) => {
+        this.colMapDept = res.data.colMap
+        this.colKeyDept = res.data.colKey
+        this.get('/dept/get.do', {"id": val['DEPT_ID']}).then((res) => {
+          this.rowDept = res.data
+          this.loadingDept = false
+        }).catch(() => {
+          this.loadingDept = false
+        })
+
+      }).catch(() => {
+        this.loadingDept = false
+      })
+
+
+
+    },
+    //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
+    handlerShowRole(val) {
+      this.loadingUpdateRole = ! this.loadingUpdateRole
+      this.loadingRole = true
+      this.listRole = []
+      this.get('/common/getColsMap.do', {tableName: 'W_ROLE'}).then((res) => {
+        this.colMapRole = res.data.colMap
+        this.colKeyRole = res.data.colKey
+        this.get('/role/getRoles.do', val).then((res) => {
+          this.listRole = res.data.list
+          this.listRoleDept = res.data.listDept
+
+          this.loadingRole = false
+        }).catch(() => {
+          this.loadingRole = false
+        })
+      }).catch(() => {
+        this.loadingRole = false
+      })
+
+    },
+    //用户角色 批量保存 删除
+    handlerSaveAllRoles(){
+
+
+    },
+    //多选改变role
+    handlerSelectionChange(val) {
+      console.info("handlerSelectionChangeRole" + JSON.stringify(val))
+      this.rowSelectRole = val
+    },
+      //取消修改  不做操作
     handlerCancel(){
-      console.info("handlerCancel "+ JSON.stringify(this.rowUpdate))
       this.loadingUpdate = ! this.loadingUpdate
     },
     //保存修改  保存至表格 和 数据库 ? 还是批量改完后一次存储 先临时选中修改过的
@@ -242,7 +426,7 @@ export default {
 
       Object.assign(this.rowUpdateFrom, this.rowUpdate)
       var params = this.rowUpdateFrom
-      this.post('/file/save.do', params).then((res) => {
+      this.post('/user/save.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
@@ -251,10 +435,9 @@ export default {
     },
     //删除单行
     handlerDelete(val, index) {
-      console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
       const params = {ids: val[this.colKey]}
-      this.get('/file/deleteByIds.do', params).then((res) => {
+      this.get('/user/delet.do', params).then((res) => {
         for(let j = 0; j < this.list.length; j++) {
           if(this.list[j] == val){
             this.list.splice(j, 1);
@@ -268,7 +451,6 @@ export default {
     //删除选中多行
     handlerDeleteAll(){
       // const val = this.$refs.multipleTable.data
-      console.info("handlerDeleteAll " + " " + JSON.stringify(this.rowSelect))
       if(this.rowSelect.length > 0){
         this.loadingList = true
         let ids = ""
@@ -277,7 +459,7 @@ export default {
         }
         ids = ids.substring(0, ids.length - 1)
         const params = {ids: ids}
-        this.get('/file/deleteByIds.do', params).then((res) => {
+        this.get('/user/delet.do', params).then((res) => {
           this.loadingList = false
           for(let i = 0; i < this.rowSelect.length; i++){
             for(let j = 0; j < this.list.length; j++) {
@@ -295,7 +477,6 @@ export default {
     //多选改变
     handlerSelectionChange(val) {
       console.info("handlerSelectionChange" + JSON.stringify(val))
-      console.info(val)
       this.rowSelect = val
       // this.multipleSelection = val;
       // this.$refs.multipleTable.toggleAllSelection()
@@ -312,7 +493,6 @@ export default {
     //翻页
     handlerCurrentChange(val) {
       console.info("handlerCurrentChange")
-      console.info(val)
       this.page.nowpage = val
       this.getListPage()
     },
@@ -329,13 +509,6 @@ export default {
         return 'success-row';
       }
       return '';
-    },
-    download(row){
-      this.$message.success('下载文件' + row.NAME);
-      let a = document.createElement('a')
-      a.href ="/file/download.do?key=" + row.ID
-      a.click();
-      // window.open("/file/download.do?path=" + row.PATH,"height=100,width=100,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no")
     },
   }
 }

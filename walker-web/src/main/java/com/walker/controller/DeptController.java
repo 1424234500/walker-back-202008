@@ -4,12 +4,9 @@ package com.walker.controller;
 import com.walker.Response;
 import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
-import com.walker.mode.Role;
-import com.walker.mode.User;
-import com.walker.mode.User;
+import com.walker.mode.Dept;
 import com.walker.service.BaseService;
-import com.walker.service.UserService;
-import com.walker.service.UserService;
+import com.walker.service.DeptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -17,29 +14,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /*
-测试 jap userService
+测试 jap deptService
 
  */
-@Api(value = "service层 USER 实体类对象 ")
+@Api(value = "service层 DEPT 实体类对象 ")
 @Controller
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/dept")
+public class DeptController {
     private Logger log = LoggerFactory.getLogger(getClass());
     @Autowired
     @Qualifier("baseService")
     private BaseService baseService;
 
     @Autowired
-    @Qualifier("userService")
-    private UserService userService;
+    @Qualifier("deptService")
+    private DeptService deptService;
 
     @ApiOperation(value = "post 保存 更新/添加 ", notes = "")
     @ResponseBody
@@ -50,30 +48,21 @@ public class UserController {
             @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "0") String sFlag,
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
-            @RequestParam(value = "SEX", required = false, defaultValue = "") String sex,
-            @RequestParam(value = "NICK_NAME", required = false, defaultValue = "") String nickName,
-            @RequestParam(value = "SIGN", required = false, defaultValue = "") String sign,
-            @RequestParam(value = "EMAIL", required = false, defaultValue = "") String email,
-            @RequestParam(value = "MOBILE", required = false, defaultValue = "") String mobile,
-            @RequestParam(value = "DEPT_ID", required = false, defaultValue = "") String deptCode,
-            @RequestParam(value = "PWD", required = false, defaultValue = "") String pwd
-    ) {
-        User user = new User();
-        user.setID(id);
-        user.setS_MTIME(TimeUtil.getTimeYmdHms());
-        user.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
-        user.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
-        user.setNAME(name);
-        user.setSEX(sex);
-        user.setNICK_NAME(nickName);
-        user.setSIGN(sign);
-        user.setEMAIL(email);
-        user.setMOBILE(mobile);
-        user.setDEPT_ID(deptCode);
-        user.setPWD(pwd);
+            @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid,
+            @RequestParam(value = "PATH", required = false, defaultValue = "") String path
 
-        String info = "post user:" +user.toString();
-        List<User> res = userService.saveAll(Arrays.asList(user));
+            ) {
+        Dept dept = new Dept();
+        dept.setID(id);
+        dept.setS_MTIME(TimeUtil.getTimeYmdHms());
+        dept.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
+        dept.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
+        dept.setNAME(name);
+        dept.setP_ID(pid);
+        dept.setPATH(path);
+
+        String info = "post dept:" +dept.toString();
+        List<Dept> res = deptService.saveAll(Arrays.asList(dept));
         return Response.makeTrue(info, res);
     }
 
@@ -84,7 +73,7 @@ public class UserController {
             @RequestParam(value = "ids", required = false, defaultValue = "") String ids
     ) {
         String info = "delete ids:" + ids;
-        Object res = userService.deleteAll(Arrays.asList(ids.split(",")));
+        Object res = deptService.deleteAll(Arrays.asList(ids.split(",")));
         return Response.makeTrue(info, res);
     }
 
@@ -95,7 +84,7 @@ public class UserController {
             @RequestParam(value = "id", required = true) String id
     ) {
         String info = "get id:" + id;
-        User model = userService.get(new User().setID(id));
+        Dept model = deptService.get(new Dept().setID(id));
         return Response.makeTrue(info, model);
     }
 
@@ -107,38 +96,30 @@ public class UserController {
             @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
             @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
+
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
-            @RequestParam(value = "SEX", required = false, defaultValue = "") String sex,
-            @RequestParam(value = "NICK_NAME", required = false, defaultValue = "") String nickName,
-            @RequestParam(value = "SIGN", required = false, defaultValue = "") String sign,
-            @RequestParam(value = "EMAIL", required = false, defaultValue = "") String email,
-            @RequestParam(value = "MOBILE", required = false, defaultValue = "") String mobile,
-            @RequestParam(value = "DEPT_ID", required = false, defaultValue = "") String deptCode,
-            @RequestParam(value = "PWD", required = false, defaultValue = "") String pwd,
+
+            @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid,
+            @RequestParam(value = "PATH", required = false, defaultValue = "") String path,
 
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
             @RequestParam(value = "order", required = false, defaultValue = "") String order
     ) {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
-        User user = new User();
-        user.setID(id);
-        user.setS_MTIME(sMtime);
-        user.setS_ATIME(sAtime);
-        user.setS_FLAG(sFlag);
-        user.setNAME(name);
-        user.setSEX(sex);
-        user.setNICK_NAME(nickName);
-        user.setSIGN(sign);
-        user.setEMAIL(email);
-        user.setMOBILE(mobile);
-        user.setDEPT_ID(deptCode);
-        user.setPWD(pwd);
+        Dept dept = new Dept();
+        dept.setID(id);
+        dept.setS_MTIME(sMtime);
+        dept.setS_ATIME(sAtime);
+        dept.setS_FLAG(sFlag);
+        dept.setNAME(name);
+        dept.setP_ID(pid);
+        dept.setPATH(path);
 
-        String info = "get   user:" + user;
+        String info = "get   dept:" + dept;
 
-        List<User> list = userService.finds(user, page);
-        page.setNum(userService.count(user));
+        List<Dept> list = deptService.finds(dept, page);
+        page.setNum(deptService.count(dept));
         return Response.makePage(info, page, list);
     }
 

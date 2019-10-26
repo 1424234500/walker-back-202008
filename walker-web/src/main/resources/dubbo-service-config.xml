@@ -57,11 +57,16 @@
 
     <!--    用户user-->
     <dubbo:reference id="userService" interface="com.walker.service.UserService" timeout="30000" version="1.0" />
+    <!--    部门dept-->
+    <dubbo:reference id="deptService" interface="com.walker.service.DeptService" timeout="30000" version="1.0" />
+    <!--    角色role-->
+    <dubbo:reference id="roleService" interface="com.walker.service.RoleService" timeout="30000" version="1.0" />
 
 
 
 
-    <!--    消息表服务 手动分表-->
+
+<!--    消息表服务 手动分表-->
     <dubbo:reference id="messageService" interface="com.walker.service.MessageService" timeout="30000" version="1.0" />
 <!--    消息表服务 自动分表-->
     <dubbo:reference id="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="30000" version="1.0" />

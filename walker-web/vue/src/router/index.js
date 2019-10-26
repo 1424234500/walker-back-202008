@@ -60,25 +60,19 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/db/Student',
     name: 'Db',
-    meta: { title: 'Tables', icon: 'example' },
+    meta: { title: 'Tables', icon: 'table' },
     children: [
       {
         path: 'student',
         name: 'Student',
         component: () => import('@/views/db/student'),
-        meta: { title: 'Student', icon: 'table' }
+        meta: { title: 'Student', icon: 'people' }
       },
       {
         path: 'teacher',
         name: 'Teacher',
         component: () => import('@/views/db/teacher'),
-        meta: { title: 'Teacher', icon: 'table' }
-      },
-      {
-        path: 'user',
-        name: 'User',
-        component: () => import('@/views/db/user'),
-        meta: { title: 'User', icon: 'table' }
+        meta: { title: 'Teacher', icon: 'user' }
       },
       {
         path: 'table',
@@ -90,24 +84,53 @@ export const constantRoutes = [
   },
 
 
+
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/user',
+    name: 'User',
+    meta: { title: 'User', icon: 'user' },
+    children: [
+      {
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/user/user'),
+        meta: { title: 'User', icon: 'people' }
+      },
+      {
+        path: 'dept',
+        name: 'Dept',
+        component: () => import('@/views/user/dept'),
+        meta: {title: 'Dept', icon: 'list'}
+      },
+      {
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/user/role'),
+        meta: {title: 'Role', icon: 'theme'}
+      },
+    ]
+  },
+
   {
     path: '/file',
     component: Layout,
     redirect: '/file/file',
     name: 'File',
-    meta: { title: 'File', icon: 'example' },
+    meta: { title: 'File', icon: 'documentation' },
     children: [
       {
         path: 'fileindex',
         name: 'Fileindex',
         component: () => import('@/views/file/fileindex'),
-        meta: { title: 'Fileindex', icon: 'table' }
+        meta: { title: 'Fileindex', icon: 'tree-table' }
       },
       {
         path: 'file',
         name: 'File',
         component: () => import('@/views/file/file'),
-        meta: {title: 'File', icon: 'table'}
+        meta: {title: 'File', icon: 'tab'}
       },
       {
         path: 'tree',
@@ -122,13 +145,13 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/echarts/controller',
     name: 'Echarts',
-    meta: { title: 'Echarts', icon: 'example' },
+    meta: { title: 'Echarts', icon: 'chart' },
     children: [
       {
         path: 'controller',
         name: 'Controller',
         component: () => import('@/views/echarts/controller'),
-        meta: { title: 'Controller', icon: 'table' }
+        meta: { title: 'Controller', icon: 'tree-table' }
       },
       {
         path: 'socket',

@@ -36,4 +36,28 @@ public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecific
     Integer selfDeleteAll(List<String> ids);
 
 
+    /**
+     * 查询角色
+     * @param id 传入user id则查user的role 传入dept id则查dept的role
+     * @param sFlag
+     * @return
+     */
+//    @Query("select r.ID,r.LEVEL,r.NAME,r.NUM,r.s_ATIME,r.s_MTIME,nvl(ru.S_FLAG,'0') S_FLAG from Role r " +
+//            "left join RoleUser ru " +
+//            "on ru.USER_ID=?1 and r.ID=ru.ROLE_ID " +
+//            "where S_FLAG like concat('%', ?2, '%') ")
+    @Query(value = "select * from ( " +
+            "select r.ID,r.LEVEL,r.NAME,r.NUM,r.s_ATIME,r.s_MTIME,ifnull(ru.S_FLAG,'0') S_FLAG " +
+            "from W_ROLE r " +
+            "left join W_ROLE_USER ru " +
+            "on ru.USER_ID=?1 and r.ID=ru.ROLE_ID " +
+            " ) t " +
+            "where S_FLAG like concat('%', ?2, '%') ", nativeQuery = true)
+    List<Role> getRoles(String id, String sFlag);
+
+//
+//    @Query(value = "select t.* from W_TEACHER t where t.NAME like CONCAT('%', ?1, '%')",
+//            countQuery = "select count(t.id) from W_TEACHER t where t.NAME like CONCAT('%', ?1, '%')",
+//            nativeQuery = true)
+
 }

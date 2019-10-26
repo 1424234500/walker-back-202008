@@ -39,7 +39,7 @@ public class UserServiceImplTest extends ApplicationProviderTests {
                     .setID("id_" + seri)
                     .setNAME("name_" + seri)
                     .setPWD("pwd_" + seri)
-                    .setDEPT_CODE("" + seri)
+                    .setDEPT_ID("" + seri)
                     .setEMAIL("" + seri + "@walker.com")
                     .setMOBILE("18408249" + seri)
                     .setNICK_NAME("nick_name_" + seri)
