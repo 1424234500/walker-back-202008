@@ -110,18 +110,18 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
     Teacher selfFindOneCacheJPQL(String id);
 
     /**
-     * JPQL查询 缓存
+     * JPQL删除
+     */
+    @Query("delete from Teacher t where t.ID=?1 ")
+    Integer selfDeleteJPQL(String id);
+
+    /**
+     * JPQL查询 缓存    in语句 如果缓存 那么  缓存共用导致 查询异常！！！！！！！！！！
      * @Cacheable 缓存方法操作
      */
     @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
     @Query("select t from Teacher t where t.ID in (?1) ")
     List<Teacher> selfFindListCacheJPQL(List<String> ids);
-
-    /**
-     * JPQL删除
-     */
-    @Query("delete from Teacher t where t.ID=?1 ")
-    Integer selfDeleteJPQL(String id);
     /**
     * JPQL查询 删除
      * @Cacheable 缓存方法操作

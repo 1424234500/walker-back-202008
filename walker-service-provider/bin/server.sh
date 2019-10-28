@@ -59,7 +59,6 @@ function start(){
         echo ${tcmd}
         eval ${tcmd}
         pid
-        log
     fi
 }
 function test(){

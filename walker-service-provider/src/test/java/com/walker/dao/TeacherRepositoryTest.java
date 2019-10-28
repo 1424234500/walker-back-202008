@@ -32,6 +32,15 @@ public class TeacherRepositoryTest extends ApplicationProviderTests {
         teacherRepository.selfDeleteAll(Arrays.asList("1,2,3".split(",")));
     }
 
+    @Test
+    public void findALl(){
+        out(teacherRepository.selfFindListCacheJPQL(Arrays.asList("1,2,3".split(","))));
+        out(teacherRepository.selfFindListCacheJPQL(Arrays.asList("1,2".split(","))));
+        out(teacherRepository.selfFindListCacheJPQL(Arrays.asList("1".split(","))));
+//        out(teacherRepository.selfFindListCacheJPQL(Arrays.asList()));
+
+    }
+
     public void makeData(){
         teacherRepository.selfDeleteAll(Arrays.asList("1,2,3".split(",")));
         teacherRepository.save(new Teacher().setID("1").setNAME("111"));
