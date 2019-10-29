@@ -1,6 +1,7 @@
 package com.walker.dao;
 
 import com.walker.mode.Teacher;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -82,6 +83,82 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
 
 
     /**
+     * JPQL更新 占位符 表对应的 类名 属性名
+     * @CachePut 每次都执行方法 删除缓存
+     */
+    @Transactional
+    @Modifying
+    @Query(value = "insert into W_TEACHER(ID,NAME) values(?1,?2)", nativeQuery = true)
+    Integer saveWithCache(String id, String name);
+    /**
+     * JPQL删除 并删除缓存
+     */
+    @Transactional
+    @Modifying
+    @Query("delete from Teacher t where t.ID=?1 ")
+    @CacheEvict(keyGenerator="keyGenerator",value="cache-teacher")
+    Integer deleteJPQLWithCache(String id);
+    /**
+     * JPQL查询 缓存
+     * @Cacheable 缓存方法操作
+     */
+    @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
+    @Query("select t from Teacher t where t.ID=?1")
+    Teacher findOneJPQLWithCache(String id);
+
+
+
+    /**
+     * 保存缓存 默认key生成 覆盖父类save? 复用sql
+     */
+//    @CachePut(key="#root.targetClass.name + #p0",value="cache-teacher-sk")
+//    "cache-teacher-sk::org.springframework.data.jpa.repository.support.SimpleJpaRepositoryTeacher{ID='4', S_MTIME='null', S_ATIME='2019-10-29 10:02:52', S_FLAG='null', NAME='name4', SEX='null', LEVEL='null'}"
+    @CachePut(key="#p0.ID",value="cache-teacher-sk")
+//    "cache-teacher-sk::org.springframework.data.jpa.repository.support.SimpleJpaRepositoryTeacher{ID='4', S_MTIME='null', S_ATIME='2019-10-29 10:02:52', S_FLAG='null', NAME='name4', SEX='null', LEVEL='null'}"
+    Teacher save(Teacher teacher);
+    /**
+     * 删除缓存 默认key生成
+     */
+    @Transactional
+    @Modifying
+    @Query("delete from Teacher t where t.ID=?1 ")
+    @CacheEvict(key="#p0",value="cache-teacher-sk")
+//    @CacheEvict(key="#root.targetClass.name + #p0.ID",value="cache-teacher-sk")
+    Integer deleteJPQLWithCacheSimpleKey(String id);
+    /**
+     * JPQL查询 缓存 默认key生成
+     */
+    @Cacheable(key="#p0",value="cache-teacher-sk")
+//    @Cacheable(key="#root.targetClass.name + #p0.ID",value="cache-teacher-sk")
+    @Query("select t from Teacher t where t.ID=?1")
+    Teacher findOneJPQLWithCacheSimpleKey(String id);
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * JPQL查询 缓存?    in语句 如果缓存 那么  key? 缓存共用导致 查询异常！！！！！！！！！！
+     */
+    @Query("select t from Teacher t where t.ID in (?1) ")
+    List<Teacher> selfFindListCacheJPQL(List<String> ids);
+
+    /**
+     * JPQL查询 删除
+     */
+    @Transactional
+    @Modifying
+    @Query("delete from Teacher t where t.ID in (?1) ")
+    Integer selfDeleteAll(List<String> ids);
+
+    /**
      *  nativeQuery sql 原生sql方式 占位符 表名 字段名
      */
     @Transactional
@@ -89,54 +166,10 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
     @Query(value = "UPDATE W_TEACHER t SET t.NAME =?1 WHERE t.ID=?2", nativeQuery = true)   //占位符传值形式
     int selfUpdateSql(String name, String id);
 
-
-    /**
-     * JPQL更新 占位符 表对应的 类名 属性名
-     * @CachePut 每次都执行方法 删除缓存
-     */
-    @Transactional
-    @Modifying
-//    @CachePut(value = "cache-key", key="#root.targetClass.name + #p0")
-    @CachePut(keyGenerator="keyGenerator",value="cache-teacher")
-    @Query(value = "update Teacher t set t.NAME =?1 where t.ID=?2")   //占位符传值形式
-    int selfUpdateCacheJPQL(String name, String id);
-
-    /**
-     * JPQL查询 缓存
-     * @Cacheable 缓存方法操作
-     */
-    @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
-    @Query("select t from Teacher t where t.ID=?1")
-    Teacher selfFindOneCacheJPQL(String id);
-
-    /**
-     * JPQL删除
-     */
-    @Query("delete from Teacher t where t.ID=?1 ")
-    Integer selfDeleteJPQL(String id);
-
-    /**
-     * JPQL查询 缓存    in语句 如果缓存 那么  缓存共用导致 查询异常！！！！！！！！！！
-     * @Cacheable 缓存方法操作
-     */
-    @Cacheable(keyGenerator="keyGenerator",value="cache-teacher")
-    @Query("select t from Teacher t where t.ID in (?1) ")
-    List<Teacher> selfFindListCacheJPQL(List<String> ids);
-    /**
-    * JPQL查询 删除
-     * @Cacheable 缓存方法操作
-     */
-    @Transactional
-    @Modifying
-    @CachePut(keyGenerator="keyGenerator",value="cache-teacher")
-    @Query("delete from Teacher t where t.ID in (?1) ")
-    Integer selfDeleteAll(List<String> ids);
-
-
     /**
      * JPQL  别名
      */
-    @Query("from Teacher t where t.NAME=:name")
+    @Query("select t from Teacher t where t.NAME=:name")
     Teacher selfFindByName(@Param("name") String name);
 
     /**

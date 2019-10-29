@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,21 +58,32 @@ public class CommonController {
         res.put("colKey", colMap.keySet().toArray()[0]);
         return Response.makeTrue(tableName, res);
     }
+
+    /**
+     * 使用redis sb 缓存
+     * @param dbOrUser
+     * @param tableName
+     * @return
+     */
+    @Cacheable(keyGenerator="keyGenerator",value="cache-getColsMapCache")
     public Map<String, String> getColsMapCache(String dbOrUser, String tableName){
-        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsMapByTableName:" + dbOrUser + ":" + tableName, new Cache.Function() {
-            @Override
-            public Map<String, String> cache() {
-                return jdbcDao.getColumnsMapByTableName(dbOrUser, tableName);
-            }
-        });
+        return jdbcDao.getColumnsMapByTableName(dbOrUser, tableName);
+//        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsMapByTableName:" + dbOrUser + ":" + tableName, new Cache.Function() {
+//            @Override
+//            public Map<String, String> cache() {
+//                return jdbcDao.getColumnsMapByTableName(dbOrUser, tableName);
+//            }
+//        });
     }
+    @Cacheable(keyGenerator="keyGenerator",value="cache-getColumnsByTableName")
     public List<String> getColsCache(String dbOrUser, String tableName){
-        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsByTableName:" + dbOrUser + ":" + tableName, new Cache.Function() {
-            @Override
-            public List<String> cache() {
-                return jdbcDao.getColumnsByTableName(dbOrUser, tableName);
-            }
-        });
+        return jdbcDao.getColumnsByTableName(dbOrUser, tableName);
+//        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsByTableName:" + dbOrUser + ":" + tableName, new Cache.Function() {
+//            @Override
+//            public List<String> cache() {
+//                return jdbcDao.getColumnsByTableName(dbOrUser, tableName);
+//            }
+//        });
     }
 
     @ApiOperation(value = "获取表列表", notes = "")

@@ -31,6 +31,68 @@ public class RepositoryController {
     private TeacherRepository teacherRepository;
 
 
+
+    @ApiOperation(value = "保存 save cache-teacher-sk  ")
+    @ResponseBody
+    @RequestMapping(value = "/save.do", method = RequestMethod.POST, produces = "application/json")
+    public Response save(
+            @RequestParam(value = "id", required = false) String id,
+            @RequestParam(value = "name", required = true, defaultValue = "default") String name,
+            @RequestParam(value = "time", required = false, defaultValue = "default") String time
+    ) {
+        Teacher model = teacherRepository.save(new Teacher().setID(id).setNAME(name));
+        return Response.makeTrue("", model);
+    }
+    @ApiOperation(value = "删除 deleteJPQLWithCacheSimpleKey cache-teacher-sk")
+    @ResponseBody
+    @RequestMapping(value = "/deleteJPQLWithCacheSimpleKey.do", method = RequestMethod.POST, produces = "application/json")
+    public Response deleteJPQLWithCacheSimpleKey(
+            @RequestParam(value = "id", required = true) String id
+    ) {
+        return Response.makeTrue("", teacherRepository.deleteJPQLWithCacheSimpleKey(id));
+    }
+    @ApiOperation(value = "查找一个 findOneJPQLWithCacheSimpleKey cache-teacher-sk")
+    @ResponseBody
+    @RequestMapping(value = "/findOneJPQLWithCacheSimpleKey.do", method = RequestMethod.POST, produces = "application/json")
+    public Response findOneJPQLWithCacheSimpleKey(
+            @RequestParam(value = "id", required = true) String id
+    ) {
+        return Response.makeTrue("", teacherRepository.findOneJPQLWithCacheSimpleKey(id));
+    }
+
+
+
+    @ApiOperation(value = "保存 saveWithCache cache-teacher")
+    @ResponseBody
+    @RequestMapping(value = "/saveWithCache.do", method = RequestMethod.POST, produces = "application/json")
+    public Response selfUpdateJPQL(
+            @RequestParam(value = "id", required = true) String id,
+            @RequestParam(value = "name", required = false, defaultValue = "default") String name
+    ) {
+        return Response.makeTrue("", teacherRepository.saveWithCache(id, name));
+    }
+
+    @ApiOperation(value = "删除 deleteJPQLWithCache cache-teacher")
+    @ResponseBody
+    @RequestMapping(value = "/deleteJPQLWithCache.do", method = RequestMethod.POST, produces = "application/json")
+    public Response deleteJPQLWithCache(
+            @RequestParam(value = "id", required = true) String id
+    ) {
+        return Response.makeTrue("", teacherRepository.deleteJPQLWithCache(id));
+    }
+
+    @ApiOperation(value = "查找一个 findOneJPQLWithCache cache-teacher")
+    @ResponseBody
+    @RequestMapping(value = "/findOneJPQLWithCache.do", method = RequestMethod.POST, produces = "application/json")
+    public Response findOneJPQLWithCache(
+            @RequestParam(value = "id", required = true) String id
+    ) {
+        return Response.makeTrue("", teacherRepository.findOneJPQLWithCache(id));
+    }
+
+
+
+
     @ApiOperation(value = "自定义更新 selfUpdateSql")
     @ResponseBody
     @RequestMapping(value = "/selfUpdateSql.do", method = RequestMethod.POST, produces = "application/json")
@@ -41,24 +103,6 @@ public class RepositoryController {
         return Response.makeTrue("", teacherRepository.selfUpdateSql(name, id));
     }
 
-    @ApiOperation(value = "自定义更新 selfUpdateCacheJPQL")
-    @ResponseBody
-    @RequestMapping(value = "/selfUpdateJPQL.do", method = RequestMethod.POST, produces = "application/json")
-    public Response selfUpdateJPQL(
-            @RequestParam(value = "id", required = true) String id,
-            @RequestParam(value = "name", required = false, defaultValue = "default") String name
-    ) {
-        return Response.makeTrue("", teacherRepository.selfUpdateCacheJPQL(name, id));
-    }
-
-    @ApiOperation(value = "自定义删除 selfDeleteJPQL")
-    @ResponseBody
-    @RequestMapping(value = "/selfDeleteJPQL.do", method = RequestMethod.POST, produces = "application/json")
-    public Response selfDeleteJPQL(
-            @RequestParam(value = "id", required = true) String id
-    ) {
-        return Response.makeTrue("", teacherRepository.selfDeleteJPQL(id));
-    }
 
     @ApiOperation(value = "自定义查询 selfFindByName")
     @ResponseBody
@@ -146,17 +190,6 @@ public class RepositoryController {
         } else {
             return Response.makeTrue("", res);
         }
-    }
-    @ApiOperation(value = "save 存储")
-    @ResponseBody
-    @RequestMapping(value = "/save.do", method = RequestMethod.POST, produces = "application/json")
-    public Response save(
-            @RequestParam(value = "id", required = false) String id,
-            @RequestParam(value = "name", required = true, defaultValue = "default") String name,
-            @RequestParam(value = "time", required = false, defaultValue = "default") String time
-    ) {
-        Teacher model = teacherRepository.save(new Teacher().setID(id).setNAME(name));
-        return Response.makeTrue("", model);
     }
     @ApiOperation(value = "existsById 查询")
     @ResponseBody

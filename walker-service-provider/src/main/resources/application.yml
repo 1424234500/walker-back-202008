@@ -12,13 +12,13 @@ spring:
 
   profiles:
     active: pro ,sharding #加载多个模块配置文件yml pro,test,log4j
+  #    java -jar example.jar --spring.profiles.active=test
 
 
 
   main:
     allow-bean-definition-overriding: true
 
-#    java -jar example.jar --spring.profiles.active=test
 
 
 #

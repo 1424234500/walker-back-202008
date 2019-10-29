@@ -64,7 +64,7 @@ spring:
 
     default:
       #redis cache 过期时间
-      expiration:3509
+      expiration:61
   session:
     jdbc:
       initialize-schema:

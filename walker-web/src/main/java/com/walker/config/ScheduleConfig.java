@@ -113,8 +113,8 @@ public class ScheduleConfig {
 	public void everyMinute() {
 	    log.info("[eachMinute 0/60 * * * * ?][每分钟任务]");
 		log.info("Redis操作记录持久化"); 
-	    //刷新redis到oracle
-	    logService.saveStatis();
+	    //刷新redis到oracle provider自动调用
+//	    logService.saveStatis();
 //	    fileService.scan();
 
 	}

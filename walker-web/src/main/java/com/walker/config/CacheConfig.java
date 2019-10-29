@@ -127,8 +127,13 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     /**
      * 缓存对象集合中，缓存是以 key-value 形式保存的。当不指定缓存的 key 时，SpringBoot 会使用 SimpleKeyGenerator 生成 key。
-     * @return
-     */
+     * 以命名空间 对应参数作为缓存键 主要用于可失效 可覆盖
+     * "cache-teacher::com.walker.dao.TeacherRepository.findOneJPQLWithCache(java.lang.String)[0]"
+     * ->
+     * "cache-teacher::[0]"
+     * 主键 关键命中缓存
+     *
+     * */
     @Bean
     public KeyGenerator keyGenerator() {
         log.debug(Config.PRE + "--------keyGenerator");
@@ -136,8 +141,8 @@ public class CacheConfig extends CachingConfigurerSupport {
             @Override
             public Object generate(Object target, Method method, Object... params) {
                 StringBuilder sb = new StringBuilder();
-                String[] ss = method.toString().split(" ");
-                sb.append(ss[ss.length - 1]);
+//                String[] ss = method.toString().split(" ");
+//                sb.append(ss[ss.length - 1]);
                 sb.append(Arrays.toString(params));
                 return sb.toString();
             }

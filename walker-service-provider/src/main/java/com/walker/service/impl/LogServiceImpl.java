@@ -75,7 +75,7 @@ public class LogServiceImpl implements LogService {
 							+ "(IPPORT, ID, URL, COUNT, TIME, COSTTIME) "
 							+ "values"
 							+ "(?, ?, ?, ?, ?, ?) "
-							, "localhost:8080", LangUtil.getGenerateId(), map.get("URL"), map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME")
+							, map.get("IPPORT", "localhost:8080"), LangUtil.getGenerateId(), map.get("URL"), map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME")
 						); 
 				}
 			}

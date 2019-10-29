@@ -33,7 +33,7 @@ public class CacheConfig extends CachingConfigurerSupport {
     /**
      *  redis缓存的有效时间单位是秒 默认过期时间：1 hours
      */
-    @Value("${spring.redis.default.expiration:3600}")
+    @Value("${spring.redis.default.expiration:600}")
     private long redisDefaultExpiration;
 
     /**
@@ -136,8 +136,8 @@ public class CacheConfig extends CachingConfigurerSupport {
             @Override
             public Object generate(Object target, Method method, Object... params) {
                 StringBuilder sb = new StringBuilder();
-                String[] ss = method.toString().split(" ");
-                sb.append(ss[ss.length - 1]);
+//                String[] ss = method.toString().split(" ");
+//                sb.append(ss[ss.length - 1]);
                 sb.append(Arrays.toString(params));
                 return sb.toString();
             }

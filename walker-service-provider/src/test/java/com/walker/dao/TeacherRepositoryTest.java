@@ -34,9 +34,10 @@ public class TeacherRepositoryTest extends ApplicationProviderTests {
 
     @Test
     public void findALl(){
-        out(teacherRepository.selfFindListCacheJPQL(Arrays.asList("1,2,3".split(","))));
-        out(teacherRepository.selfFindListCacheJPQL(Arrays.asList("1,2".split(","))));
-        out(teacherRepository.selfFindListCacheJPQL(Arrays.asList("1".split(","))));
+        out("1,2,3", teacherRepository.selfFindListCacheJPQL(Arrays.asList("1,2,3".split(","))));
+        out("1,2,3", teacherRepository.selfFindListCacheJPQL(Arrays.asList("1,2,3".split(","))));
+        out("1,2", teacherRepository.selfFindListCacheJPQL(Arrays.asList("1,2".split(","))));
+        out("1", teacherRepository.selfFindListCacheJPQL(Arrays.asList("1".split(","))));
 //        out(teacherRepository.selfFindListCacheJPQL(Arrays.asList()));
 
     }
@@ -78,17 +79,17 @@ public class TeacherRepositoryTest extends ApplicationProviderTests {
     }
 
     @Test
-    public void selfUpdateCacheJPQL() {
+    public void saveWithCache() {
         Pageable pageable = PageRequest.of(0, size);
 
-        out(teacherRepository.selfUpdateCacheJPQL("nameupdate2", "1"));
+        out(teacherRepository.saveWithCache("1", "nameupdate2"));
         out(teacherRepository.selfFindPage("", pageable));
         makeData();
     }
 
     @Test
-    public void selfFindOneCacheJPQL() {
-        out(teacherRepository.selfFindOneCacheJPQL("1"));
+    public void findOneJPQLWithCache() {
+        out(teacherRepository.findOneJPQLWithCache("1"));
     }
 
     @Test
@@ -97,9 +98,9 @@ public class TeacherRepositoryTest extends ApplicationProviderTests {
     }
 
     @Test
-    public void selfDeleteJPQL() {
-        out(teacherRepository.selfDeleteJPQL("1"));
-        out(teacherRepository.selfFindOneCacheJPQL("1"));
+    public void deleteJPQLWithCache() {
+        out(teacherRepository.deleteJPQLWithCache("1"));
+        out(teacherRepository.findOneJPQLWithCache("1"));
         makeData();
     }
 
