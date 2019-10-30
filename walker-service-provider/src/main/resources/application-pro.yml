@@ -34,10 +34,11 @@ spring:
 #  每次加载hibernate时，验证创建数据库表结构，只会和数据库中的表进行比较，不会创建新表，但是会插入新值。
 
       #jpa表名大小写问题 全大写
+      naming-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       naming:
 #        jpa连接查询 leftjoin 第二张表出现依然小写的问题
-#        physical-strategy:  org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        physical-strategy:  com.walker.config.HibernateTableNameStrategy
+        physical-strategy:  org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#        physical-strategy:  com.walker.config.HibernateTableNameStrategy
     database-platform: org.hibernate.dialect.MySQL5Dialect  #分表合表MERGE引擎依赖myisam
   #    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect  #不加这句则默认为myisam引擎
 

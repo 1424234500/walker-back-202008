@@ -42,10 +42,11 @@ public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecific
      * @param sFlag
      * @return
      */
-//    @Query("select r.ID,r.LEVEL,r.NAME,r.NUM,r.s_ATIME,r.s_MTIME,nvl(ru.S_FLAG,'0') S_FLAG from Role r " +
+//    @Query("select r.ID as ID,r.LEVEL as LEVEL,r.NAME as NAME,r.NUM as NUM,r.S_ATIME as S_ATIME,r.S_MTIME as S_MTIME, COALESCE(ru.S_FLAG,'0') as S_FLAG from Role r " +
 //            "left join RoleUser ru " +
-//            "on ru.USER_ID=?1 and r.ID=ru.ROLE_ID " +
-//            "where S_FLAG like concat('%', ?2, '%') ")
+//            "on ru.USER_ID=?1 and r.ID=ru.ROLE_ID and ru.S_FLAG like concat('%', ?2, '%')  " +
+//            " ")
+//    第二张表名字自动小写异常!!!???
     @Query(value = "select * from ( " +
             "select r.ID,r.LEVEL,r.NAME,r.NUM,r.s_ATIME,r.s_MTIME,ifnull(ru.S_FLAG,'0') S_FLAG " +
             "from W_ROLE r " +

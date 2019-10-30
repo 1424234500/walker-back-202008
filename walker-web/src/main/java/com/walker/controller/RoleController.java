@@ -139,7 +139,7 @@ public class RoleController {
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "false") String sFlag
     ) {
         String info = "get id:" + id;
-        List<Role> list = roleService.getRoles(id, sFlag);
+        List<Role> list =  roleService.getRoles(id, sFlag);
         List<Role> listDept = roleService.getRoles(deptId, sFlag);
         Map<String, Object> res = new HashMap<>();
         res.put("listUser", list);

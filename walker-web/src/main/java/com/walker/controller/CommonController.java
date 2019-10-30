@@ -8,7 +8,7 @@ import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.database.SqlUtil;
 import com.walker.dao.JdbcDao;
-import com.walker.event.RequestUtil;
+import com.walker.util.RequestUtil;
 import com.walker.service.BaseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

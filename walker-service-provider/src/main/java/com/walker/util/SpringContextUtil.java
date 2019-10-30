@@ -1,12 +1,18 @@
-package com.walker.event;
+package com.walker.util;
 
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.cglib.beans.BeanMap;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 获取spring上下文环境
@@ -18,6 +24,59 @@ public class SpringContextUtil implements ApplicationContextAware {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	private static ApplicationContext applicationContext; // Spring应用上下文环境
+
+
+
+	/**
+	 * 将对象装换为map
+	 * @param bean
+	 * @return
+	 */
+	public static <T> Map<String, Object> beanToMap(T bean) {
+		if(bean == null) return null;
+
+		Map<String, Object> map = Maps.newHashMap();
+		if (bean != null) {
+			BeanMap beanMap = BeanMap.create(bean);
+			for (Object key : beanMap.keySet()) {
+				map.put(key+"", beanMap.get(key));
+			}
+		}
+		return map;
+	}
+	public static <T> List<Map<String, Object>> beanToMap(List<T> list) {
+		if(list == null) return null;
+
+		List<Map<String, Object>> res =  new ArrayList<>();
+		for(T bean : list){
+			res.add(beanToMap(bean));
+		}
+		return res;
+	}
+
+	/**
+	 * 将map装换为javabean对象
+	 * @param map
+	 * @param bean
+	 * @return
+	 */
+	public static <T> T mapToBean(Map<String, Object> map, T bean) {
+		if(bean == null) return null;
+
+		BeanMap beanMap = BeanMap.create(bean);
+		beanMap.putAll(map);
+		return bean;
+	}
+	public static <T> List<T> mapToBean(List<Map<String, Object>> list, T bean){
+		if(list == null) return null;
+
+		List<T> res = new ArrayList<>();
+		for(Map<String, Object> map : list){
+			res.add(mapToBean(map, bean));
+		}
+		return res;
+	}
+
 
 	/**
 	 * 不依赖于servlet,不需要注入

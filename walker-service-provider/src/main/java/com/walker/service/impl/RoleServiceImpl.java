@@ -2,9 +2,11 @@ package com.walker.service.impl;
 
 import com.walker.common.util.Page;
 import com.walker.config.Config;
+import com.walker.dao.JdbcDao;
 import com.walker.dao.RoleRepository;
 import com.walker.mode.Role;
 import com.walker.service.RoleService;
+import com.walker.util.SpringContextUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service("roleService")
@@ -99,8 +102,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
 
-
-
+    /**
+     * 迫于 连表时 jpa异常和  sharding导致的第二张表名小写问题 原生sql实现
+     */
+    @Autowired
+    JdbcDao jdbcDao;
 
     /**
      * 获取关联表role role_user的赋予用户的权限
@@ -111,7 +117,17 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public List<Role> getRoles(String id, String sFlag) {
-        return roleRepository.getRoles(id, sFlag);
+//        return roleRepository.getRoles(id, sFlag);
+        List<Map<String, Object>> list = jdbcDao.find("select * from ( " +
+                "select r.ID,r.LEVEL,r.NAME,r.NUM,r.s_ATIME,r.s_MTIME,ifnull(ru.S_FLAG,'0') S_FLAG " +
+                "from W_ROLE r " +
+                "left join W_ROLE_USER ru " +
+                "on ru.USER_ID=? and r.ID=ru.ROLE_ID " +
+                " ) t " +
+                "where S_FLAG like concat('%', ?, '%') ", id, sFlag);
+
+
+        return SpringContextUtil.mapToBean(list, new Role());
     }
 
 

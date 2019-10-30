@@ -1,15 +1,12 @@
 package com.walker.event.intercept;
 
 import com.walker.event.Context;
-import com.walker.event.RequestUtil;
-import com.walker.event.SpringContextUtil;
+import com.walker.util.RequestUtil;
+import com.walker.util.SpringContextUtil;
 import com.walker.service.LogService;
-import com.walker.service.LoginService;
 import org.apache.log4j.NDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

@@ -1,8 +1,8 @@
 package com.walker.event.intercept;
 
 import com.walker.config.Context;
-import com.walker.event.RequestUtil;
-import com.walker.event.SpringContextUtil;
+import com.walker.util.RequestUtil;
+import com.walker.util.SpringContextUtil;
 import com.walker.service.LogService;
 import org.apache.log4j.NDC;
 import org.slf4j.Logger;

@@ -20,6 +20,7 @@ sharding:
         maxIdle: 16
         minIdle: 4
         validationQuery: select 1 from dual
+
       walker0:
         type: org.apache.commons.dbcp.BasicDataSource
 #        type: com.mchange.v2.c3p0.ComboPooledDataSource

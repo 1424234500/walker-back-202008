@@ -1,4 +1,4 @@
-package com.walker.event;
+package com.walker.util;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.Tools;
@@ -211,7 +211,7 @@ public class RequestUtil {
 //        response.setHeader("content-type", "application/octet-stream");
 //        response.setContentType("application/octet-stream");
         response.setContentType("multipart/form-data");   
-		String userbrowser = request.getHeader("User-Agent");
+		String userbrowser = request.getHeader("mode-Agent");
 		response.addHeader("content-disposition", RequestUtil.getDispo(userbrowser, fileName));
 
 		if (userbrowser == null) {
