@@ -2,6 +2,7 @@ package com.walker.service;
 
 import com.walker.common.util.Page;
 import com.walker.mode.Role;
+import com.walker.mode.RoleUser;
 
 import java.util.List;
 
@@ -26,5 +27,15 @@ public interface RoleService {
      * @return
      */
     List<Role> getRoles(String id, String sFlag);
+
+    /**
+     * 保存角色关联
+     * @param id 用户/部门
+     * @param onRoleIds 开启的角色id列表
+     * @param offRoleIds 关闭的角色id列表
+     * @return
+     */
+    List<RoleUser> saveRoles(String id, List<String> onRoleIds, List<String> offRoleIds);
+
 
 }

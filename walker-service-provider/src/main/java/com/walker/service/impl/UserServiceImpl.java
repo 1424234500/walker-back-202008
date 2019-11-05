@@ -2,6 +2,7 @@ package com.walker.service.impl;
 
 import com.walker.common.util.Page;
 import com.walker.config.Config;
+import com.walker.dao.RoleUserRepository;
 import com.walker.dao.UserRepository;
 import com.walker.dao.UserRepository;
 import com.walker.mode.Role;
@@ -28,6 +29,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleUserRepository roleUserRepository;
 
 
     @Override
@@ -38,6 +41,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer delete(User obj) {
         userRepository.deleteById(obj.getID());
+        roleUserRepository.deleteAllByUserId(Arrays.asList(obj.getID()));
         return 1;
     }
 
@@ -112,6 +116,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer[] deleteAll(List<String> ids) {
         int res = userRepository.selfDeleteAll(ids);
+
+        roleUserRepository.deleteAllByUserId(ids);
+
         return new Integer[]{res};
     }
 }

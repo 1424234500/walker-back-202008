@@ -35,5 +35,16 @@ public interface DeptRepository extends JpaRepository<Dept, String>, JpaSpecific
     @Query("delete from Dept t where t.ID in (?1) ")
     Integer selfDeleteAll(List<String> ids);
 
+    @Query("select t from Dept t where t.ID in (?1) ")
+    List<Dept> findAllByID(List<String> ids);
+
+    @Query("select t from Dept t where t.P_ID in (?1) ")
+    List<Dept> findAllByP_ID(List<String> pids);
+
+
+    @Query("select t from Dept t where t.PATH like CONCAT('%', ?1, '%') ")
+    List<Dept> findAllByPATH(String path);
+
+
 
 }

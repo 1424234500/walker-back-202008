@@ -35,5 +35,19 @@ public interface RoleUserRepository extends JpaRepository<RoleUser, String>, Jpa
     @Query("delete from RoleUser t where t.ID in (?1) ")
     Integer selfDeleteAll(List<String> ids);
 
+    @Query("select t from RoleUser t where t.USER_ID=?1 ")
+    List<RoleUser> findByUserId(String id);
+
+
+    @Transactional
+    @Modifying
+    @Query("delete from RoleUser t where t.USER_ID in (?1) ")
+    Integer deleteAllByUserId(List<String> userIds);
+
+    @Transactional
+    @Modifying
+    @Query("delete from RoleUser t where t.ROLE_ID in (?1) ")
+    Integer deleteAllByRoleId(List<String> roleIds);
+
 
 }

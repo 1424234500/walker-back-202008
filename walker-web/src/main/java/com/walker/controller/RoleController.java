@@ -5,6 +5,7 @@ import com.walker.Response;
 import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
 import com.walker.mode.Role;
+import com.walker.mode.RoleUser;
 import com.walker.service.BaseService;
 import com.walker.service.RoleService;
 import io.swagger.annotations.Api;
@@ -19,10 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
 测试 jap roleService
@@ -40,6 +38,10 @@ public class RoleController {
     @Autowired
     @Qualifier("roleService")
     private RoleService roleService;
+
+    @Autowired
+    @Qualifier("roleUserService")
+    private RoleUserService roleUserService;
 
     @ApiOperation(value = "post 保存 更新/添加 ", notes = "")
     @ResponseBody
@@ -127,6 +129,39 @@ public class RoleController {
         return Response.makePage(info, page, list);
     }
 
+    @ApiOperation(value = "get findPage roleUser 分页查询", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/findPageRoleUser.do", method = RequestMethod.GET)
+    public Response findPageRoleUser(
+            @RequestParam(value = "ID", required = false, defaultValue = "") String id,
+            @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
+            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
+            @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
+
+            @RequestParam(value = "ROLE_ID", required = false, defaultValue = "") String roleId,
+
+            @RequestParam(value = "USER_ID", required = false, defaultValue = "") String userId,
+
+            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
+            @RequestParam(value = "order", required = false, defaultValue = "") String order
+    ) {
+        Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
+        RoleUser role = new RoleUser();
+        role.setID(id);
+        role.setS_MTIME(sMtime);
+        role.setS_ATIME(sAtime);
+        role.setS_FLAG(sFlag);
+        role.setROLE_ID(roleId);
+        role.setUSER_ID(userId);
+
+        String info = "get   role:" + role;
+
+        List<RoleUser> list = roleUserService.finds(role, page);
+        page.setNum(roleUserService.count(role));
+        return Response.makePage(info, page, list);
+    }
+
 
 
 
@@ -136,15 +171,54 @@ public class RoleController {
     public Response getUserRoles(
             @RequestParam(value = "ID", required = true, defaultValue = "") String id,
             @RequestParam(value = "DEPT_ID", required = false, defaultValue = "") String deptId,
-            @RequestParam(value = "S_FLAG", required = false, defaultValue = "false") String sFlag
+            @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag
     ) {
-        String info = "get id:" + id;
-        List<Role> list =  roleService.getRoles(id, sFlag);
-        List<Role> listDept = roleService.getRoles(deptId, sFlag);
+        String info = "ID:" + id + " DEPT_ID:" + deptId + " S_FLAG:" + sFlag;
         Map<String, Object> res = new HashMap<>();
-        res.put("listUser", list);
-        res.put("listDept", listDept);
+        if(id.length() > 0) {
+            List<Role> list = roleService.getRoles(id, sFlag);
+            res.put("listUser", list);
+        }
+        if(deptId.length() > 0) {
+            List<Role> listDept = roleService.getRoles(deptId, "1");
+            res.put("listDept", listDept);
+        }
         return Response.makeTrue(info, res);
+    }
+    @ApiOperation(value = "查询dept id 关联所有的角色 是否包含未拥有的角色", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/getDeptRoles.do", method = RequestMethod.GET)
+    public Response getDeptRoles(
+            @RequestParam(value = "ID", required = true, defaultValue = "") String id,
+            @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag
+    ) {
+        String info = "ID:" + id + " S_FLAG:" + sFlag;
+        Map<String, Object> res = new HashMap<>();
+        if(id.length() > 0) {
+            List<Role> listDept = roleService.getRoles(id, sFlag);
+            res.put("listDept", listDept);
+        }
+        return Response.makeTrue(info, res);
+    }
+
+
+    @ApiOperation(value = "保存用户角色 ", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/saveRoles.do", method = RequestMethod.GET)
+    public Response saveRoles(
+            @RequestParam(value = "ID", required = true, defaultValue = "") String id,
+            @RequestParam(value = "ON", required = false, defaultValue = "") String on,
+            @RequestParam(value = "OFF", required = false, defaultValue = "") String off
+    ) {
+        String info = "ID:" + id + " ON:" + on + " OFF:" + off;
+        List<String> listOn = on.length() > 0 ? Arrays.asList(on.split(",")) : new ArrayList<>();
+        List<String> listOff = off.length() > 0 ? Arrays.asList(off.split(",")) : new ArrayList<>();
+        if(listOn.size() == 0 && listOff.size() == 0){
+            return Response.makeFalse(info + " all is null ");
+        }
+        List<RoleUser> roleUserList = roleService.saveRoles(id, listOn, listOff);
+
+        return Response.makeTrue(info, roleUserList);
     }
 
 

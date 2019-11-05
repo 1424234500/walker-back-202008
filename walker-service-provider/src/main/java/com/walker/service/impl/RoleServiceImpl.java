@@ -1,10 +1,14 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.Page;
+import com.walker.common.util.TimeUtil;
 import com.walker.config.Config;
 import com.walker.dao.JdbcDao;
 import com.walker.dao.RoleRepository;
+import com.walker.dao.RoleUserRepository;
+import com.walker.dao.UserRepository;
 import com.walker.mode.Role;
+import com.walker.mode.RoleUser;
 import com.walker.service.RoleService;
 import com.walker.util.SpringContextUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -17,16 +21,15 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service("roleService")
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private RoleUserRepository roleUserRepository;
 
 
     @Override
@@ -37,6 +40,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Integer delete(Role obj) {
         roleRepository.deleteById(obj.getID());
+        roleUserRepository.deleteAllByRoleId(Arrays.asList(obj.getID()));
         return 1;
     }
 
@@ -98,39 +102,90 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Integer[] deleteAll(List<String> ids) {
         int res = roleRepository.selfDeleteAll(ids);
+        roleUserRepository.deleteAllByRoleId(ids);
         return new Integer[]{res};
     }
-
-
-    /**
-     * 迫于 连表时 jpa异常和  sharding导致的第二张表名小写问题 原生sql实现
-     */
-    @Autowired
-    JdbcDao jdbcDao;
 
     /**
      * 获取关联表role role_user的赋予用户的权限
      *
      * @param id
-     * @param sFlag 是否包含未拥有的
+     * @param sFlag 1已有的 0没有的  ''则返回所有
      * @return
      */
     @Override
     public List<Role> getRoles(String id, String sFlag) {
 //        return roleRepository.getRoles(id, sFlag);
-        List<Map<String, Object>> list = jdbcDao.find("select * from ( " +
-                "select r.ID,r.LEVEL,r.NAME,r.NUM,r.s_ATIME,r.s_MTIME,ifnull(ru.S_FLAG,'0') S_FLAG " +
-                "from W_ROLE r " +
-                "left join W_ROLE_USER ru " +
-                "on ru.USER_ID=? and r.ID=ru.ROLE_ID " +
-                " ) t " +
-                "where S_FLAG like concat('%', ?, '%') ", id, sFlag);
+//        "select * from ( " +
+//        "select r.ID,r.LEVEL,r.NAME,r.NUM,r.s_ATIME,r.s_MTIME,ifnull(ru.S_FLAG,'0') S_FLAG " +
+//        "from W_ROLE r " +
+//        "left join W_ROLE_USER ru " +
+//        "on ru.USER_ID=? and r.ID=ru.ROLE_ID " +
+//        " ) t " +
+//        "where S_FLAG like concat('%', ?, '%') ", id, sFlag);
+        List<RoleUser> roleUserList = roleUserRepository.findByUserId(id);  //部门/用户的配置关联列表
+        Map<String, RoleUser> roleUserMap = new HashMap<>();
+        for(RoleUser roleUser : roleUserList){
+            roleUserMap.put(roleUser.getROLE_ID(), roleUser);
+        }
+//        List<Role> roleList = roleRepository.findByIds(roleIdList);
+        List<Role> roleList = roleRepository.findAll(); //角色列表
+        List<Role> roleListRes = new ArrayList<>();
 
-
-        return SpringContextUtil.mapToBean(list, new Role());
+        //有关联角色且为sflag=1 则有 否则无
+        for(Role role : roleList){
+            RoleUser roleUser = roleUserMap.get(role.getID());
+            if(roleUser == null){
+                role.setS_FLAG(Config.FALSE);
+            }else{
+                role.setS_FLAG(roleUser.getS_FLAG());
+                role.setS_MTIME(roleUser.getS_MTIME());
+                role.setS_ATIME(roleUser.getS_ATIME());
+            }
+            if(role.getS_FLAG().contains(sFlag) || sFlag.length() == 0){
+                roleListRes.add(role);
+            }
+        }
+        return roleListRes;
     }
 
-
+    /**
+     * 保存角色关联
+     *
+     * @param id         用户/部门
+     * @param onRoleIds  开启的角色id列表
+     * @param offRoleIds 关闭的角色id列表
+     * @return
+     */
+    @Override
+    public List<RoleUser> saveRoles(String id, List<String> onRoleIds, List<String> offRoleIds) {
+        List<RoleUser> roleUserList = new ArrayList<>();
+        for(String roleId : onRoleIds){
+            if(roleId.length() > 0) {
+                RoleUser roleUser = new RoleUser();
+                roleUser.setROLE_ID(roleId);
+                roleUser.setUSER_ID(id);
+                roleUser.setID(roleId + ":" + id);
+                roleUser.setS_MTIME(TimeUtil.getTimeYmdHms());
+                roleUser.setS_ATIME(TimeUtil.getTimeYmdHms());
+                roleUser.setS_FLAG(Config.TRUE);
+                roleUserList.add(roleUser);
+            }
+        }
+        for(String roleId : offRoleIds){
+            if(roleId.length() > 0) {
+                RoleUser roleUser = new RoleUser();
+                roleUser.setROLE_ID(roleId);
+                roleUser.setUSER_ID(id);
+                roleUser.setID(roleId + ":" + id);
+                roleUser.setS_MTIME(TimeUtil.getTimeYmdHms());
+                roleUser.setS_ATIME(TimeUtil.getTimeYmdHms());
+                roleUser.setS_FLAG(Config.FALSE);
+                roleUserList.add(roleUser);
+            }
+        }
+        return roleUserRepository.saveAll(roleUserList);
+    }
 
 
 }

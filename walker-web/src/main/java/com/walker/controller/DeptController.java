@@ -70,9 +70,11 @@ public class DeptController {
     @ResponseBody
     @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
     public Response delet(
-            @RequestParam(value = "ids", required = false, defaultValue = "") String ids
+            @RequestParam(value = "ids", required = true, defaultValue = "") String ids
     ) {
         String info = "delete ids:" + ids;
+        if(ids == null || ids.length() <= 0)
+            return Response.makeFalse("args is null ?");
         Object res = deptService.deleteAll(Arrays.asList(ids.split(",")));
         return Response.makeTrue(info, res);
     }
@@ -85,7 +87,10 @@ public class DeptController {
     ) {
         String info = "get id:" + id;
         Dept model = deptService.get(new Dept().setID(id));
-        return Response.makeTrue(info, model);
+        if(model != null)
+            return Response.makeTrue(info, model);
+        else
+            return Response.makeFalse(info);
     }
 
     @ApiOperation(value = "get findPage 分页查询", notes = "")

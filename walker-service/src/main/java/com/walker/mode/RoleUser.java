@@ -18,7 +18,7 @@ public class RoleUser implements Cloneable,Serializable{
 //    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
 //    @GeneratedValue(generator = "system-uuid")
 //    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
+    @Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键ROLE_USER' ")
     private String ID;
     @Column(name = "S_MTIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
     private String S_MTIME;

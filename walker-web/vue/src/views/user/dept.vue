@@ -33,6 +33,8 @@
         :row-class-name="tableRowClassName"
         ref="multipleTable"
         @selection-change="handlerSelectionChange"
+        highlight-current-row
+        @current-change="handlerCurrentChangeTable"
         @sort-change="handlerSortChange"
         element-loading-text="Loading"
         border
@@ -40,7 +42,6 @@
         stripe
         show-summary
         sum-text="S"
-        highlight-current-row
         max-height="86%"
       >
         <!--      多选框-->
@@ -66,10 +67,11 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="90px"
+          min-width="120px"
         >
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+            <el-button size="mini" type="primary" icon="el-icon-menu" circle @click.stop="handlerShowRole(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
         </el-table-column>
@@ -125,6 +127,60 @@
           </el-form>
         </template>
       </el-dialog>
+
+      <el-dialog
+        title="拥有的角色"
+        :visible.sync="loadingUpdateRole"
+        width="86%"
+      >
+        <template>
+          部门角色:
+          <el-table
+            v-loading="loadingRole"
+            :data="listRoleDept"
+            :row-class-name="tableRowClassName"
+            :default-sort = "{prop: 'S_FLAG', order: 'descending'}"
+            @selection-change="handlerSelectionChangeRole"
+            @open="handlerOnShowRole"
+            ref="multipleTableRoleUser"
+            element-loading-text="Loading"
+            border
+            fit
+            stripe
+            show-summary
+            sum-text="S"
+            highlight-current-row
+            max-height="86%"
+          >
+            <!--      多选框-->
+            <el-table-column fixed="left" aligin="center" type="selection" min-width="12px"> </el-table-column>
+            <!--      序号-->
+            <el-table-column fixed="left" align="center" type="index" min-width="12px"></el-table-column>
+
+            <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
+            <el-table-column
+              v-for="(value, key) in colMapRole"
+              :key="key"
+              :property="key"
+              :label="(value=='' ? key : value)"
+              sortable
+              show-overflow-tooltip
+              min-width="100px"
+            >
+              <template slot-scope="scope">
+                {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-button
+            class="btn btn-danger"
+            @click="handlerSaveAllRoles()"
+            style="margin:4px 0px 0 2px;"
+          >保存角色</el-button>
+
+        </template>
+      </el-dialog>
+
     </div>
 
 
@@ -161,7 +217,8 @@ export default {
       rowSearch: {},   //搜索 列明:搜索值
       rowUpdate: {},   //更新界面复制 列名:新值
       rowUpdateFrom: {},//更新界面源对象 列名:旧值
-      rowSelect: [],   //选中行
+      rowSelect: [],   //选中多行
+      nowRow: null,     //当前行
       page: {
         nowpage: 1,
         num: 0,
@@ -173,6 +230,15 @@ export default {
       loadingCols: true,
       loadingSave: true,
       loadingUpdate: false,
+
+
+      loadingRole: false,
+      loadingUpdateRole: false,
+      deptShowRole: {}, //当前角色用户
+      colMapRole: {},
+      colKeyRole: {},
+      listRoleDept: [],
+      rowSelectRole: [],
     }
   },
   created() {
@@ -215,10 +281,18 @@ export default {
         this.loadingList = false
       })
     },
+    //当前高亮行
+    handlerCurrentChangeTable(row){
+      console.info("handlerCurrentChangeTable", row)
+      this.nowRow = row
+    },
     //添加行
     handlerAddColumn(){
-      this.list.push(Object.assign({}, this.rowSearch))
-      this.handlerChange(this.list[this.list.length - 1])
+      let newObj = Object.assign({}, this.rowSearch)
+      newObj["P_ID"] = this.nowRow == null ? "" : this.nowRow["ID"]
+      newObj["S_FLAG"] = '1'
+      this.list.push(newObj)
+      this.handlerChange(newObj)
     },
     //修改单行 展示弹框
     handlerChange(val) {
@@ -300,6 +374,78 @@ export default {
       // this.$refs.multipleTable.toggleAllSelection()
       // this.$refs.multipleTable.toggleRowSelection(VAL);
     },
+
+    //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
+    handlerShowRole(val) {
+      this.deptShowRole = val
+      this.loadingUpdateRole = ! this.loadingUpdateRole
+      this.loadingRole = true
+      this.listRoleDept = []
+      this.get('/common/getColsMap.do', {tableName: 'W_ROLE'}).then((res) => {
+        this.colMapRole = res.data.colMap
+        this.colKeyRole = res.data.colKey
+        var params = {ID:val.ID, S_FLAG:''}
+        this.get('/role/getDeptRoles.do', params).then((res) => {
+          this.listRoleDept = res.data.listDept
+          this.rowSelectRole = []
+          this.loadingRole = false
+          this.$nextTick(this.handlerOnShowRole)  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
+        }).catch(() => {
+          this.loadingRole = false
+        })
+      }).catch(() => {
+        this.loadingRole = false
+      }).then(res=>{
+        this.handlerOnShowRole()
+      })
+
+    },
+    //默认选中
+    handlerOnShowRole(){
+      for(var i = 0; i < this.listRoleDept.length; i++){
+        if(this.listRoleDept[i].S_FLAG == '1'){
+          // this.rowSelectRole.push(this.listRoleDept[i])
+          this.$refs.multipleTableRoleUser.toggleRowSelection(this.listRoleDept[i], true)
+        }
+      }
+
+    },
+    //用户角色 批量保存 删除 比对默认值 找出差异化 提交
+    handlerSaveAllRoles(){
+      var listOn = []
+      var listOff = []
+      var map = {}
+      for(var i = 0; i < this.rowSelectRole.length; i++){
+        map[this.rowSelectRole[i][this.colKeyRole]] = '1'
+      }
+      for(var i = 0; i < this.listRoleDept.length; i++){
+        var roleUser = this.listRoleDept[i]
+        var id = roleUser[this.colKeyRole]
+        var newFlag = map[id] == null ? '0' : '1'
+        var oldFlag = roleUser['S_FLAG']
+        if(oldFlag != newFlag){
+          newFlag == '1' ? listOn.push(id) : listOff.push(id)
+        }
+      }
+      if(listOn.length > 0 || listOff.length > 0){
+        var params = {ID: this.deptShowRole[this.colKey], ON: listOn.join(","), OFF: listOff.join(",")}
+        this.get('/role/saveRoles.do', params).then((res) => {
+          this.loadingRole = false
+          this.loadingUpdateRole = false
+        }).catch(() => {
+          this.loadingRole = false
+        })
+      }else{
+        this.$message({message:'没有改动', type:'waring'});
+      }
+
+    },
+    //多选改变role
+    handlerSelectionChangeRole(val) {
+      console.info("handlerSelectionChangeRole" + JSON.stringify(val))
+      this.rowSelectRole = val
+    },
+
     //排序事件
     handlerSortChange(val) {
       console.info("handlerSortChange " + JSON.stringify(val))

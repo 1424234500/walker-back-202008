@@ -61,4 +61,9 @@ public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecific
 //            countQuery = "select count(t.id) from W_TEACHER t where t.NAME like CONCAT('%', ?1, '%')",
 //            nativeQuery = true)
 
+
+    @Query("select t from Role t where t.ID in (?1) ")
+    List<Role> findByIds(List<String> ids);
+
+
 }

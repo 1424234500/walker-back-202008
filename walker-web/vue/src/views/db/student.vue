@@ -298,7 +298,7 @@
         this.rowSelect = val
         // this.multipleSelection = val;
         // this.$refs.multipleTable.toggleAllSelection()
-        // this.$refs.multipleTable.toggleRowSelection(VAL);
+        // this.$refs.multipleTable.toggleRowSelection(VAL, true/false/reverse);
       },
       //排序事件
       handlerSortChange(val) {
