@@ -249,7 +249,7 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.get('/common/getColsMap.do', {tableName: 'W_ROLE'}).then((res) => {
+      this.get('/common/getColsMap.do', {tableName: 'W_ROLE_USER'}).then((res) => {
         this.colMap = res.data.colMap
         this.colKey = res.data.colKey
         this.clearRowSearch()
@@ -272,7 +272,7 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      this.get('/role/findPage.do', params).then((res) => {
+      this.get('/roleUser/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
         this.loadingList = false
@@ -314,7 +314,7 @@ export default {
 
       Object.assign(this.rowUpdateFrom, this.rowUpdate)
       var params = this.rowUpdateFrom
-      this.post('/role/save.do', params).then((res) => {
+      this.post('/roleUser/save.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
@@ -326,7 +326,7 @@ export default {
       console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
       const params = {ids: val[this.colKey]}
-      this.get('/role/delet.do', params).then((res) => {
+      this.get('/roleUser/delet.do', params).then((res) => {
         for(let j = 0; j < this.list.length; j++) {
           if(this.list[j] == val){
             this.list.splice(j, 1);
@@ -349,7 +349,7 @@ export default {
         }
         ids = ids.substring(0, ids.length - 1)
         const params = {ids: ids}
-        this.get('/role/delet.do', params).then((res) => {
+        this.get('/roleUser/delet.do', params).then((res) => {
           this.loadingList = false
           for(let i = 0; i < this.rowSelect.length; i++){
             for(let j = 0; j < this.list.length; j++) {
@@ -384,7 +384,7 @@ export default {
         this.colMapRole = res.data.colMap
         this.colKeyRole = res.data.colKey
         var params = {ID:val.ID, S_FLAG:''}
-        this.get('/role/getroleRoles.do', params).then((res) => {
+        this.get('/roleUser/getroleRoles.do', params).then((res) => {
           this.listRolerole = res.data.listrole
           this.rowSelectRole = []
           this.loadingRole = false
@@ -428,7 +428,7 @@ export default {
       }
       if(listOn.length > 0 || listOff.length > 0){
         var params = {ID: this.roleShowRole[this.colKey], ON: listOn.join(","), OFF: listOff.join(",")}
-        this.get('/role/saveRoles.do', params).then((res) => {
+        this.get('/roleUser/saveRoles.do', params).then((res) => {
           this.loadingRole = false
           this.loadingUpdateRole = false
         }).catch(() => {

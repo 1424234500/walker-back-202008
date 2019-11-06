@@ -15,6 +15,9 @@ spring:
       max-active: 64
       validation-query: select 1 from dual
       validation-query-timeout: 1000
+    schema: classpath:ddl.sql  # 指定生成数据库的schema文件位置
+    data: classpath:dml.sql  # 指定插入数据库语句的脚本位置
+
   jpa:
     database: mysql
     show-sql: true

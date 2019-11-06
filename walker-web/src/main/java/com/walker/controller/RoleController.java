@@ -22,9 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 
-/*
-测试 jap roleService
-
+/**
+ *  roleService
  */
 @Api(value = "service层 DEPT 实体类对象 ")
 @Controller
@@ -39,9 +38,6 @@ public class RoleController {
     @Qualifier("roleService")
     private RoleService roleService;
 
-    @Autowired
-    @Qualifier("roleUserService")
-    private RoleUserService roleUserService;
 
     @ApiOperation(value = "post 保存 更新/添加 ", notes = "")
     @ResponseBody
@@ -128,41 +124,6 @@ public class RoleController {
         page.setNum(roleService.count(role));
         return Response.makePage(info, page, list);
     }
-
-    @ApiOperation(value = "get findPage roleUser 分页查询", notes = "")
-    @ResponseBody
-    @RequestMapping(value = "/findPageRoleUser.do", method = RequestMethod.GET)
-    public Response findPageRoleUser(
-            @RequestParam(value = "ID", required = false, defaultValue = "") String id,
-            @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
-            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
-            @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
-
-            @RequestParam(value = "ROLE_ID", required = false, defaultValue = "") String roleId,
-
-            @RequestParam(value = "USER_ID", required = false, defaultValue = "") String userId,
-
-            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
-            @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
-            @RequestParam(value = "order", required = false, defaultValue = "") String order
-    ) {
-        Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
-        RoleUser role = new RoleUser();
-        role.setID(id);
-        role.setS_MTIME(sMtime);
-        role.setS_ATIME(sAtime);
-        role.setS_FLAG(sFlag);
-        role.setROLE_ID(roleId);
-        role.setUSER_ID(userId);
-
-        String info = "get   role:" + role;
-
-        List<RoleUser> list = roleUserService.finds(role, page);
-        page.setNum(roleUserService.count(role));
-        return Response.makePage(info, page, list);
-    }
-
-
 
 
     @ApiOperation(value = "查询user/dept id 关联所有的角色 是否包含未拥有的角色", notes = "")

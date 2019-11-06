@@ -57,12 +57,25 @@ public class RoleServiceImpl implements RoleService {
         page.setNum(res.getTotalElements());
         return res.getContent();
     }
-
+    @Override
+    public List<RoleUser> finds(RoleUser obj, Page page) {
+        Pageable pageable = Config.turnTo(page);
+        org.springframework.data.domain.Page<RoleUser> res = roleUserRepository.findAll(this.getSpecification(obj), pageable);
+        page.setNum(res.getTotalElements());
+        return res.getContent();
+    }
     @Override
     public Integer count(Role obj) {
         long res = roleRepository.count(this.getSpecification(obj));
         return new Long(res).intValue();
     }
+    @Override
+    public Integer count(RoleUser obj) {
+        long res = roleUserRepository.count(this.getSpecification(obj));
+        return new Long(res).intValue();
+    }
+
+
     private Specification getSpecification(Role obj){
         return new Specification<Role>(){
             @Override
@@ -99,6 +112,39 @@ public class RoleServiceImpl implements RoleService {
         };
     }
 
+
+    private Specification getSpecification(RoleUser obj){
+        return new Specification<Role>(){
+            @Override
+            public Predicate toPredicate(Root<Role> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+
+                List<Predicate> list = new ArrayList<>();
+                if (StringUtils.isNotEmpty(obj.getID())) {
+                    list.add(criteriaBuilder.like(root.get("ID"), "%" + obj.getID() + "%"));
+                }
+                if (StringUtils.isNotEmpty(obj.getS_MTIME())) {
+                    list.add(criteriaBuilder.greaterThan(root.get("S_MTIME"), obj.getS_MTIME()));
+                }
+                if (StringUtils.isNotEmpty(obj.getS_ATIME())) {
+                    list.add(criteriaBuilder.greaterThan(root.get("S_ATIME"), obj.getS_ATIME()));
+                }
+                if (StringUtils.isNotEmpty(obj.getS_FLAG())) {
+                    list.add(criteriaBuilder.equal(root.get("S_FLAG"), obj.getS_FLAG()));
+                }
+
+
+
+                if (StringUtils.isNotEmpty(obj.getROLE_ID())) {
+                    list.add(criteriaBuilder.equal(root.get("ROLE_ID"), obj.getROLE_ID()));
+                }
+                if (StringUtils.isNotEmpty(obj.getUSER_ID())) {
+                    list.add(criteriaBuilder.equal(root.get("USER_ID"), obj.getUSER_ID()));
+                }
+
+                return criteriaBuilder.and(list.toArray(new Predicate[0]));
+            }
+        };
+    }
     @Override
     public Integer[] deleteAll(List<String> ids) {
         int res = roleRepository.selfDeleteAll(ids);

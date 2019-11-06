@@ -38,4 +38,14 @@ public interface RoleService {
     List<RoleUser> saveRoles(String id, List<String> onRoleIds, List<String> offRoleIds);
 
 
+    /**
+     * 查询角色的用户列表
+     * @param obj
+     * @param page
+     * @return
+     */
+    List<RoleUser> finds(RoleUser obj, Page page);
+
+    Integer count(RoleUser obj);
+
 }

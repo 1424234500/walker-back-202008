@@ -61,6 +61,8 @@
     <dubbo:reference id="deptService" interface="com.walker.service.DeptService" timeout="30000" version="1.0" />
     <!--    角色role-->
     <dubbo:reference id="roleService" interface="com.walker.service.RoleService" timeout="30000" version="1.0" />
+    <!--    角色role关联-->
+    <dubbo:reference id="roleUserService" interface="com.walker.service.RoleUserService" timeout="30000" version="1.0" />
 
 
 

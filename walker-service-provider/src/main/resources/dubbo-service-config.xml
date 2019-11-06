@@ -71,6 +71,9 @@
     <!--    角色role-->
     <bean id="roleService" class="com.walker.service.impl.RoleServiceImpl" />
     <dubbo:service ref="roleService" interface="com.walker.service.RoleService" timeout="30000" version="1.0" />
+    <!--    角色role关联-->
+    <bean id="roleUserService" class="com.walker.service.impl.RoleUserServiceImpl" />
+    <dubbo:service ref="roleUserService" interface="com.walker.service.RoleUserService" timeout="30000" version="1.0" />
 
 
 
