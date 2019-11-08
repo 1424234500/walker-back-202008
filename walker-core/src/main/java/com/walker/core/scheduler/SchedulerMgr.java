@@ -43,7 +43,7 @@ public class SchedulerMgr extends TestAdapter{
 	 */
 	public void reload(Scheduler scheduler){
 		log.warn("Reload scheduler from file / db");
-		Task task = new Task("util.scheduler.job.JobTest","scheduler tools out");
+		Task task = new Task("util.scheduler.job.JobTest","quartz scheduler tools out");
 		task.addCron("0/30 * * * * ?");
 		try {
 			scheduler.add(task);

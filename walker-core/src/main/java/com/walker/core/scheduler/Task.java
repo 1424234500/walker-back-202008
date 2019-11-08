@@ -59,15 +59,15 @@ public class Task {
 	 */
 	Set<String> pattern;
 
-	
+	/**
+	 * new Task("util.scheduler.job.JobTest","quartz scheduler tools out");
+	 */
 	public Task(){
 		pattern = new HashSet<>();
 	}
 	/**
 	 * 构造一个任务
-	 * @param className
-	 * @param methodName
-	 * @param args
+	 * new Task("util.scheduler.job.JobTest","quartz scheduler tools out");
 	 */
 	public Task(String className, String about, String...crons){
 		this();
@@ -93,7 +93,7 @@ public class Task {
 	
 
 	@SuppressWarnings("unchecked")
-	JobDetail getJobDetail(){
+	public JobDetail getJobDetail(){
 		String name = this.toString();
 		Class<? extends Job> clz = (Class<? extends Job>) ClassUtil.loadClass(className);
 		this.jobDetail = JobBuilder
@@ -105,7 +105,7 @@ public class Task {
 		return this.jobDetail;
 	}
 	
-	Trigger getTrigger(){
+	public Trigger getTrigger(){
 		TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
 
 		Set<String> trr = this.pattern;

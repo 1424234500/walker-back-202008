@@ -10,17 +10,23 @@ import com.walker.service.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * 定时器任务
@@ -35,6 +41,30 @@ public class ScheduleConfig {
 	public ScheduleConfig(){
 		log.info(Config.PRE + "-------ScheduleConfig");
 	}
+
+	@Autowired
+	private DataSource dataSource;
+
+	@Bean
+	public SchedulerFactoryBean schedulerFactoryBean() throws IOException {
+		SchedulerFactoryBean factory = new SchedulerFactoryBean();
+		factory.setSchedulerName("Cluster_Scheduler");
+		factory.setDataSource(dataSource);
+		factory.setApplicationContextSchedulerContextKey("applicationContext");
+		factory.setQuartzProperties(quartzProperties());
+		return factory;
+	}
+
+	@Bean
+	public Properties quartzProperties() throws IOException {
+		PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
+		propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
+
+		propertiesFactoryBean.afterPropertiesSet();
+		return propertiesFactoryBean.getObject();
+	}
+
+
 
 	static private long count = 0;
 	@Autowired

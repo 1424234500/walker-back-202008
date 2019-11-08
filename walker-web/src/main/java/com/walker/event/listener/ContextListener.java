@@ -1,7 +1,11 @@
 package com.walker.event.listener;
 
 import com.walker.common.util.*;
+import com.walker.core.scheduler.Task;
+import com.walker.service.ScheduleService;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -18,6 +22,9 @@ import java.util.concurrent.TimeUnit;
 public class ContextListener implements ServletContextListener {
     private static Logger log = Logger.getLogger("ContextListener");
 
+    @Autowired
+    ScheduleService scheduleService;
+
     /**
      * 初始化系统
      * @param sce 存放于WEB.XML中的配置信息
@@ -27,6 +34,13 @@ public class ContextListener implements ServletContextListener {
         // 加载配置参数
         log.info(".........................................................");
         log.info(".........................................................");
+        log.info("..start quartz.......................................................");
+        try {
+            scheduleService.start();
+            scheduleService.add(new Task("util.scheduler.job.JobTest","quartz scheduler tools out"));
+        }catch (Exception e){
+            log.error("quartz start error", e);
+        }
         log.info(".........................................................");
         log.info("正在启动系统 ... ...");
         ServletContext sc = sce.getServletContext();

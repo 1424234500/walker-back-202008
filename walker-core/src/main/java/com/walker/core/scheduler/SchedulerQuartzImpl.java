@@ -17,7 +17,7 @@ class SchedulerQuartzImpl implements com.walker.core.scheduler.Scheduler {
 
 	SchedulerFactory schedulerFactory;
 	Scheduler scheduler;
-	
+
 	private Scheduler getScheduler() throws SchedulerException{
 		if (schedulerFactory == null) {
 			log.warn(" * init scheduler quartz SchedulerFactory");
