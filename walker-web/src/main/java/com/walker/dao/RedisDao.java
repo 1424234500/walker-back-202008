@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -135,7 +136,15 @@ public class RedisDao {
         HashOperations<String, Object, Object>  hash = redisTemplate.opsForHash();
         return hash.get(key,hashKey);
     }
-
+    /**
+     * 哈希获取
+     * @param key
+     * @return
+     */
+    public Map<String, String> hmGet(String key){
+        HashOperations<String, String, String>  hash = redisTemplate.opsForHash();
+        return hash.entries(key);
+    }
     /**
      * 列表添加
      * @param k

@@ -1,18 +1,22 @@
 package com.walker.service.impl;
 
 import com.walker.service.ScheduleService;
-import org.apache.log4j.Logger;
 import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.stereotype.Service;
 
 /**
+ *
  * quartz实现
  *
  */
+@Service("scheduleService")
 class ScheduleServiceImpl implements ScheduleService {
-	private static Logger log = Logger.getLogger(ScheduleServiceImpl.class);
+	private Logger log = LoggerFactory.getLogger(getClass());
+
 
 	@Autowired
 	SchedulerFactoryBean schedulerFactoryBean;
@@ -23,21 +27,25 @@ class ScheduleServiceImpl implements ScheduleService {
 
 	@Override
 	public void start() throws Exception {
+		log.info("start");
 		if(!getScheduler().isStarted())
 			getScheduler().start();
 	}
 	@Override
 	public void pause() throws Exception {
+		log.info("pause");
 		getScheduler().pauseAll();
 	}
 	@Override
 	public void shutdown() throws Exception {
+		log.info("shutdown");
 		if(!getScheduler().isShutdown())
 			getScheduler().shutdown();
 	}
 
 	@Override
 	public void add(com.walker.core.scheduler.Task task) throws Exception {
+		log.info("add " + task.toString());
 		Scheduler scheduler = getScheduler();
 		JobDetail jobDetail = task.getJobDetail();//makeJobDetail(task);
 		Trigger trigger = task.getTrigger();//makeTrigger(task);
@@ -47,6 +55,8 @@ class ScheduleServiceImpl implements ScheduleService {
 	}
 	@Override
 	public void remove(com.walker.core.scheduler.Task task) throws Exception {
+		log.info("remove " + task.toString());
+
 		JobDetail job = task.getJobDetail();
 		getScheduler().deleteJob(job.getKey());
 	}
@@ -56,6 +66,8 @@ class ScheduleServiceImpl implements ScheduleService {
 	 */
 	@Override
 	public void update(com.walker.core.scheduler.Task task) throws Exception {
+		log.info("update " + task.toString());
+
 		remove(task);
 		add(task);
 	} 

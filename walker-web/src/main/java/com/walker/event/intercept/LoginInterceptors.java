@@ -8,7 +8,8 @@ import com.walker.util.RequestUtil;
 import com.walker.util.SpringContextUtil;
 import com.walker.service.LogService;
 import com.walker.service.LoginService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,8 +23,8 @@ import java.util.Map;
  * @author Walker
  *
  */
-public class LoginInterceptors implements HandlerInterceptor{  
-	static public Logger logger = Logger.getLogger("Aop"); 
+public class LoginInterceptors implements HandlerInterceptor{
+	private Logger log = LoggerFactory.getLogger(getClass());
 
 	Cache<String> cache = CacheMgr.getInstance();
 
@@ -65,30 +66,30 @@ public class LoginInterceptors implements HandlerInterceptor{
 	    Map<String, Object> map =  cache.get(LoginService.CACHE_KEY, new HashMap<String, Object>());
 	    if(tokenObj != null && map != null && map.containsKey(tokenObj) ){
 	    	Bean user = (Bean) map.get(tokenObj);
-	    	
+
 	    	String token = user.get("token", "");
 	    	String id = user.get("id", "");
 	    	Long time = user.get("time", 0L);
 	    	Long expire = user.get("expire", 0L);
 	    	if(time + expire < System.currentTimeMillis()){
-		    	logger.info(token + "." + id + "." + time + "." + expire + "." + " 过期 失效 ");
+		    	log.info(token + "." + id + "." + time + "." + expire + "." + " 过期 失效 ");
 		    	loginService.login();
 	    	}else{
-		    	logger.info(token + "." + id + "." + time + "." + expire + "." + " 已登录 未过期 ");
+		    	log.info(token + "." + id + "." + time + "." + expire + "." + " 已登录 未过期 ");
 		    	//登录用户操作日志 记录 用户id,操作url权限?,用户操作ip/mac/端口
-		    	String requestUri = request.getRequestURI();  
-		        String contextPath = request.getContextPath();  
+		    	String requestUri = request.getRequestURI();
+		        String contextPath = request.getContextPath();
 		        String url = requestUri.substring(contextPath.length());  //[/student/listm]
-		        //sequenceid time userid url ip host 端口     
+		        //sequenceid time userid url ip host 端口
 		        String ip = request.getRemoteAddr();//返回发出请求的IP地址
 		        String params = RequestUtil.getRequestBean(request).toString();
 		        String host=request.getRemoteHost();//返回发出请求的客户机的主机名
 		        int port =request.getRemotePort();//返回发出请求的客户机的端口号。
-		        
+
 		        logService.saveControl(id, url, ip, host, port, params);
 	    	}
     	}else{
-	    	logger.info("token:" + tokenObj + " 无效 未登录：跳转到login页面！");
+	    	log.info("token:" + tokenObj + " 无效 未登录：跳转到login页面！");
 	    	loginService.login();
 	    	request.getSession().setAttribute("token", Context.getToken());
            // request.getRequestDispatcher("/login/onlogin.do").forward(request, response);  

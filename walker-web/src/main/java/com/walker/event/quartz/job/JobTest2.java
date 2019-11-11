@@ -2,16 +2,13 @@ package com.walker.event.quartz.job;
 
 import com.walker.event.quartz.TaskJob;
 import org.quartz.DisallowConcurrentExecution;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class JobTest extends TaskJob {
+public class JobTest2 extends TaskJob {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 
@@ -29,7 +26,7 @@ public class JobTest extends TaskJob {
 	 */
 	@Override
 	public void run() {
-		log.info("jobTest---------");
+		log.info("jobTest2---------");
 
 	}
 }

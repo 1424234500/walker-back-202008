@@ -151,7 +151,7 @@ public class ScheduleConfig {
 
 	@Scheduled(cron = "0/10 * * * * ?") //每10s
 	public void everySec10() {
-		log.info("[everySec10 0/10 * * * * ?][每10s任务]" + count ++);
+		log.info("[eachSec10 0/10 * * * * ?][每10s任务]" + count ++);
 	}
 
 

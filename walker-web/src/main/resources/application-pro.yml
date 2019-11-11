@@ -3,8 +3,8 @@ quartz:
   enabled: true
 spring:
 #默认主数据源
-  datasource:
-    url: jdbc:mysql://39.106.111.11:3306/walker?useUnicode=true&characterEncoding=utf-8&useSSL=false
+  datasource: #连接超时问题 MYSQL八小时
+    url: jdbc:mysql://39.106.111.11:3306/walker?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true
     username: walker
     password: qwer
 #    driver-class-name: com.mysql.jdbc.Driver
@@ -15,12 +15,16 @@ spring:
       max-active: 64
       validation-query: select 1 from dual
       validation-query-timeout: 1000
-    schema: classpath:ddl.sql  # 指定生成数据库的schema文件位置
-    data: classpath:dml.sql  # 指定插入数据库语句的脚本位置
 
+    sql-script-encoding: utf-8
+    schema: classpath:ddl.sql  # 初始化schema文件位置
+    data: classpath:dml.sql  # 初始化data位置
+    initialization-mode: always #初始化模式（springboot2.0），其中有三个值，always为始终执行初始化，embedded只初始化内存数据库（默认值）,如h2等，never为不执行初始化。
+    continue-on-error: true
   jpa:
     database: mysql
     show-sql: true
+    generate-ddl: false #启动时是否初始化数据库-hibernate 为true时，执行schema创建，会检测classpath下的import.sql文件，当然spring.jpa.hibernate.ddl-auto: 必须为create/update/create-drop，none和validate是不行的
     hibernate:
       #自动创建表
       ddl-auto: update

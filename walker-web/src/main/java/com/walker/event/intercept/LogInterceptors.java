@@ -45,14 +45,14 @@ public class LogInterceptors implements HandlerInterceptor{
      */   
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object method, Exception e)    throws Exception {  
     	// log.info("==============执行顺序: 3、afterCompletion================");
-        //结束时间   统计应用的性能 
+        //结束时间   统计应用的性能
         long endTime = System.currentTimeMillis();
         // 得到线程绑定的局部变量（开始时间）
-        long beginTime = (long) startTimeThreadLocal.get(); 
+        long beginTime = (long) startTimeThreadLocal.get();
         long time = endTime - beginTime;
- 
-        String requestUri = request.getRequestURI();  
-        String contextPath = request.getContextPath();  
+
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath();
         String url = requestUri.substring(contextPath.length());  //[/student/listm]
         String params = RequestUtil.getRequestBean(request).toString();
 
