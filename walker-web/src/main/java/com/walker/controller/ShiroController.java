@@ -2,15 +2,24 @@ package com.walker.controller;
 
 
 import com.walker.Response;
+import com.walker.common.util.TimeUtil;
+import com.walker.config.Context;
+import com.walker.dao.RedisDao;
+import com.walker.mode.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 
@@ -57,6 +66,13 @@ Parameter Types
 @RequestMapping("/shiro")
 public class ShiroController {
     private Logger log = LoggerFactory.getLogger(getClass());
+    @Autowired
+    RedisDao redisDao;
+    /**
+     *  redis缓存的有效时间单位是秒 默认过期时间：1 hours
+     */
+    @Value("${session.redis.expiration:1800}")
+    private long sessionRedisExpiration;
 
 
     @ApiOperation(value="登录shiro")
@@ -69,12 +85,18 @@ public class ShiroController {
 //            UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 //            SecurityUtils.getSubject().login(token);
 //            WebUser webUser = (WebUser) SecurityUtils.getSubject().getPrincipal();//登录成功之后，取出用户信息放进session存储域
-//            this.getRequest().getSession().setAttribute("webUser",webUser);
 
-//        log.info("token:" + token);
-//        log.info("webUser:" + webUser);
+        String token = "T:" + username + ":" + TimeUtil.getTimeSequence();
 
-        return Response.makeTrue("登录成功", "1");
+        User user = new User().setNAME(username).setID(username).setPWD(password).setSIGN("sign");
+        redisDao.set(token, user, sessionRedisExpiration);
+        Context.getRequest().getSession().setAttribute("TOKEN",token);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("USER", user);
+        res.put("TOKEN", token);
+
+        return Response.makeTrue("登录成功", res);
     }
 
 

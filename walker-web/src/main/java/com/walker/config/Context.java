@@ -2,6 +2,7 @@ package com.walker.config;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.Page;
+import com.walker.mode.User;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -119,13 +120,37 @@ public class Context  {
 	}
 
 	private final static String STR_TOKEN = "_TOKEN_";
+
+	/**
+	 * 设置当前用户token
+	 * @param token
+	 */
 	public static void setToken(String token){
 		Context.set(STR_TOKEN, token);
 	}
 	public static String getToken(){
 		return Context.get(STR_TOKEN, "");
 	}
+	private final static String STR_USER = "_USER_";
+	/**
+	 * 设置当前用户
+	 */
+	public static void setUser(User user){
+		Context.set(STR_USER, user);
+	}
+	public static User getUser(){
+		return Context.get(STR_USER, null);
+	}
 
-
+	private final static String STR_INFO= "_INFO_";
+	/**
+	 * 设置info
+	 */
+	public static void setInfo(String info){
+		Context.set(STR_INFO, info);
+	}
+	public static String getInfo(){
+		return Context.get(STR_INFO, "");
+	}
 
 }

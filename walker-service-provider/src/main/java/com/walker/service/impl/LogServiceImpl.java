@@ -7,11 +7,16 @@ import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.dao.JdbcDao;
+import com.walker.dao.LogInfoRepository;
+import com.walker.mode.LogInfo;
 import com.walker.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 @Transactional
@@ -23,19 +28,33 @@ public class LogServiceImpl implements LogService {
 
 	private Cache<String> cache = CacheMgr.getInstance();
 
+	@Autowired
+	LogInfoRepository logInfoRepository;
 
     //info:
     //id,userid,time,url,ip,mac,port,about
 	@Override
 	public void saveControl(String userid, String url, String ip, String host, int port, String params) {
-		int res = 0;
+//		List<List<Object>> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
+//
+//		params = Tools.cutString(params, 180);
+//
+//		List<Object> line = Arrays.asList(LangUtil.getGenerateId(),TimeUtil.getTimeYmdHmss(), userid, url, ip, host, port, params);
+//		list.add(line);
+//		cache.put(CACHE_KEY_CONTROL, list);
+		List<LogInfo> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
+
 		params = Tools.cutString(params, 180);
-		res = jdbcDao.executeSql("insert into LOG_INFO"
-				+ "(ID,TIME,USERID,URL,IP,MAC,PORT,ABOUT) "
-				+ "values"
-				+ "(?,?,?,?,?,?,?,?) "
-				,LangUtil.getGenerateId(),TimeUtil.getTimeYmdHmss(),userid,url,ip,host,port,params
-			);
+		LogInfo line = new LogInfo();
+		line.setId(LangUtil.getGenerateId());
+		line.setTime(TimeUtil.getTimeYmdHmss());
+		line.setUSERID(userid);
+		line.setURL(url);
+		line.setIP(ip + ":" + port);
+		line.setHOST(host);
+		line.setABOUT(params);
+		list.add(line);
+		cache.put(CACHE_KEY_CONTROL, list);
 	}
 
 
@@ -45,11 +64,7 @@ public class LogServiceImpl implements LogService {
 	@Override
 	public void saveStatis(String url, String params, long costtime) {
 		url = url.split("\\.")[0]; //url编码
-		Bean bean = cache.get(CACHE_KEY);
-		if(bean != null){
-		}else{
-			bean = new Bean();
-		}
+		Bean bean = cache.get(CACHE_KEY, new Bean());
 		Bean beanUrl = bean.get(url, new Bean());
 		beanUrl.put("URL", url);
 		beanUrl.put("COSTTIME", bean.get("COSTTIME", 0L) + costtime);
@@ -61,26 +76,48 @@ public class LogServiceImpl implements LogService {
 	}
 	@Override
 	public void saveStatis() {
-		Bean bean = cache.get(CACHE_KEY, new Bean());
-		cache.remove(CACHE_KEY);
+		log.info("begin batch save");
 
-//		Redis redis = Redis.getInstance();
-		//redis.show();
+		Bean bean = cache.get(CACHE_KEY, new Bean());
 		Set<Object> keys = bean.keySet();
-		if(keys != null)
-			for(Object key : keys){
-				if(bean.containsKey(key)){
-					Bean map = bean.get(key, new Bean());
-					int res = jdbcDao.executeSql("insert into W_LOG_TIME"
+		if(keys != null && keys.size() > 0) {
+			List<List<Object>> list = new ArrayList<>();
+			for (Object key : keys) {
+				Bean map = bean.get(key, new Bean());
+				List<Object> line = Arrays.asList(map.get("IPPORT", "localhost:8080"), LangUtil.getGenerateId(), map.get("URL"), map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME"));
+				list.add(line);
+			}
+			Integer[] res = jdbcDao.executeSql("insert into W_LOG_TIME"
 							+ "(IPPORT, ID, URL, COUNT, TIME, COSTTIME) "
 							+ "values"
 							+ "(?, ?, ?, ?, ?, ?) "
-							, map.get("IPPORT", "localhost:8080"), LangUtil.getGenerateId(), map.get("URL"), map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME")
-						); 
-				}
-			}
-//		redis.clearKeys();
-		//redis.show();
+					, list
+//					map.get("IPPORT", "localhost:8080"), LangUtil.getGenerateId(), map.get("URL"), map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME")
+			);
+			log.info("batch save static " + res);
+		}
+		cache.remove(CACHE_KEY);
+
+
+//		List<List<Object>> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
+//		if(list.size() > 0) {
+//			Integer[] res = jdbcDao.executeSql("insert into LOG_INFO"
+//							+ "(ID,TIME,USERID,URL,IP,MAC,PORT,ABOUT) "
+//							+ "values"
+//							+ "(?,?,?,?,?,?,?,?) "
+//					, list
+//					//LangUtil.getGenerateId(),TimeUtil.getTimeYmdHmss(),userid,url,ip,host,port,params
+//			);
+//			cache.remove(CACHE_KEY_CONTROL);
+//			log.info("batch save Control " + res);
+//		}
+		List<LogInfo> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
+		if(list.size() > 0) {
+			list = logInfoRepository.saveAll(list);
+			cache.remove(CACHE_KEY_CONTROL);
+			log.info("batch save Control " + list.size());
+		}
+
 	}
 
 }

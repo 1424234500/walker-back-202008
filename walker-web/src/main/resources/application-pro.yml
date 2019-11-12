@@ -111,5 +111,7 @@ logging:
 #
 #logging:
 #  config: classpath:log4j2.yml
-
+session:
+  redis:
+    expiration: 1801
 

@@ -1,15 +1,18 @@
 package com.walker.event.intercept;
 
 import com.walker.common.util.Bean;
+import com.walker.config.Context;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
-import com.walker.config.Context;
+import com.walker.dao.RedisDao;
+import com.walker.mode.User;
 import com.walker.util.RequestUtil;
 import com.walker.util.SpringContextUtil;
 import com.walker.service.LogService;
 import com.walker.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,7 +26,7 @@ import java.util.Map;
  * @author Walker
  *
  */
-public class LoginInterceptors implements HandlerInterceptor{
+public class UserInterceptors implements HandlerInterceptor{
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	Cache<String> cache = CacheMgr.getInstance();
@@ -31,6 +34,7 @@ public class LoginInterceptors implements HandlerInterceptor{
 	LoginService loginService = SpringContextUtil.getBean("loginService");
 
 	LogService logService = SpringContextUtil.getBean("logService");
+	RedisDao redisDao = SpringContextUtil.getBean("redisDao");
 
     /** 
      * 在渲染视图之后被调用； 
@@ -57,44 +61,33 @@ public class LoginInterceptors implements HandlerInterceptor{
      */  
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object method) throws Exception {  
        // log.info("==============执行顺序: 1、preHandle================");
- 
-        //登录权限
-//	    LoginUser user = (LoginUser) request.getSession().getAttribute("SY_LOGINUSER");
-	    
-		Object tokenObj = request.getSession().getAttribute("token");
-//		cache.put("USER_ONLINE", map);
-	    Map<String, Object> map =  cache.get(LoginService.CACHE_KEY, new HashMap<String, Object>());
-	    if(tokenObj != null && map != null && map.containsKey(tokenObj) ){
-	    	Bean user = (Bean) map.get(tokenObj);
 
-	    	String token = user.get("token", "");
-	    	String id = user.get("id", "");
-	    	Long time = user.get("time", 0L);
-	    	Long expire = user.get("expire", 0L);
-	    	if(time + expire < System.currentTimeMillis()){
-		    	log.info(token + "." + id + "." + time + "." + expire + "." + " 过期 失效 ");
-		    	loginService.login();
-	    	}else{
-		    	log.info(token + "." + id + "." + time + "." + expire + "." + " 已登录 未过期 ");
-		    	//登录用户操作日志 记录 用户id,操作url权限?,用户操作ip/mac/端口
-		    	String requestUri = request.getRequestURI();
-		        String contextPath = request.getContextPath();
-		        String url = requestUri.substring(contextPath.length());  //[/student/listm]
-		        //sequenceid time userid url ip host 端口
-		        String ip = request.getRemoteAddr();//返回发出请求的IP地址
-		        String params = RequestUtil.getRequestBean(request).toString();
-		        String host=request.getRemoteHost();//返回发出请求的客户机的主机名
-		        int port =request.getRemotePort();//返回发出请求的客户机的端口号。
+		Object tokenObj = request.getSession().getAttribute("TOKEN");
+//		request.getHeader("TOKEN")
+		String token = tokenObj == null ? "" : String.valueOf(tokenObj);
+		if(token.length() == 0){
+			token = request.getHeader("TOKEN");
+			token = token == null ? "" : token;
+			log.warn("session is null, then userAgent token " + token);
+		}
+//	    Map<String, Object> map =  cache.get(LoginService.CACHE_KEY, new HashMap<String, Object>());
+//		Map<String, String> user = redisDao.hmGet(token);
+		User user = token.length() > 0 ? redisDao.get(token, null) : null;
 
-		        logService.saveControl(id, url, ip, host, port, params);
-	    	}
-    	}else{
-	    	log.info("token:" + tokenObj + " 无效 未登录：跳转到login页面！");
-	    	loginService.login();
-	    	request.getSession().setAttribute("token", Context.getToken());
-           // request.getRequestDispatcher("/login/onlogin.do").forward(request, response);  
-           // return false;
+		if( user != null ){
+//			log.info(info + " token:" + tokenObj + " go ");
+			Context.setToken(token);
+			Context.setUser(user);
+	    }else{
+			String requestUri = request.getRequestURI();
+			String contextPath = request.getContextPath();
+			String url = requestUri.substring(contextPath.length());  //[/student/listm]
+			log.info("ipport:" + request.getRemoteAddr() + ":" + request.getRemotePort() + " " + url + " token:" + tokenObj + " go login 401");
+			RequestUtil.echo401(response, token);
+//			RequestUtil.sendRedirect(response, "/");
+	    	return false;
 	    }
+
         return true;  
     }  
   

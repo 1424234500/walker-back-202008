@@ -1,13 +1,15 @@
 package com.walker.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 日志管理
  */
 public interface LogService  {
-	Logger logger = Logger.getLogger(LogService.class); 
+	Logger log = LoggerFactory.getLogger(LogService.class);
 	String CACHE_KEY = "cache-url-request";
+	String CACHE_KEY_CONTROL = "cache-url-request-control";
 
 
 	/**

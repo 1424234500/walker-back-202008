@@ -7,6 +7,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
@@ -141,7 +142,7 @@ public class RequestUtil {
 	/**
 	 * 通过Direct方式向JSP或Servlet跳转.
 	 * 
-	 * @param res
+	 * @param response
 	 *            response对象
 	 * @param url
 	 *            目标的URL相对路径
@@ -154,9 +155,9 @@ public class RequestUtil {
 	/**
 	 * 通过Dispatcher方式向JSP或Servlet跳转.
 	 * 
-	 * @param req
+	 * @param request
 	 *            reqeust对象
-	 * @param res
+	 * @param response
 	 *            response对象
 	 * @param url
 	 *            目标的URL相对路径
@@ -351,5 +352,24 @@ public class RequestUtil {
 			value = "";
 		return value;
 	}
+	public static void echo401(HttpServletResponse response, String json) throws IOException {
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, json);
+	}
 
+
+	public static void echo(HttpServletResponse response, String json) throws Exception {
+		PrintWriter writer = null;
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=utf-8");
+		try {
+			writer = response.getWriter();
+			writer.print(json);
+		} catch (IOException e) {
+			throw new RuntimeException(json + " " + e.getMessage());
+		} finally {
+			if (writer != null)
+				writer.close();
+		}
+
+	}
 }

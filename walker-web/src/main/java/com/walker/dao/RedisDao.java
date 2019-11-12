@@ -24,10 +24,10 @@ public class RedisDao {
      * @param value
      * @return
      */
-    public boolean set(final String key, Object value) {
+    public <T> boolean set(final String key, T value) {
         boolean result = false;
         try {
-            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+            ValueOperations<Serializable, T> operations = redisTemplate.opsForValue();
             operations.set(key, value);
             result = true;
         } catch (Exception e) {
@@ -41,10 +41,10 @@ public class RedisDao {
      * @param value
      * @return
      */
-    public boolean set(final String key, Object value, Long expireTime) {
+    public <T> boolean set(final String key, T value, Long expireTime) {
         boolean result = false;
         try {
-            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+            ValueOperations<Serializable, T> operations = redisTemplate.opsForValue();
             operations.set(key, value);
             redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
             result = true;
@@ -53,6 +53,8 @@ public class RedisDao {
         }
         return result;
     }
+
+
     /**
      * 批量删除对应的value
      * @param keys
@@ -105,7 +107,7 @@ public class RedisDao {
      * @param key
      * @return
      */
-    public <T> T getConfig(final String key, final T defaultValue) {
+    public <T> T get(final String key, final T defaultValue) {
         T result = null;
         ValueOperations<Serializable, T> operations = redisTemplate.opsForValue();
         result = operations.get(key);

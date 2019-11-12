@@ -105,6 +105,12 @@ export const constantRoutes = [
         meta: {title: 'Dept', icon: 'list'}
       },
       {
+        path: 'depttree',
+        name: 'DeptTree',
+        component: () => import('@/views/user/depttree'),
+        meta: { title: 'DeptTree', icon: 'tree' }
+      },
+      {
         path: 'role',
         name: 'Role',
         component: () => import('@/views/user/role'),

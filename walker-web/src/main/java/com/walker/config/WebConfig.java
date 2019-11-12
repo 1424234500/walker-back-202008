@@ -2,6 +2,7 @@ package com.walker.config;
 
 
 import com.walker.event.intercept.LogInterceptors;
+import com.walker.event.intercept.UserInterceptors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 配置mvc web.xml spring-mvc.xml
@@ -55,24 +57,47 @@ public class WebConfig implements WebMvcConfigurer {
 //        resolver.setMaxUploadSize(100 * 1024 * 1024);//上传文件大小 5M 5*1024*1024
 //        return resolver;
 //    }
+    static final List<String> exceptStatic = Arrays.asList(new String[]{
+            "/webjars/**",
+            "/static/**",
+            "/html/*",
+
+    });
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         log.info(Config.PRE + "-------------addInterceptors");
+
+//        token检测 设置用户 环境上下文    未登录则跳转登录 拦截?
+        registry.addInterceptor(new UserInterceptors() )
+                .addPathPatterns("/**")
+                .excludePathPatterns(Arrays.asList(
+                        "/shiro/**",
+                        "/webjars/**",
+                        "/static/**",
+                        "/html/*",
+                        "/*",
+                        "/swagger-resources/**",
+                        "/v2/**"
+
+                ));
+//        url ip  参数 耗时统计监控
+
+        //配置 拦截 /list结尾的请求
+        //    /*表示只拦截 /这一层目录下的/list   比如 拦截/dept/list  不会拦截/api/dept/list
+        //    /** 表示拦截  /这一层目录下的包含子目录的/list 比如拦截 /api/dept/list
         registry.addInterceptor(new LogInterceptors() )
                 .addPathPatterns("/**")
-                .excludePathPatterns(
-                        Arrays.asList(new String[]{
-                                "/webjars/**",
-                                "/static/**",
-                                "/html/*"
+                .excludePathPatterns(Arrays.asList(
+                        "/webjars/**",
+                        "/static/**",
+                        "/html/*",
+                        "/*",
+                        "/swagger-resources/**",
+                        "/v2/**"
 
-                        })
-                )
-        ;
-
-
-//        registry.addInterceptor(new LoginInterceptors())
+                ));
+//        registry.addInterceptor(new UserInterceptors())
 //            .excludePathPatterns(
 //                Arrays.asList(new String[]{
 //                        "/*/*onlogin.do",
@@ -97,7 +122,7 @@ public class WebConfig implements WebMvcConfigurer {
 //           <!-- 登录拦截例外 -->
 //	 	   <mvc:exclude-mapping path="/*/*onlogin.do" />
 //	 	   <mvc:exclude-mapping path="/*/*loginin.do" />
-//	       <bean class="com.walker.event.intercept.LoginInterceptors" />
+//	       <bean class="com.walker.event.intercept.UserInterceptors" />
 //      	</mvc:interceptor>
 //    </mvc:interceptors>
     }

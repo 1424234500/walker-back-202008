@@ -35,6 +35,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { getToken,setToken,getUser,setUser,clear } from '@/utils/store' // get token from cookie
 
 export default {
   components: {
@@ -52,7 +53,8 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('userSocket/logout')
+      // await this.$store.dispatch('userSocket/logout')
+      clear()
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }

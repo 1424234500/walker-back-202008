@@ -1,5 +1,5 @@
 // import { login, logout, getInfo } from '@/api/shiro'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken,setToken,getUser,setUser } from '@/utils/store' // get token from cookie
 import { resetRouter } from '@/router'
 import { get, post } from '@/utils/http'
 
@@ -24,9 +24,9 @@ const mutations = {
 //other异步 方法?
 const actions = {
   loginin({ commit, state }, data){
-    console.info("module/user/loginOn设置当前用户信息 " + data)
-
-    const {token, name} = data
+    console.info("module/user/loginOn设置当前用户信息 ", data)
+    const token = data['TOKEN']
+    const name = data['USER']['NAME']
     commit('SET_TOKEN', token)
     commit('SET_NAME', name)
     setToken(token)
@@ -47,7 +47,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         commit('SET_TOKEN', '')
-        removeToken()
+        setToken('')
         resetRouter()
         resolve()
       }).catch(error => {
@@ -60,7 +60,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      removeToken()
+      setToken('')
       resolve()
     })
   }

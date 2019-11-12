@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { Message } from 'element-ui';
+import { getToken,setToken,getUser,setUser,clear } from '@/utils/store' // get token from cookie
 
+import router from '@/router'
 import qs from 'qs'
 //
 // if (process.env.NODE_ENV == 'development') {
@@ -22,23 +24,41 @@ axios.defaults.timeout = 10000;
 
 axios.interceptors.request.use(function (config) {
   // 一般在这个位置判断token是否存在
+  let token = getToken()
+  if (token) {
+    config.headers.TOKEN = token
+  }
+  // else {
+  //   window.location.pathname = '/login'
+  // }
+
   return config;
 }, function (error) {
   // 对请求错误做些什么
   return Promise.reject(error);
 });
 
-axios.interceptors.response.use(function (response) {
-  // 处理响应数据
-  if (response.status === 200) {
-    return Promise.resolve(response);
-  } else {
-    return Promise.reject(response);
+axios.interceptors.response.use(
+  response => {
+    return response
+  },
+error => {
+  if (error.response) {
+    switch (error.response.status) {
+      case 401:
+        // 返回 401 清除token信息并跳转到登录页面
+        confirm('登录信息已经过期')
+        router.replace({
+          path: '/login'
+        })
+        clear()
+        location.reload()
+    }
   }
-}, function (error) {
-  // 处理响应失败
-  return Promise.reject(error);
+  return Promise.reject(error.response.data)   // 返回接口返回的错误信息
 });
+
+
 
 
 

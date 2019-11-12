@@ -54,6 +54,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { getToken,setToken,getUser,setUser } from '@/utils/store' // get token from cookie
 
 export default {
   name: 'Login',
@@ -95,7 +96,7 @@ export default {
     }
   },
   created() {
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     showPwd() {
@@ -113,9 +114,12 @@ export default {
         if (valid) {
           this.loading = true
           this.post('/shiro/login.do', this.loginForm).then((res)=>{
-            res = {token:111, name:this.loginForm.username}
+            // res = {token:111, name:this.loginForm.username}
+            res = res.data
+            setToken(res['TOKEN'])
+            setUser(res['USER'])
             this.$message({message:'登录成功', type:'success'});
-            this.$store.dispatch('user/loginin', res)
+            // this.$store.dispatch('user/loginin', res)
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(()=>{
