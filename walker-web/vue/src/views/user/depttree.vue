@@ -154,8 +154,11 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      debugger
-      params['ID'] = data
+      if(data == null){
+        params['ID'] = 'D0' //root根规则
+      }else {
+        params['P_ID'] = data['ID']
+      }
       this.get('/dept/findPage.do', params).then((res) => {
         var list = res.data.data
         this.page = res.data.page
