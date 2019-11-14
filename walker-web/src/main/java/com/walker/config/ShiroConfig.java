@@ -1,5 +1,6 @@
 package com.walker.config;
 
+import com.walker.dao.RedisDao;
 import com.walker.mode.User;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
@@ -36,6 +37,16 @@ public class ShiroConfig {
 
     @Autowired
     SecurityManager securityManager;
+
+    @Autowired
+    RedisDao redisDao;
+    /**
+     *  redis缓存的有效时间单位是秒 默认过期时间：1 hours
+     */
+    @Value("${session.redis.expiration:1800}")
+    private long sessionRedisExpiration;
+
+
 
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean shiroFilter() {
@@ -168,4 +179,32 @@ public class ShiroConfig {
 
 
     }
+
+    /**
+     * 获取在线用户
+     * @param token
+     * @return
+     */
+    public User getOnlineUser(String token){
+        return redisDao.get(token, null);
+    }
+    /**
+     * 保存在线用户 token 放入redis缓存
+     * @param token
+     * @param user
+     */
+    public void onlineUser(String token, User user) {
+        redisDao.set(token, user, sessionRedisExpiration);
+        Context.getRequest().getSession().setAttribute("TOKEN",token);
+    }
+    /**
+     * 刷新在线用户 token 放入redis缓存
+     * @param token
+     */
+    public void keeponUser(String token) {
+        redisDao.expire(token, sessionRedisExpiration);
+    }
+
+
+
 }

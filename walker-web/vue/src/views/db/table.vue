@@ -25,7 +25,6 @@
           </el-select>
           <el-button  class="btn btn-primary" @click="getTables()" >查询</el-button>
         </div>
-        <br>
         <div class="form-group">
           <label>table</label>
           <el-select v-model="table"
@@ -254,6 +253,7 @@
         this.get('/common/getDatabasesOrUsers.do', params).then((res) => {
           this.queryDatabase = res.data
           this.database = res.data != null && res.data.length > 0 ? res.data[0] : 'walker'
+          this.database = 'walker'
           this.loadingTables = false
           this.getTables()
         }).catch(() => {

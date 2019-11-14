@@ -4,8 +4,6 @@ import com.walker.common.util.Bean;
 import com.walker.common.util.MD5;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
-import com.walker.dao.JdbcDao;
-import com.walker.event.Context;
 import com.walker.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +36,7 @@ public class LoginServiceImpl implements LoginService,Serializable {
 		map.put(token, bean);
 		cache.put(CACHE_KEY, map);	
 		log.info("登录" + id + "." + pwd + "." + token);
-		Context.setToken(token);
+//		Context.setToken(token);
 //		Context.getRequest().getSession().setAttribute("TOKEN", token);
 		return true;
 	}

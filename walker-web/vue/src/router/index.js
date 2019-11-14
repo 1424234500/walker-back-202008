@@ -80,6 +80,12 @@ export const constantRoutes = [
         component: () => import('@/views/db/table'),
         meta: { title: 'Table', icon: 'table' }
       },
+      {
+        path: 'auto',
+        name: 'Auto',
+        component: () => import('@/views/db/auto'),
+        meta: { title: 'Auto', icon: 'table' }
+      },
     ]
   },
 

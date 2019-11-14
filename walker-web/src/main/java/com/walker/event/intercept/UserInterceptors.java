@@ -2,6 +2,7 @@ package com.walker.event.intercept;
 
 import com.walker.common.util.Bean;
 import com.walker.config.Context;
+import com.walker.config.ShiroConfig;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.dao.RedisDao;
@@ -12,6 +13,7 @@ import com.walker.service.LogService;
 import com.walker.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,6 +25,7 @@ import java.util.Map;
 
 /**
  * 拦截器 日志 登录/访问权限 事务   监控所有用户操作和登录并记录日志数据库
+ * 拦截器是在上下文容器 Spring Context 初始化之前执行，所以没有办法直接在拦截器中注入Service对象
  * @author Walker
  *
  */
@@ -34,8 +37,13 @@ public class UserInterceptors implements HandlerInterceptor{
 	LoginService loginService = SpringContextUtil.getBean("loginService");
 
 	LogService logService = SpringContextUtil.getBean("logService");
-	RedisDao redisDao = SpringContextUtil.getBean("redisDao");
+	ShiroConfig shiroConfig = SpringContextUtil.getBean("shiroConfig");
 
+	/**
+	 *  redis缓存的有效时间单位是秒 默认过期时间：1 hours
+	 */
+	@Value("${session.redis.expiration:1800}")
+	private long sessionRedisExpiration;
     /** 
      * 在渲染视图之后被调用； 
      * 可以用来释放资源 
@@ -72,10 +80,11 @@ public class UserInterceptors implements HandlerInterceptor{
 		}
 //	    Map<String, Object> map =  cache.get(LoginService.CACHE_KEY, new HashMap<String, Object>());
 //		Map<String, String> user = redisDao.hmGet(token);
-		User user = token.length() > 0 ? redisDao.get(token, null) : null;
+		User user = token.length() > 0 ? shiroConfig.getOnlineUser(token) : null;
 
 		if( user != null ){
 //			log.info(info + " token:" + tokenObj + " go ");
+			shiroConfig.keeponUser(token);
 			Context.setToken(token);
 			Context.setUser(user);
 	    }else{

@@ -1,10 +1,11 @@
 package com.walker.event.intercept;
 
-import com.walker.event.Context;
+import com.walker.common.util.Tools;
+import com.walker.config.Context;
+import com.walker.mode.User;
+import com.walker.service.LogService;
 import com.walker.util.RequestUtil;
 import com.walker.util.SpringContextUtil;
-import com.walker.service.LogService;
-import org.apache.log4j.NDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.NamedThreadLocal;
@@ -45,29 +46,37 @@ public class LogInterceptors implements HandlerInterceptor{
      */   
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object method, Exception e)    throws Exception {  
     	// log.info("==============执行顺序: 3、afterCompletion================");
-        //结束时间   统计应用的性能 
+        //结束时间   统计应用的性能
         long endTime = System.currentTimeMillis();
         // 得到线程绑定的局部变量（开始时间）
-        long beginTime = (long) startTimeThreadLocal.get(); 
+        long beginTime = (long) startTimeThreadLocal.get();
         long time = endTime - beginTime;
- 
-        String requestUri = request.getRequestURI();  
-        String contextPath = request.getContextPath();  
-        String url = requestUri.substring(contextPath.length());  //[/student/listm]
-        String params = RequestUtil.getRequestBean(request).toString();
-
+        String info = Context.getInfo() + "[cost " + time + "]" + (e == null ? "" : Tools.toString(e));
 
         // 此处认为处理时间超过500毫秒的请求为慢请求
         if(time > 3000){
-            log.error("after [" + url + "] [ cost " + time + "] " + params);
+            log.error(info);
         }else if(time > 1000){
-            log.warn("after [" + url + "] [ cost " + time + "] " + params);
+            log.warn(info);
         }else{
-            log.info("after [" + url + "] [ cost " + time + "] " + params);
+            log.info(info);
         }
-        logService.saveStatis(url, params, time);
+        User user = Context.getUser();
+        //登录用户操作日志 记录 用户id,操作url权限?,用户操作ip/mac/端口
+        String id = user == null ? "" : user.getID();
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String url = requestUri.substring(contextPath.length());  //[/student/listm]
+        //sequenceid time userid url ip host 端口
+        String ip = request.getRemoteAddr();//返回发出请求的IP地址
+        String params = RequestUtil.getRequestBean(request).toString();
+        String host=request.getRemoteHost();//返回发出请求的客户机的主机名
+        int port =request.getRemotePort();//返回发出请求的客户机的端口号。
 
-        NDC.pop();
+        logService.saveControl(id, url, ip, host, port, params);
+
+        logService.saveStatis(url, params, time);   //统计耗时
+
 
         Context.clear();
         
@@ -89,33 +98,28 @@ public class LogInterceptors implements HandlerInterceptor{
      * 
      *  
      */  
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object method) throws Exception {  
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object method) throws Exception {
         //log.info("==============执行顺序: 1、preHandle================");
 //    	String s = request.getCharacterEncoding();
     	request.setCharacterEncoding("UTF-8");
     	response.setCharacterEncoding("UTF-8");
-    	Object params = RequestUtil.getRequestBean(request).toString();
 
         // 设置开始时间  线程绑定变量（该数据只有当前请求的线程可见）
         startTimeThreadLocal.set(System.currentTimeMillis());
-        
-        //log4j 日志栈控制 配置输出 %X{uid} %X{remoteAddr}
-        NDC.push(request.getRemoteAddr() + ":" + request.getRemotePort() + " " + params);
 
         Context.setRequest(request);
         Context.setResponse(response);
         Context.setTimeStart();             //设置上下文
-        
-        
- 
-        String requestUri = request.getRequestURI();  
-        String contextPath = request.getContextPath();  
+
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath();
         String url = requestUri.substring(contextPath.length());  //[/student/listm]
-         
+        String params = RequestUtil.getRequestBean(request).toString();
+
         String name = "", cla = "";
         if(method != null && method instanceof HandlerMethod){
         	try{
-	        	HandlerMethod handlerMethod = (HandlerMethod) method; 
+	        	HandlerMethod handlerMethod = (HandlerMethod) method;
 	        	name = handlerMethod.getMethod().getName();
 	            cla = handlerMethod.getBean().toString();
 	            cla = cla.substring(0, cla.indexOf("@"));
@@ -123,11 +127,16 @@ public class LogInterceptors implements HandlerInterceptor{
         		e.printStackTrace();
         	}
         }
-        //日志 记录 输出       
-//        log.info("++++++++ ");
-	    log.info("before [" + url + "] [" + cla + "." + name + "]" + params);
+        User user = Context.getUser();
+        String userid = user == null ? "null" : user.getID();
+        String info = "do url:" + url + " class:" + cla + "." + name + " args:" + params + " ipport:" + request.getRemoteAddr() + ":" + request.getRemotePort() + " token:" + Context.getToken() + " user:" + userid + " ";
 
-        return true;  
+        Context.setInfo(info);
+        //日志 记录 输出
+//        log.info("++++++++ ");
+	    log.info(info);
+
+        return true;
     }  
   
 }  

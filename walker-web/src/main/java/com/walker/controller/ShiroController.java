@@ -4,6 +4,7 @@ package com.walker.controller;
 import com.walker.Response;
 import com.walker.common.util.TimeUtil;
 import com.walker.config.Context;
+import com.walker.config.ShiroConfig;
 import com.walker.dao.RedisDao;
 import com.walker.mode.User;
 import io.swagger.annotations.Api;
@@ -66,14 +67,9 @@ Parameter Types
 @RequestMapping("/shiro")
 public class ShiroController {
     private Logger log = LoggerFactory.getLogger(getClass());
-    @Autowired
-    RedisDao redisDao;
-    /**
-     *  redis缓存的有效时间单位是秒 默认过期时间：1 hours
-     */
-    @Value("${session.redis.expiration:1800}")
-    private long sessionRedisExpiration;
 
+    @Autowired
+    ShiroConfig shiroConfig;
 
     @ApiOperation(value="登录shiro")
     @ResponseBody
@@ -89,8 +85,8 @@ public class ShiroController {
         String token = "T:" + username + ":" + TimeUtil.getTimeSequence();
 
         User user = new User().setNAME(username).setID(username).setPWD(password).setSIGN("sign");
-        redisDao.set(token, user, sessionRedisExpiration);
-        Context.getRequest().getSession().setAttribute("TOKEN",token);
+
+        shiroConfig.onlineUser(token, user);
 
         Map<String, Object> res = new HashMap<>();
         res.put("USER", user);

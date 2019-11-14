@@ -44,6 +44,60 @@ public class CommonController {
     @Qualifier("jdbcDao")
     private JdbcDao jdbcDao;
 
+    @ApiOperation(value = "sql执行", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/exeSql.do", method = RequestMethod.GET)
+    public Response exeSql(
+            @RequestParam(value = "_SQL_", required = true, defaultValue = "select 1 from dual") String sql,
+
+            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
+            @RequestParam(value = "order", required = false, defaultValue = "") String order
+    ) {
+        Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
+
+//        select xxx  update xxxx insert xxxx delete from xxxx
+        Map<String, Object> res = new HashMap<>();
+
+        String up = sql.toUpperCase();
+        int s = up.indexOf("SELECT") ;
+        int w = up.indexOf("WITH") ;
+        int u = up.indexOf("UPDATE") ;
+        int i = up.indexOf("INSERT") ;
+        int d = up.indexOf("DELETE") ;
+
+        try {
+            if (
+                    (s > 0 && s > u && s > i && s > d)  //
+                            || (u < 0 && i < 0 && d < 0)    //无修改
+            ) {
+                List<?> list = null;
+
+                List<String> cols = baseService.getColumnsBySql(sql);
+                Map<String, String> colMap = new LinkedHashMap<>();
+                for (String str : cols) {
+                    colMap.put(str, str);
+                }
+                list = baseService.findPage(page, sql);
+                page.setNum(baseService.count(sql));
+
+                res.put("data", list);
+                res.put("page", page);
+                res.put("colMap", colMap);
+                res.put("colKey", colMap.keySet().toArray()[0]);
+            } else {
+                String info = "";
+                info = "" + baseService.executeSql(sql);
+                res.put("info", info);
+
+            }
+        }catch (Exception e){
+            res.put("info", e.getMessage());
+        }
+        return Response.makeTrue(sql, res);
+    }
+
+
 
     @ApiOperation(value = "获取需要前段展示的表列名 备注名", notes = "")
     @ResponseBody

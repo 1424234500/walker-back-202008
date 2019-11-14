@@ -54,6 +54,10 @@ public class RedisDao {
         return result;
     }
 
+    public void expire(String key, Long expireTime){
+        redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+    }
+
 
     /**
      * 批量删除对应的value
