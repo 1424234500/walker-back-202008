@@ -1,17 +1,33 @@
-package com.walker.event.quartz.job;
+package com.walker.job;
 
-import com.walker.event.quartz.TaskJob;
+import com.alibaba.fastjson.JSON;
+import com.walker.common.util.Bean;
+import com.walker.common.util.HttpBuilder;
+import com.walker.config.MakeConfig;
+import com.walker.quartz.TaskJob;
+import com.walker.mode.Dept;
+import com.walker.service.DeptService;
+import com.walker.service.InitService;
+import com.walker.util.SpringContextUtil;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 同步 地域信息
+ */
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class JobTest2 extends TaskJob {
+public class JobUpdateArea extends TaskJob {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
-
+	@Autowired
+	InitService initService;
 
 	/**
 	 * When an object implementing interface <code>Runnable</code> is used
@@ -26,7 +42,11 @@ public class JobTest2 extends TaskJob {
 	 */
 	@Override
 	public void run() {
-		log.info("jobTest2---------");
+		log.info("begin---------");
+
+		initService.updateArea();
+
+		log.info("end---------");
 
 	}
 }

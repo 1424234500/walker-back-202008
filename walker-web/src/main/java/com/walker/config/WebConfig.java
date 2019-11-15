@@ -1,8 +1,8 @@
 package com.walker.config;
 
 
-import com.walker.event.intercept.LogInterceptors;
-import com.walker.event.intercept.UserInterceptors;
+import com.walker.intercept.LogInterceptors;
+import com.walker.intercept.UserInterceptors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -131,7 +131,7 @@ public class WebConfig implements WebMvcConfigurer {
 //    public ServletListenerRegistrationBean listenerRegist() {
 //        log.info("ServletListenerRegistrationBean");
 //        ServletListenerRegistrationBean srb = new ServletListenerRegistrationBean();
-//        srb.setListener(new ContextListener());
+//        srb.setListener(new OnServletContextListener());
 //        return srb;
 //    }
 //

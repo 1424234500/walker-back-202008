@@ -1,4 +1,4 @@
-package com.walker.event.intercept;
+package com.walker.intercept;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

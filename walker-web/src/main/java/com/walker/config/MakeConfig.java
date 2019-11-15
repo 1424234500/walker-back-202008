@@ -21,6 +21,9 @@ public class MakeConfig {
     private Logger log = LoggerFactory.getLogger(getClass());
 
 
+    @Value("${url.area.meituan:https://www.meituan.com/ptapi/getprovincecityinfo/}")
+    public String urlAreaMeituan;
+
 
     @Value("${test}")
     public String test;

@@ -1,22 +1,26 @@
-package com.walker.event.listener;
+package com.walker.listener;
 
 import com.walker.common.util.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 启动listener类，用于系统环境总体初始化
- *
+ * 在上下文容器 Spring Context 初始化之前执行，所以没有办法直接在拦截器中注入Service对象?
  * 迟于springmvc onload执行
  *
  */
-public class ContextListener implements ServletContextListener {
-    private static Logger log = Logger.getLogger("ContextListener");
+@WebListener
+public class OnServletContextListener implements ServletContextListener {
+    private Logger log = LoggerFactory.getLogger(getClass());
+
 
     /**
      * 初始化系统
@@ -27,6 +31,7 @@ public class ContextListener implements ServletContextListener {
         // 加载配置参数
         log.info(".........................................................");
         log.info(".........................................................");
+
         log.info(".........................................................");
         log.info("正在启动系统 ... ...");
         ServletContext sc = sce.getServletContext();

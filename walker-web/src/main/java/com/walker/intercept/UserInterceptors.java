@@ -1,11 +1,9 @@
-package com.walker.event.intercept;
+package com.walker.intercept;
 
-import com.walker.common.util.Bean;
 import com.walker.config.Context;
 import com.walker.config.ShiroConfig;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
-import com.walker.dao.RedisDao;
 import com.walker.mode.User;
 import com.walker.util.RequestUtil;
 import com.walker.util.SpringContextUtil;
@@ -14,14 +12,11 @@ import com.walker.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 拦截器 日志 登录/访问权限 事务   监控所有用户操作和登录并记录日志数据库

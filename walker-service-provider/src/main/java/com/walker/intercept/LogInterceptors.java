@@ -1,4 +1,4 @@
-package com.walker.event.intercept;
+package com.walker.intercept;
 
 import com.walker.common.util.Tools;
 import com.walker.config.Context;

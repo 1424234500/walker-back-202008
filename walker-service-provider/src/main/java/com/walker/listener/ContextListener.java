@@ -1,18 +1,11 @@
-package com.walker.event.listener;
+package com.walker.listener;
 
 import com.walker.common.util.*;
-import com.walker.core.scheduler.Task;
-import com.walker.core.scheduler.job.JobTest;
-import com.walker.service.ScheduleService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -22,12 +15,8 @@ import java.util.concurrent.TimeUnit;
  * 迟于springmvc onload执行
  *
  */
-@WebListener
 public class ContextListener implements ServletContextListener {
-    private Logger log = LoggerFactory.getLogger(getClass());
-
-    @Autowired
-    ScheduleService scheduleService;
+    private static Logger log = Logger.getLogger("ContextListener");
 
     /**
      * 初始化系统
@@ -38,14 +27,6 @@ public class ContextListener implements ServletContextListener {
         // 加载配置参数
         log.info(".........................................................");
         log.info(".........................................................");
-        log.info("..start quartz.......................................................");
-        try {
-            scheduleService.start();
-            scheduleService.add(new Task("com.walker.event.quartz.job.JobTest","sb quartz scheduler tools out", "0 0/2 * * * ?", "0 0/3 * * * ?"));
-            scheduleService.add(new Task("com.walker.event.quartz.job.JobTest2","sb quartz scheduler tools out2", "0 0/5 * * * ?", "0 0/30 * * * ?"));
-        }catch (Exception e){
-            log.error("quartz start error", e);
-        }
         log.info(".........................................................");
         log.info("正在启动系统 ... ...");
         ServletContext sc = sce.getServletContext();

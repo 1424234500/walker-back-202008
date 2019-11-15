@@ -1,4 +1,4 @@
-package com.walker.event.intercept;
+package com.walker.intercept;
 
 import com.walker.common.util.Tools;
 import com.walker.config.Context;
@@ -6,7 +6,6 @@ import com.walker.mode.User;
 import com.walker.util.RequestUtil;
 import com.walker.util.SpringContextUtil;
 import com.walker.service.LogService;
-import org.apache.log4j.NDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.NamedThreadLocal;

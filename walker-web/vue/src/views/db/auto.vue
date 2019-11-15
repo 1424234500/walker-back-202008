@@ -45,26 +45,29 @@
         </div>
 
       </form>
+
       <br>
-      <el-tabs v-model="listTabValue" type="card" editable @edit="handleTabsEdit">
-        <el-tab-pane
-          :key="item.name"
-          v-for="(item, index) in listTab"
-          :label="item.title"
-          :name="item.name"
-        >
-          <el-input
-            type="textarea"
-            :rows="4"
-            placeholder="输入需要执行的sql"
 
-            v-model="item.content">
-          </el-input>
-        </el-tab-pane>
-      </el-tabs>
-      <el-button  class="btn btn-warning" @click="getListPage()" >执行sql</el-button>
-      <el-button  class="btn btn-danger" @click="initTab()" >清空所有sql</el-button>
-
+      <div v-loading="loadingSql" >
+        <el-tabs
+          v-model="listTabValue" type="card" editable @edit="handleTabsEdit">
+          <el-tab-pane
+            :key="item.name"
+            v-for="(item, index) in listTab"
+            :label="item.title"
+            :name="item.name"
+          >
+            <el-input
+              type="textarea"
+              :rows="4"
+              placeholder="输入需要执行的sql"
+              v-model="item.content">
+            </el-input>
+          </el-tab-pane>
+        </el-tabs>
+        <el-button  class="btn btn-warning" @click="getListPage()" >执行sql</el-button>
+        <el-button  class="btn btn-danger" @click="initTab()" >清空所有sql</el-button>
+      </div>
 
     </div>
 
@@ -179,6 +182,7 @@
         },
         loadingList: false,
         loadingTables: false,
+        loadingSql: false,
 
         tabPre: 'T',
         defaultSql: 'select t.* from walker.W_USER t where 1=1 ',
@@ -259,7 +263,7 @@
       },
       //执行手写sql
       getListPage(){
-        this.loadingList = true
+        this.loadingSql = true
         var tab = null
         for(var i = 0; i < this.listTab.length; i++){
           if(this.listTab[i].name == this.listTabValue){
@@ -294,9 +298,9 @@
           }
           // tab.content = res.info
           tab.title = tab.title.split(' ')[0] + ' ' + res.costTime
-          this.loadingList = false
+          this.loadingSql = false
         }).catch(() => {
-          this.loadingList = false
+          this.loadingSql = false
         })
       },
 

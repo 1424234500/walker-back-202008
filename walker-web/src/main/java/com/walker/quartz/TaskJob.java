@@ -1,6 +1,5 @@
-package com.walker.event.quartz;
+package com.walker.quartz;
 
-import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

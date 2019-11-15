@@ -97,12 +97,13 @@ public class HttpBuilder {
 		this.socketTimeout = socketTimeout;
 		return this;
 	}
-	HttpBuilder(String url, Type type){
+
+	public HttpBuilder(String url, Type type){
 		setUrl(url);
 		setType(type);
 	}
 	
-	String buildString() throws UnsupportedEncodingException, InfoException  {
+	public String buildString() throws UnsupportedEncodingException, InfoException  {
 		makeData();
 		timeout = HttpUtil.makeTimeoutConfig(requestTimeout, connectTimeout, socketTimeout);
 		return HttpUtil.executeString(request, url, encode, decode, headers, timeout);
@@ -142,7 +143,7 @@ public class HttpBuilder {
 	}
 
 
-	enum Type{
+	public enum Type{
 		PUT, GET, POST, DELETE,
 	}
 	
