@@ -33,7 +33,11 @@ public class OnApplicationListener implements ApplicationListener<ContextRefresh
     public void onApplicationEvent(ContextRefreshedEvent event) {
         count++;
 //        if (event.getApplicationContext().getParent() == null)
-        log.info(Config.PRE + "OnApplicationListener onApplicationEvent " + count + " " + String.valueOf(initService));
+        log.info(Config.getPre() + "OnApplicationListener onApplicationEvent " + count + " " + String.valueOf(initService));
+
+
+
+
 
     }
 }

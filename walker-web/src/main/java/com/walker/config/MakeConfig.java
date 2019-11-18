@@ -34,7 +34,7 @@ public class MakeConfig {
     public static String TEST;
     @Value("${test}")
     public void setExamplePath(String test) {
-        log.info(Config.PRE + "----------read static properties " + test);
+        log.info(Config.getPre() + "read static properties " + test);
         MakeConfig.TEST = test;
     }
 

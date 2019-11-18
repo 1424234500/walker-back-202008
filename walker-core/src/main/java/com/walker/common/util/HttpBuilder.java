@@ -1,6 +1,7 @@
 package com.walker.common.util;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.client.config.RequestConfig;

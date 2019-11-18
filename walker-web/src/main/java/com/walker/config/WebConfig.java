@@ -66,7 +66,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        log.info(Config.PRE + "-------------addInterceptors");
+        log.info(Config.getPre() + "addInterceptors");
 
 //        token检测 设置用户 环境上下文    未登录则跳转登录 拦截?
         registry.addInterceptor(new UserInterceptors() )

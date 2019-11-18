@@ -39,7 +39,7 @@ public class ScheduleConfig {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	public ScheduleConfig(){
-		log.info(Config.PRE + "-------ScheduleConfig");
+		log.info(Config.getPre() + "ScheduleConfig");
 	}
 
 	@Autowired

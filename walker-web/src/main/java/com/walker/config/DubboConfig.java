@@ -22,7 +22,7 @@ public class DubboConfig {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     public DubboConfig(){
-        log.info(Config.PRE + " dubbo ");
+        log.info(Config.getPre() + " dubbo ");
     }
 
 

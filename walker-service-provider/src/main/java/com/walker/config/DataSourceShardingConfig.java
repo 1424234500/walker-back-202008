@@ -47,7 +47,7 @@ public class DataSourceShardingConfig extends SpringBootConfiguration {
     @Bean("shardingDataSource")
     public DataSource dataSource() throws SQLException {
         DataSource ds = super.dataSource();
-        log.info(Config.PRE + "sharding--------------dataSource init " + ds.toString());
+        log.info(Config.getPre() + "sharding--------------dataSource init " + ds.toString());
         return ds;
     }
     @Bean(name = "shardingJdbcTemplate")

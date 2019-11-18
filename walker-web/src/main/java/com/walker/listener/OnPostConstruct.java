@@ -28,7 +28,11 @@ public class OnPostConstruct {
 
     @PostConstruct
     public void init() throws Exception {
-        log.info(Config.PRE + "OnPostConstruct init " + String.valueOf(initService));
+        log.info(Config.getPre() + "OnPostConstruct init " + String.valueOf(initService));
+
+
+        initService.initOnStart();
+
 
     }
 }

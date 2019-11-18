@@ -39,7 +39,7 @@ public class JsonConfig {
         TypeUtils.compatibleWithFieldName = true;   // 第二个字母非大写 S_XXX
 
 
-        log.info(Config.PRE + "--------fastJsonHttpMessageConverters");
+        log.info(Config.getPre() + "--------fastJsonHttpMessageConverters");
         // 1.定义一个converters转换消息的对象
         FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
         // 2.添加fastjson的配置信息，比如: 是否需要格式化返回的json数据

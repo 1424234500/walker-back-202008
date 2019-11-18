@@ -26,7 +26,7 @@ public class OnInitializingBean implements InitializingBean {
     InitService initService;
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info(Config.PRE + "OnInitBean afterPropertiesSet " + String.valueOf(initService));
+        log.info(Config.getPre() + "OnInitBean afterPropertiesSet " + String.valueOf(initService));
 
     }
 }

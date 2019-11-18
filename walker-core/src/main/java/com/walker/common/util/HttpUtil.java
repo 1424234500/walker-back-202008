@@ -57,7 +57,7 @@ import com.walker.core.exception.InfoException;
  */
 public class HttpUtil {
 	private static Logger log = Logger.getLogger("Http");
-
+	//	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36
 	private final static String DEFAULT_BROWSER = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
 
 	/**
@@ -127,8 +127,8 @@ public class HttpUtil {
 	 * @param headers
 	 */
 	public static void makeHeader(HttpMessage httpMessage, Map<?, ?> headers) {
-		httpMessage.addHeader("Connection", "keep-alive");
-		httpMessage.addHeader("mode-Agent", DEFAULT_BROWSER);
+//		httpMessage.addHeader("Connection", "keep-alive");
+		httpMessage.addHeader("User-Agent", DEFAULT_BROWSER);
 		if (headers != null && headers.size() > 0) {
 			for (Entry<?, ?> item : headers.entrySet()) {
 				httpMessage.addHeader(String.valueOf(item.getKey()), String.valueOf(item.getValue()));
