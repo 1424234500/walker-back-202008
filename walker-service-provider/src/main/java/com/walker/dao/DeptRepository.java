@@ -1,6 +1,8 @@
 package com.walker.dao;
 
 import com.walker.mode.Dept;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -44,6 +46,9 @@ public interface DeptRepository extends JpaRepository<Dept, String>, JpaSpecific
 
     @Query("select t from Dept t where t.PATH like CONCAT('%', ?1, '%') ")
     List<Dept> findAllByPATH(String path);
+
+    @Query("select t from Dept t where t.P_ID is null or t.P_ID='' ")
+    Page<Dept> findsRoot(Pageable page);
 
 
 

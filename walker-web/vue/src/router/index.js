@@ -13,7 +13,7 @@ import Layout from '@/layout'
  * hidden: true                   if set true, item will not show in the sidebar(default is false)
  * alwaysShow: true               if set true, will always show the root menu
  *                                if not set alwaysShow, when item has more than one children route,
- *                                it will becomes nested mode, otherwise not show the root menu
+ *                                it will becomes menu mode, otherwise not show the root menu
  * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
@@ -130,7 +130,27 @@ export const constantRoutes = [
       },
     ]
   },
-
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/quartz',
+    name: 'System',
+    meta: { title: 'System', icon: 'documentation' },
+    children: [
+      {
+        path: 'quartz',
+        name: 'Quartz',
+        component: () => import('@/views/system/quartz'),
+        meta: { title: 'Quartz', icon: 'tree-table' }
+      },
+      {
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('@/views/file/tree'),
+        meta: { title: 'Tree', icon: 'tree' }
+      },
+    ]
+  },
   {
     path: '/file',
     component: Layout,
@@ -179,56 +199,78 @@ export const constantRoutes = [
       }
     ]
   },
+
   {
-    path: '/form',
+    path: '/other',
     component: Layout,
+    redirect: '/other/button',
+    name: 'Other',
+    meta: { title: 'Other', icon: 'form' },
     children: [
       {
-        path: 'index',
+        path: 'button',
+        name: 'button',
+        component: () => import('@/views/other/button'),
+        meta: { title: 'Button', icon: 'tree-table' }
+      },
+      {
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('@/views/other/tree'),
+        meta: {title: 'Tree', icon: 'tab'}
+      },
+      {
+        path: 'popover',
+        name: 'Popover',
+        component: () => import('@/views/other/popover'),
+        meta: { title: 'Popover', icon: 'tree' }
+      },
+      {
+        path: 'form',
         name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
+        component: () => import('@/views/other/form'),
+        meta: { title: 'Form', icon: 'tree' }
+      },
     ]
   },
 
   {
-    path: '/nested',
+    path: '/menu',
     component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
+    redirect: '/menu/menu1',
+    name: 'Menu',
     meta: {
-      title: 'Nested',
+      title: 'Menu',
       icon: 'nested'
     },
     children: [
       {
         path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
+        component: () => import('@/views/menu/menu1/index'), // Parent router-view
         name: 'Menu1',
         meta: { title: 'Menu1' },
         children: [
           {
             path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
+            component: () => import('@/views/menu/menu1/menu1-1'),
             name: 'Menu1-1',
             meta: { title: 'Menu1-1' }
           },
           {
             path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
+            component: () => import('@/views/menu/menu1/menu1-2'),
             name: 'Menu1-2',
             meta: { title: 'Menu1-2' },
             children: [
               {
                 path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
+                component: () => import('@/views/menu/menu1/menu1-2/menu1-2-1'),
                 name: 'Menu1-2-1',
                 meta: { title: 'Menu1-2-1' }
               },
               {
                 path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
+                component: () => import('@/views/menu/menu1/menu1-2/menu1-2-2'),
                 name: 'Menu1-2-2',
                 meta: { title: 'Menu1-2-2' }
               }
@@ -236,7 +278,7 @@ export const constantRoutes = [
           },
           {
             path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
+            component: () => import('@/views/menu/menu1/menu1-3'),
             name: 'Menu1-3',
             meta: { title: 'Menu1-3' }
           }
@@ -244,37 +286,12 @@ export const constantRoutes = [
       },
       {
         path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
+        component: () => import('@/views/menu/menu2/index'),
+        meta: { title: 'Menu2' }
       }
     ]
   },
 
-  {
-    path: '/template',
-    component: Layout,
-    redirect: '/template/popover',
-    name: 'Template',
-    meta: { title: 'Template', icon: 'example' },
-    children: [
-      {
-        path: 'https://cloud.tencent.com/developer/doc/1270',
-        meta: { title: 'Vue-el-doc', icon: 'link' }
-      },
-      {
-        path: 'popover',
-        name: 'Popover',
-        component: () => import('@/views/template/popover'),
-        meta: { title: 'Popover', icon: 'table' }
-      },
-      {
-        path: 'button',
-        name: 'Button',
-        component: () => import('@/views/template/button'),
-        meta: { title: 'Button', icon: 'table' }
-      },
-    ]
-  },
   {
     path: 'external-link',
     component: Layout,

@@ -1,6 +1,7 @@
 package com.walker.service.impl;
 
 import com.walker.common.util.Page;
+import com.walker.common.util.TimeUtil;
 import com.walker.config.Config;
 import com.walker.dao.DeptRepository;
 import com.walker.dao.RoleUserRepository;
@@ -39,9 +40,10 @@ public class DeptServiceImpl implements DeptService {
     public List<Dept> saveAll(List<Dept> objs) {
         List<String> pids = new ArrayList<>();
         for(Dept obj : objs){
-            pids.add(obj.getP_ID());
+            if(obj.getP_ID() != null)   //可能没有上级
+                pids.add(obj.getP_ID());
         }
-        List<Dept> pobjs = deptRepository.findAllByID(pids);
+        List<Dept> pobjs = pids.size() > 0 ? deptRepository.findAllByID(pids) : new ArrayList<>();    //查找出所有上级
         Map<String, Dept> index = new HashMap<>();
         for(Dept obj : pobjs){
             index.put(obj.getID(), obj);
@@ -51,17 +53,25 @@ public class DeptServiceImpl implements DeptService {
         for(Dept obj : objs){
             if(obj.getP_ID() != null && obj.getP_ID().length() > 0){
                 Dept pobj = index.get(obj.getP_ID());
-                if(pobj == null){//上级不存在
-                    log.warn("try save dept not exists pid " + obj);
+                if(pobj == null){//表中 上级不存在
+                    log.error("try save dept not exists pid " + obj);
                 }else{//上级存在 复用机构树
                     obj.setPATH(pobj.getPATH() + "," + obj.getID());
+                    obj.setPATH_NAME(pobj.getPATH_NAME() + "/" + obj.getNAME());
                     oks.add(obj);
                 }
             }else{//无上级 root
                 obj.setPATH(obj.getID());
+                obj.setPATH_NAME(obj.getNAME());
                 oks.add(obj);
             }
         }
+        for(Dept obj : oks){
+            if(StringUtils.isEmpty(obj.getS_MTIME())){
+                obj.setS_MTIME(TimeUtil.getTimeYmdHms());
+            }
+        }
+
         return deptRepository.saveAll(oks);
     }
 
@@ -90,6 +100,14 @@ public class DeptServiceImpl implements DeptService {
         long res = deptRepository.count(this.getSpecification(obj));
         return new Long(res).intValue();
     }
+
+    @Override
+    public List<Dept> findsRoot(Page page) {
+        Pageable pageable = Config.turnTo(page);
+        org.springframework.data.domain.Page<Dept> res = deptRepository.findsRoot(pageable);
+        page.setNum(res.getTotalElements());
+        return res.getContent();    }
+
     private Specification getSpecification(Dept obj){
         return new Specification<Dept>(){
             @Override
@@ -101,9 +119,6 @@ public class DeptServiceImpl implements DeptService {
                 }
                 if (StringUtils.isNotEmpty(obj.getS_MTIME())) {
                     list.add(criteriaBuilder.greaterThan(root.get("S_MTIME"), obj.getS_MTIME()));
-                }
-                if (StringUtils.isNotEmpty(obj.getS_ATIME())) {
-                    list.add(criteriaBuilder.greaterThan(root.get("S_ATIME"), obj.getS_ATIME()));
                 }
                 if (StringUtils.isNotEmpty(obj.getS_FLAG())) {
                     list.add(criteriaBuilder.equal(root.get("S_FLAG"), obj.getS_FLAG()));
@@ -120,7 +135,9 @@ public class DeptServiceImpl implements DeptService {
                 if (StringUtils.isNotEmpty(obj.getPATH())) {
                     list.add(criteriaBuilder.like(root.get("PATH"), "%" + obj.getPATH() + "%"));
                 }
-
+                if (StringUtils.isNotEmpty(obj.getPATH_NAME())) {
+                    list.add(criteriaBuilder.like(root.get("PATH_NAME"), "%" + obj.getPATH_NAME() + "%"));
+                }
                 return criteriaBuilder.and(list.toArray(new Predicate[0]));
             }
         };

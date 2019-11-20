@@ -55,7 +55,7 @@ public class DeptController {
         Dept dept = new Dept();
         dept.setID(id);
         dept.setS_MTIME(TimeUtil.getTimeYmdHms());
-        dept.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
+//        dept.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
         dept.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
         dept.setNAME(name);
         dept.setP_ID(pid);
@@ -104,6 +104,7 @@ public class DeptController {
 
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
 
+            @RequestParam(value = "P_ID_NULL", required = false, defaultValue = "false") String pidNull,
             @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid,
             @RequestParam(value = "PATH", required = false, defaultValue = "") String path,
 
@@ -112,10 +113,16 @@ public class DeptController {
             @RequestParam(value = "order", required = false, defaultValue = "") String order
     ) {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
+        if(pidNull.equalsIgnoreCase("true")){
+            List<Dept> list = deptService.findsRoot(page);
+
+            return Response.makePage("", page, list);
+        }
+
         Dept dept = new Dept();
         dept.setID(id);
         dept.setS_MTIME(sMtime);
-        dept.setS_ATIME(sAtime);
+//        dept.setS_ATIME(sAtime);
         dept.setS_FLAG(sFlag);
         dept.setNAME(name);
         dept.setP_ID(pid);

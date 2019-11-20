@@ -18,5 +18,8 @@ public interface DeptService {
     Integer count(Dept obj);
 
 
+    List<Dept> findsRoot(Page page);
+
+
 
 }

@@ -87,7 +87,7 @@ export default {
         num: 0,
         order: "",
         pagenum: 0,
-        shownum: 8,
+        shownum: 50,
       },
       loadingList: true,
       loadingCols: true,
@@ -129,9 +129,10 @@ export default {
 
     },
     loadNode(node, resolve) {
+
       console.log("loadNode", node);
       var data = node.data
-      if(1==1 || data == null || data.EXT == 'dir'){
+      if(1==1 || data == null || data.EXT == 'dir' || !data.ID ){
         // resolve([{name: 'region'}])
         this.getListPage(data, resolve)
       }else{
@@ -154,8 +155,8 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      if(data == null){
-        params['ID'] = 'D0' //root根规则
+      if(data == null || !data['ID']){
+        params['P_ID_NULL'] = 'true' //root根规则
       }else {
         params['P_ID'] = data['ID']
       }

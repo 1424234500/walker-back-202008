@@ -132,7 +132,7 @@ public class ThreadUtil {
 	/**
 	 * 添加多个线程任务 type三种线程池
 	 * @param type ThreadHelp.
-	 * @param runnable 命令
+	 * @param runnables 命令
 	 */
 	public static void execute(Type type, List<Runnable> runables) {
 		ExecutorService exec = getExecutorServiceInstance(type);

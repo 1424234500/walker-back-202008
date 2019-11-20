@@ -28,7 +28,7 @@ public class Bean extends HashMap<Object, Object>{
     /**
      * 设置对象，支持级联设置
      * @param key   键值
-     * @param obj   对象数据
+     * @param value   对象数据
      * @return this，当前Bean
      */
     public Bean set(Object key, Object value) {

@@ -27,7 +27,7 @@ public class Config {
     }
 
     public static int getDbsize(){
-        return 500;
+        return 200;
     }
 
     public static Pageable turnTo(Page page){

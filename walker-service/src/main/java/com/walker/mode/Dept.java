@@ -22,8 +22,8 @@ public class Dept implements Cloneable,Serializable {
     private String ID;
     @Column(name = "S_MTIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
     private String S_MTIME;
-    @Column(name = "S_ATIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '添加时间' ")
-    private String S_ATIME;
+//    @Column(name = "S_ATIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '添加时间' ")
+//    private String S_ATIME;
     @Column(name = "S_FLAG", columnDefinition = "varchar(4) default '0' comment '1是0否' ")
     private String S_FLAG;
 
@@ -32,8 +32,10 @@ public class Dept implements Cloneable,Serializable {
     private String NAME;
     @Column(name = "P_ID", columnDefinition = "varchar(32) default '' comment '上级部门' ")
     private String P_ID;
-    @Column(name = "PATH", columnDefinition = "varchar(512) default '' comment '机构树' ")
+    @Column(name = "PATH", columnDefinition = "varchar(512) default '' comment '机构树-编码' ")
     private String PATH;
+    @Column(name = "PATH_NAME", columnDefinition = "varchar(998) default '' comment '机构树-中文' ")
+    private String PATH_NAME;
 
 
     @Override
@@ -41,12 +43,22 @@ public class Dept implements Cloneable,Serializable {
         return "Dept{" +
                 "ID='" + ID + '\'' +
                 ", S_MTIME='" + S_MTIME + '\'' +
-                ", S_ATIME='" + S_ATIME + '\'' +
+//                ", S_ATIME='" + S_ATIME + '\'' +
                 ", S_FLAG='" + S_FLAG + '\'' +
                 ", NAME='" + NAME + '\'' +
                 ", P_ID='" + P_ID + '\'' +
                 ", PATH='" + PATH + '\'' +
+                ", PATH_NAME='" + PATH_NAME + '\'' +
                 '}';
+    }
+
+    public String getPATH_NAME() {
+        return PATH_NAME;
+    }
+
+    public Dept setPATH_NAME(String PATH_NAME) {
+        this.PATH_NAME = PATH_NAME;
+        return this;
     }
 
     public String getPATH() {
@@ -76,14 +88,14 @@ public class Dept implements Cloneable,Serializable {
         return this;
     }
 
-    public String getS_ATIME() {
-        return S_ATIME;
-    }
-
-    public Dept setS_ATIME(String s_ATIME) {
-        S_ATIME = s_ATIME;
-        return this;
-    }
+//    public String getS_ATIME() {
+//        return S_ATIME;
+//    }
+//
+//    public Dept setS_ATIME(String s_ATIME) {
+//        S_ATIME = s_ATIME;
+//        return this;
+//    }
 
     public String getS_FLAG() {
         return S_FLAG;

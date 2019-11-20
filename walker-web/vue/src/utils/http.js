@@ -55,7 +55,7 @@ error => {
         location.reload()
     }
   }
-  return Promise.reject(error.response.data)   // 返回接口返回的错误信息
+  return Promise.reject(error&&error.response&&error.response.data ? error.response.data : error.response )   // 返回接口返回的错误信息
 });
 
 
