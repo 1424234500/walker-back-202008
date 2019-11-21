@@ -8,6 +8,7 @@ import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.database.SqlUtil;
 import com.walker.dao.JdbcDao;
+import com.walker.service.CacheService;
 import com.walker.util.RequestUtil;
 import com.walker.service.BaseService;
 import io.swagger.annotations.Api;
@@ -27,7 +28,7 @@ import java.util.*;
 测试 jap teacherService
 
  */
-@Api(value = "共用工具mysql ddl ")
+@Api(value = "公用工具mysql ddl ")
 @Controller
 @RequestMapping("/common")
 public class CommonController {
@@ -36,6 +37,9 @@ public class CommonController {
     @Autowired
     @Qualifier("baseService")
     private BaseService baseService;
+    @Autowired
+    @Qualifier("cacheService")
+    private CacheService cacheService;
 
     /**
      * shardingjdbc拦截mysql其他用户 为默认用户
@@ -106,39 +110,13 @@ public class CommonController {
             @RequestParam(value = "dbOrUser", required = false, defaultValue = "") String dbOrUser,
             @RequestParam(value = "tableName", required = true, defaultValue = "W_TEACHER") String tableName
     ) {
-        Map<String, String> colMap = this.getColsMapCache(dbOrUser, tableName);
+        Map<String, String> colMap = cacheService.getColsMapCache(dbOrUser, tableName);
         Map<String, Object> res = new HashMap<>();
         res.put("colMap", colMap);
         res.put("colKey", colMap.keySet().toArray()[0]);
         return Response.makeTrue(tableName, res);
     }
 
-    /**
-     * 使用redis sb 缓存
-     * @param dbOrUser
-     * @param tableName
-     * @return
-     */
-    @Cacheable(keyGenerator="keyGenerator",value="cache-getColsMapCache")
-    public Map<String, String> getColsMapCache(String dbOrUser, String tableName){
-        return jdbcDao.getColumnsMapByTableName(dbOrUser, tableName);
-//        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsMapByTableName:" + dbOrUser + ":" + tableName, new Cache.Function() {
-//            @Override
-//            public Map<String, String> cache() {
-//                return jdbcDao.getColumnsMapByTableName(dbOrUser, tableName);
-//            }
-//        });
-    }
-    @Cacheable(keyGenerator="keyGenerator",value="cache-getColumnsByTableName")
-    public List<String> getColsCache(String dbOrUser, String tableName){
-        return jdbcDao.getColumnsByTableName(dbOrUser, tableName);
-//        return CacheMgr.getInstance().getFun("jdbcDao.getColumnsByTableName:" + dbOrUser + ":" + tableName, new Cache.Function() {
-//            @Override
-//            public List<String> cache() {
-//                return jdbcDao.getColumnsByTableName(dbOrUser, tableName);
-//            }
-//        });
-    }
 
     @ApiOperation(value = "获取表列表", notes = "")
     @ResponseBody
@@ -188,7 +166,7 @@ public class CommonController {
         bean.remove(KEY_DB);
 
 
-        List<String> cols = this.getColsCache(database, tableName);
+        List<String> cols = cacheService.getColsCache(database, tableName);
         String keyId = cols.get(0);
         //insert into student(ID, NAME, TIME) values(?,?,?)
         StringBuilder sb = new StringBuilder("insert into " + (database.length() > 0 ? database+"." : "") + tableName + "(");
@@ -227,7 +205,7 @@ public class CommonController {
         }
         bean.remove(KEY_TABLE);
         bean.remove(KEY_DB);
-        List<String> cols = this.getColsCache(database, tableName);
+        List<String> cols = cacheService.getColsCache(database, tableName);
         String keyId = cols.get(0);
         //delete from student where 1=1 and id=? and name=?
         StringBuilder sb = new StringBuilder("delete from " + (database.length() > 0 ? database+"." : "") + tableName + " where 1=1 ");
@@ -275,7 +253,7 @@ public class CommonController {
         bean.remove(KEY_DB);
 
 
-        List<String> cols = this.getColsCache(database, tableName);
+        List<String> cols = cacheService.getColsCache(database, tableName);
         String keyId = cols.get(0);
 
         //select * from student where 1=1 and id=? and name=?

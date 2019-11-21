@@ -148,8 +148,8 @@ function before(url, params, type){
 
 }
 function afterResolve(url, params, type, res){
-  console.info(pre + " resolve " + type + " " + url + " " + JSON.stringify(params) )
-  console.info(res)
+  // console.info(pre + " resolve " + type + " " + url + " " + JSON.stringify(params) )
+  // console.info(res)
   Message({
     message: 'Done ' + res.data.info + ' ' + res.data.costTime,
     duration:1000,
@@ -157,8 +157,8 @@ function afterResolve(url, params, type, res){
   });
 }
 function afterReject(url, params, type, err){
-  console.info(pre + " reject  " + type + " " + url + " " + JSON.stringify(params) )
-  console.info(err)
+  // console.info(pre + " reject  " + type + " " + url + " " + JSON.stringify(params) )
+  // console.info(err)
   // Message.error(err);
   // {
   //   "timestamp":1569752060437,
