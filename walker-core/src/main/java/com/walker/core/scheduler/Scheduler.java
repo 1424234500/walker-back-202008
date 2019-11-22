@@ -1,6 +1,8 @@
 package com.walker.core.scheduler;
 
 
+import java.util.List;
+
 /**
  * 定时器任务调度工具
  *
@@ -32,21 +34,26 @@ public interface Scheduler{
 
     /**
      * 添加任务
+     * @return
      */
-    public void add(Task task) throws Exception;
+    public Task add(Task task) throws Exception;
     
     
     /**
      * 移除任务
+     * @return
      */
-    public void remove(Task task) throws Exception;
+    public Task remove(Task task) throws Exception;
     
     /**
-     * 修改任务
+     * 保存任务  添加删除多个触发器
+     * @return
      */
-    public void update(Task task) throws Exception;
-    
-    
-    
-	
+    public Task save(Task task) throws Exception;
+
+
+    public Task saveTrigger(String jobName, List<String> cronOn, List<String> cronOff) throws Exception;
+
+
+
 }

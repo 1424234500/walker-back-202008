@@ -1,8 +1,6 @@
 package com.walker.quartz;
 
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -15,8 +13,10 @@ public abstract class TaskJob extends QuartzJobBean implements Runnable {
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException{
 		JobDetail jobDetail = context.getJobDetail();
-		log.info("Scheduler quartz execute " + this.getClass().toString());
-		log.info(" " + jobDetail.getDescription());
+		Trigger trigger = context.getTrigger();
+		CronTrigger cronTrigger = (CronTrigger) trigger;
+		log.info("Scheduler quartz " + this.getClass().toString() + " " + cronTrigger.getCronExpression() + " " + cronTrigger.getDescription());
+		log.info("desc:" + jobDetail.getDescription());
 		
 		this.run();
 		

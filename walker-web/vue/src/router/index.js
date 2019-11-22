@@ -78,13 +78,18 @@ export const constantRoutes = [
         path: 'table',
         name: 'Table',
         component: () => import('@/views/db/table'),
-        meta: { title: 'Table', icon: 'table' }
+        meta: { title: 'Table', icon: 'table',
+          keepAlive: true ,//当前的.vue文件需要缓存
+        }
       },
       {
         path: 'auto',
         name: 'Auto',
         component: () => import('@/views/db/auto'),
-        meta: { title: 'Auto', icon: 'table' }
+        meta: { title: 'Auto', icon: 'table' ,
+          keepAlive: true ,//当前的.vue文件需要缓存
+        },
+
       },
     ]
   },

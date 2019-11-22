@@ -1,15 +1,8 @@
 package com.walker.core.scheduler;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.quartz.CronScheduleBuilder;
-import org.quartz.Job;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
+import org.quartz.*;
 
 import com.walker.common.util.ClassUtil;
 
@@ -23,23 +16,23 @@ public class Task {
 	/**
 	 * id 任务id标识
 	 */
-	String id;
+	String id = "";
 	
 	/**
 	 * com.task.TaskTest
 	 */
-	String className; 
+	String className = "";
 	
 	/**
 	 * 这是个测试任务
 	 */
-	String about;
+	String about = "";
 	
 	/**
 	 * 任务添加 使用job triiger
 	 */
 	JobDetail jobDetail;
-	Trigger trigger;
+	List<Trigger> trigger;
 	
 	/**
 	 * 多触发器 
@@ -52,6 +45,7 @@ public class Task {
 	 */
 	public Task(){
 		pattern = new HashSet<>();
+		trigger = new ArrayList<>();
 	}
 	/**
 	 * 构造一个任务
@@ -92,7 +86,9 @@ public class Task {
 		this();
 		this.className = className;
 		this.about = about;
-		pattern.addAll(Arrays.asList(crons));
+		if(crons.length > 0) {
+			pattern.addAll(Arrays.asList(crons));
+		}
 	}
 	/**
 	 * 以反射 类名 函数名 和参数名作为统一 id
@@ -107,9 +103,6 @@ public class Task {
 	public Boolean removeCron(String str) {
 		return this.pattern.remove(str);
 	}
-	
-	
-	
 
 	@SuppressWarnings("unchecked")
 	public JobDetail getJobDetail(){
@@ -117,24 +110,87 @@ public class Task {
 		Class<? extends Job> clz = (Class<? extends Job>) ClassUtil.loadClass(className);
 		this.jobDetail = JobBuilder
 			.newJob (clz)
-			.withIdentity(name)
+			.withIdentity(name)	//主键
 			.withDescription(this.about)
+			.storeDurably()	//持久化
 			.build();
 			
 		return this.jobDetail;
 	}
 	
-	public Trigger getTrigger(){
-		TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
-
+	public List<Trigger> getTriggers(){
+		this.trigger.clear();
+		JobDetail jobDetail = this.getJobDetail();
 		Set<String> trr = this.pattern;
 		for(String cron : trr){
+			TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
 			triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cron));
+			triggerBuilder.withDescription(makeInfo(cron));
+			triggerBuilder.forJob(jobDetail);
+			this.trigger.add(triggerBuilder.build());
 		}
-		this.trigger = triggerBuilder.build();
 		return this.trigger;
 	}
-	
-	
+	public static List<Trigger> getTriggers(List<String> trr, JobDetail jobDetail){
+		List<Trigger> trigger = new ArrayList<>();
+		for(String cron : trr){
+			TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
+			triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cron));
+			triggerBuilder.withDescription(makeInfo(cron));
+			triggerBuilder.forJob(jobDetail);
+			trigger.add(triggerBuilder.build());
+		}
+		return trigger;
+	}
+
+	public static String makeInfo(String cron){
+//		秒                     0-59                           , - * /
+//	 * 分                     0-59                           , - * /
+//	 * 小时                  0-23                           , - * /
+//	 * 日                     1-31                            , - * ? / L W C
+//	 * 月                     1-12 or JAN-DEC        , - * /
+//	 * 周几                  1-7 or SUN-SAT         , - * ? / L C #
+//	 * 年(可选字段)     empty                         1970-2099 , - * /
+		StringBuilder sb = new StringBuilder();
+		String[] ds = {"秒", "分", "时", "日!?", "月", "周?", "(年)"};
+		String cs[] = cron.split(" +");
+		for(int i = 0; i < cs.length && i < ds.length; i ++){
+			sb.append(cs[i] + ds[i]).append(" ");
+		}
+		return sb.toString();
+	}
+
+
+	public String getClassName() {
+		return className;
+	}
+
+	public Task setClassName(String className) {
+		this.className = className;
+		return this;
+	}
+
+	public String getAbout() {
+		return about;
+	}
+
+	public Task setAbout(String about) {
+		this.about = about;
+		return this;
+	}
+
+	public Task setJobDetail(JobDetail jobDetail) {
+		this.jobDetail = jobDetail;
+		return this;
+	}
+
+	public Set<String> getPattern() {
+		return pattern;
+	}
+
+	public Task setPattern(Set<String> pattern) {
+		this.pattern = pattern;
+		return this;
+	}
 }
 	

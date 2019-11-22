@@ -1,4 +1,6 @@
 import Cookies from 'js-cookie'
+
+
 export function clear() {
   //console.info("utils/store.js/clear")
   setToken('')

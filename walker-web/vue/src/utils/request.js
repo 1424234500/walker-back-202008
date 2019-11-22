@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken,setToken,getUser,setUser } from '@/utils/store' // get token from cookie
+import { getToken,setToken,getUser,setUser } from '@/utils/cookie' // get token from cookie
 
 // create an axios instance
 const service = axios.create({

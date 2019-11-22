@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui';
-import { getToken,setToken,getUser,setUser,clear } from '@/utils/store' // get token from cookie
+import { getToken,setToken,getUser,setUser,clear } from '@/utils/cookie' // get token from cookie
 
 import router from '@/router'
 import qs from 'qs'

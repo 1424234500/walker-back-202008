@@ -35,7 +35,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import { getToken,setToken,getUser,setUser,clear } from '@/utils/store' // get token from cookie
+import { getToken,setToken,getUser,setUser,clear } from '@/utils/cookie' // get token from cookie
 
 export default {
   components: {

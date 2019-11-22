@@ -203,7 +203,7 @@
             class="btn btn-danger"
             @click="handlerSaveAllRoles()"
             style="margin:4px 0px 0 2px;"
-          >保存角色</el-button>
+          >保存</el-button>
           <br>
 
           机构树角色：
@@ -439,9 +439,6 @@ export default {
           this.$refs.multipleTableRoleDept.toggleRowSelection(this.listRoleDept[i], true)
         }
       }
-
-
-
 
     },
     //用户角色 批量保存 删除 比对默认值 找出差异化 提交

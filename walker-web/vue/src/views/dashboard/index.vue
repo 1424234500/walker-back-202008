@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { getToken,setToken,getUser,setUser } from '@/utils/store' // get token from cookie
+import { getToken,setToken,getUser,setUser } from '@/utils/cookie' // get token from cookie
 
 export default {
     created() {

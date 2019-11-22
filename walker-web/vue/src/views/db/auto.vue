@@ -159,6 +159,7 @@
     data() {
       return {
         obj: [],  //多卡片页
+        // obj: this.dbAuto,  //多卡片页
 
         list: [],
         colMap: {},      //列名:别名
@@ -204,12 +205,14 @@
     },
     methods: {
       initTab(){
-        this.obj = []
-        this.listTab = []
-        for(var i = 0; i < 3; i++ ){
-          this.addTab()
+        if(!this.obj || this.obj.length == 0) {
+          this.obj = []
+          this.listTab = []
+          for (var i = 0; i < 3; i++) {
+            this.addTab()
+          }
+          this.listTabValue = this.listTab[0].name
         }
-        this.listTabValue = this.listTab[0].name
       },
       addTab( ){
         var tab =  this.handleTabsEdit('', 'add')

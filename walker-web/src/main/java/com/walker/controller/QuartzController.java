@@ -7,6 +7,7 @@ import com.walker.common.util.Page;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.database.SqlUtil;
+import com.walker.core.scheduler.Task;
 import com.walker.dao.JdbcDao;
 import com.walker.service.BaseService;
 import com.walker.service.CacheService;
@@ -53,19 +54,60 @@ public class QuartzController {
     @ApiOperation(value = "保存任务", notes = "通用存储")
     @ResponseBody
     @RequestMapping(value = "/save.do", method = RequestMethod.POST)
-    public Response save(HttpServletRequest request) {
+    public Response save(
+            @RequestParam(value = "JOB_NAME", required = true, defaultValue = "") String jobName,
+            @RequestParam(value = "DESCRIPTION", required = false, defaultValue = "") String description,
+            @RequestParam(value = "CRON_EXPRESSION", required = false, defaultValue = "") String cronExpression
 
+    ) throws Exception {
+        Task task = null;
+        if(cronExpression.length() > 0){
+            task = new Task(jobName, description, cronExpression);
+        }else{
+            task = new Task(jobName, description);
+        }
+        task = scheduleService.save(task);
+        return Response.makeTrue("", task);
+    }
+    @ApiOperation(value = "保存触发器 ", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/saveTriggers.do", method = RequestMethod.GET)
+    public Response saveRoles(
+            @RequestParam(value = "JOB_NAME", required = true, defaultValue = "") String jobName,
+            @RequestParam(value = "ON", required = false, defaultValue = "") String on,
+            @RequestParam(value = "OFF", required = false, defaultValue = "") String off
+    ) throws Exception {
+        String info = "JOB_NAME:" + jobName + " ON:" + on + " OFF:" + off;
+        List<String> listOn = on.length() > 0 ? Arrays.asList(on.split(",")) : new ArrayList<>();
+        List<String> listOff = off.length() > 0 ? Arrays.asList(off.split(",")) : new ArrayList<>();
+        if(listOn.size() == 0 && listOff.size() == 0){
+            return Response.makeFalse(info + " on off is null ");
+        }
+        if(jobName.length() == 0){
+            return Response.makeFalse(info + " job is null ");
+        }
+        Task task = scheduleService.saveTrigger(jobName, listOn, listOff);
 
-        return Response.makeFalse("no implemnets");
-
+        return Response.makeTrue(info, task);
     }
 
     @ApiOperation(value = "删除任务", notes = "delete参数 restful 路径 PathVariable ")
     @ResponseBody
     @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
-    public Response delet(HttpServletRequest request) {
-
-        return Response.makeFalse("no implemnets");
+    public Response delet(
+            @RequestParam(value = "JOB_NAME", required = true, defaultValue = "") String jobName
+    ) throws Exception {
+        if(jobName.length() == 0){
+            return Response.makeFalse("null ? args");
+        }
+        String jobNames[] = jobName.split(",");
+        List<Task> res = new ArrayList<>();
+        for(String clz : jobNames) {
+            Task task = new Task(jobName, "");
+            task = scheduleService.remove(task);
+            res.add(task);
+        }
+        return Response.makeFalse(res.size() + "", res);
     }
     @ApiOperation(value = "分页查询任务列表", notes = "")
     @ResponseBody
@@ -110,7 +152,7 @@ public class QuartzController {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
 
         StringBuilder sb = new StringBuilder(
-                "select j.JOB_NAME,c.CRON_EXPRESSION,t.DESCRIPTION from  W_QRTZ_JOB_DETAILS j, W_QRTZ_TRIGGERS t, W_QRTZ_CRON_TRIGGERS c  where 1=1 and j.JOB_NAME=t.JOB_NAME and t.TRIGGER_NAME=c.TRIGGER_NAME and j.JOB_NAME=? " );
+                "select j.JOB_NAME,c.CRON_EXPRESSION,t.TRIGGER_STATE,t.DESCRIPTION from  W_QRTZ_JOB_DETAILS j, W_QRTZ_TRIGGERS t, W_QRTZ_CRON_TRIGGERS c  where 1=1 and j.JOB_NAME=t.JOB_NAME and t.TRIGGER_NAME=c.TRIGGER_NAME and j.JOB_NAME=? " );
 
         log.info("make sql " + sb.toString());
         List<?> res = jdbcDao.findPage(page, sb.toString(), jobName);

@@ -3,7 +3,7 @@ import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken,setToken,getUser,setUser } from '@/utils/store' // get token from cookie
+import { getToken,setToken,getUser,setUser } from '@/utils/cookie' // get token from cookie
 
 import getPageTitle from '@/utils/get-page-title'
 
@@ -25,7 +25,8 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
+      // const hasGetUserInfo = store.getters.name
+      const hasGetUserInfo = getUser().name
       if (hasGetUserInfo) {
         next()
       } else {
