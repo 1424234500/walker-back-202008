@@ -607,8 +607,10 @@ public class ClassUtil {
             e.printStackTrace();  
         }  
         return myClassName;  
-    }  
-  
+    }
+	public static List<Method> getMethodNative(String className){
+		return getMethodNative(className, false);
+	}
 	public static List<Bean> getMethod(String className){
 		return getMethod(className, true, false);
 	}
@@ -672,6 +674,46 @@ public class ClassUtil {
 		}
 		SortUtil.sort(res, "BASE");
 		
+		return res;
+	}
+	/**
+	 * 获取包文件列表
+	 * 类路径 util.Bean
+	 * 是否显示成员变量
+	 * 是否包括父级
+	 * return new Map(list,size)  <NAME,RETURNTYPE,PARAMETERTYPES,TOSTRING,BASE:0/1,TYPE:method/field>
+	 */
+	public static List<Method> getMethodNative(String className, boolean ifFather){
+		Class<?> cls = loadClass(className);
+		List<Method> res = new ArrayList<>();
+
+
+		List<Method> methodAll = new ArrayList<>();//所有方法
+		Collections.addAll(methodAll, cls.getMethods());
+
+		List<Method> methodSelf = new ArrayList<>();//自有方法
+		Collections.addAll(methodAll, cls.getDeclaredMethods());
+
+		methodAll.removeAll(methodSelf); //余下的是基类的方法
+
+		if(cls != null){
+			if(ifFather){ //显示父类(仅public) 以及自己 的(不包括private)所有方法 不要变量
+				for(Method item : cls.getMethods()){
+					res.add(item);
+				}
+				//附加自己私有域
+				for(Method item : cls.getDeclaredMethods()){
+					if(getModifier(item).indexOf("private") >= 0){
+						res.add(item);
+					}
+				}
+			}else{//只显示自己的(所有的 包括private)
+				for(Method item : cls.getDeclaredMethods()){
+					res.add(item);
+				}
+			}
+		}
+
 		return res;
 	}
 	private static String filterString(String className, String str){
