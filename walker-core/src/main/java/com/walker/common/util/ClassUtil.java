@@ -748,12 +748,19 @@ public class ClassUtil {
 	 * @param member
 	 * @return
 	 */
-	private static String getModifier(Member member){
+	public static String getModifier(Member member){
 		int mod = member.getModifiers() & Modifier.methodModifiers();
         if (mod != 0) {
             return Modifier.toString(mod);
         }
         return "";
+	}
+	public static String getModifier(Class<?> member){
+		int mod = member.getModifiers() & Modifier.classModifiers();
+		if (mod != 0) {
+			return Modifier.toString(mod);
+		}
+		return "";
 	}
 	private static Bean turnField(String className, Field item){
 		Bean bean = new Bean();
