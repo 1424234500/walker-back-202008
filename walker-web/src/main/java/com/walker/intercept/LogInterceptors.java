@@ -18,6 +18,13 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
+ * 拦截器 Interceptor 不依赖 Servlet 容器，依赖 Spring 等 Web 框架，
+ * 在 SpringMVC 框架中是配置在SpringMVC 的配置文件中，在 SpringBoot 项目中也可以采用注解的形式实现。
+ * 拦截器是 AOP 的一种应用，底层采用 Java 的反射机制来实现的。
+ * 与过滤器一个很大的区别是在拦截器中可以注入 Spring 的 Bean，能够获取到各种需要的 Service 来处理业务逻辑，而过滤器则不行。
+ *
+ * 过滤器英文叫 Filter，是 JavaEE 的标准，依赖于 Servlet 容器，使用的时候是配置在 web.xml 文件中的，可以配置多个，执行的顺序是根据配置顺序从上到下。常用来配置请求编码以及过滤一些非法参数，垃圾信息或者是网站登录验证码。
+ *
  * 拦截器 日志 登录/访问权限 事务  监控所有访问地址和参数打印 
  * 实现应用之性能监控
  * 拦截器是实现成单例的，因此不管用户请求多少次都只访问同一个拦截器实现，即线程不安全。
