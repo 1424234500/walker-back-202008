@@ -107,7 +107,7 @@
           min-width="100px"
         >
           <template slot-scope="scope">
-            {{scope.row[scope.column.property] | formatTime }}  <!-- 渲染对应表格里面的内容 -->
+            {{scope.row[scope.column.property] | formatTime. }}  <!-- 渲染对应表格里面的内容 -->
           </template>
         </el-table-column>
         <el-table-column

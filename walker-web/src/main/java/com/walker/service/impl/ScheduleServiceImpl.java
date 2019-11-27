@@ -76,7 +76,7 @@ class ScheduleServiceImpl implements ScheduleService {
 	}
 	/**
 	 *
-	 * 以className删除重建job
+	 * 以className删除重建job 继承触发器 备注
 	 * @return
 	 */
 	@Override
@@ -126,7 +126,7 @@ class ScheduleServiceImpl implements ScheduleService {
 				String key = cronTrigger.getCronExpression();
 				if(cronOff.contains(key)){
 					log.info("drop old trigger " + key);
-
+					scheduler.unscheduleJob(cronTrigger.getKey());
 				}
 			}
 			triggerList = Task.getTriggers(cronOn, jobDetail);

@@ -16,7 +16,21 @@ public class ExcelUtil {
 	private static Logger log = Logger.getLogger(ExcelUtil.class);
  
     private static final String SHEET_NAME = "new sheet";
- 
+
+    public static void saveToExcel(
+            List<List<Object>> objList,
+            List<Object> titleList,
+            String sheetName,
+            String saveFilePath
+    ) throws IOException {
+        Object[][] ll = new Object[objList.size()][];
+        int i = 0;
+        for(List<Object> line : objList){
+            ll[i] = line.toArray();
+        }
+        saveToExcel(ll, titleList.toArray(), sheetName, saveFilePath);
+
+    }
     public static void saveToExcel(
             Object[][] objList,
             Object[] titleList,
@@ -122,8 +136,7 @@ public class ExcelUtil {
     }
     /**
      * @param objList 动态二维数组
-     * @param keyList  键名列表
-     * @param titleList  中文title列表
+     * @param titleList  中文title列表 第一行
      * @MethodName : listToExcel
      * @Description : 导出Excel（可以导出到本地文件系统，也可以导出到浏览器，工作表大小为2003支持的最大值）
      */

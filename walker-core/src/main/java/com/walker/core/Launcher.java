@@ -35,6 +35,7 @@ public class Launcher {
 		testArgs();
 		testArgs(null);
 		testNull();
+
 		Tools.out("-----------------end-------------------");
 	}
 

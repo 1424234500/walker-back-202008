@@ -72,7 +72,7 @@ public class QuartzController {
     @ApiOperation(value = "保存触发器 ", notes = "")
     @ResponseBody
     @RequestMapping(value = "/saveTriggers.do", method = RequestMethod.GET)
-    public Response saveRoles(
+    public Response saveTriggers(
             @RequestParam(value = "JOB_NAME", required = true, defaultValue = "") String jobName,
             @RequestParam(value = "ON", required = false, defaultValue = "") String on,
             @RequestParam(value = "OFF", required = false, defaultValue = "") String off

@@ -281,7 +281,7 @@ export default {
         this.colMapShow = {}
         this.colMapShow['JOB_NAME'] = this.colMap['JOB_NAME']
         this.colMapShow['DESCRIPTION'] = this.colMap['DESCRIPTION']
-        this.colMapShow['STATUS'] = '状态'
+        // this.colMapShow['STATUS'] = '状态'
 
 
         this.colKey = 'JOB_NAME'  //res.data.colKey
