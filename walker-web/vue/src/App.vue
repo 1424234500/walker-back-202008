@@ -9,9 +9,9 @@
 
 
 
-    <keep-alive>
+<!--    <keep-alive>-->
     <router-view></router-view>
-    </keep-alive>
+<!--    </keep-alive>-->
 
 
   </div>

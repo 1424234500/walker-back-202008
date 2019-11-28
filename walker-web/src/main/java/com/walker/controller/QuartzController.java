@@ -159,6 +159,25 @@ public class QuartzController {
         return Response.makePage(SqlUtil.makeSql(sb.toString(), jobName), page, res);
     }
 
+    @ApiOperation(value = "分页查询 任务执行日志", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/findPageJobHis.do", method = RequestMethod.GET)
+    public Response findPageJobHis(
+            @RequestParam(value = "JOB_NAME", required = true, defaultValue = "") String jobName,
+
+            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(value = "showNum", required = false, defaultValue = "10") Integer showNum,
+            @RequestParam(value = "order", required = false, defaultValue = "") String order
+    ) {
+        Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
+
+        StringBuilder sb = new StringBuilder(
+                "select j.JOB_NAME, h.* from  W_QRTZ_JOB_DETAILS j, W_JOB_HIS h  where 1=1 and j.JOB_NAME=? and j.JOB_NAME=h.INFO order by h.S_TIME_START desc " );
+
+        log.info("make sql " + sb.toString());
+        List<?> res = jdbcDao.findPage(page, sb.toString(), jobName);
+        return Response.makePage(SqlUtil.makeSql(sb.toString(), jobName), page, res);
+    }
 
 
 }

@@ -118,7 +118,16 @@ public class TimeUtil {
 		}
 		return res;
 	}
-
+	/**
+	 * 2342342342, yyyy-MM-dd HH:mm:ss:SSS
+	 * @param time 11231213123
+	 * @return
+	 */
+	public static String format(long time) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+		String res = sdf.format(new Date(time));
+		return res;
+	}
 	/**
 	 * 2342342342, yyyy-MM-dd
 	 * @param time 11231213123

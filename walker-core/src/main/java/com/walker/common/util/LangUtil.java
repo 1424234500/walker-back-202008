@@ -175,8 +175,30 @@ public class LangUtil {
 		uuid = hexTo64(uuid);
 		return uuid;
 	}
+
 	/**
-	 * 递增id生成
+	 * 获取时序keyid
+	 * @param key
+	 * @return	20190102-key-uuid
+	 */
+	public static String getTimeSeqId(String key){
+		String time = TimeUtil.getTimeSequence();
+		String str =  getUUID();
+		return time + "_" + key + "_" + str.substring(0, Math.min(4, str.length()));
+	}
+
+	/**
+	 * 时序递增id生成2
+	 * @return 20181012_jaxjkxj
+	 */
+	public static String getTimeSeqId() {
+		String time = TimeUtil.getTimeSequence();
+		String str =  getUUID();
+		return time + "_" + str.substring(0, Math.min(6, str.length()));
+	}
+	/**
+	 * 时序递增id生成
+	 * @return 39939384884_jaxjkxj
 	 */
 	public static String getGenerateId() {
 		long time = System.nanoTime();

@@ -19,8 +19,8 @@
         </div>
 
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-warning" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >清除</el-button>
+        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
       </form>
     </div>
 
@@ -121,7 +121,7 @@
 
             <el-form-item>
               <el-button type="primary" @click="handlerSave()">确定</el-button>
-              <el-button @click="handlerCancel()">取消</el-button>
+              <el-button type="danger" @click="handlerCancel()">取消</el-button>
             </el-form-item>
           </el-form>
         </template>

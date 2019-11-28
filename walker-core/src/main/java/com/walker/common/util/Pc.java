@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -239,7 +240,19 @@ public class Pc {
 		res += " totalMemory: " + Tools.calcSize(runtime.totalMemory()) + " \n";
 		return res;
 	}
-	
+	/**
+	 * 获取本机ip
+	 */
+	public static String getIp(){
+		String addr = "";
+		try {
+			addr = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			addr = "127.0.0.1";
+		}
+		return addr;
+	}
 	/**
 	 * 超时应该在3钞以上
 	 */

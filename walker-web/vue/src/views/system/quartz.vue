@@ -19,8 +19,8 @@
         </div>
 
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-warning" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >清除</el-button>
+        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
       </form>
     </div>
 
@@ -71,7 +71,8 @@
         >
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="primary" icon="el-icon-menu" circle @click.stop="handlerShowTrigger(scope.row)"></el-button>
+            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowTrigger(scope.row)"></el-button>
+            <el-button size="mini" type="warning" icon="el-icon-search" circle @click.stop="handlerHis(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
         </el-table-column>
@@ -122,23 +123,22 @@
 
             <el-form-item>
               <el-button type="primary" @click="handlerSave()">确定</el-button>
-              <el-button @click="handlerCancel()">取消</el-button>
+              <el-button type="danger" @click="handlerCancel()">取消</el-button>
             </el-form-item>
           </el-form>
         </template>
       </el-dialog>
 
       <el-dialog
-        title="触发器列表"
+        title="调度执行"
         :visible.sync="loadingUpdateTrigger"
         width="86%"
       >
         <template>
-          <el-button
-            class="btn btn-warning"
-            @click="handlerAddColumnTrigger()"
-            style="margin:4px 0px 0 2px;"
-          >添加</el-button>
+          <label>触发器列表</label>
+          <el-button  class="btn btn-success" @click="handlerAddColumnTrigger()" style="margin:4px 0px 0 2px;">添加</el-button>
+          <el-button  class="btn btn-danger" @click="handlerSaveAllTriggers()" style="margin:4px 0px 0 2px;">保存</el-button>
+
           <el-table
             v-loading="loadingTrigger"
             :data="listTrigger"
@@ -182,12 +182,43 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-button
-            class="btn btn-danger"
-            @click="handlerSaveAllTriggers()"
-            style="margin:4px 0px 0 2px;"
-          >保存</el-button>
 
+        </template>
+
+
+        <template >
+          <label>执行日志</label>
+          <el-table
+            v-loading="loadingHis"
+            :data="listHis"
+            element-loading-text="Loading"
+            border
+            fit
+            stripe
+            show-summary
+            sum-text="S"
+            highlight-current-row
+            max-height="86%"
+          >
+            <!--      多选框-->
+<!--            <el-table-column fixed="left" aligin="center" type="selection" min-width="12px"> </el-table-column>-->
+            <!--      序号-->
+            <el-table-column fixed="left" align="center" type="index" min-width="12px"></el-table-column>
+
+            <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
+            <el-table-column
+              v-for="(value, key) in colMapHis"
+              :key="key"
+              :property="key"
+              :label="(value=='' ? key : value)"
+              sortable
+              show-overflow-tooltip
+            >
+              <template slot-scope="scope">
+                  {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
+              </template>
+            </el-table-column>
+          </el-table>
 
         </template>
       </el-dialog>
@@ -245,15 +276,22 @@ export default {
 
       nowRowTrigger: null,
       loadingTrigger: false,
+      loadingHis: false,
       loadingUpdateTrigger: false,
       showTrigger: {}, //当前角色用户
       colMapTrigger: {},
       colKeyTrigger: {},
       listTrigger: [],
+      colMapHis: {},
+      colKeyHis: '',
+      listHis: [],
       listTriggerOld: [],
       rowSelectTrigger: [],
+      rowSelectHis: [],
       quartzTable: 'W_QRTZ_JOB_DETAILS',
       quartzTableTrigger: 'W_QRTZ_CRON_TRIGGERS',
+      info: "",
+      info2: "",
     }
   },
   created() {
@@ -291,6 +329,16 @@ export default {
       }).catch(() => {
         this.loadingCols = false
       })
+
+      this.get('/common/getColsMap.do', {tableName: 'W_JOB_HIS'}).then((res) => {
+        this.colMapHis = res.data.colMap
+        // delete this.colMap.REQUESTS_RECOVERY
+        this.colKeyHis = res.data.colKey
+      }).catch(() => {
+
+      })
+
+
 
     },
     //清空搜索条件
@@ -434,7 +482,7 @@ export default {
       this.colMapTrigger['DESCRIPTION'] = '描述'
       this.colKeyTrigger = 'CRON_EXPRESSION'
 
-      var params = {nowPage: 1, showNum: 20}
+      var params = {nowPage: 1, showNum: 10}
       params[this.colKey] = val[this.colKey]
       this.get('/quartz/findPageTrigger.do', params).then((res) => {
         this.listTrigger = res.data.data
@@ -450,6 +498,21 @@ export default {
       }).catch(() => {
         this.loadingTrigger = false
       })
+
+
+
+      params = {nowPage: 1, showNum: 20}
+      params[this.colKey] = val[this.colKey]
+      this.loadingHis = true
+      this.get('/quartz/findPageJobHis.do', params).then((res) => {
+        this.listHis = res.data.data
+        // this.page = res.data.page
+        this.info2 = res.info
+        this.loadingHis = false
+      }).catch(() => {
+        this.loadingHis = false
+      })
+
     },
     //默认选中
     handlerOnShowTrigger(){
@@ -460,8 +523,19 @@ export default {
       }
 
     },
+    handlerHis(val){
+      var params =  {
+        database: '', table: 'W_JOB_HIS',
+      }
+      params['INFO'] = val[this.colKey]
+      this.$router.push({
+        path:'/db/table',
+        query: params,
+      })
+    },
     //新建的  取消勾选的 差异化 触发器保存
     handlerSaveAllTriggers(){
+      this.loadingTrigger = true;
       var listOn = []
       var listOff = []
       var map = {}
@@ -497,6 +571,8 @@ export default {
         })
       }else{
         this.$message({message:'没有改动', type:'waring'});
+        this.loadingTrigger = false;
+
       }
 
     },

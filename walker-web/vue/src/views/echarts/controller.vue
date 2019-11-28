@@ -23,7 +23,7 @@
           </div>
 
           <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-          <el-button  class="btn btn-default" @click="clearColsSearch();getListPage();" >清除</el-button>
+          <el-button  class="btn btn-danger" @click="clearColsSearch();getListPage();" >清除</el-button>
         </form>
     </div>
 

@@ -7,7 +7,9 @@ import com.walker.common.util.Tools;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.dao.JdbcDao;
+import com.walker.dao.JobHisRepository;
 import com.walker.dao.LogInfoRepository;
+import com.walker.mode.JobHis;
 import com.walker.mode.LogInfo;
 import com.walker.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,19 +33,22 @@ public class LogServiceImpl implements LogService {
 	@Autowired
 	LogInfoRepository logInfoRepository;
 
+
+	@Autowired
+	JobHisRepository jobHisRepository;
+	/**
+	 * 保存jobhis quartz类执行日志
+	 * @param jobHis
+	 */
+	public void saveJobHis(JobHis jobHis){
+		jobHisRepository.save(jobHis);
+	}
+
     //info:
     //id,userid,time,url,ip,mac,port,about
 	@Override
 	public void saveControl(String userid, String url, String ip, String host, int port, String params) {
-//		List<List<Object>> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
-//
-//		params = Tools.cutString(params, 180);
-//
-//		List<Object> line = Arrays.asList(LangUtil.getGenerateId(),TimeUtil.getTimeYmdHmss(), userid, url, ip, host, port, params);
-//		list.add(line);
-//		cache.put(CACHE_KEY_CONTROL, list);
 		List<LogInfo> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
-
 		params = Tools.cutString(params, 180);
 		LogInfo line = new LogInfo();
 		line.setId(LangUtil.getGenerateId());
@@ -56,7 +61,6 @@ public class LogServiceImpl implements LogService {
 		list.add(line);
 		cache.put(CACHE_KEY_CONTROL, list);
 	}
-
 
 	/**
 	 * 切换 线程安全的计数方案
@@ -72,7 +76,6 @@ public class LogServiceImpl implements LogService {
 
 		bean.put(url, beanUrl);
 		cache.put(CACHE_KEY, bean);
-//		saveStatis();
 	}
 	@Override
 	public void saveStatis() {
@@ -92,25 +95,12 @@ public class LogServiceImpl implements LogService {
 							+ "values"
 							+ "(?, ?, ?, ?, ?, ?) "
 					, list
-//					map.get("IPPORT", "localhost:8080"), LangUtil.getGenerateId(), map.get("URL"), map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME")
 			);
 			log.info("batch save static " + res);
 		}
 		cache.remove(CACHE_KEY);
 
 
-//		List<List<Object>> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
-//		if(list.size() > 0) {
-//			Integer[] res = jdbcDao.executeSql("insert into LOG_INFO"
-//							+ "(ID,TIME,USERID,URL,IP,MAC,PORT,ABOUT) "
-//							+ "values"
-//							+ "(?,?,?,?,?,?,?,?) "
-//					, list
-//					//LangUtil.getGenerateId(),TimeUtil.getTimeYmdHmss(),userid,url,ip,host,port,params
-//			);
-//			cache.remove(CACHE_KEY_CONTROL);
-//			log.info("batch save Control " + res);
-//		}
 		List<LogInfo> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
 		if(list.size() > 0) {
 			list = logInfoRepository.saveAll(list);

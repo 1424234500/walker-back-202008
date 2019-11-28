@@ -29,7 +29,7 @@
           v-model="dir"
         />
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >home</el-button>
+        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >home</el-button>
         <el-button  class="btn btn-default" @click="goParent()" >上级目录</el-button>
 
       </form>
@@ -155,7 +155,7 @@
 
             <el-form-item>
               <el-button type="primary" @click="handlerSave()">确定</el-button>
-              <el-button @click="handlerCancel()">取消</el-button>
+              <el-button type="danger" @click="handlerCancel()">取消</el-button>
             </el-form-item>
           </el-form>
         </template>

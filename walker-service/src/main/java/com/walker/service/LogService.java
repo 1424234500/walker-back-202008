@@ -1,5 +1,6 @@
 package com.walker.service;
 
+import com.walker.mode.JobHis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,11 @@ public interface LogService  {
 	String CACHE_KEY = "cache-url-request";
 	String CACHE_KEY_CONTROL = "cache-url-request-control";
 
+	/**
+	 * 保存jobhis quartz类执行日志
+	 * @param jobHis
+	 */
+	public void saveJobHis(JobHis jobHis);
 
 	/**
 	 * 登陆用户操作 记录

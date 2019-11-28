@@ -3,6 +3,7 @@
 
     <!--搜索 table-->
     <div class="div-box-down"
+         v-show="showChoseDb"
          v-loading="loadingTables"
     >
       <form class="form-inline" >
@@ -50,7 +51,7 @@
 
     <!--搜索-->
     <div class="div-box-down"
-         v-show="!loadingTables"
+         v-show="!loadingTables || !showChoseDb"
          v-loading="loadingCols"
     >
       <form class="form-inline" >
@@ -67,8 +68,8 @@
         </div>
 
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-warning" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-default" @click="clearRowSearch();getListPage();" >清除</el-button>
+        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
       </form>
     </div>
 
@@ -107,7 +108,7 @@
           min-width="100px"
         >
           <template slot-scope="scope">
-            {{scope.row[scope.column.property] | formatTime. }}  <!-- 渲染对应表格里面的内容 -->
+            {{scope.row[scope.column.property]  }}  <!-- 渲染对应表格里面的内容 -->
           </template>
         </el-table-column>
         <el-table-column
@@ -146,6 +147,7 @@
 
 <!--      提示sql-->
       <el-input
+        v-show="showChoseDb"
         type="textarea"
         :rows="4"
         placeholder="执行sql"
@@ -177,7 +179,7 @@
 
             <el-form-item>
               <el-button type="primary" @click="handlerSave()">确定</el-button>
-              <el-button @click="handlerCancel()">取消</el-button>
+              <el-button type="danger" @click="handlerCancel()">取消</el-button>
             </el-form-item>
           </el-form>
         </template>
@@ -216,6 +218,7 @@
         colMap: {},      //列名:别名
         colKey: "",     //主键名
         rowSearch: {},   //搜索 列明:搜索值
+        rowSearchDefault: {},//默认搜索 当传参过来指定条件嵌入
         rowUpdate: {},   //更新界面复制 列名:新值
         rowUpdateFrom: {},//更新界面源对象 列名:旧值
         rowSelect: [],   //选中行
@@ -239,10 +242,24 @@
         loadingCols: true,
         loadingSave: true,
         loadingUpdate: false,
+        showChoseDb: false,
       }
     },
     created() {
-      this.getDatabases()
+      if(this.$route.query.table){ //传递 指定table
+        var params = this.$route.query
+        this.showChoseDb = false
+        this.database = params.database
+        this.database = this.database ? this.database : ''
+        this.table = params.table
+        delete params.table
+        delete params.database
+        this.rowSearchDefault = Object.assign({}, params)
+        this.getColumns()
+      }else {
+        this.showChoseDb = true
+        this.getDatabases()
+      }
     },
     filters: {
     },
@@ -296,7 +313,7 @@
       },
       //清空搜索条件
       clearRowSearch(){
-        this.rowSearch = {}
+        this.rowSearch = Object.assign({}, this.rowSearchDefault)
         this.page.nowpage = 1
         this.page.order = ''
       },
