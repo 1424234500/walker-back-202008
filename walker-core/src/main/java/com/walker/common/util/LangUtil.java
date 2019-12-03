@@ -80,7 +80,7 @@ public class LangUtil {
 			StringBuilder sb = new StringBuilder("list\t").append(list.size());
 			int i = 0;
 			for(Object item : list){
-				sb.append(i).append("\t").append(toString(item)).append("\n");
+				sb.append(i++).append("\t").append(toString(item)).append(", ");
 			}
 			return sb.toString();
 		} else if (
