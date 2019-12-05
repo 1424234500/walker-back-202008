@@ -67,10 +67,11 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="90px"
+          min-width="130px"
         >
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowRoleUser(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
         </el-table-column>
@@ -128,55 +129,12 @@
       </el-dialog>
 
       <el-dialog
-        title="拥有的角色"
-        :visible.sync="loadingUpdateRole"
+        title="该角色用户"
+        :visible.sync="showDialogRoleUser"
         width="86%"
       >
         <template>
-          部门角色:
-          <el-table
-            v-loading="loadingRole"
-            :data="listRolerole"
-            :row-class-name="tableRowClassName"
-            :default-sort = "{prop: 'S_FLAG', order: 'descending'}"
-            @selection-change="handlerSelectionChangeRole"
-            @open="handlerOnShowRole"
-            ref="multipleTableRoleUser"
-            element-loading-text="Loading"
-            border
-            fit
-            stripe
-            show-summary
-            sum-text="S"
-            highlight-current-row
-            max-height="86%"
-          >
-            <!--      多选框-->
-            <el-table-column fixed="left" aligin="center" type="selection" min-width="12px"> </el-table-column>
-            <!--      序号-->
-            <el-table-column fixed="left" align="center" type="index" min-width="12px"></el-table-column>
-
-            <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
-            <el-table-column
-              v-for="(value, key) in colMapRole"
-              :key="key"
-              :property="key"
-              :label="(value=='' ? key : value)"
-              sortable
-              show-overflow-tooltip
-              min-width="100px"
-            >
-              <template slot-scope="scope">
-                {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-button
-            class="btn btn-danger"
-            @click="handlerSaveAllRoles()"
-            style="margin:4px 0px 0 2px;"
-          >保存角色</el-button>
-
+          <roleuser :id=id></roleuser>
         </template>
       </el-dialog>
 
@@ -238,6 +196,10 @@ export default {
       colKeyRole: {},
       listRolerole: [],
       rowSelectRole: [],
+
+      showDialogRoleUser: false,
+
+      id: "",
     }
   },
   created() {
@@ -398,6 +360,10 @@ export default {
         this.handlerOnShowRole()
       })
 
+    },
+    handlerShowRoleUser(val) {
+      this.showDialogRoleUser = ! this.showDialogRoleUser
+      this.id = val[this.colKey]
     },
     //默认选中
     handlerOnShowRole(){

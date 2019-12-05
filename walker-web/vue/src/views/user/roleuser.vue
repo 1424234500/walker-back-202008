@@ -17,6 +17,7 @@
             v-model="rowSearch[key]"
           />
         </div>
+        {{roleId}}
 
         <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
         <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
@@ -230,7 +231,6 @@ export default {
       loadingSave: true,
       loadingUpdate: false,
 
-
       loadingRole: false,
       loadingUpdateRole: false,
       roleShowRole: {}, //当前角色用户
@@ -240,6 +240,7 @@ export default {
       rowSelectRole: [],
     }
   },
+  props:['id'],//组件传参
   created() {
     this.getColumns()
   },
@@ -253,8 +254,10 @@ export default {
         this.colMap = res.data.colMap
         this.colKey = res.data.colKey
         this.clearRowSearch()
+        this.rowSearch['ROLE_ID'] = this.id //参数传递
+
         this.loadingCols = false
-        this. getListPage()
+        this.getListPage()
       }).catch(() => {
         this.loadingCols = false
       })

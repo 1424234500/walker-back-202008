@@ -67,11 +67,12 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="120px"
+          min-width="150px"
         >
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
             <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowRole(scope.row)"></el-button>
+            <el-button size="mini" type="warning" icon="el-icon-menu" circle @click.stop="handlerShowUser(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
         </el-table-column>
@@ -181,6 +182,16 @@
         </template>
       </el-dialog>
 
+      <el-dialog
+        title="部门用户"
+        :visible.sync="showDialogUser"
+        width="86%"
+      >
+        <template>
+          <user :id=id></user>
+        </template>
+      </el-dialog>
+
     </div>
 
 
@@ -239,6 +250,9 @@ export default {
       colKeyRole: {},
       listRoleDept: [],
       rowSelectRole: [],
+
+      showDialogUser: false,
+      id: '',
     }
   },
   created() {
@@ -374,8 +388,11 @@ export default {
       // this.$refs.multipleTable.toggleAllSelection()
       // this.$refs.multipleTable.toggleRowSelection(VAL);
     },
-
-    //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
+    handlerShowUser(val){
+      this.id = val[this.colKey]
+      this.showDialogUser = ! this.showDialogUser
+    },
+      //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
     handlerShowRole(val) {
       this.deptShowRole = val
       this.loadingUpdateRole = ! this.loadingUpdateRole

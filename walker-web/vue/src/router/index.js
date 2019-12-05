@@ -127,12 +127,12 @@ export const constantRoutes = [
         component: () => import('@/views/user/role'),
         meta: {title: 'Role', icon: 'theme'}
       },
-      {
-        path: 'roleuser',
-        name: 'RoleUser',
-        component: () => import('@/views/user/roleuser'),
-        meta: {title: 'RoleUser', icon: 'theme'}
-      },
+      // {
+      //   path: 'roleuser',
+      //   name: 'RoleUser',
+      //   component: () => import('@/views/user/roleuser'),
+      //   meta: {title: 'RoleUser', icon: 'theme'}
+      // },
     ]
   },
   {

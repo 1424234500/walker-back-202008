@@ -315,6 +315,7 @@ export default {
 
     }
   },
+  props:['id'],//组件传参
   created() {
     this.getColumns()
   },
@@ -328,6 +329,8 @@ export default {
         this.colMap = res.data.colMap
         this.colKey = res.data.colKey
         this.clearRowSearch()
+        this.rowSearch['DEPT_ID'] = this.id //参数传递
+
         this.loadingCols = false
         this. getListPage()
       }).catch(() => {
