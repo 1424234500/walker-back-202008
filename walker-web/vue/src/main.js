@@ -18,6 +18,10 @@ import store from './store'
 import router from './router'
 
 // 注册为全局组件 供直接使用
+
+import mtable from './views/db/mtable'
+Vue.component('mtable', mtable)
+
 import dept from './views/user/dept'
 Vue.component('dept', dept)
 import depttree from './views/user/depttree'

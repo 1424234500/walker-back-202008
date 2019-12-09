@@ -75,10 +75,10 @@ export const constantRoutes = [
         meta: { title: 'Teacher', icon: 'user' }
       },
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/db/table'),
-        meta: { title: 'Table', icon: 'table',
+        path: 'mtable',
+        name: 'Mtable',
+        component: () => import('@/views/db/mtable'),
+        meta: { title: 'Mtable', icon: 'table',
           keepAlive: true ,//当前的.vue文件需要缓存
         }
       },

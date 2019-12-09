@@ -188,7 +188,7 @@
         width="86%"
       >
         <template>
-          <user :id=id></user>
+          <user :props="showDialogUserParams"></user>
         </template>
       </el-dialog>
 
@@ -252,7 +252,7 @@ export default {
       rowSelectRole: [],
 
       showDialogUser: false,
-      id: '',
+      showDialogUserParams: null,
     }
   },
   created() {
@@ -389,7 +389,11 @@ export default {
       // this.$refs.multipleTable.toggleRowSelection(VAL);
     },
     handlerShowUser(val){
-      this.id = val[this.colKey]
+      this.showDialogUserParams =  {
+        params: {
+          'DEPT_ID' : val[this.colKey]
+        },
+      }
       this.showDialogUser = ! this.showDialogUser
     },
       //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)

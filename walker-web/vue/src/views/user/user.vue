@@ -279,6 +279,7 @@ export default {
       colMap: {},      //列名:别名
       colKey: "",     //主键名
       rowSearch: {},   //搜索 列明:搜索值
+      rowSearchDefault: {},//默认搜索 当传参过来指定条件嵌入
       rowUpdate: {},   //更新界面复制 列名:新值
       rowUpdateFrom: {},//更新界面源对象 列名:旧值
       rowSelect: [],   //选中多行
@@ -315,8 +316,13 @@ export default {
 
     }
   },
-  props:['id'],//组件传参
+  props:['props'],//组件传参
   created() {
+    if(this.props) {
+      debugger
+      var params = this.props
+      this.rowSearchDefault = Object.assign({}, params.params)
+    }
     this.getColumns()
   },
   filters: {
@@ -329,7 +335,6 @@ export default {
         this.colMap = res.data.colMap
         this.colKey = res.data.colKey
         this.clearRowSearch()
-        this.rowSearch['DEPT_ID'] = this.id //参数传递
 
         this.loadingCols = false
         this. getListPage()
@@ -340,9 +345,7 @@ export default {
     },
     //清空搜索条件
     clearRowSearch(){
-      for (var key in this.colMap) {
-        this.rowSearch[key] = ''
-      }
+      this.rowSearch = Object.assign({}, this.rowSearchDefault)
       this.page.nowpage = 1
     },
      //分页查询
@@ -365,7 +368,7 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-      let newObj = Object.assign(this.nowRow==null?{}:this.nowRow, this.rowSearch)
+      var newObj = Object.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
       newObj["S_FLAG"] = '1'
       this.list.push(newObj)
       this.handlerChange(newObj)

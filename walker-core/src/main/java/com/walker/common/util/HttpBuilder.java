@@ -1,9 +1,13 @@
 package com.walker.common.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -24,7 +28,7 @@ public class HttpBuilder {
 	private Type type;
 	private String url;
 	private Map<?,?> data;
-	private String encode;
+	private String encode = "utf-8";
 	private String decode;
 	private Map<?,?> headers;
 	
@@ -109,7 +113,21 @@ public class HttpBuilder {
 		timeout = HttpUtil.makeTimeoutConfig(requestTimeout, connectTimeout, socketTimeout);
 		return HttpUtil.executeString(request, url, encode, decode, headers, timeout);
 	}
-	
+	public HttpResponse buildResponse() throws IOException, URISyntaxException {
+		makeData();
+		timeout = HttpUtil.makeTimeoutConfig(requestTimeout, connectTimeout, socketTimeout);
+		return HttpUtil.executeResponse(request, url, headers, timeout);
+	}
+	public File buildFile(File file) throws IOException, URISyntaxException {
+		if(file.exists() && file.isFile()){
+			file.delete();
+		}else{
+			file.createNewFile();
+		}
+		makeData();
+		timeout = HttpUtil.makeTimeoutConfig(requestTimeout, connectTimeout, socketTimeout);
+		return HttpUtil.executeFile(request, url, headers, timeout, file);
+	}
 	
 	private void makeData() throws UnsupportedEncodingException {
 		switch(this.type) {

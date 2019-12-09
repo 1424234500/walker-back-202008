@@ -3,7 +3,7 @@
 
     <!--搜索 table-->
     <div class="div-box-down"
-         v-show="showChoseDb"
+         v-if="showChoseDb"
          v-loading="loadingTables"
     >
       <form class="form-inline" >
@@ -81,6 +81,7 @@
         :data="list"
         :row-class-name="tableRowClassName"
         ref="multipleTable"
+        @current-change="handlerCurrentChangeTable"
         @selection-change="handlerSelectionChange"
         @sort-change="handlerSortChange"
         element-loading-text="Loading"
@@ -222,6 +223,7 @@
         rowUpdate: {},   //更新界面复制 列名:新值
         rowUpdateFrom: {},//更新界面源对象 列名:旧值
         rowSelect: [],   //选中行
+        nowRow: null,     //当前行
         info: "",       //执行sql 提示
         queryDatabase: [],  //db列表
         database: "", //选中db
@@ -245,6 +247,8 @@
         showChoseDb: false,
       }
     },
+    props:['props'],//组件传参
+
     created() {
       if(this.$route.query.table){ //传递 指定table
         var params = this.$route.query
@@ -256,7 +260,15 @@
         delete params.database
         this.rowSearchDefault = Object.assign({}, params)
         this.getColumns()
-      }else {
+      }else if(this.props) {
+        var params = this.props
+        this.showChoseDb = false
+        this.database = params.database
+        this.database = this.database ? this.database : ''
+        this.table = params.table
+        this.rowSearchDefault = Object.assign({}, params.params)
+        this.getColumns()
+      }else{
         this.showChoseDb = true
         this.getDatabases()
       }
@@ -300,7 +312,6 @@
         this.loadingCols = true
         var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
         this.get('/common/getColsMap.do', {tableName: this.table}).then((res) => {
-
           this.colMap = res.data.colMap
           this.colKey = res.data.colKey
           this.clearRowSearch()
@@ -335,7 +346,8 @@
       },
       //添加行
       handlerAddColumn(){
-        this.list.push(Object.assign({}, this.rowSearch))
+        var newObj = Object.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
+        this.list.push(newObj)
         this.handlerChange(this.list[this.list.length - 1])
       },
       //修改单行 展示弹框
@@ -343,7 +355,7 @@
         this.loadingUpdate = ! this.loadingUpdate
         this.loadingSave = false
         console.info("handlerChange " + JSON.stringify(val))
-        this.rowUpdateFrom = val;
+        this.rowUpdateFrom = val
         this.rowUpdate = JSON.parse(JSON.stringify(val))
         this.loadingSave = false
       },
@@ -414,6 +426,11 @@
         // order: "ascending"
         // prop: "time"
         this.page.order = val.prop + (val.order.startsWith("desc") ? " desc" : "")
+      },
+      //当前高亮行
+      handlerCurrentChangeTable(row){
+        console.info("handlerCurrentChangeTable", row)
+        this.nowRow = row
       },
       //翻页
       handlerCurrentChange(val) {

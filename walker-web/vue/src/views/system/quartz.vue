@@ -185,44 +185,16 @@
 
         </template>
 
-
-        <template >
-          <label>执行日志</label>
-          <el-table
-            v-loading="loadingHis"
-            :data="listHis"
-            element-loading-text="Loading"
-            border
-            fit
-            stripe
-            show-summary
-            sum-text="S"
-            highlight-current-row
-            max-height="86%"
-          >
-            <!--      多选框-->
-<!--            <el-table-column fixed="left" aligin="center" type="selection" min-width="12px"> </el-table-column>-->
-            <!--      序号-->
-            <el-table-column fixed="left" align="center" type="index" min-width="12px"></el-table-column>
-
-            <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
-            <el-table-column
-              v-for="(value, key) in colMapHis"
-              :key="key"
-              :property="key"
-              :label="(value=='' ? key : value)"
-              sortable
-              show-overflow-tooltip
-            >
-              <template slot-scope="scope">
-                  {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
-              </template>
-            </el-table-column>
-          </el-table>
-
+      </el-dialog>
+      <el-dialog
+        title="调度日志"
+        :visible.sync="showDialogLog"
+        width="86%"
+      >
+        <template>
+          <mtable :props='showDialogLogParams' ></mtable>
         </template>
       </el-dialog>
-
     </div>
 
 
@@ -292,6 +264,8 @@ export default {
       quartzTableTrigger: 'W_QRTZ_CRON_TRIGGERS',
       info: "",
       info2: "",
+      showDialogLog: false,
+      showDialogLogParams: null,
     }
   },
   created() {
@@ -374,7 +348,8 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-      let newObj = Object.assign({}, this.rowSearch)
+      var newObj = Object.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
+
       newObj["JOB_NAME"] = this.nowRow == null ? "" : this.nowRow["JOB_NAME"]
       newObj["DESCRIPTION"] = this.nowRow == null ? "" : this.nowRow["DESCRIPTION"]
       newObj['CRON_EXPRESSION'] = '0 0 10 * * ?'
@@ -524,14 +499,20 @@ export default {
 
     },
     handlerHis(val){
-      var params =  {
-        database: '', table: 'W_JOB_HIS',
+      this.showDialogLogParams =  {
+        database: '',
+        table: 'W_JOB_HIS',
+        params: {
+          'INFO' : val[this.colKey]
+        },
       }
-      params['INFO'] = val[this.colKey]
-      this.$router.push({
-        path:'/db/table',
-        query: params,
-      })
+      this.showDialogLog = ! this.showDialogLog
+
+      // params['INFO'] = val[this.colKey]
+      // this.$router.push({
+      //   path:'/db/table',
+      //   query: params,
+      // })
     },
     //新建的  取消勾选的 差异化 触发器保存
     handlerSaveAllTriggers(){

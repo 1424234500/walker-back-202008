@@ -1,10 +1,6 @@
 package com.walker.common.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -254,7 +250,7 @@ public class HttpUtil {
 			HttpEntity entity = response.getEntity();
 			res = parseHttpEntity(entity, decode);
 
-			w.cost( " \nparseResponse");
+			w.cost( " \nparseString");
 			w.res(res.substring(0, Math.min(res.length(), SHOW_STRING_LEN)), log);
 		} catch (Exception e) {
 			w.exceptionWithThrow(e, log);
@@ -262,6 +258,43 @@ public class HttpUtil {
 			
 		}
 		return res;
+	}
+	/**
+	 * 根据请求类型 url 头 超时配置获取response
+	 */
+	public static File executeFile(HttpRequestBase request, String url, Map<?, ?> headers, RequestConfig timeout, File file)
+			throws URISyntaxException, ClientProtocolException, IOException {
+		Watch w = new Watch();
+		try {
+			w.put("http " + request.getMethod() + " " + url + " "  + request.getProtocolVersion());
+			w.put(" \nheaders", headers);
+			w.put(" \nRequestConfig:");
+			if(timeout == null) {
+				Cache<String> cache = CacheMgr.getInstance();
+				int requestTimeout = cache.get("http_request_timeout", 3000);
+				int connectTimeout = cache.get("http_connect_timeout", 3000);
+				int socketTimeout = cache.get("http_socket_timeout", 6000);
+				w.put("requestTimeout=" + requestTimeout + ",connectTimeout=" + connectTimeout + ",socketTimeout=" + socketTimeout);
+			}else {
+				w.put(timeout);
+			}
+			HttpResponse response = executeResponse(request, url, headers, timeout);
+			w.cost(" \nexecute");
+
+			StatusLine status = response.getStatusLine();
+			w.put(" \ncode", status);
+			HttpEntity entity = response.getEntity();
+
+			file = parseHttpEntity(entity, file);
+
+			w.cost( " \nparseFile");
+			w.res(file.getAbsolutePath(), log);
+		} catch (Exception e) {
+			w.exceptionWithThrow(e, log);
+		} finally {
+
+		}
+		return file;
 	}
 	/**
 	 * 根据请求类型 url 头 超时配置获取response
@@ -306,7 +339,32 @@ public class HttpUtil {
 		}
 		return res;
 	}
-	
+	/**
+	 * 解析response实体 file
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 */
+	public static File parseHttpEntity(HttpEntity entity, File file) throws IllegalStateException, IOException {
+		String res = "";
+		FileOutputStream os = new FileOutputStream(file);
+		if (entity != null) {
+			// getResponse
+			InputStream is = null;
+			try {
+				is = entity.getContent();
+				FileUtil.copyStream(is, os);
+				res = os.toString();
+			}finally {
+				if(os != null) {
+					os.close();
+				}
+				if(is != null)
+					is.close();
+			}
+		}
+		return file;
+	}
+
 	/**
 	 * 下载文件
 	 * 
