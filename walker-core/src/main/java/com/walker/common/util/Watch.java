@@ -88,66 +88,78 @@ public class Watch {
 		long deta = now - last;
 		return deta;
 	}
-	/**
-	 * 总耗时存入
-	 * 若传入log则记录日志
-	 * @return
-	 */
-	public Watch res( Logger...logs) {
-		long now =  System.currentTimeMillis();
-		long last = times.get(times.size() - 1);
-		long deta = now - last;
-		this.put("total", deta + "");
-
-		for(Logger log : logs) {
-			log.info(this);
-		}
-		return this;
+	public Watch res(){
+		return res(null);
 	}
 	/**
 	 * 总耗时存入
 	 * 若传入log则记录日志
 	 * @return
 	 */
-	public Watch resSlf4j( org.slf4j.Logger...logs) {
+	public Watch res(Logger log) {
+		long now =  System.currentTimeMillis();
+		long last = times.get(times.size() - 1);
+		long deta = now - last;
+		this.put("total", deta + "");
+		if(log != null)
+		log.info(this);
+		return this;
+	}
+	public Watch resSlf4j(  ) {
+		return resSlf4j(null);
+	}
+		/**
+         * 总耗时存入
+         * 若传入log则记录日志
+         * @return
+         */
+	public Watch resSlf4j( org.slf4j.Logger log) {
 		long now =  System.currentTimeMillis();
 		long last = times.get(times.size() - 1);
 		long deta = now - last;
 		this.put("total", deta + "");
 
-		for( org.slf4j.Logger log : logs) {
-			log.info(this.toPrettyString());
-		}
+		if(log != null)
+		log.info(this.toPrettyString());
 		return this;
 	}
-
+	public Watch res(Object res) {
+		return res(res, null);
+	}
 
 	/**
 	 * 正常结果
 	 * @param res
 	 * @return
 	 */
-	public Watch res(Object res,  Logger...logs) {
+	public Watch res(Object res,  Logger logs) {
 		this.put("res", res);
+		if(logs != null)
 		this.res(logs);
 		return this;
 	}
+	public Watch resSlf4j(Object res) {
+		return resSlf4j(res, null);
+	}
 	/**
 	 * 正常结果
 	 * @param res
 	 * @return
 	 */
-	public Watch resSlf4j(Object res,  org.slf4j.Logger...logs) {
+	public Watch resSlf4j(Object res,  org.slf4j.Logger logs) {
 		this.put("res", res);
 		this.resSlf4j(logs);
 		return this;
+	}
+	public Watch exceptionWithThrow(Throwable e) {
+		return exceptionWithThrow(e, null);
 	}
 	/**
 	 * 异常结果
 	 * @param e
 	 * @return
 	 */
-	public Watch exceptionWithThrow(Throwable e,  Logger...log) {
+	public Watch exceptionWithThrow(Throwable e,  Logger log) {
 		this.put("exception", Tools.toString(e));
 		this.res(log);
 		throw new ErrorException(this);
@@ -157,7 +169,7 @@ public class Watch {
 	 * @param e
 	 * @return
 	 */
-	public Watch exception(Throwable e,  Logger...log) {
+	public Watch exception(Throwable e,  Logger log) {
 		this.put("exception", Tools.toString(e));
 		this.res(log);
 //		throw new ErrorException(this);

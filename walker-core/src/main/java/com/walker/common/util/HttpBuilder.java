@@ -26,7 +26,15 @@ import com.walker.core.exception.InfoException;
  */
 public class HttpBuilder {
 	private Type type;
+	/**
+	 * 浏览器 新访问?
+	 */
+	private String who;
 	private String url;
+	/**
+	 * 表单参数 否则 json参数
+	 */
+	private Boolean form = false;
 	private Map<?,?> data;
 	private String encode = "utf-8";
 	private String decode;
@@ -38,7 +46,16 @@ public class HttpBuilder {
 	
 	private HttpRequestBase request;
 	private RequestConfig timeout;
-	
+
+	public Boolean getForm() {
+		return form;
+	}
+
+	public HttpBuilder setForm(Boolean form) {
+		this.form = form;
+		return this;
+	}
+
 	public Type getType() {
 		return type;
 	}
@@ -46,6 +63,16 @@ public class HttpBuilder {
 		this.type = type;
 		return this;
 	}
+
+	public String getWho() {
+		return who;
+	}
+
+	public HttpBuilder setWho(String who) {
+		this.who = who;
+		return this;
+	}
+
 	public String getUrl() {
 		return url;
 	}
@@ -53,6 +80,7 @@ public class HttpBuilder {
 		this.url = url;
 		return this;
 	}
+
 	public Map<?, ?> getData() {
 		return data;
 	}
@@ -110,13 +138,11 @@ public class HttpBuilder {
 	
 	public String buildString() throws UnsupportedEncodingException, InfoException  {
 		makeData();
-		timeout = HttpUtil.makeTimeoutConfig(requestTimeout, connectTimeout, socketTimeout);
-		return HttpUtil.executeString(request, url, encode, decode, headers, timeout);
+		return HttpUtil.executeString(who, request, url, encode, decode, headers, timeout);
 	}
 	public HttpResponse buildResponse() throws IOException, URISyntaxException {
 		makeData();
-		timeout = HttpUtil.makeTimeoutConfig(requestTimeout, connectTimeout, socketTimeout);
-		return HttpUtil.executeResponse(request, url, headers, timeout);
+		return HttpUtil.executeResponse(who, request, url, headers, timeout);
 	}
 	public File buildFile(File file) throws IOException, URISyntaxException {
 		if(file.exists() && file.isFile()){
@@ -125,11 +151,12 @@ public class HttpBuilder {
 			file.createNewFile();
 		}
 		makeData();
-		timeout = HttpUtil.makeTimeoutConfig(requestTimeout, connectTimeout, socketTimeout);
-		return HttpUtil.executeFile(request, url, headers, timeout, file);
+		return HttpUtil.executeFile(who, request, url, headers, timeout, file);
 	}
-	
+
 	private void makeData() throws UnsupportedEncodingException {
+		timeout = HttpUtil.makeTimeoutConfig(requestTimeout, connectTimeout, socketTimeout);
+
 		switch(this.type) {
 			case DELETE:
 				if(data != null && data.size() > 0)
@@ -138,14 +165,24 @@ public class HttpBuilder {
 				break;
 			case PUT:
 				HttpPut put = new HttpPut();
-				if(data != null && data.size() > 0)
-					put.setEntity(new StringEntity(JsonUtil.makeJson(data), encode));
+				if(data != null && data.size() > 0) {
+					if(this.form){
+						put.setEntity(HttpUtil.getFormEntity(data, encode));
+					}else {
+						put.setEntity(new StringEntity(JsonUtil.makeJson(data), encode));
+					}
+				}
 				request = put;
 				break;
 			case POST:
 				HttpPost post = new HttpPost();
-				if(data != null && data.size() > 0)
-					post.setEntity(new StringEntity(JsonUtil.makeJson(data), encode));
+				if(data != null && data.size() > 0) {
+					if (this.form) {
+						post.setEntity(HttpUtil.getFormEntity(data, encode));
+					} else {
+						post.setEntity(new StringEntity(JsonUtil.makeJson(data), encode));
+					}
+				}
 				request = post;
 			break;
 			case GET:

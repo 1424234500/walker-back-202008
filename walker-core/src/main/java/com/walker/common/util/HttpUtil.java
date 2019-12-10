@@ -5,7 +5,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -16,6 +19,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -23,6 +27,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
 import com.walker.core.cache.Cache;
@@ -105,16 +110,19 @@ public class HttpUtil {
 			return url;
 		if (!url.contains("?"))
 			url = url + "?";
-		StringBuilder ddd = new StringBuilder();
-		for (Object key : data.keySet()) {
-			ddd.append(key).append("=").append(makeEncode(String.valueOf(data.get(key)), encode)).append("&");
-		}
-		if (ddd.length() > 0) {
-			ddd.setLength(ddd.length() - 1);
-		}
-		url = url + ddd.toString();
+		String dd = makeUrlData(data, encode);
+		url = url + (url.endsWith("?") ? "" : "&") + dd;
 		return url;
 	}
+	public static String makeUrlData(Map<?,?> data, String encode) throws UnsupportedEncodingException {
+		StringBuilder ddd = new StringBuilder();
+		for (Object key : data.keySet()) {
+			ddd.append("&").append(key).append("=").append(makeEncode(String.valueOf(data.get(key)), encode));
+		}
+		String dd  = ddd.length() > 0 ? ddd.substring(1, ddd.length()) : "";
+		return dd;
+	}
+
 
 	/**
 	 * 设置header集合
@@ -198,40 +206,41 @@ public class HttpUtil {
 		String str = JsonUtil.makeJson(data);
 		HttpPost request = new HttpPost();
 		request.setEntity(new StringEntity(str, encode));
-		return executeString(request, url, encode, encode, headers, null);
+		return executeString("", request, url, encode, encode, headers, null);
 	}
 
 	public static String doPut(String url, Object data, String encode, Map<?, ?> headers) throws InfoException {
 		String str = JsonUtil.makeJson(data);
 		HttpPut request = new HttpPut();
 		request.setEntity(new StringEntity(str, encode));
-		return executeString(request, url, encode, encode, headers, null);
+		return executeString("", request, url, encode, encode, headers, null);
 	}
 
 	public static String doGet(String url, Map<?, ?> data, String encode, Map<?, ?> headers)
 			throws InfoException, UnsupportedEncodingException {
 		url = makeUrl(url, data, encode);
 		HttpGet request = new HttpGet();
-		return executeString(request, url, encode, encode, headers, null);
+		return executeString("", request, url, encode, encode, headers, null);
 	}
 
 	public static String doDelete(String url, Map<?, ?> data, String encode, Map<?, ?> headers)
 			throws InfoException, UnsupportedEncodingException {
 		url = makeUrl(url, data, encode);
 		HttpDelete request = new HttpDelete();	
-		return executeString(request, url, encode, encode, headers, null);
+		return executeString("", request, url, encode, encode, headers, null);
 	}
 
 
-	public static String executeString(HttpRequestBase request, String url, String encode, String decode, Map<?, ?> headers, RequestConfig timeout)
+	public static String executeString(String who, HttpRequestBase request, String url, String encode, String decode, Map<?, ?> headers, RequestConfig timeout)
 			throws InfoException{
 		Watch w = new Watch();
 		String res = "";
 		try {
 			w.put("http " + request.getMethod() + " " + url + " "  + request.getProtocolVersion());
+			w.put("who", who);
 			w.put("encode", encode);
 			w.put("decode", decode);
-			w.put(" \nheaders", headers);
+			w.put(" \nheaders", request.getAllHeaders());
 			w.put(" \nRequestConfig:");
 			if(timeout == null) {
 				Cache<String> cache = CacheMgr.getInstance();
@@ -242,7 +251,7 @@ public class HttpUtil {
 			}else {
 				w.put(timeout);
 			}
-			HttpResponse response = executeResponse(request, url, headers, timeout);
+			HttpResponse response = executeResponse(who, request, url, headers, timeout);
 			w.cost(" \nexecute");
 
 			StatusLine status = response.getStatusLine();
@@ -262,12 +271,13 @@ public class HttpUtil {
 	/**
 	 * 根据请求类型 url 头 超时配置获取response
 	 */
-	public static File executeFile(HttpRequestBase request, String url, Map<?, ?> headers, RequestConfig timeout, File file)
+	public static File executeFile(String who, HttpRequestBase request, String url, Map<?, ?> headers, RequestConfig timeout, File file)
 			throws URISyntaxException, ClientProtocolException, IOException {
 		Watch w = new Watch();
 		try {
 			w.put("http " + request.getMethod() + " " + url + " "  + request.getProtocolVersion());
-			w.put(" \nheaders", headers);
+			w.put("who", who);
+			w.put(" \nheaders", request.getAllHeaders());
 			w.put(" \nRequestConfig:");
 			if(timeout == null) {
 				Cache<String> cache = CacheMgr.getInstance();
@@ -278,7 +288,7 @@ public class HttpUtil {
 			}else {
 				w.put(timeout);
 			}
-			HttpResponse response = executeResponse(request, url, headers, timeout);
+			HttpResponse response = executeResponse(who, request, url, headers, timeout);
 			w.cost(" \nexecute");
 
 			StatusLine status = response.getStatusLine();
@@ -299,7 +309,7 @@ public class HttpUtil {
 	/**
 	 * 根据请求类型 url 头 超时配置获取response
 	 */
-	public static HttpResponse executeResponse(HttpRequestBase request, String url, Map<?, ?> headers, RequestConfig timeout)
+	public static HttpResponse executeResponse(String who, HttpRequestBase request, String url, Map<?, ?> headers, RequestConfig timeout)
 			throws URISyntaxException, ClientProtocolException, IOException {
 		request.setURI(new URI(url));
 		// 设置超时 依赖配置默认值
@@ -307,7 +317,7 @@ public class HttpUtil {
 			request.setConfig(timeout);
 		// 设置请求头
 		makeHeader(request, headers);
-		HttpClient client = getClient();
+		HttpClient client = getClient(who);
 		return client.execute(request);
 	}
 
@@ -416,4 +426,12 @@ public class HttpUtil {
 		}
 	}
 
+	public static HttpEntity getFormEntity(Map<?,?> data, String encode) {
+		List<BasicNameValuePair> list = new ArrayList<>();
+		for(Entry<?, ?> entry : data.entrySet()){
+			list.add(new BasicNameValuePair(String.valueOf(entry.getKey()), String.valueOf(entry.getValue())));
+		}
+		return new UrlEncodedFormEntity(list, Charset.forName(encode));
+
+	}
 }
