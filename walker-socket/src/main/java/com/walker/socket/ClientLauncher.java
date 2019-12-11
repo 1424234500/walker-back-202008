@@ -20,8 +20,16 @@ public class ClientLauncher {
 //		new ClientUI(new ClientNIO("127.0.0.1", 8091), "nio-nio-server");
 //		new ClientUI(new ClientNIO("127.0.0.1", 8091), "nio-nio-client");
 //		new ClientUI(new ClientNIO("127.0.0.1", 8092), "nio-netty-client");
-		new ClientUI(new ClientNetty("39.106.111.11",	 Setting.get("socket_port_netty", 8093)), "netty-netty-client-39");
-		new ClientUI(new ClientNetty("127.0.0.1",	 Setting.get("socket_port_netty", 8093)), "netty-netty-client-127");
+		try {
+			new ClientUI(new ClientNetty("39.106.111.11", Setting.get("socket_port_netty", 8093)), "netty-netty-client-39");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		try {
+			new ClientUI(new ClientNetty("127.0.0.1",	 Setting.get("socket_port_netty", 8093)), "netty-netty-client-127");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		while(true) {}
 	}
 

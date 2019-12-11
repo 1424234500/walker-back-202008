@@ -82,6 +82,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 					try {
 						PluginMgr.getInstance().doMsg(msg);
 					}catch(Exception e) {
+						log.error("plugin exception", e);
 						//插件处理异常 反馈异常
 						session.send(MsgBuilder.makeException(session, msg, e));
 					}

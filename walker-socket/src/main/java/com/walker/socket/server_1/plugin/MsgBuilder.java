@@ -88,7 +88,7 @@ public class MsgBuilder {
 	
 	public static <T> Object makeException(Session<T> session, Msg msg, Exception e) {
 		return new Msg().setType(Plugin.KEY_EXCEPTION).setStatus(1)
-				.setInfo(e.toString()).setData(new Bean().set(Key.MSG, msg).set(Key.INFO, Tools.toString(e)));
+				.setInfo(e.toString()).setData(new Bean().set(Key.MSG, msg).set(Key.INFO, e.getMessage()));//Tools.toString(e)
 	}
 
 	
