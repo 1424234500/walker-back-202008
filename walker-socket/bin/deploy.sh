@@ -79,13 +79,13 @@ function upAndTar(){
     #上传
 	scp -p ${fromfile_temp}  ${server}:${todir}/${tofile_name}
     #解压&重启
-    ssh ${server}  " cd ${todir} && tar -xvf ${tofile_name} && ./server.sh restart "
+    ssh ${server}  ". /etc/profile &&  cd ${todir} && tar -xvf ${tofile_name} && ./server.sh restart "
 
 }
 
 function server(){
     #解压&重启
-	ssh ${server}  " cd ${todir}  && ./server.sh $@ "
+	ssh ${server}  ". /etc/profile &&  cd ${todir} && . /etc/profile  && ./server.sh $@ "
 }
 
 function help(){

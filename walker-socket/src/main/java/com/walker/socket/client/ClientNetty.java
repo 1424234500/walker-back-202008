@@ -158,9 +158,10 @@ public class ClientNetty extends ClientAdapter {
 				if(this.socket != null) {
 					this.socket.close();
 				}
-				if(group != null) {
-					group.shutdownGracefully(); 
+				if(this.group != null) {
+					this.group.shutdownGracefully();
 				}
+
 				if(this.onSocket != null) {
 					this.onSocket.onDisconnect(socket.toString());
 				}
