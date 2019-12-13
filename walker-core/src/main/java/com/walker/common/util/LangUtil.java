@@ -77,11 +77,13 @@ public class LangUtil {
 			return ((Map)obj).toString();
 		} else if (obj instanceof Collection) {
 			Collection<Object> list = (Collection<Object>)obj;
-			StringBuilder sb = new StringBuilder("list\t").append(list.size());
+			StringBuilder sb = new StringBuilder("list.").append(list.size()).append(" [ ");
 			int i = 0;
 			for(Object item : list){
-				sb.append(i++).append("\t").append(toString(item)).append(", ");
+				sb.append(" ").append(i++).append(".").append(toString(item)).append(",");
 			}
+			sb.setLength(sb.length() -1);
+			sb.append("]");
 			return sb.toString();
 		} else if (
 				obj instanceof String

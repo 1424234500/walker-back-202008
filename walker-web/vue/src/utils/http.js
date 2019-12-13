@@ -167,15 +167,15 @@ function afterReject(url, params, type, err){
   //   "message":"Failed to invoke the method finds in the service com.walker.service.TeacherService. Tried 3 times of the providers [192.168.103.240:8095] (1/1) from the registry localhost:8096 on the consumer 192.168.103.240 using the dubbo version 2.5.3. Last error is: Failed to invoke remote method: finds, provider: dubbo://192.168.103.240:8095/com.walker.service.TeacherService2?anyhost=true&application=service-provider&check=false&dubbo=2.5.3&group=jpa&interface=com.walker.service.TeacherService&logger=log4j&methods=add,finds,get,count,update,delete&monitor=dubbo%3A%2F%2Flocalhost%3A8096%2Fcom.alibaba.dubbo.registry.RegistryService%3Fapplication%3Dservice-provider%26dubbo%3D2.5.3%26logger%3Dlog4j%26owner%3Dwalker%26pid%3D28486%26protocol%3Dregistry%26refer%3Ddubbo%253D2.5.3%2526interface%253Dcom.alibaba.dubbo.monitor.MonitorService%2526pid%253D28486%2526timestamp%253D1569465229160%26registry%3Dzookeeper%26timeout%3D30000%26timestamp%3D1569465229160&owner=walker&pid=28486&revision=1.0&side=consumer&timeout=30000&timestamp=1569465229152&version=1.0, cause: message can not send, because channel is closed . url:dubbo://192.168.103.240:8095/com.walker.service.LogService?anyhost=true&application=service-provider&check=false&codec=dubbo&dubbo=2.5.3&heartbeat=60000&interface=com.walker.service.LogService&logger=log4j&methods=saveControl,saveStatis&monitor=dubbo%3A%2F%2Flocalhost%3A8096%2Fcom.alibaba.dubbo.registry.RegistryService%3Fapplication%3Dservice-provider%26dubbo%3D2.5.3%26logger%3Dlog4j%26owner%3Dwalker%26pid%3D28486%26protocol%3Dregistry%26refer%3Ddubbo%253D2.5.3%2526interface%253Dcom.alibaba.dubbo.monitor.MonitorService%2526pid%253D28486%2526timestamp%253D1569465228348%26registry%3Dzookeeper%26timeout%3D30000%26timestamp%3D1569465228346&owner=walker&pid=28486&revision=1.0&side=consumer&timeout=30000&timestamp=1569465228303&version=1.0",
   //   "path":"/teacher/findPage.do"
   // }
-  if(err && err.response){
-    err = err.response
+  err = err  && err.response ? err.response : err
+  if(err){
     Message({
-      message: 'Error ' + err.status + ' ' + err.statusText,
+      message: 'Error ' + err.status + ' ' + err.message,
       type: 'error'
     });
   }else{
     Message({
-      message: 'Error other ' + err,
+      message: 'Error other ' + JSON.stringify(err),
       type: 'error'
     });
   }
