@@ -78,70 +78,70 @@ public class RedisController  {
                     deta = max - min;
                     Iterator iterator = keys.iterator();
 
-                    while(true) {
-                        String type;
-                        ArrayList lineAve;
-                        ArrayList line;
-                        String name;
-                        do {
-                            if (!iterator.hasNext()) {
-                                return (new Bean()).put("from", fromNew).put("to", toNew).put("url", url);
+                    String type;
+                    ArrayList lineAve;
+                    ArrayList line;
+                    String name;
+                    while(iterator.hasNext()) {
+
+                        String key = (String) iterator.next();
+                        type = "bar";
+                        if (listXs.size() == 0) {
+                            Set<Tuple> rowWithScore = jedis.zrangeByScoreWithScores(key, min, max);
+                            Iterator var16 = rowWithScore.iterator();
+
+                            while (var16.hasNext()) {
+                                Tuple colTuple = (Tuple) var16.next();
+                                double score = colTuple.getScore();
+                                String colx = colTuple.getElement();
+                                listXs.add(TimeUtil.formatAuto((long) score, -1));
                             }
+                        }
 
-                            String key = (String)iterator.next();
-                            type = "bar";
-                            if (listXs.size() == 0) {
-                                Set<Tuple> rowWithScore = jedis.zrangeByScoreWithScores(key, min, max);
-                                Iterator var16 = rowWithScore.iterator();
+                        line = new ArrayList();
+                        List<String> lineQpsNet = new ArrayList();
+                        List<String> lineQpsWait = new ArrayList();
+                        List<String> lineQpsDone = new ArrayList();
+                        line.add(lineQpsNet);
+                        line.add(lineQpsWait);
+                        line.add(lineQpsDone);
+                        lineAve = new ArrayList();
+                        List<String> lineAveNet = new ArrayList();
+                        List<String> lineAveWait = new ArrayList();
+                        List<String> lineAveDone = new ArrayList();
+                        lineAve.add(lineAveNet);
+                        lineAve.add(lineAveWait);
+                        lineAve.add(lineAveDone);
+                        Set<String> row = jedis.zrangeByScore(key, min, max);
+                        Iterator var24 = row.iterator();
 
-                                while(var16.hasNext()) {
-                                    Tuple colTuple = (Tuple)var16.next();
-                                    double score = colTuple.getScore();
-                                    String colx = colTuple.getElement();
-                                    listXs.add(TimeUtil.formatAuto((long)score, -1));
-                                }
-                            }
+                        while (var24.hasNext()) {
+                            String col = (String) var24.next();
+                            String[] cc = col.split(" +");
+                            lineQpsNet.add(cc[4]);
+                            lineQpsWait.add(cc[9]);
+                            lineQpsDone.add(cc[14]);
+                            lineAveNet.add(cc[6]);
+                            lineAveWait.add(cc[11]);
+                            lineAveDone.add(cc[16]);
+                        }
 
-                            line = new ArrayList();
-                            List<String> lineQpsNet = new ArrayList();
-                            List<String> lineQpsWait = new ArrayList();
-                            List<String> lineQpsDone = new ArrayList();
-                            line.add(lineQpsNet);
-                            line.add(lineQpsWait);
-                            line.add(lineQpsDone);
-                            lineAve = new ArrayList();
-                            List<String> lineAveNet = new ArrayList();
-                            List<String> lineAveWait = new ArrayList();
-                            List<String> lineAveDone = new ArrayList();
-                            lineAve.add(lineAveNet);
-                            lineAve.add(lineAveWait);
-                            lineAve.add(lineAveDone);
-                            Set<String> row = jedis.zrangeByScore(key, min, max);
-                            Iterator var24 = row.iterator();
+                        name = key.substring(start.length());
 
-                            while(var24.hasNext()) {
-                                String col = (String)var24.next();
-                                String[] cc = col.split(" +");
-                                lineQpsNet.add(cc[4]);
-                                lineQpsWait.add(cc[9]);
-                                lineQpsDone.add(cc[14]);
-                                lineAveNet.add(cc[6]);
-                                lineAveWait.add(cc[11]);
-                                lineAveDone.add(cc[16]);
-                            }
-
-                            name = key.substring(start.length());
+                        if (url.length() == 0 || url.contains(name)) {
                             items.add(name);
-                        } while(url.length() > 0 && !url.contains(name));
 
-                        series.add((new Bean()).put("name", name + ":net").put("type", type).put("stack", name).put("data", line.get(0)));
-                        series.add((new Bean()).put("name", name + ":wait").put("type", type).put("stack", name).put("data", line.get(1)));
-                        series.add((new Bean()).put("name", name + ":done").put("type", type).put("stack", name).put("data", line.get(2)));
-                        series2.add((new Bean()).put("name", name + ":net").put("type", type).put("stack", name).put("data", lineAve.get(0)));
-                        series2.add((new Bean()).put("name", name + ":wait").put("type", type).put("stack", name).put("data", lineAve.get(1)));
-                        series2.add((new Bean()).put("name", name + ":done").put("type", type).put("stack", name).put("data", lineAve.get(2)));
+                            series.add((new Bean()).put("name", name + ":net").put("type", type).put("stack", name).put("data", line.get(0)));
+                            series.add((new Bean()).put("name", name + ":wait").put("type", type).put("stack", name).put("data", line.get(1)));
+                            series.add((new Bean()).put("name", name + ":done").put("type", type).put("stack", name).put("data", line.get(2)));
+                            series2.add((new Bean()).put("name", name + ":net").put("type", type).put("stack", name).put("data", lineAve.get(0)));
+                            series2.add((new Bean()).put("name", name + ":wait").put("type", type).put("stack", name).put("data", lineAve.get(1)));
+                            series2.add((new Bean()).put("name", name + ":done").put("type", type).put("stack", name).put("data", lineAve.get(2)));
+                        }
                     }
-                }
+
+                  }
+                return (new Bean()).put("from", fromNew).put("to", toNew).put("url", url);
             }
         });
         List<String> listLineNames = new ArrayList();

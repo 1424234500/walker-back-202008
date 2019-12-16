@@ -106,6 +106,12 @@ public class Redis  extends TestAdapter{
 		config.setMaxWaitMillis(cache.get("redis_maxWaitMillis", 1000)); 
         // 设置空闲连接
         config.setMaxIdle(cache.get("redis_maxIdle", 3));
+
+		config.setTestOnBorrow(false);
+		config.setTestOnReturn(false);
+		config.setTestOnCreate(true);
+		config.setBlockWhenExhausted(true);
+
         host = cache.get("redis_host", "localhost");
         
 		pool = new JedisPool(config, host);

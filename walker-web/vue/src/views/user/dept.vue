@@ -67,7 +67,7 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="150px"
+          min-width="180px"
         >
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
