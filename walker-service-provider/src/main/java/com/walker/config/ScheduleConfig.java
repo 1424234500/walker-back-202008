@@ -22,7 +22,7 @@ public class ScheduleConfig {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	public ScheduleConfig(){
-		log.info(Config.getPre() + "-------ScheduleConfig");
+		log.info(Config.getPre() + "ScheduleConfig");
 	}
 
 	static private long count = 0;

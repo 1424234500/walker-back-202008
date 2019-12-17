@@ -53,11 +53,14 @@ class SchedulerQuartzImpl implements com.walker.core.scheduler.Scheduler {
 		log.info("add " + task.toString());
 		Scheduler scheduler = getScheduler();
 		JobDetail jobDetail = task.getJobDetail();//makeJobDetail(task);
+
+		scheduler.addJob(jobDetail, false);	//添加方式2
+
 		List<Trigger> triggers = task.getTriggers();//makeTrigger(task);
 		// 将任务及其触发器放入调度器
 		for(Trigger trigger : triggers) {
-//			scheduler.scheduleJob(jobDetail, trigger);//只能单触发器
-			scheduler.scheduleJob(trigger);//trigger绑定job
+//			scheduler.scheduleJob(jobDetail, trigger);//添加方式1 只能单触发器
+			scheduler.scheduleJob(trigger);//添加方式2 trigger绑定job
 		}
 		start();
 		return task;
@@ -75,7 +78,7 @@ class SchedulerQuartzImpl implements com.walker.core.scheduler.Scheduler {
 	}
 	/**
 	 *
-	 * 以className删除重建job
+	 * 以className删除重建job 继承触发器 备注
 	 * @return
 	 */
 	@Override
@@ -125,7 +128,7 @@ class SchedulerQuartzImpl implements com.walker.core.scheduler.Scheduler {
 				String key = cronTrigger.getCronExpression();
 				if(cronOff.contains(key)){
 					log.info("drop old trigger " + key);
-
+					scheduler.unscheduleJob(cronTrigger.getKey());
 				}
 			}
 			triggerList = Task.getTriggers(cronOn, jobDetail);

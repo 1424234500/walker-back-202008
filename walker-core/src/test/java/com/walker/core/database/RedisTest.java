@@ -17,7 +17,7 @@ public class RedisTest {
 		Redis.getInstance().test();;
 		
 	}
-	int maxcount = 1000;
+	int maxcount = 100000;
 	static int count = 10;
 	@Test
 	public void test() {

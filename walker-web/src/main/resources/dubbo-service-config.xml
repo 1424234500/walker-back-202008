@@ -18,9 +18,8 @@
     <!-- 注册中心 -->
 
     <!-- zookeeper 版本可配？ 多ip问题汉注意！ enable="true" ,122.10.1.12:2182 register="false" 只订阅 -->
-<!--    <dubbo:registry address="39.106.111.11:8096" protocol="zookeeper"  timeout="30000"/>-->
+<!--    <dubbo:registry protocol="redis" address="localhost:6379,localhost:6389,localhost:6399" />-->
     <dubbo:registry address="localhost:8096" protocol="zookeeper"  timeout="30000" check="false" />
-    <!-- redis -->
 
     <!-- 监控中心 从注册中心获取监控地址 address version-->
     <dubbo:monitor protocol="registry"  />

@@ -3,11 +3,8 @@ package com.walker.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
 
 /**
  * 自定义配置文件
@@ -22,7 +19,7 @@ public class DubboConfig {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     public DubboConfig(){
-        log.info(Config.getPre() + " dubbo ");
+        log.info(Config.getPre() + " DubboConfig ");
     }
 
 

@@ -145,7 +145,7 @@ public class Watch {
 	 * 正常结果
 	 * @param res
 	 * @return
-	 */user
+	 */
 	public Watch resSlf4j(Object res,  org.slf4j.Logger logs) {
 		this.put("res", res);
 		this.resSlf4j(logs);
