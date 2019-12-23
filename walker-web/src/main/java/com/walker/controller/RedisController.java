@@ -83,10 +83,7 @@ public class RedisController  {
                     type = "bar";
                     if (listXs.size() == 0) {
                         Set<Tuple> rowWithScore = jedis.zrangeByScoreWithScores(key, min, max);
-                        Iterator var16 = rowWithScore.iterator();
-
-                        while (var16.hasNext()) {
-                            Tuple colTuple = (Tuple) var16.next();
+                        for(Tuple colTuple : rowWithScore) {
                             double score = colTuple.getScore();
                             String colx = colTuple.getElement();
                             listXs.add(TimeUtil.formatAuto((long) score, -1));
@@ -108,10 +105,7 @@ public class RedisController  {
                     lineAve.add(lineAveWait);
                     lineAve.add(lineAveDone);
                     Set<String> row = jedis.zrangeByScore(key, min, max);
-                    Iterator var24 = row.iterator();
-
-                    while (var24.hasNext()) {
-                        String col = (String) var24.next();
+                    for(String col : row) {
                         String[] cc = col.split(" +");
                         lineQpsNet.add(cc[4]);
                         lineQpsWait.add(cc[9]);
