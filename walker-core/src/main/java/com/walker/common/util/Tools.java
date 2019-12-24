@@ -30,6 +30,24 @@ public class Tools {
 		}
 	}
 
+	/**
+	 * 区间交集 a1 < a2, b1 < b2
+	 */
+	public static boolean isOn(int a1, int a2, int b1, int b2){
+		if(a2 < b1 || a1 > b2){
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * 区间交集 a1 < a2, b1 < b2
+	 */
+	public static boolean isOn(String a1, String a2, String b1, String b2){
+		if(a2.compareTo(b1) < 0 || a1.compareTo(b2) > 0){
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * @param num:要获取二进制值的数 64 + 15 -> 0100 1111
@@ -144,7 +162,7 @@ public class Tools {
 	private static Logger log = Logger.getLogger("Tools"); 
 	public static String out(String str) {
 		if(log.getAllAppenders() == null || System.getProperty("path_conf") == null) {
-			System.out.println(getNowTimeS() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
+			System.out.println(TimeUtil.getTimeHms() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
 		}else {
 			log.info(str);
 		}
@@ -462,27 +480,21 @@ public class Tools {
 	 * 获取当前时间 HH:mm:ss
 	 */
 	public static String getNowTimeS() {
-		return getTime("HH:mm:ss");
+		return TimeUtil.getTime("HH:mm:ss");
 	}
 
-	/**
-	 * 获取当前时间 yyyy-MM-dd
-	 */
-	public static String getNowTime() {
-		return getTime("yyyy-MM-dd");
-	}
 
 	/**
 	 * 获取当前时间 yyyy-MM-dd HH:mm:ss
 	 */
 	public static String getNowTimeL() {
-		return getTime("yyyy-MM-dd HH:mm:ss");
+		return TimeUtil.getTime("yyyy-MM-dd HH:mm:ss");
 	}
 	/**
 	 * 获取当前时间 yyyy-MM-dd HH:mm:ss:sss
 	 */
 	public static String getNowTimeLS() {
-		return getTime("yyyy-MM-dd HH:mm:ss:SSS");
+		return TimeUtil.getTime("yyyy-MM-dd HH:mm:ss:SSS");
 	}
 	/**
 	 * 格式化时间 yyyy-MM-dd
@@ -513,14 +525,6 @@ public class Tools {
 		return res;
 	}
 
-	/**
-	 * 获取指定格式的时间yyyy-MM-dd HH:mm:ss
-	 */
-	public static String getTime(String format) {
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		return sdf.format(d);
-	}
 
 	/**
 	 * 取得当月天数

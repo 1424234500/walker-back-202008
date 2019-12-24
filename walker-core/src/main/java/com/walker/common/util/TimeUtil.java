@@ -31,7 +31,12 @@ public class TimeUtil {
 	public static String getTimeYmd() {
 		return getTime("yyyy-MM-dd");
 	}
-
+	/**
+	 * 获取当前时间 yyyy-MM-dd
+	 */
+	public static String getTimeHms() {
+		return getTime("HH:mm:ss");
+	}
 	/**
 	 * 获取当前时间 yyyy-MM-dd HH:mm:ss
 	 */
