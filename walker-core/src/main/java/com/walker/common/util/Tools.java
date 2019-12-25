@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+f	
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.log4j.Logger;
 
@@ -159,13 +159,13 @@ public class Tools {
 		return "";
 	}
 
-	private static Logger log = Logger.getLogger("Tools"); 
+//	private static Logger log = Logger.getLogger("Tools");
 	public static String out(String str) {
-		if(log.getAllAppenders() == null || System.getProperty("path_conf") == null) {
+//		if(log.getAllAppenders() == null || System.getProperty("path_conf") == null) {
 			System.out.println(TimeUtil.getTimeHms() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
-		}else {
-			log.info(str);
-		}
+//		}else {
+//			log.info(str);
+//		}
 		return str;
 	}
 	public static String out(Object object) {
