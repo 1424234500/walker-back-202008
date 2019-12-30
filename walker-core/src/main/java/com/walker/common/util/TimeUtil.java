@@ -7,57 +7,15 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class TimeUtil {
-	
-	
-	/**
-	 * 解获取时间yyyyMMddHHmmss
-	 */
-	public static String getTimeSequence() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-		String res = sdf.format(new Date());
-		return res;
-	}
-
-	/**
-	 * 获取当前时间 HH:mm:ss
-	 */
-	public static String getNowTimeHms() {
-		return getTime("HH:mm:ss");
-	}
-
-	/**
-	 * 获取当前时间 yyyy-MM-dd
-	 */
-	public static String getTimeYmd() {
-		return getTime("yyyy-MM-dd");
-	}
-	/**
-	 * 获取当前时间 yyyy-MM-dd
-	 */
-	public static String getTimeHms() {
-		return getTime("HH:mm:ss");
-	}
-	/**
-	 * 获取当前时间 yyyy-MM-dd HH:mm:ss
-	 */
-	public static String getTimeYmdHms() {
-		return getTime("yyyy-MM-dd HH:mm:ss");
-	}
-	/**
-	 * 获取当前时间 yyyy-MM-dd HH:mm:ss:sss
-	 */
-	public static String getTimeYmdHmss() {
-		return getTime("yyyy-MM-dd HH:mm:ss:SSS");
-	}
-
-	/**
-	 * 获取指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
-	 */
-	public static String getTime(String format) {
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		return sdf.format(d);
-	}
+	public final static String ymdhms1 = "yyyyMMddHHmmss";
+	public final static String hms = "HH:mm:ss";
+	public final static String ymd = "yyyy-MM-dd";
+	public final static String ymd1= "yyyyMMdd";
+	public final static String ymdhms = "yyyy-MM-dd HH:mm:ss";
+	public final static String ymdhmsS = "yyyy-MM-dd HH:mm:ss:SSS";
+	public final static String sss = "SSS";
+	public final static String seq = "yyyyMMddHHmmss";
+	public final static String seq1 = "yyyyMMddHHmmssSSS";
 	/**
 	 * 获取指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
 	 */
@@ -73,6 +31,70 @@ public class TimeUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(d);
 	}
+	/**
+	 * 获取指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
+	 */
+	public static String getTime(String format) {
+		return getTime(new Date(), format);
+	}
+
+	/**
+	 * 解获取时间yyyyMMddHHmmss
+	 */
+	public static String getTimeSequence() {
+		return getTime(new Date(), seq);
+	}
+
+	/**
+	 * 获取当前时间 yyyy-MM-dd
+	 */
+	public static String getTimeYmd() {
+		return getTime(new Date(), ymd);
+	}
+	/**
+	 * 获取当前时间 yyyy-MM-dd
+	 */
+	public static String getTimeYmd(long time) {
+		return getTime(time, ymd);
+	}
+	/**
+	 * 获取当前时间 HH:mm:ss
+	 */
+	public static String getTimeHms() {
+		return getTime(new Date(), "HH:mm:ss");
+	}
+	/**
+	 * 获取当前时间 HH:mm:ss
+	 */
+	public static String getTimeHms(long time) {
+		return getTime(time, "HH:mm:ss");
+	}
+	/**
+	 * 获取当前时间 yyyy-MM-dd HH:mm:ss
+	 */
+	public static String getTimeYmdHms() {
+		return getTime(new Date(), ymdhms);
+	}
+	/**
+	 * 获取当前时间 yyyy-MM-dd HH:mm:ss
+	 */
+	public static String getTimeYmdHms(long time) {
+		return getTime(time, ymdhms);
+	}
+	/**
+	 * 获取当前时间 yyyy-MM-dd HH:mm:ss:sss
+	 */
+	public static String getTimeYmdHmss() {
+		return getTime(new Date(), ymdhmsS);
+	}
+	/**
+	 * 获取当前时间 yyyy-MM-dd HH:mm:ss:sss
+	 */
+	public static String getTimeYmdHmss(long time) {
+		return getTime(time, ymdhmsS);
+	}
+
+
 	
 	/**
 	 * 获取差值几天的 指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
@@ -85,35 +107,15 @@ public class TimeUtil {
 	 */
 	public static String getTime(String format, long detaMills) {
 		long t = System.currentTimeMillis() + detaMills;
-		Date d = new Date(t);
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		return sdf.format(d);
-	}
-	
-	/**
-	 * 格式化时间 yyyy-MM-dd
-	 */
-	public static String format(Date d) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String res = sdf.format(d);
-		return res;
-	}
-
-	/**
-	 * 获取当前时间 yyyy-MM-dd HH:mm:ss
-	 */
-	public static String formatL(Date d) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String res = sdf.format(d);
-		return res;
+		return getTime(t, format);
 	}
 	/**
-	 * 2018-91-12, yyyy-MM-dd
+	 * 2018-91-12, yyyy-MM-dd HH:mm:ss:SSS
 	 * @param time
 	 * @param format
 	 * @return
 	 */
-	public static Date format(String time, String format) {
+	public static long format(String time, String format) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		Date res = new Date();
 		try {
@@ -121,28 +123,7 @@ public class TimeUtil {
 		} catch (ParseException e) {
 			 e.printStackTrace();
 		}
-		return res;
-	}
-	/**
-	 * 2342342342, yyyy-MM-dd HH:mm:ss:SSS
-	 * @param time 11231213123
-	 * @return
-	 */
-	public static String format(long time) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-		String res = sdf.format(new Date(time));
-		return res;
-	}
-	/**
-	 * 2342342342, yyyy-MM-dd
-	 * @param time 11231213123
-	 * @param format yyyy-MM-dd HH:mm:ss
-	 * @return
-	 */
-	public static String format(long time, String format) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		String res = sdf.format(new Date(time));
-		return res;
+		return res.getTime();
 	}
 	/**
 	 * 根据时间差 决定格式化到 分钟 还是 小时 天

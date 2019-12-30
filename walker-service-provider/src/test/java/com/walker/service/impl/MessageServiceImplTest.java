@@ -55,7 +55,7 @@ public class MessageServiceImplTest {
                 msg.addUserTo(id4);
 
                 Long score = messageService.save(msg.getUserTo(), msg);
-                String t = TimeUtil.format(score, "yyyy-MM-dd HH:mm:ss:SSS");
+                String t = TimeUtil.getTime(score, "yyyy-MM-dd HH:mm:ss:SSS");
                 Tools.out(score, t);
                 scores.add(t);
             }

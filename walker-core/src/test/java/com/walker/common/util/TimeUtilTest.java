@@ -18,8 +18,8 @@ public class TimeUtilTest {
 			
 			String to = TimeUtil.getTime(format, mindeta);
 
-			long max = TimeUtil.format(from, format).getTime();
-			long min = TimeUtil.format(to, format).getTime();
+			long max = TimeUtil.format(from, format);
+			long min = TimeUtil.format(to, format);
 			long deta = max - min;
 			
 			Tools.out(from, to, deta, TimeUtil.formatAuto(System.currentTimeMillis(), deta));

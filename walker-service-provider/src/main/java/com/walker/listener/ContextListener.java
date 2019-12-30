@@ -57,7 +57,7 @@ public class ContextListener implements ServletContextListener {
                 log.info("........................................................");
                 log.info("........................................................");
                 log.warn("----------销毁 执行ShutdownHook----------");
-                String nowTime = Tools.getNowTimeL();
+                String nowTime = TimeUtil.getTimeYmdHmss();
                 String str = Pc.getRuntime();
                 log.warn(nowTime);
                 log.warn(str);

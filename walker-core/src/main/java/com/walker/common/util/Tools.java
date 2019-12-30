@@ -1,22 +1,16 @@
 package com.walker.common.util;
 
+import org.apache.log4j.Logger;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-f	
-import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.apache.log4j.Logger;
 
-import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImpl;
 
 public class Tools {
 
@@ -139,12 +133,12 @@ public class Tools {
 	 * ms计算耗时 10M8S100ms
 	 */
 	public static String calcTime(long timemill) {
-//		return timemill > 60 * 1000 ? (float) (10 * timemill / (60 * 1000))
-//				/ 10 + "M " + timemill % (60 * 1000) / 1000 + "S "
-//				: (timemill > 1000 ? timemill / 1000 + "S " + timemill % 1000
-//				+ "Ms " : timemill + "Ms ");
+		return timemill > 60 * 1000 ? (float) (10 * timemill / (60 * 1000))
+				/ 10 + "M " + timemill % (60 * 1000) / 1000 + "S "
+				: (timemill > 1000 ? timemill / 1000 + "S " + timemill % 1000
+				+ "Ms " : timemill + "Ms ");
 		
-		return DurationFormatUtils.formatDuration(timemill, "HH:mm:ss.SSS");
+//		return DurationFormatUtils.formatDuration(timemill, "HH:mm:ss.SSS");
 	}
 
 	public static String getValueEncoded(String value) {
@@ -159,13 +153,13 @@ public class Tools {
 		return "";
 	}
 
-//	private static Logger log = Logger.getLogger("Tools");
+	private static Logger log = Logger.getLogger("Tools");
 	public static String out(String str) {
-//		if(log.getAllAppenders() == null || System.getProperty("path_conf") == null) {
+		if(log.getAllAppenders() == null || System.getProperty("path_conf") == null) {
 			System.out.println(TimeUtil.getTimeHms() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
-//		}else {
-//			log.info(str);
-//		}
+		}else {
+			log.info(str);
+		}
 		return str;
 	}
 	public static String out(Object object) {
@@ -467,98 +461,9 @@ public class Tools {
 		}
 		return res;
 	}
-	/**
-	 * 解获取时间yyyyMMddHHmmss
-	 */
-	public static String getTimeSequence() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-		String res = sdf.format(new Date());
-		return res;
-	}
-
-	/**
-	 * 获取当前时间 HH:mm:ss
-	 */
-	public static String getNowTimeS() {
-		return TimeUtil.getTime("HH:mm:ss");
-	}
 
 
-	/**
-	 * 获取当前时间 yyyy-MM-dd HH:mm:ss
-	 */
-	public static String getNowTimeL() {
-		return TimeUtil.getTime("yyyy-MM-dd HH:mm:ss");
-	}
-	/**
-	 * 获取当前时间 yyyy-MM-dd HH:mm:ss:sss
-	 */
-	public static String getNowTimeLS() {
-		return TimeUtil.getTime("yyyy-MM-dd HH:mm:ss:SSS");
-	}
-	/**
-	 * 格式化时间 yyyy-MM-dd
-	 */
-	public static String format(java.util.Date d) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String res = sdf.format(d);
-		return res;
-	}
 
-	/**
-	 * 获取当前时间 yyyy-MM-dd HH:mm:ss
-	 */
-	public static String formatL(java.util.Date d) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String res = sdf.format(d);
-		return res;
-	}
-
-	public static Date format(String time, String format) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		Date res = new Date();
-		try {
-			res = sdf.parse(time);
-		} catch (ParseException e) {
-			// e.printStackTrace();
-		}
-		return res;
-	}
-
-
-	/**
-	 * 取得当月天数
-	 * */
-	public static int getDaysNow() {
-		Calendar a = Calendar.getInstance();
-		a.set(Calendar.DATE, 1);// 把日期设置为当月第一天
-		a.roll(Calendar.DATE, -1);// 日期回滚一天，也就是最后一天
-		int maxDate = a.get(Calendar.DATE);
-		return maxDate;
-	}
-
-	/**
-	 * 得到指定月的天数
-	 * */
-	public static int getDays(String yyyymmdd) {
-		int year = parseInt(yyyymmdd.substring(0, 4));
-		int month = parseInt(yyyymmdd.substring(5, 7));
-
-		Calendar a = Calendar.getInstance();
-		a.set(Calendar.YEAR, year);
-		a.set(Calendar.MONTH, month - 1);
-		a.set(Calendar.DATE, 1);// 把日期设置为当月第一天
-		a.roll(Calendar.DATE, -1);// 日期回滚一天，也就是最后一天
-		int maxDate = a.get(Calendar.DATE);
-		return maxDate;
-	}
-
-	/**
-	 * 获取时间戳
-	 */
-	public static long getCurrentTime() {
-		return System.currentTimeMillis();
-	}
 
 	/**
 	 * 将int数值转换为占四个字节的byte数组，本方法适用于(高位在前，低位在后)的顺序。 和bytesToInt2（）配套使用
@@ -608,65 +513,6 @@ public class Tools {
 
 	public static String cutName(String str, int i) {
 		return str.length() > i ? str.substring(0, i) + ".." : str;
-	}
-
-	// /sdcard/mycc/record/100-101020120120120.amr return amr
-	public static String getFileTypeByLocalPath(String localpath) {
-		String res = "null";
-
-		if (localpath == null) {
-		} else {
-			String[] ss = localpath.split("/");
-			if (ss.length > 0) {
-				localpath = ss[ss.length - 1]; // 0120.amr
-				ss = localpath.split("\\.");
-				if (ss.length > 0) {
-					res = ss[ss.length - 1]; // 0120.amr
-				}
-			}
-		}
-		return res;
-	}
-
-	public static String getFileNameOnlyByLocalPath(String localpath) {
-		String res = "null";
-
-		if (localpath == null) {
-		} else {
-			String[] ss = localpath.split("/");
-			if (ss.length > 0) {
-				localpath = ss[ss.length - 1]; // 0120.amr
-				res = localpath.substring(0, localpath.lastIndexOf("\\."));
-
-			}
-		}
-		return res;
-	}
-
-	/**
-	 *  /sdcard/mycc/record/100-101020120120120.amr return asdfa.amr
-	 */
-	public static String getFileNameByLocalPath(String localpath) {
-		String res = "null";
-
-		if (localpath == null) {
-		} else {
-			String[] ss = localpath.split("/");
-			if (ss.length > 0) {
-				res = ss[ss.length - 1]; // 0120.amr
-			}
-		}
-		return res;
-	}
-	public static int getCount(String[] array, String str){
-		if(array == null) return -1;
-		if(str == null) return -1;
-		for(int i = 0; i < array.length; i++){
-			if(array[i].equals(str)){
-				return i;
-			}
-		}
-		return -1;
 	}
 
 	/**

@@ -649,7 +649,7 @@ public class FileUtil {
 		map.put("NAME", coder.getName());
 		map.put("SIZE", calcSize(coder.length()));
 		map.put("LENGTH", coder.length());
-		map.put("S_MTIME", TimeUtil.format(coder.lastModified(), "yyyy-MM-dd HH:mm:ss"));
+		map.put("S_MTIME", TimeUtil.getTimeYmdHms(coder.lastModified()));
 
 		String type = "";
 		int dirfiles = 0;

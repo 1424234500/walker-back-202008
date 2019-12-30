@@ -14,8 +14,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 public class Context {
-	
-	
+	public static String getRedisKeyPush(){
+		return "push:";
+	}
+
+
+
+
 	private final static String STR_REQUEST = "_REQUEST_";
 	private final static String STR_RESPONSE = "_RESPONSE_";
 	@SuppressWarnings("unused")

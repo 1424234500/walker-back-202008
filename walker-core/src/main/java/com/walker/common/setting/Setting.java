@@ -7,10 +7,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.walker.common.util.Context;
-import com.walker.common.util.FileUtil;
-import com.walker.common.util.LangUtil;
-import com.walker.common.util.Tools;
+import com.walker.common.util.*;
 
 /**
  * 配置文件 读写工具
@@ -90,7 +87,7 @@ public class Setting {
 		///保存属性到b.properties文件
 		try{
 	        FileOutputStream oFile = new FileOutputStream(settingFileName, false);//true表示追加打开
-	        proper.store(oFile, "Change at " + Tools.getNowTimeL());
+	        proper.store(oFile, "Change at " + TimeUtil.getTimeYmdHmss());
 	        oFile.close();
 		}catch(Exception e){
 			e.printStackTrace();

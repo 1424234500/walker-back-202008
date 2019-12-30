@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.MapListUtil;
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 
 /**
@@ -42,7 +43,7 @@ public class SettingUtil {
 		proper.putAll(bean);
 		try{
 	        FileOutputStream oFile = new FileOutputStream(filename, false);//true表示追加打开
-	        proper.store(oFile, "Change at " + Tools.getNowTimeL());
+	        proper.store(oFile, "Change at " + TimeUtil.getTimeYmdHms());
 	        oFile.close();
 		}catch(Exception e){
 			e.printStackTrace();

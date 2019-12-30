@@ -176,7 +176,7 @@ public class MessageServiceShardingImpl implements MessageService {
 		List<Msg> list = new ArrayList<Msg>();
 		String id = SqlUtil.makeTableKey(userId, toId);
 		String tableName = TABLE_MSG_USER_ + SqlUtil.makeTableCount(COUNT_MSG_USER, id);
-		Long time = TimeUtil.format(before, "yyyy-MM-dd HH:mm:ss:SSS").getTime();
+		Long time = TimeUtil.format(before, "yyyy-MM-dd HH:mm:ss:SSS");
 
 //		List<Map<String, Object>> ids = jdbcDao.findPage("SELECT * FROM " + tableName + " WHERE ID=? AND TIME < ? order by TIME desc ", 1, count, id, time);
 		//分页信息
@@ -216,7 +216,7 @@ public class MessageServiceShardingImpl implements MessageService {
 
 		List<Msg> list = new ArrayList<Msg>();
 		String key = Key.getKeyOffline(userId);
-		Long b = TimeUtil.format(after, "yyyy-MM-dd HH:mm:ss:SSS").getTime();
+		Long b = TimeUtil.format(after, "yyyy-MM-dd HH:mm:ss:SSS");
 //				Set<String> set = jedis.zrevrangeByScore(key, b - 1, 0, 0, count);//获取上面的 旧的
 		Set<String> set = zSetOperations.rangeByScore(key, b+1, Double.MAX_VALUE, 0, count);
 //				jedis.zrangeByScore(key, b+1, Double.MAX_VALUE, 0, count);	//获取下面的 新的

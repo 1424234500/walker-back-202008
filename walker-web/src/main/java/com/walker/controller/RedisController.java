@@ -57,19 +57,19 @@ public class RedisController  {
 //                        max = ((Tuple[])set.toArray(new Tuple[0]))[0].getScore();
                     max = System.currentTimeMillis();
                     min = max - deta;
-                    fromNew = TimeUtil.format((long)min, format);
-                    toNew = TimeUtil.format((long)max, format);
+                    fromNew = TimeUtil.getTime((long)min, format);
+                    toNew = TimeUtil.getTime((long)max, format);
                 } else if (from.length() == 0) {
-                    max = (double)TimeUtil.format(to, format).getTime();
+                    max = (double)TimeUtil.format(to, format);
                     min = max - deta;
-                    fromNew = TimeUtil.format((long)min, format);
+                    fromNew = TimeUtil.getTime((long)min, format);
                 } else if (to.length() == 0) {
-                    min = (double)TimeUtil.format(from, format).getTime();
+                    min = (double)TimeUtil.format(from, format);
                     max = min + deta;
-                    toNew = TimeUtil.format((long)max, format);
+                    toNew = TimeUtil.getTime((long)max, format);
                 } else {
-                    min = (double)TimeUtil.format(from, format).getTime();
-                    max = (double)TimeUtil.format(to, format).getTime();
+                    min = (double)TimeUtil.format(from, format);
+                    max = (double)TimeUtil.format(to, format);
                 }
 
                 deta = max - min;

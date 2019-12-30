@@ -35,7 +35,7 @@ public abstract class TaskJob extends QuartzJobBean implements Runnable {
 		JobHis jobHis = new JobHis()
 				.setID(LangUtil.getTimeSeqId())
 				.setIP_PORT(Pc.getIp())
-				.setS_TIME_START(TimeUtil.format(startTime))
+				.setS_TIME_START(TimeUtil.getTimeYmdHms(startTime))
 				.setSTATUS(status)
 				.setINFO(className)
 				.setTIP(jobDetail.getDescription() + " " + cronTrigger.getCronExpression() + " " + cronTrigger.getDescription())
@@ -53,7 +53,7 @@ public abstract class TaskJob extends QuartzJobBean implements Runnable {
 			long cost = stopTime - startTime;
 			jobHis
 			.setSTATUS(status)
-			.setS_TIME_STOP(TimeUtil.format(stopTime))
+			.setS_TIME_STOP(TimeUtil.getTimeYmdHms(stopTime))
 			.setS_TIME_COST("" + cost)
 			.setABOUT(about)
 			;
