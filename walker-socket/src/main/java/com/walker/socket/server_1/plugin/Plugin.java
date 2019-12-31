@@ -2,11 +2,17 @@ package com.walker.socket.server_1.plugin;
 
 import com.walker.common.util.Bean;
 import com.walker.common.util.LangUtil;
+import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.route.SubPub;
 import com.walker.core.route.SubPubMgr;
+import com.walker.dubbo.DubboMgr;
+import com.walker.mode.Key;
 import com.walker.mode.Msg;
+import com.walker.mode.PushModel;
 import com.walker.mode.UserSocket;
+import com.walker.service.MessageService;
+import com.walker.service.PushAgentService;
 import com.walker.socket.server_1.netty.handler.SessionHandler;
 import com.walker.socket.server_1.session.Session;
 import org.apache.log4j.Logger;
@@ -39,8 +45,11 @@ public abstract class Plugin<T> {
      * pub发布 key socket定向消息 或者 发布user频道消息
      * 不需要session
      */
-    SubPub<Msg, Session<T>> pub = SubPubMgr.getSubPub("msg_route", 0);
-    
+    private SubPub<Msg, Session<T>> pub = SubPubMgr.getSubPub("msg_route", 0);
+
+    private PushAgentService pushAgentService = DubboMgr.getService("pushAgentService");
+	;
+
 	Bean params;
 	Plugin(Bean params){
 		this.params = params;
@@ -77,6 +86,28 @@ public abstract class Plugin<T> {
 		Msg msgc = LangUtil.cloneObject(msg);
 
 		String[] tos = msgc.getUserTo();
+		String tostr = msgc.getUserToStr();
+
+		if(msg.getType().equals(Plugin.KEY_MESSAGE)) {
+			Bean bean = (Bean) msg.getData();
+			String text = bean.get(Key.TEXT, "");
+//		推送
+			PushModel pushModel = new PushModel()
+					.setUSER_ID(tostr)
+					.setTITLE(msg.getUserFrom().getName() + "发来消息")
+					.setCONTENT(text)
+					.setEXT(bean.toString())
+					.setS_MTIME(TimeUtil.getTimeYmdHms())
+					;
+
+			try {
+				pushAgentService.push(pushModel);
+			}catch (Exception e){
+				pushAgentService = null;
+				log.error(e.toString(), e);
+			}
+		}
+
 
 		//单端在线 记录未命中目标 向上传递
 		List<String> offUsers = new ArrayList<String>();

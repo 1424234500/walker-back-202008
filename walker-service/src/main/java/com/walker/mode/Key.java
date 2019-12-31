@@ -5,7 +5,10 @@ package com.walker.mode;
  * andorid 静态键配置化
  */
 public class Key {
-	
+
+
+
+
     public static final String BEFORE = "BEFORE";
     public static final String COUNT = "COUNT";
 

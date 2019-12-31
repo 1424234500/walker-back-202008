@@ -14,8 +14,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 public class Context {
-	public static String getRedisKeyPush(){
-		return "push:";
+	public static String getRedisKeyUserPush(){
+		return "push:user";
+	}
+	public static String getRedisKeyDeviceUser(){
+		return "push:device";
 	}
 
 

@@ -1,10 +1,13 @@
 package com.walker.mode;
 
+import com.walker.common.util.JsonFastUtil;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 推送模型 队列缓冲
@@ -27,7 +30,7 @@ public class PushModel implements Cloneable, Serializable {
 	@Column(name = "LEVEL", columnDefinition = "varchar(32) default '0' comment '优先级' ")    //255
 	private String LEVEL;
 
-	@Column(name = "USER_ID", columnDefinition = "varchar(32) default '' comment '目标用户id' ")    //255
+	@Column(name = "USER_ID", columnDefinition = "varchar(32) default '' comment '目标用户id,分隔多个用户' ")    //255
 	private String USER_ID;
 	@Column(name = "TITLE", columnDefinition = "varchar(512) default 'title' comment '标题' ")    //255
 	private String TITLE;
@@ -144,6 +147,11 @@ public class PushModel implements Cloneable, Serializable {
 	public String getEXT() {
 		return EXT;
 	}
+	public Map<String, String> getEXTObj() {
+		Map<String, String> map = JsonFastUtil.get(EXT);
+		return map;
+	}
+
 
 	public PushModel setEXT(String EXT) {
 		this.EXT = EXT;

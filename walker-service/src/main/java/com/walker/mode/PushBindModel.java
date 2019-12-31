@@ -54,6 +54,20 @@ public class PushBindModel implements Cloneable, Serializable {
 		return serialVersionUID;
 	}
 
+	@Override
+	public String toString() {
+		return "PushBindModel{" +
+				"ID='" + ID + '\'' +
+				", S_MTIME='" + S_MTIME + '\'' +
+				", S_ATIME='" + S_ATIME + '\'' +
+				", S_FLAG='" + S_FLAG + '\'' +
+				", USER_ID='" + USER_ID + '\'' +
+				", PUSH_ID='" + PUSH_ID + '\'' +
+				", DEVICE_ID='" + DEVICE_ID + '\'' +
+				", TYPE='" + TYPE + '\'' +
+				'}';
+	}
+
 	public String getDEVICE_ID() {
 		return DEVICE_ID;
 	}

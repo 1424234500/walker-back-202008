@@ -81,7 +81,7 @@ public class Tools {
 
         try {
             e.printStackTrace(pw);
-			return /* " \nException:" + e.getMessage() + */" \n" +sw.toString();
+			return  " \nException:" + e.getMessage() + " \n" +sw.toString();
 //            return sw.toString();
         } finally {
             pw.close();

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Configuration
 @PropertySource({"classpath:make.properties"})
-@Component("makeConfig")
+//@Component("makeConfig")
 public class MakeConfig {
 
     private Logger log = LoggerFactory.getLogger(getClass());
