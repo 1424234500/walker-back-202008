@@ -1,6 +1,7 @@
 package com.walker.mode;
 
 import com.walker.common.util.JsonFastUtil;
+import com.walker.common.util.JsonUtil;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

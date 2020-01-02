@@ -71,6 +71,8 @@
     <dubbo:reference id="messageService" interface="com.walker.service.MessageService" timeout="30000" version="1.0" />
 <!--    消息表服务 自动分表-->
     <dubbo:reference id="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="30000" version="1.0" />
+    <!--    消息推送提醒服务 分类 -->
+    <dubbo:reference id="pushAgentService" interface="com.walker.service.PushAgentService" version="1.0" timeout="30000" check="false"/>
 
 
 

@@ -10,7 +10,7 @@ export function clear() {
 
 
 
-const KEY_TOKEN = 'KEY_TOKEN'
+const KEY_TOKEN = 'TOKEN'
 
 export function getToken() {
   var res = Cookies.get(KEY_TOKEN)
@@ -23,7 +23,7 @@ export function setToken(token) {
   return Cookies.set(KEY_TOKEN, token)
 }
 
-const KEY_USER = 'KEY_USER_JSON'
+const KEY_USER = 'USER'
 
 export function getUser() {
   var res = Cookies.get(KEY_USER)

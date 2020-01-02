@@ -53,8 +53,13 @@ public class RedisController  {
                 double max = 0.0D;
                 double deta = 60 * 60 * 1000.0D;
                 if (from.length() == 0 && to.length() == 0) {
-//                        Set<Tuple> set = jedis.zrevrangeWithScores(String.valueOf(keys.toArray()[0]), 0L, 0L);
-//                        max = ((Tuple[])set.toArray(new Tuple[0]))[0].getScore();
+                    for(String key : keys) {
+                        Set<Tuple> set = jedis.zrevrangeWithScores(String.valueOf(keys.toArray()[0]), 0L, 0L);
+                        max = ((Tuple[]) set.toArray(new Tuple[0]))[0].getScore();
+
+
+                    }
+
                     max = System.currentTimeMillis();
                     min = max - deta;
                     fromNew = TimeUtil.getTime((long)min, format);

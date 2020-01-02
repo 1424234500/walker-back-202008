@@ -92,6 +92,8 @@ public class PushAgentServiceImpl implements PushAgentService {
 	 * 单用户可注册到多个设备
 	 * 单设备只能注册单个用户
 	 *
+	 * 绑定空pushId则为取消该设备的绑定
+	 *
 	 * redis	hash
 	 * key_${user_id1}
 	 * 		${device_id1}	:	${push_id1}, ${type1}, ${device_id1}
@@ -141,7 +143,7 @@ public class PushAgentServiceImpl implements PushAgentService {
 	}
 
 	/**
-	 * 绑定用户id和推送id和推送类别
+	 * 查找用户绑定列表
 	 *
 	 * @param userId
 	 * @return
@@ -165,12 +167,12 @@ public class PushAgentServiceImpl implements PushAgentService {
 	 * @return
 	 */
 	@Override
-	public void unbind(List<PushBindModel> pushBindModels) {
+	public List<PushBindModel> unbind(List<PushBindModel> pushBindModels) {
 		HashOperations<String, String, PushBindModel> setOperationsUserPush = redisTemplate.opsForHash();
 		HashOperations<String, String, String> setOperationsDeviceUser = redisTemplate.opsForHash();
 		String deviceKey = Context.getRedisKeyDeviceUser();
 
-
+		List<PushBindModel> res = new ArrayList<>();
 		for(PushBindModel pushBindModel : pushBindModels){
 			String userKey = Context.getRedisKeyUserPush() + pushBindModel.getUSER_ID();
 
@@ -178,9 +180,13 @@ public class PushAgentServiceImpl implements PushAgentService {
 			pushBindModel.setS_ATIME("");
 			pushBindModel.setS_FLAG("");
 			pushBindModel.setS_MTIME("");
-
-			setOperationsUserPush.delete(userKey, pushBindModel.getDEVICE_ID());
+			if(setOperationsUserPush.hasKey(userKey, pushBindModel.getDEVICE_ID())){
+				setOperationsUserPush.delete(userKey, pushBindModel.getDEVICE_ID());
+				res.add(pushBindModel);
+			}
+			setOperationsDeviceUser.delete(deviceKey, pushBindModel.getDEVICE_ID());
 		}
+		return res;
 	}
 
 	/**

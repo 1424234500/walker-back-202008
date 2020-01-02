@@ -71,7 +71,7 @@ public class UserInterceptors implements HandlerInterceptor{
 		if(token.length() == 0){
 			token = request.getHeader("TOKEN");
 			token = token == null ? "" : token;
-			log.warn("session is null, then userAgent token " + token);
+			log.debug("session is null, then userAgent token " + token);
 		}
 //	    Map<String, Object> map =  cache.get(LoginService.CACHE_KEY, new HashMap<String, Object>());
 //		Map<String, String> user = redisDao.hmGet(token);

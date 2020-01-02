@@ -48,7 +48,7 @@ public interface PushAgentService{
      * @param pushBindModels
      * @return
      */
-    void unbind(List<PushBindModel> pushBindModels);
+    List<PushBindModel> unbind(List<PushBindModel> pushBindModels);
 
     /**
      * 取消绑定用户id和推送id和推送类别

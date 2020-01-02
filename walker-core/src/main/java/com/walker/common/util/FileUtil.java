@@ -809,6 +809,16 @@ public class FileUtil {
 		int index = path.lastIndexOf(File.separator);
 		if(index >= 0) {
 			res = path.substring(index + 1, path.length());
+		}else{
+			index = path.lastIndexOf("/");
+			if(index >= 0) {
+				res = path.substring(index + 1, path.length());
+			}else{
+				index = path.lastIndexOf("\\");
+				if(index >= 0) {
+					res = path.substring(index + 1, path.length());
+				}
+			}
 		}
 		return res;
 
@@ -824,6 +834,16 @@ public class FileUtil {
 		int index = path.lastIndexOf(File.separator);
 		if(index >= 0) {
 			res = path.substring(0, index);
+		}else{
+			index = path.lastIndexOf("/");
+			if(index >= 0) {
+				res = path.substring(0, index);
+			}else{
+				index = path.lastIndexOf("\\");
+				if(index >= 0) {
+					res = path.substring(0, index);
+				}
+			}
 		}
 		return res;
 	}
