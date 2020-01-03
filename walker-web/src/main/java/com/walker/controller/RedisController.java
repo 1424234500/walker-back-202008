@@ -53,12 +53,10 @@ public class RedisController  {
                 double max = 0.0D;
                 double deta = 60 * 60 * 1000.0D;
                 if (from.length() == 0 && to.length() == 0) {
-                    for(String key : keys) {
-                        Set<Tuple> set = jedis.zrevrangeWithScores(String.valueOf(keys.toArray()[0]), 0L, 0L);
-                        max = ((Tuple[]) set.toArray(new Tuple[0]))[0].getScore();
-
-
-                    }
+//                    for(String key : keys) {
+//                        Set<Tuple> set = jedis.zrevrangeWithScores(String.valueOf(keys.toArray()[0]), 0L, 0L);
+//                        max = ((Tuple[]) set.toArray(new Tuple[0]))[0].getScore();
+//                    }
 
                     max = System.currentTimeMillis();
                     min = max - deta;
@@ -91,7 +89,8 @@ public class RedisController  {
                         for(Tuple colTuple : rowWithScore) {
                             double score = colTuple.getScore();
                             String colx = colTuple.getElement();
-                            listXs.add(TimeUtil.formatAuto((long) score, -1));
+                            String x = TimeUtil.formatAuto((long) score, 0);
+                            listXs.add(x);
                         }
                     }
 

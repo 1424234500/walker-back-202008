@@ -95,8 +95,10 @@ public class PushServiceJpushImpl implements PushService {
 			res = result.getResponseCode();
 			w.resSlf4j(result, log);
 		} catch (Exception e) {
-//			log.error(e.toString(), e);
+			log.error(e.toString(), e);
 			w.exceptionWithThrow(e);
+		}finally {
+//			log.info(w.toString());
 		}
 
 		return res;
@@ -109,11 +111,11 @@ public class PushServiceJpushImpl implements PushService {
 
 
 
-	public static PushPayload buildPushPayLoad(String[] alias, String title, String content, Map<String, String> ext) {
+	public static PushPayload buildPushPayLoad(String[] registrationIds, String title, String content, Map<String, String> ext) {
 		return PushPayload.newBuilder()
 				.setPlatform(Platform.all())
-				.setAudience(Audience.alias(alias))
-				.setNotification(Notification.android(title, title, ext))
+				.setAudience(Audience.registrationId(registrationIds))
+				.setNotification(Notification.android(content, title, ext))
 				.build();
 	}
 

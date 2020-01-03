@@ -20,9 +20,9 @@ public class TimeUtilTest {
 
 			long max = TimeUtil.format(from, format);
 			long min = TimeUtil.format(to, format);
-			long deta = max - min;
+			int deta = (int) (max - min);
 			
-			Tools.out(from, to, deta, TimeUtil.formatAuto(System.currentTimeMillis(), deta));
+			Tools.out(from, to, deta, TimeUtil.formatAuto(System.currentTimeMillis(), 0));
 			
 		}
 		

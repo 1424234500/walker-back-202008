@@ -91,10 +91,11 @@ public abstract class Plugin<T> {
 		if(msg.getType().equals(Plugin.KEY_MESSAGE)) {
 			Bean bean = (Bean) msg.getData();
 			String text = bean.get(Key.TEXT, "");
+//			{type:message,data:{to:123,from:222,type:txt,body:hello} }
 //		推送
 			PushModel pushModel = new PushModel()
 					.setUSER_ID(tostr)
-					.setTITLE(msg.getUserFrom().getName() + "发来消息")
+					.setTITLE(msg.getUserFrom().getName() + "")
 					.setCONTENT(text)
 					.setEXT(bean.toString())
 					.setS_MTIME(TimeUtil.getTimeYmdHms())

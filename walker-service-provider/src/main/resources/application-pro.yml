@@ -19,7 +19,7 @@ spring:
 #      validation-query-timeout: 1000
   jpa:
     database: mysql
-    show-sql: true
+#    show-sql: true
     hibernate:
       #自动创建表
       ddl-auto: update
