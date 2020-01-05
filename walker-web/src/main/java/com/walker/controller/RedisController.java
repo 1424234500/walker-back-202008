@@ -88,7 +88,7 @@ public class RedisController  {
                         Set<Tuple> rowWithScore = jedis.zrangeByScoreWithScores(key, min, max);
                         for(Tuple colTuple : rowWithScore) {
                             double score = colTuple.getScore();
-                            String colx = colTuple.getElement();
+//                            String colx = colTuple.getElement();
                             String x = TimeUtil.formatAuto((long) score, 0);
                             listXs.add(x);
                         }

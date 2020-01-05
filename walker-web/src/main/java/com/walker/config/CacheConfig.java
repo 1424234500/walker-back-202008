@@ -1,5 +1,8 @@
 package com.walker.config;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,9 +21,12 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Arrays;
 
@@ -84,8 +90,9 @@ public class CacheConfig extends CachingConfigurerSupport {
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         jackson2JsonRedisSerializer.setObjectMapper(om);
-
-        // 设置值（value）的序列化采用Jackson2JsonRedisSerializer。
+//
+//        // 设置值（value）的序列化采用Jackson2JsonRedisSerializer。
+//        FastJson2JsonRedisSerializer<Object> fastJson2JsonRedisSerializer = new FastJson2JsonRedisSerializer<>(Object.class);
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
         // 设置键（key）的序列化采用StringRedisSerializer。
@@ -150,4 +157,34 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     }
 
+
 }
+
+//class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
+//
+//    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+//
+//    private Class<T> clazz;
+//
+//    public FastJson2JsonRedisSerializer(Class<T> clazz) {
+//        super();
+//        this.clazz = clazz;
+//    }
+//
+//    public byte[] serialize(T t) throws SerializationException {
+//        if (t == null) {
+//            return new byte[0];
+//        }
+//        return JSON.toJSONString(t, SerializerFeature.WriteClassName).getBytes(DEFAULT_CHARSET);
+//    }
+//
+//    public T deserialize(byte[] bytes) throws SerializationException {
+//        if (bytes == null || bytes.length <= 0) {
+//            return null;
+//        }
+//        String str = new String(bytes, DEFAULT_CHARSET);
+//
+//        return (T) JSON.parseObject(str, clazz);
+//    }
+//
+//}

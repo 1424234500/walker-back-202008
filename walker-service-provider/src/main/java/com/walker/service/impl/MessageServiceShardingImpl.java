@@ -182,7 +182,8 @@ public class MessageServiceShardingImpl implements MessageService {
 		//分页信息
 
 //		Sort sort = new Sort(Sort.Direction.ASC, "ID");
-		Pageable pageable = new PageRequest(0, count);
+		Pageable pageable = PageRequest.of(0, count);
+
 		log.info(pageable.toString());
 
 		Page<MessageUser> pageIds = messageUserRepository.selfFindPageOnceJpql(id, time, pageable);

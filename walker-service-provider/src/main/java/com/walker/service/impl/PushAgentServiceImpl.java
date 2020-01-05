@@ -152,17 +152,33 @@ public class PushAgentServiceImpl implements PushAgentService {
 	public List<PushBindModel> findBind(String userId) {
 		HashOperations<String, String, PushBindModel> setOperationsUserPush = redisTemplate.opsForHash();
 		HashOperations<String, String, String> setOperationsDeviceUser = redisTemplate.opsForHash();
-		String userKey = Context.getRedisKeyUserPush() + userId;
+		List<PushBindModel> res = new ArrayList<>();
 		String deviceKey = Context.getRedisKeyDeviceUser();
 
-		List<PushBindModel> res = setOperationsUserPush.values(userKey);
-		res = res == null ? new ArrayList<>() : res;
+		if(userId != null && userId.length() > 0) {
+			String userKey = Context.getRedisKeyUserPush() + userId;
+
+			List<PushBindModel> one = setOperationsUserPush.values(userKey);
+			if(one != null && one.size() > 0){
+				res.addAll(one);
+			}
+		}else{
+			Set<String> keys = redisTemplate.keys(Context.getRedisKeyUserPush() + "*" );
+			for(String userKey : keys){
+				List<PushBindModel> one = setOperationsUserPush.values(userKey);
+				if(one != null && one.size() > 0){
+					res.addAll(one);
+				}
+			}
+
+		}
+
 		return res;
 	}
 
 	/**
 	 * 取消绑定用户id和推送id和推送类别
-	 *
+	 *	user_id, device_id
 	 * @param pushBindModels
 	 * @return
 	 */

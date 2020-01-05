@@ -85,6 +85,9 @@ public class PushAgentServiceImplTest  extends ApplicationProviderTests {
         pushAgentService.bind(pushBindModel1);
         List<PushBindModel> list = pushAgentService.findBind(userId);
         out(list);
+
+        List<PushBindModel> list1 = pushAgentService.findBind("");
+        out(list);
         Assert.assertTrue(list.size() == 2 );
 
     }
