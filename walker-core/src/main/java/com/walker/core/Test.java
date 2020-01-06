@@ -1,9 +1,23 @@
 package com.walker.core;
 
+import com.walker.common.util.Tools;
+
+import java.nio.ByteBuffer;
+
 public class Test {
 
 	public static void main(String[] args) throws InterruptedException {
-		new Test();
+		int d = 1024 * 1024 * 1;
+		long all = 0;
+
+		while(true) {
+			all ++;
+			Tools.out(all, "M");
+			ByteBuffer byteBuffer = ByteBuffer.allocateDirect(d);
+			Thread.sleep(10);
+		}
+
+//		new Test();
 	}
 
 
