@@ -6,7 +6,12 @@ import java.nio.ByteBuffer;
 
 public class Test {
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws Exception {
+		testgc();
+
+//		new Test();
+	}
+	public static void testgc()throws Exception{
 		int d = 1024 * 1024 * 1;
 		long all = 0;
 
@@ -16,10 +21,7 @@ public class Test {
 			ByteBuffer byteBuffer = ByteBuffer.allocateDirect(d);
 			Thread.sleep(10);
 		}
-
-//		new Test();
 	}
-
 
 	public Test() throws InterruptedException {
 		for(int i = 0; i < 4; i++) {

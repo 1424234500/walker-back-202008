@@ -5,6 +5,7 @@ import com.walker.intercept.LogInterceptors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -46,6 +47,14 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     private Logger log = LoggerFactory.getLogger(getClass());
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        int i = 0;
+        for (HttpMessageConverter<?> messageConverter : converters) {
+            log.info("converters " + i++ + "." + String.valueOf(messageConverter));
+        }
+    }
+
 
 //    @Bean(name = "multipartResolver")
 //    public MultipartResolver multipartResolver(){
