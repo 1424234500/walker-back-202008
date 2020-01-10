@@ -1,5 +1,6 @@
 package com.walker.core.database;
 
+import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -338,7 +339,7 @@ public class SqlUtil{
 	 * @param baseDao
 	 * @param path
 	 */
-	public static void executeSqlFile(BaseDao baseDao, String path) {
+	public static void executeSqlFile(BaseDao baseDao, String path) throws FileNotFoundException {
 		FileUtil.readByLines(path, new Fun<String>() {
 			@Override
 			public <T> T make(String obj) {

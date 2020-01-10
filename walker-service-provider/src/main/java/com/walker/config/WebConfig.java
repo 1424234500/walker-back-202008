@@ -6,10 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -50,8 +52,14 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         int i = 0;
-        for (HttpMessageConverter<?> messageConverter : converters) {
-            log.info("converters " + i++ + "." + String.valueOf(messageConverter));
+        Iterator<HttpMessageConverter<?>> iterable = converters.iterator();
+        while(iterable.hasNext()){
+            HttpMessageConverter<?> messageConverter = iterable.next();
+            boolean del = messageConverter instanceof MappingJackson2HttpMessageConverter;
+            log.info("converters " + i++ + ".del:" + del + "." + String.valueOf(messageConverter) );
+            if(del){
+                iterable.remove();
+            }
         }
     }
 

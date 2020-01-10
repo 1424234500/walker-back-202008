@@ -162,11 +162,11 @@ public class PipeRedisImpl implements Pipe<String>{
 							try {
 								Thread.sleep(Pipe.SLEEP_THREAD);
 							} catch (InterruptedException e) {
-								e.printStackTrace();
+								log.error(e.getMessage(), e);
 							}
 						}
 					}
-					
+
 					Redis.getInstance().close(keyJedis);
 				}
 			});

@@ -2,6 +2,8 @@ package com.walker.common.util;
 
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 public class PcTest {
@@ -19,5 +21,15 @@ public class PcTest {
     @Test
     public void telnet() {
         Tools.out(Pc.telnet("127.0.0.1", 6379, 200));
+    }
+
+    @Test
+    public void getCpu() throws IOException, InterruptedException {
+        Tools.out(Pc.getCpu());
+        Tools.out(Pc.doCmdString("top -bn 2 "));
+//        Tools.out(Pc.doCmdString("top -bn1"));
+        Tools.out(Pc.doCmdString("echo ----------------"));
+        Tools.out(Pc.doCmdString("ls -alF"));
+
     }
 }

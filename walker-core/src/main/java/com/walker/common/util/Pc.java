@@ -3,9 +3,7 @@ package com.walker.common.util;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.InputEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -41,6 +39,29 @@ public class Pc {
 	}
 
 
+	/**
+	 * 获取cpu使用率
+	 */
+	public static float getCpu() throws IOException, InterruptedException {
+		String c = doCmdString("top -bn 1 ");
+		c = c.toUpperCase();
+		//编译正则
+		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("CPU.*\\d+.* US");
+		//使用正则匹配
+		java.util.regex.Matcher matcher = pattern.matcher("");
+		String resstr = "-1";
+		matcher.reset(c); //新匹配str
+		while(matcher.find()){
+//			Tools.out(matcher.group());
+			String k = matcher.group();
+			String ss[] = k.split(" +");
+			if(ss.length == 3){
+				resstr = ss[1];
+			}
+		}
+		float res = Tools.parseFloat(resstr, -1f);
+		return res;
+	}
 
 	/**
 	 * 按键按下 KeyEvent.VK_A
@@ -214,6 +235,17 @@ public class Pc {
 
 		};
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+	}
+	public static String doCmdString(String command) throws IOException, InterruptedException {
+		Process process = doCmd(command);
+
+		int status = process.waitFor();
+		if (status != 0){
+			return "";
+		}
+		InputStream inputStream = process.getInputStream();
+		String str = FileUtil.toString(inputStream);
+		return str;
 	}
 
 	/**

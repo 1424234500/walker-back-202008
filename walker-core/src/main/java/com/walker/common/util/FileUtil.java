@@ -149,7 +149,6 @@ public class FileUtil {
 
 	/**
 	 * 文件读取到流 原则 谁开启流谁关闭
-	 * @param is
 	 * @param path
 	 * @return
 	 * @throws IOException
@@ -171,7 +170,6 @@ public class FileUtil {
 	/**
 	 * 流存入文件 原则 谁开启流谁关闭
 	 * @param is
-	 * @param path
 	 * @return
 	 * @throws IOException
 	 */
@@ -187,6 +185,11 @@ public class FileUtil {
 			}
 		}
 	}
+
+	public static String toString(InputStream is){
+		return readByLines(is, null, null);
+	}
+
 	/**
 	 * 流写入写出 不关闭！
 	 * @throws IOException 
@@ -295,7 +298,6 @@ public class FileUtil {
 	/**
 	 * 以行为单位读取文件，常用于读取面向行的格式化文件 apache.common.io
 	 * 
-	 * @param path
 	 * @return 返回行数
 	 * @throws IOException 
 	 */
@@ -320,18 +322,26 @@ public class FileUtil {
 
 		return lines;
 	}
+	public static String readByLines(String path, Fun<String> fun, String encode)   {
+		try {
+			return readByLines(new FileInputStream(path), fun, encode);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return  "-1";
+	}
 
 	/**
 	 * 按行读取	java.io
-	 * 若回调null 则返回所有字符串 大文件慎用
+	 * 若回调 fun null 则返回所有字符串 大文件慎用
 	 */
-	public static String readByLines(String path, Fun<String> fun, String encode) {
+	public static String readByLines(InputStream stream, Fun<String> fun, String encode) {
 		encode = makeEncode(encode);
 
 		String content = null;
 		BufferedReader bufferedReader = null;
 		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), encode));
+			bufferedReader = new BufferedReader(new InputStreamReader(stream, encode));
 
 			StringBuffer sb = new StringBuffer();
 			String temp = null;
@@ -371,7 +381,6 @@ public class FileUtil {
 	 * 把内容content写的path文件中
 	 * 
 	 * @param content
-	 * @param path
 	 * @param append 是否追加
 	 * 
 	 * @return 是否保存成功

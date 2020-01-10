@@ -34,10 +34,10 @@ public class Redis  extends TestAdapter{
 	 * 关闭计数器
 	 */
 	int close = 0;
-	/**
-	 * 保持不断掉的jedis
-	 */
-	Map<String, Jedis> mapJedisLong;
+//	/**
+//	 * 保持不断掉的jedis
+//	 */
+//	Map<String, Jedis> mapJedisLong;
 	/**
 	 * 连接池
 	 */
@@ -65,12 +65,13 @@ public class Redis  extends TestAdapter{
 	 * @param key
 	 */
 	public Jedis getJedis(String key) {
-		Jedis res = mapJedisLong.get(key);
-		if(res == null) {
-			res = getJedis();
-			mapJedisLong.put(key, res);
-		}
-		return res;
+//		Jedis res = mapJedisLong.get(key);
+//		if(res == null) {
+//			res = getJedis();
+//			mapJedisLong.put(key, res);
+//		}
+//		return res;
+		return getJedis();
 	}
 	/**
 	 * 获取jedis 必须关闭close
@@ -81,9 +82,9 @@ public class Redis  extends TestAdapter{
 		return pool.getResource();
 	}
 	public void close(String key) {
-		Jedis res = mapJedisLong.get(key);
-		close(res);
-		mapJedisLong.remove(key);
+//		Jedis res = mapJedisLong.get(key);
+//		close(res);
+//		mapJedisLong.remove(key);
 	}
 	
 	public void close(Jedis jedis){
@@ -116,7 +117,6 @@ public class Redis  extends TestAdapter{
         
 		pool = new JedisPool(config, host);
  
-		mapJedisLong = new HashMap<>();
 		log.info("redis init ----------------------- " + cc++);
 		test();
 		log.info(this.toString());
@@ -159,7 +159,7 @@ public class Redis  extends TestAdapter{
 		}
 	}
 	public String toString() {
-		return "host:" + host + " long:" + mapJedisLong.size() + " get:" + get + " cc:" + cc + " config:" + config;
+		return "host:" + host + " get:" + get + " cc:" + cc + " config:" + config;
 	}
 	
 	/**
