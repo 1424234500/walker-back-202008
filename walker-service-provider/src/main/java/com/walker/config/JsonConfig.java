@@ -4,6 +4,7 @@ package com.walker.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.alibaba.fastjson.util.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -22,11 +23,20 @@ public class JsonConfig {
 
     /**
      * 替换jackson导致的序列化字段名大小写问题
+     *  1、直接配置系统环境变量，新建，变量名：TypeUtils.compatibleWithFieldName,变量值：true
+     *  2、“tEST”    TypeUtils.compatibleWithJavaBean = true;
+     *  3、“t_EST”   TypeUtils.compatibleWithFieldName = true;
+     *  4、在实体类中使用@JSONField(name = "name")，注意此注解是使用在get方法上，不是在声明属性的地方，务必注意。
      * @return
      */
     @Bean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
-        log.info(Config.getPre() + "JsonConfig fastJsonHttpMessageConverters");
+        log.info(Config.getPre() + "JsonConfig fastJsonHttpMessageConverters" );
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        TypeUtils.compatibleWithJavaBean = true;
+        TypeUtils.compatibleWithFieldName = true;
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         // 1.定义一个converters转换消息的对象
         FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();

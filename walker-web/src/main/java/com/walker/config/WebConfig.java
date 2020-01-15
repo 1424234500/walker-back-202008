@@ -94,13 +94,13 @@ public class WebConfig implements WebMvcConfigurer {
 //        converters.add(fastConverter);
 //
 //    }
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        int i = 0;
-        for (HttpMessageConverter<?> messageConverter : converters) {
-            log.info("converters " + i++ + "." + String.valueOf(messageConverter));
-        }
-    }
+//    @Override
+//    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        int i = 0;
+//        for (HttpMessageConverter<?> messageConverter : converters) {
+//            log.info("converters " + i++ + "." + String.valueOf(messageConverter));
+//        }
+//    }
 
     //    @Bean(name = "multipartResolver")
 //    public MultipartResolver multipartResolver(){

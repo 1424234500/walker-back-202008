@@ -49,19 +49,9 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     private Logger log = LoggerFactory.getLogger(getClass());
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        int i = 0;
-        Iterator<HttpMessageConverter<?>> iterable = converters.iterator();
-        while(iterable.hasNext()){
-            HttpMessageConverter<?> messageConverter = iterable.next();
-            boolean del = messageConverter instanceof MappingJackson2HttpMessageConverter;
-            log.info("converters " + i++ + ".del:" + del + "." + String.valueOf(messageConverter) );
-            if(del){
-                iterable.remove();
-            }
-        }
-    }
+//    @Override
+//    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+//    }
 
 
 //    @Bean(name = "multipartResolver")

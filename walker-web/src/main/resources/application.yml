@@ -14,7 +14,7 @@ spring:
 
 
   profiles:
-    active: pro #加载多个模块配置文件yml pro,test,log4j
+    active: local #加载多个模块配置文件yml pro,test,log4j
   #    java -jar example.jar --spring.profiles.active=test
 
 
