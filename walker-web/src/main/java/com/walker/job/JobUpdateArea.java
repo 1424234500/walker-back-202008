@@ -33,8 +33,9 @@ public class JobUpdateArea extends TaskJob {
 	@Override
 	public void run() {
 		log.info("begin---------");
+		initService.updateAreaGov();
 
-		initService.updateArea();
+//		initService.updateAreaMeituan();
 
 		log.info("end---------");
 

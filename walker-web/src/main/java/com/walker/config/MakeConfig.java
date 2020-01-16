@@ -23,6 +23,8 @@ public class MakeConfig {
     @Value("${url.area.meituan:https://www.meituan.com/ptapi/getprovincecityinfo/}")
     public String urlAreaMeituan;
 
+    @Value("${url.area.gov:http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html}")
+    public String urlAreaGov;
 
     @Value("${test}")
     public String test;

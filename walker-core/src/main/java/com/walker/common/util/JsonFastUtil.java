@@ -2,13 +2,16 @@ package com.walker.common.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * fastjson 对象 序列化存取
  */
 public class JsonFastUtil {
 
-
+    public static <T> String toStringFormat(T obj){
+        return JSON.toJSONString(obj, SerializerFeature.PrettyFormat);
+    }
     public static <T> String toString(T obj){
         return JSON.toJSONString(obj);
     }

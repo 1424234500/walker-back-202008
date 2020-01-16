@@ -37,20 +37,32 @@ public class Dept implements Cloneable,Serializable {
     @Column(name = "PATH_NAME", columnDefinition = "varchar(998) default '' comment '机构树-中文' ")
     private String PATH_NAME;
 
+    @Column(name = "LEVEL", columnDefinition = "varchar(4) default '' comment '级别 深度' ")
+    private String LEVEL;
 
     @Override
     public String toString() {
         return "Dept{" +
                 "ID='" + ID + '\'' +
                 ", S_MTIME='" + S_MTIME + '\'' +
-//                ", S_ATIME='" + S_ATIME + '\'' +
                 ", S_FLAG='" + S_FLAG + '\'' +
                 ", NAME='" + NAME + '\'' +
                 ", P_ID='" + P_ID + '\'' +
                 ", PATH='" + PATH + '\'' +
                 ", PATH_NAME='" + PATH_NAME + '\'' +
+                ", LEVEL='" + LEVEL + '\'' +
                 '}';
     }
+
+    public String getLEVEL() {
+        return LEVEL;
+    }
+
+    public Dept setLEVEL(String LEVEL) {
+        this.LEVEL = LEVEL;
+        return this;
+    }
+
 
     public String getPATH_NAME() {
         return PATH_NAME;
