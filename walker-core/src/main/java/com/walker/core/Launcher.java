@@ -22,7 +22,7 @@ public class Launcher {
 		System.setProperty("path_conf", "conf");
 		PropertyConfigurator.configure(Context.getPathConf("log4j.properties"));
 		
-		
+
 		Tools.out("-----------------launcher-------------------");
 		String root = Context.getPathRoot();
 		Tools.out(root);

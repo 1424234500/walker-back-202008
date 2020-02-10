@@ -17,7 +17,7 @@
 		<module>walker-service</module>
 		<module>walker-service-provider</module>
 		<module>walker-web</module>
-        <module>walker-test</module>
+<!--        <module>walker-test</module>-->
     </modules>
 
 
