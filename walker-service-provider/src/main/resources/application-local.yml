@@ -6,7 +6,7 @@ spring:
   #spring.datasource.walker.url=jdbc:mysqlxxxx
   #默认主数据源 改到sharding里统一路由
   #  datasource:
-  #    url: jdbc:mysql://localhost:3306/walker?useUnicode=true&characterEncoding=utf-8&useSSL=false
+  #    url: jdbc:mysql://localhost:8098/walker?useUnicode=true&characterEncoding=utf-8&useSSL=false
   #    username: walker
   #    password: qwer
   ##    driver-class-name: com.mysql.jdbc.Driver

@@ -4,7 +4,7 @@ quartz:
 spring:
 #默认主数据源
   datasource: #连接超时问题 MYSQL八小时 reconnect?
-    url: jdbc:mysql://39.106.111.11:3306/walker?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true
+    url: jdbc:mysql://39.106.111.11:8098/walker?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true
     username: walker
     password: qwer
 #    driver-class-name: com.mysql.jdbc.Driver
@@ -53,8 +53,7 @@ spring:
     # Redis数据库索引（默认为0）
     database: 0
     # Redis服务器地址
-#    host: 39.106.111.11
-    host: 127.0.0.1
+    host: 39.106.111.11
     # Redis服务器连接密码（默认为空）
     password:
     # Redis服务器连接端口

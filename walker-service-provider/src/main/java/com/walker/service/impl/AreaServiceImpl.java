@@ -41,20 +41,27 @@ public class AreaServiceImpl implements AreaService {
             if(obj.getP_ID() != null)   //可能没有上级
                 pids.add(obj.getP_ID());
         }
-        List<Area> pobjs = pids.size() > 0 ? areaRepository.findAllByID(pids) : new ArrayList<>();    //查找出所有上级
-        Map<String, Area> index = new HashMap<>();
+        Map<String, Area> index = new LinkedHashMap<>();
+
+        //1.上级在表中
+        List<Area> pobjs = pids.size() > 0 ? areaRepository.findAllByID(pids) : new ArrayList<>();
         for(Area obj : pobjs){
             index.put(obj.getID(), obj);
         }
+        //2.上级在list中
+        for(Area obj : objs){
+            index.put(obj.getID(), obj);
+        }
+
 
         List<Area> oks = new ArrayList<>();
         for(Area obj : objs){
-            if(obj.getP_ID() != null && obj.getP_ID().length() > 0){
+            if(obj.getP_ID() != null && obj.getP_ID().length() > 0 && ! obj.getP_ID().equals(obj.getID())){
                 Area pobj = index.get(obj.getP_ID());
-                if(pobj == null){//表中 上级不存在
+                if(pobj == null){//表中或list中 上级不存在
                     log.error("try save area not exists pid " + obj);
                 }else{//上级存在 复用机构树
-                    obj.setPATH(pobj.getPATH() + "," + obj.getID());
+                    obj.setPATH(pobj.getPATH() + "/" + obj.getID());
                     obj.setPATH_NAME(pobj.getPATH_NAME() + "/" + obj.getNAME());
                     oks.add(obj);
                 }

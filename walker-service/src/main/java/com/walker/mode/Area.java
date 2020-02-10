@@ -3,11 +3,10 @@ package com.walker.mode;
 
 import com.walker.common.util.TimeUtil;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * jpa实体类 地理信息 省市县区村
@@ -15,6 +14,31 @@ import java.io.Serializable;
 @Entity
 @Table(name = "W_AREA")
 public class Area implements Cloneable,Serializable {
+
+    @Transient
+    String url;
+    @Transient
+    List<Area> childs = new ArrayList<>();
+    public List<Area> addChilds(List<Area> childs){
+        this.childs.addAll(childs);
+        return childs;
+    }
+    public String getUrl() {
+        return url;
+    }
+    public Area setUrl(String url) {
+        this.url = url;
+        return this;
+    }
+    public List<Area> getChilds() {
+        return childs;
+    }
+    public Area setChilds(List<Area> childs) {
+        this.childs = childs;
+        return this;
+    }
+
+
 
     @Id     //主键
 //    @GeneratedValue(strategy = GenerationType.AUTO)     //自增
@@ -44,6 +68,8 @@ public class Area implements Cloneable,Serializable {
 
     @Column(name = "LEVEL", columnDefinition = "varchar(4) default '' comment '级别 深度' ")
     private String LEVEL;
+
+
 
 
     public String getID() {

@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -46,14 +44,15 @@ public class InitService {
         ThreadUtil.execute(new Runnable() {
            @Override
            public void run() {
-               updateAreaMeituan();
+//               updateAreaMeituan();
            }
         });
         //异步初始化
         ThreadUtil.execute(new Runnable() {
             @Override
             public void run() {
-                updateAreaGov();
+                updateArea();
+
             }
         });
 
@@ -154,37 +153,68 @@ public class InitService {
     /**
      * 国家统计局 地区分级 遍历抓取数据
      */
-    public void updateAreaGov(){
-
-//        CityGov root = getCityRoot();
-        CityGov root = new CityGov().setUrl("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html");
-        root.setID("0").setCODE("").setNAME("China").setLEVEL(""+0).setPATH("/" + root.getID()).setPATH_NAME("/" + root.getNAME());
+    public void updateArea(){
+        log.info("sync area begin thread");
+//        Area root = getCityRoot();
+        //此处按照一级省 分别递归获取树
+        Area root = getCityRootChina();
         getCity(root, false, null);
-        for(int i = 0; i < root.getChilds().size(); i++){
-            CityGov item = root.getChilds().get(i);
-            getCity(item, true, null);  //html获取构建省 树
-            List<Area> list = saveAreaGov(item, root.getID(), root.getPATH(), root.getPATH_NAME());   //递归构建树
-            Tools.formatOut(list);
-            areaService.saveAll(list);
+        areaService.saveAll(Arrays.asList(root));
+
+        for(int i = 0; i < root.getChilds().size() && i < 10; i++){
+            Area item = root.getChilds().get(i);
+
+            ThreadUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    Watch watch = new Watch("area.sync." + item.getNAME());
+                    getCity(item, true, null);  //html获取构建省 树
+                    watch.cost("http");
+
+                    List<Area> list = tree2list(item, root.getID(), root.getPATH(), root.getPATH_NAME());   //递归构建树
+                    watch.put(list.size());
+                    watch.cost("tree");
+
+
+                    for(int i = 0; i < list.size(); i+= Config.getDbsize()){
+                        List<Area> ll = list.subList(i, Math.min(i + Config.getDbsize(), list.size()));
+                        Tools.formatOut(ll);
+
+                        areaService.saveAll(ll);
+                    }
+                    watch.put("batch", list.size() / Config.getDbsize());
+                    watch.cost("db");
+                    log.info(watch.toPrettyString());
+                }
+            });
         }
-
-
+        log.info("sync area end");
 
     }
-    public List<Area> saveAreaGov(CityGov cityGov, String pid, String idPath, String namePath){
+
+
+    /**
+     * 递归树 构建每个父子关系并 便利出list方便存储
+     * @param area
+     * @param pid
+     * @param idPath
+     * @param namePath
+     * @return
+     */
+    public List<Area> tree2list(Area area, String pid, String idPath, String namePath){
         List<Area> res = new ArrayList<>();
-        idPath = idPath + "/" + cityGov.getID();
-        namePath = namePath + "/" + cityGov.getNAME();
+        idPath = idPath + "/" + area.getID();
+        namePath = namePath + "/" + area.getNAME();
 
-        cityGov.setP_ID(pid);
-        cityGov.setPATH(idPath);
-        cityGov.setPATH_NAME(namePath);
-        cityGov.setS_MTIME(TimeUtil.getTimeYmdHmss());
+        area.setP_ID(pid);
+        area.setPATH(idPath);
+        area.setPATH_NAME(namePath);
+        area.setS_MTIME(TimeUtil.getTimeYmdHmss());
+        area.setS_FLAG(Config.TRUE);
+        res.add(area);
 
-        res.add(cityGov);
-
-        for(CityGov ci : cityGov.getChilds()){
-            res.addAll(saveAreaGov(ci, cityGov.getID(), idPath, namePath));
+        for(Area ci : area.getChilds()){
+            res.addAll(tree2list(ci, area.getID(), idPath, namePath));
         }
 
         return res;
@@ -192,38 +222,14 @@ public class InitService {
 
 
 
-    class CityGov extends Area implements Serializable {
-        String url;
-        List<CityGov> childs = new ArrayList<>();
 
-        public List<CityGov> addChilds(List<CityGov> childs){
-            this.childs.addAll(childs);
-            return childs;
-        }
-        public String getUrl() {
-            return url;
-        }
-
-        public CityGov setUrl(String url) {
-            this.url = url;
-            return this;
-        }
-
-        public List<CityGov> getChilds() {
-            return childs;
-        }
-
-        public CityGov setChilds(List<CityGov> childs) {
-            this.childs = childs;
-            return this;
-        }
-    }
-
-    public CityGov getCityRoot(){
-        CityGov root = new CityGov().setUrl("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html");
-        root.setID("0").setCODE("").setNAME("China").setLEVEL(""+0);
-
-        getCity(root, true, null);
+    /**
+     * 获取china root
+     * @return
+     */
+    public Area getCityRootChina(){
+        Area root = new Area().setUrl("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html");
+        root.setID("0").setCODE("").setNAME("China").setLEVEL(""+0).setPATH("/" + root.getID()).setPATH_NAME("/" + root.getNAME());
         return root;
     }
 
@@ -234,7 +240,7 @@ public class InitService {
      * @param ifChild 是否递归子节点
      * @param list  若不为null 则把节点都添加进去   大量数据不应当使用
      */
-    public void getCity(CityGov parent, boolean ifChild,  List<CityGov> list){
+    public void getCity(Area parent, boolean ifChild, List<Area> list){
         try {
 //            http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html
 //            http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/51.html
@@ -258,46 +264,67 @@ public class InitService {
             }
             int newLevel = parent.getLEVEL() + 1;
             String urlBase = FileUtil.getFilePath(parent.getUrl());
-            for( int i = 0; i < elements.size() && i < 2; i++ ) {
-                String url = "", code = "", code1 = "", name = "";
-                Element element = elements.get(i);
 
-                if(type.equalsIgnoreCase(cs[4]) ) {
-                    Elements elementLineV = element.select("td");
-                    if(elementLineV.size() >= 3){
-                        code = elementLineV.get(0).text();
-                        code1 = elementLineV.get(1).text();
-                        name = elementLineV.get(2).text();
-                    }
-                }else{
-                    Elements elementLine = element.select("td").select("a");
-                    if(elementLine.size() > 0) {
-                        url = elementLine.get(0).attr("href");
-                    }
-                    if(url != null && url.length() > 0){
-                        url = urlBase + "/" + url;
-                    }
-                    if(type.equalsIgnoreCase(cs[0]) && elementLine.size() > 0) {//provincetr
-                        name = elementLine.get(0).text();
+            for (int i = 0; i < elements.size(); i++) {
+                Element element = elements.get(i);
+                String url = "", code = "", code1 = "", name = "";
+
+                if (type.equalsIgnoreCase(cs[0]) ) {  //省 特殊
+                    Elements elementCols = element.select("td").select("a");
+                    for (int j = 0; j < elementCols.size(); j++) {
+                        Element elementCol = elementCols.get(j);
+                        url = elementCol.attr("href");
+                        if (url != null && url.length() > 0) {
+                            url = urlBase + "/" + url;
+                        }
                         code = FileUtil.getFileNameOnly(url);
-                    }else{
+                        name = elementCol.text();
+
+                        Area area = new Area().setUrl(url);
+                        area.setID(code).setNAME(name).setCODE(code1).setLEVEL("" + newLevel);
+                        Tools.out(newLevel, url, name, code, code1);
+
+                        //                深度构建树  或者 广度构建    由上而下  由下而上 ？
+                        parent.addChilds(Arrays.asList(area));
+                        if (list != null) {
+                            list.add(area);
+                        }
+                        if (url != null && url.length() > 0 && ifChild) {
+                            getCity(area, ifChild, list);
+                        }
+                    }
+                }else {
+                    if (type.equalsIgnoreCase(cs[4])) { //镇 特殊
+                        Elements elementLineV = element.select("td");
+                        if (elementLineV.size() >= 3) {
+                            code = elementLineV.get(0).text();
+                            code1 = elementLineV.get(1).text();
+                            name = elementLineV.get(2).text();
+                        }
+                    } else {
+                        Elements elementLine = element.select("td").select("a");
+                        if (elementLine.size() > 0) {
+                            url = elementLine.get(0).attr("href");
+                        }
+                        if (url != null && url.length() > 0) {
+                            url = urlBase + "/" + url;
+                        }
                         code = elementLine.get(0).text();
                         name = elementLine.get(1).text();
                     }
-                }
-                CityGov cityGov = new CityGov().setUrl(url);
-                cityGov.setID(code).setNAME(name).setCODE(code1).setLEVEL(""+newLevel);
-                Tools.out(newLevel, url, name, code, code1);
+                    Area area = new Area().setUrl(url);
+                    area.setID(code).setNAME(name).setCODE(code1).setLEVEL("" + newLevel);
+                    Tools.out(newLevel, url, name, code, code1);
 
-//                深度构建树  或者 广度构建    由上而下  由下而上 ？
-                parent.addChilds(Arrays.asList(cityGov));
-                if(list != null){
-                    list.add(cityGov);
+                    //                深度构建树  或者 广度构建    由上而下  由下而上 ？
+                    parent.addChilds(Arrays.asList(area));
+                    if (list != null) {
+                        list.add(area);
+                    }
+                    if (url != null && url.length() > 0 && ifChild) {
+                        getCity(area, ifChild, list);
+                    }
                 }
-                if(url != null && url.length() > 0 && ifChild){
-                    getCity(cityGov, ifChild, list);
-                }
-
             }
         }catch (Exception e){
         }

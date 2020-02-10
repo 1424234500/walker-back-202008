@@ -124,7 +124,7 @@ public class LangUtil {
 				e.printStackTrace();
 			}
 		}
-   	 	log.info("turn obj to " + map.keySet() + " from " + obj);
+   	 	log.debug("turn obj to " + map.keySet() + " from " + obj);
 
 		return map;
 	}
