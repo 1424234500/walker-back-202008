@@ -84,6 +84,11 @@ public class RedisCluster  extends TestAdapter{
 			log.warn("add cluster \t" + i + "\t " + node);
 			jedisClusterNode.add(new HostAndPort(ipPort[0], Integer.valueOf(ipPort[1])));
 		}
+//		host = cache.get("redis_host", "localhost");
+//		port = cache.get("redis_port", 6379);
+//		timeout = cache.get("redis_timeout", 0);
+//		password = cache.get("redis_password", "");
+//		database = cache.get("redis_database", 0);
 		jedisCluster = new JedisCluster(jedisClusterNode, config);
 		
 		log.info("redis init ----------------------- " + cc++);

@@ -1,11 +1,9 @@
 package com.walker.config;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.walker.service.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +19,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Arrays;
 
@@ -80,7 +75,7 @@ public class CacheConfig extends CachingConfigurerSupport {
      */
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        log.info(Config.getPre() + "redisTemplate " );
+        log.info(com.walker.service.Config.getPre() + "redisTemplate " );
 
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
@@ -109,7 +104,7 @@ public class CacheConfig extends CachingConfigurerSupport {
      */
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        log.info(Config.getPre() + "cacheManager " +  redisDefaultExpiration);
+        log.info(com.walker.service.Config.getPre() + "cacheManager " +  redisDefaultExpiration);
 
 //        RedisCacheManager cacheManager = RedisCacheManager.create(factory);
 //        return cacheManager;

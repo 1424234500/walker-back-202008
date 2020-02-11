@@ -47,7 +47,7 @@ public interface DeptRepository extends JpaRepository<Dept, String>, JpaSpecific
     @Query("select t from Dept t where t.PATH like CONCAT('%', ?1, '%') ")
     List<Dept> findAllByPATH(String path);
 
-    @Query("select t from Dept t where t.P_ID is null or t.P_ID='' ")
+    @Query("select t from Dept t where t.P_ID is null or t.P_ID='' or t.P_ID=t.ID ")
     Page<Dept> findsRoot(Pageable page);
 
 

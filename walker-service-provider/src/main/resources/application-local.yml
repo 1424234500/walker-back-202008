@@ -55,7 +55,7 @@ spring:
     #    host: 39.106.111.11
     host: 127.0.0.1
     # Redis服务器连接密码（默认为空）
-    password:
+    password: qwer
     # Redis服务器连接端口
     port: 6379
     lettuce:

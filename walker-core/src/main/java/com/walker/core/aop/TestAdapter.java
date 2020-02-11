@@ -28,9 +28,9 @@ public abstract class TestAdapter implements Test{
 			res = doTest();
 		}catch(Exception e) {
 			res = false;
-			e.printStackTrace();
 			log.error(e);
-		} 
+			throw new ErrorException(e);
+		}
 		if(res) {
 			log.warn(Context.okTip(getClass()));
 		}else {

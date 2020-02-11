@@ -5,6 +5,7 @@ import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Watch;
 import com.walker.core.aop.Fun;
 import com.walker.mode.FileIndex;
+import com.walker.service.Config;
 import com.walker.service.FileIndexService;
 import com.walker.service.LogService;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class ScheduleConfig {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	public ScheduleConfig(){
-		log.info(Config.getPre() + "ScheduleConfig");
+		log.info(com.walker.service.Config.getPre() + "ScheduleConfig");
 	}
 
 	@Autowired
@@ -84,7 +85,7 @@ public class ScheduleConfig {
 	    log.info("扫描同步上传文件");
 		Watch w = new Watch("scan");
 	    //刷新上传文件集合的 文件数据到 内存数据库？ 文件管理系统 展示文件 介绍（图片），
-		String root = Config.getUploadDir();
+		String root = com.walker.service.Config.getUploadDir();
 		List<FileIndex> listSave = new ArrayList<>();
 		List<File> list = FileUtil.showDir(root, new Fun<File>(){
 			@Override

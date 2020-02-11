@@ -37,8 +37,14 @@ public interface Scheduler{
      * @return
      */
     public Task add(Task task) throws Exception;
-    
-    
+
+    /**
+     * 立即执行任务
+     * @return
+     */
+    public Task run(Task task) throws Exception;
+
+
     /**
      * 移除任务
      * @return
@@ -52,7 +58,7 @@ public interface Scheduler{
     public Task save(Task task) throws Exception;
 
 
-    public Task saveTrigger(String jobName, List<String> cronOn, List<String> cronOff) throws Exception;
+    public Task saveTrigger(Task task, List<String> cronOn, List<String> cronOff) throws Exception;
 
 
 

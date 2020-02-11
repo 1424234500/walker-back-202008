@@ -6,29 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public class Config {
-
-    private static int count = 0;
-    public static String PRE = "init--------";
-    public static String getPre(){
-        return "#" + Tools.fillStringBy(count++ + ".", " ", 4, 1) + PRE ;
-    }
-
-
-    public static final String TRUE = "1";
-    public static final String FALSE = "0";
-
-
-    public static String getUploadDir() {
-        return "/home/walker/files";
-    }
-    public static String getDownloadDir() {
-        return "/home";
-    }
-
-    public static int getDbsize(){
-        return 500;
-    }
+public class Config extends com.walker.service.Config {
 
     public static Pageable turnTo(Page page){
         String order = page.getOrder();

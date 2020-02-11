@@ -1,6 +1,8 @@
 package com.walker.mode;
 
 
+import com.walker.service.Config;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -54,6 +56,18 @@ public class Dept implements Cloneable,Serializable {
                 '}';
     }
 
+
+
+    /**
+     * 前缀标识  Dept Area User
+     */
+    public final static String prefix = "D_";
+
+
+
+
+
+
     public String getLEVEL() {
         return LEVEL;
     }
@@ -87,6 +101,8 @@ public class Dept implements Cloneable,Serializable {
     }
 
     public Dept setID(String ID) {
+        ID = Config.makePrefix(prefix, ID);
+
         this.ID = ID;
         return this;
     }
@@ -131,8 +147,10 @@ public class Dept implements Cloneable,Serializable {
         return P_ID;
     }
 
-    public Dept setP_ID(String p_ID) {
-        P_ID = p_ID;
+    public Dept setP_ID(String P_ID) {
+        P_ID = Config.makePrefix(prefix, P_ID);
+
+        this.P_ID = P_ID;
         return this;
     }
 }

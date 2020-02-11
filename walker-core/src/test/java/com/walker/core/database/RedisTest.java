@@ -13,7 +13,7 @@ import redis.clients.jedis.*;
 
 public class RedisTest {
 	static{
-		RedisCluster.getInstance().test();
+//		RedisCluster.getInstance().test();
 		Redis.getInstance().test();;
 		
 	}
@@ -93,7 +93,7 @@ public class RedisTest {
 		});
 	}
 
-	
+	@Test
 	public void testRedis1() {
 		final String t = "redis1";
 		final String key = "test:" + t;

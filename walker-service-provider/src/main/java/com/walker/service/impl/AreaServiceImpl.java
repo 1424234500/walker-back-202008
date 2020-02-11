@@ -4,7 +4,6 @@ import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
 import com.walker.config.Config;
 import com.walker.dao.AreaRepository;
-import com.walker.dao.RoleUserRepository;
 import com.walker.mode.Area;
 import com.walker.service.AreaService;
 import org.apache.commons.lang3.StringUtils;
@@ -61,13 +60,15 @@ public class AreaServiceImpl implements AreaService {
                 if(pobj == null){//表中或list中 上级不存在
                     log.error("try save area not exists pid " + obj);
                 }else{//上级存在 复用机构树
-                    obj.setPATH(pobj.getPATH() + "/" + obj.getID());
-                    obj.setPATH_NAME(pobj.getPATH_NAME() + "/" + obj.getNAME());
+                    if(obj.getPATH()==null || obj.getPATH().length() == 0) {
+                        obj.setPATH(pobj.getPATH() + "/" + obj.getID());
+                        obj.setPATH_NAME(pobj.getPATH_NAME() + "/" + obj.getNAME());
+                    }
                     oks.add(obj);
                 }
             }else{//无上级 root
-                obj.setPATH(obj.getID());
-                obj.setPATH_NAME(obj.getNAME());
+                obj.setPATH("/" + obj.getID());
+                obj.setPATH_NAME("/" + obj.getNAME());
                 oks.add(obj);
             }
         }
@@ -75,6 +76,9 @@ public class AreaServiceImpl implements AreaService {
             if(StringUtils.isEmpty(obj.getS_MTIME())){
                 obj.setS_MTIME(TimeUtil.getTimeYmdHms());
             }
+//            if(obj.getLEVEL() < 0){
+//                obj.setLEVEL(obj.getPATH().split("/").length + "");
+//            }
         }
 
         return areaRepository.saveAll(oks);

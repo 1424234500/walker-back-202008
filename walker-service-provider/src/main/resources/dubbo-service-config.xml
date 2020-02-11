@@ -39,34 +39,34 @@
         这个接口下边全部的方法累积，全部并发不能超过10
 
     -->
-    <dubbo:service ref="echoService" interface="com.walker.service.EchoService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="echoService" interface="com.walker.service.EchoService" timeout="30000" version="1.0" delay="-1" />
 
 <!--日志服务-->
     <bean id="logService" class="com.walker.service.impl.LogServiceImpl" />
-    <dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="30000" version="1.0" delay="-1" />
 
     <!--文件索引服务-->
     <bean id="fileIndexService" class="com.walker.service.impl.FileIndexServiceImpl" />
-    <dubbo:service ref="fileIndexService" interface="com.walker.service.FileIndexService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="fileIndexService" interface="com.walker.service.FileIndexService" timeout="30000" version="1.0" delay="-1" />
 
     <!--基础sql-->
     <bean id="baseService" class="com.walker.service.impl.BaseServiceImpl" />
-    <dubbo:service ref="baseService" interface="com.walker.service.BaseService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="baseService" interface="com.walker.service.BaseService" timeout="30000" version="1.0" delay="-1" />
 
 
     <!--    登录服务-->
     <bean id="loginService" class="com.walker.service.impl.LoginServiceImpl" />
-    <dubbo:service ref="loginService" interface="com.walker.service.LoginService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="loginService" interface="com.walker.service.LoginService" timeout="30000" version="1.0" delay="-1" />
 
-<!--    jdbc teacher增删查改 同服务不同实现 须分组-->
+    <!--    jdbc teacher增删查改 同服务不同实现 须分组-->
     <bean id="teacherJdbcService" class="com.walker.service.impl.TeacherJdbcServiceImpl" />
-    <dubbo:service ref="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="30000" version="1.0" delay="-1" /> 
-<!--    jpa teacher增删查改 同服务不同实现 须分组-->
+    <dubbo:service ref="teacherJdbcService" interface="com.walker.service.TeacherService" timeout="30000" version="1.0" delay="-1" />
+    <!--    jpa teacher增删查改 同服务不同实现 须分组-->
     <bean id="teacherJpaService" class="com.walker.service.impl.TeacherJpaServiceImpl" />
-    <dubbo:service ref="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="30000" version="1.0" delay="-1" /> 
-<!--    用户student-->
+    <dubbo:service ref="teacherJpaService" interface="com.walker.service.TeacherService" group="jpa" timeout="30000" version="1.0" delay="-1" />
+    <!--    用户student-->
     <bean id="studentService" class="com.walker.service.impl.StudentServiceImpl" />
-    <dubbo:service ref="studentService" interface="com.walker.service.StudentService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="studentService" interface="com.walker.service.StudentService" timeout="30000" version="1.0" delay="-1" />
 
     <!--    用户user-->
     <bean id="userService" class="com.walker.service.impl.UserServiceImpl" />
@@ -79,18 +79,21 @@
     <dubbo:service ref="areaService" interface="com.walker.service.AreaService" timeout="30000" version="1.0" delay="-1" />
     <!--    角色role-->
     <bean id="roleService" class="com.walker.service.impl.RoleServiceImpl" />
-    <dubbo:service ref="roleService" interface="com.walker.service.RoleService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="roleService" interface="com.walker.service.RoleService" timeout="30000" version="1.0" delay="-1" />
     <!--    角色role关联-->
     <bean id="roleUserService" class="com.walker.service.impl.RoleUserServiceImpl" />
-    <dubbo:service ref="roleUserService" interface="com.walker.service.RoleUserService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="roleUserService" interface="com.walker.service.RoleUserService" timeout="30000" version="1.0" delay="-1" />
 
 
+    <!--    调度类型 触发 异步 耗时操作-->
+    <bean id="syncService" class="com.walker.service.impl.SyncServiceImpl" />
+    <dubbo:service ref="syncService" interface="com.walker.service.SyncService" timeout="30000" version="1.0" delay="-1" />
 
 
 
     <!--    消息表服务 手动分表-->
     <bean id="messageService" class="com.walker.service.impl.MessageServiceImpl" />
-    <dubbo:service ref="messageService" interface="com.walker.service.MessageService" timeout="30000" version="1.0" delay="-1" /> 
+    <dubbo:service ref="messageService" interface="com.walker.service.MessageService" timeout="30000" version="1.0" delay="-1" />
 <!--    消息表服务 自动分表-->
     <bean id="messageServiceSharding" class="com.walker.service.impl.MessageServiceShardingImpl" />
     <dubbo:service ref="messageServiceSharding" interface="com.walker.service.MessageService" group="sharding" timeout="30000" version="1.0" delay="-1" />

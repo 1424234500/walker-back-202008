@@ -4,9 +4,9 @@ package com.walker.controller;
 import com.walker.Response;
 import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
-import com.walker.mode.Dept;
+import com.walker.mode.Area;
 import com.walker.service.BaseService;
-import com.walker.service.DeptService;
+import com.walker.service.AreaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -23,21 +23,21 @@ import java.util.Arrays;
 import java.util.List;
 
 /*
-测试 jap deptService
+测试 jap areaService
 
  */
-@Api(value = "service层 DEPT 实体类对象 ")
+@Api(value = "controller层 Area 实体类对象 ")
 @Controller
-@RequestMapping("/dept")
-public class  DeptController {
+@RequestMapping("/area")
+public class AreaController {
     private Logger log = LoggerFactory.getLogger(getClass());
     @Autowired
     @Qualifier("baseService")
     private BaseService baseService;
 
     @Autowired
-    @Qualifier("deptService")
-    private DeptService deptService;
+    @Qualifier("areaService")
+    private AreaService areaService;
 
     @ApiOperation(value = "post 保存 更新/添加 ", notes = "")
     @ResponseBody
@@ -45,24 +45,21 @@ public class  DeptController {
     public Response save(
             @RequestParam(value = "ID", required = false, defaultValue = "") String id,
             @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
-            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "0") String sFlag,
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
             @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid
-//            @RequestParam(value = "PATH", required = false, defaultValue = "") String path
 
             ) {
-        Dept dept = new Dept();
-        dept.setID(id);
-        dept.setS_MTIME(TimeUtil.getTimeYmdHms());
-//        dept.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
-        dept.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
-        dept.setNAME(name);
-        dept.setP_ID(pid);
-//        dept.setPATH(path);
+        Area area = new Area();
+        area.setID(id);
+        area.setS_MTIME(TimeUtil.getTimeYmdHms());
+//        area.setS_ATIME(sAtime.length() > 0 ? sAtime : TimeUtil.getTimeYmdHmss());
+        area.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
+        area.setNAME(name);
+        area.setP_ID(pid);
 
-        String info = "post dept:" +dept.toString();
-        List<Dept> res = deptService.saveAll(Arrays.asList(dept));
+        String info = "post area:" +area.toString();
+        List<Area> res = areaService.saveAll(Arrays.asList(area));
         return Response.makeTrue(info, res);
     }
 
@@ -70,12 +67,12 @@ public class  DeptController {
     @ResponseBody
     @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
     public Response delet(
-            @RequestParam(value = "ids", required = true, defaultValue = "") String ids
+            @RequestParam(value = "ID", required = true, defaultValue = "") String ids
     ) {
         String info = "delete ids:" + ids;
         if(ids == null || ids.length() <= 0)
             return Response.makeFalse("args is null ?");
-        Object res = deptService.deleteAll(Arrays.asList(ids.split(",")));
+        Object res = areaService.deleteAll(Arrays.asList(ids.split(",")));
         return Response.makeTrue(info, res);
     }
 
@@ -83,10 +80,10 @@ public class  DeptController {
     @ResponseBody
     @RequestMapping(value = "/get.do", method = RequestMethod.GET)
     public Response get(
-            @RequestParam(value = "id", required = true) String id
+            @RequestParam(value = "ID", required = true) String id
     ) {
         String info = "get id:" + id;
-        Dept model = deptService.get(new Dept().setID(id));
+        Area model = areaService.get(new Area().setID(id));
         if(model != null)
             return Response.makeTrue(info, model);
         else
@@ -99,6 +96,7 @@ public class  DeptController {
     public Response findPage(
             @RequestParam(value = "ID", required = false, defaultValue = "") String id,
             @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
+            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
 
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
@@ -113,23 +111,24 @@ public class  DeptController {
     ) {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
         if(pidNull.equalsIgnoreCase("true")){
-            List<Dept> list = deptService.findsRoot(page);
+            List<Area> list = areaService.findsRoot(page);
 
             return Response.makePage("", page, list);
         }
 
-        Dept dept = new Dept();
-        dept.setID(id);
-        dept.setS_MTIME(sMtime);
-        dept.setS_FLAG(sFlag);
-        dept.setNAME(name);
-        dept.setP_ID(pid);
-        dept.setPATH(path);
+        Area area = new Area();
+        area.setID(id);
+        area.setS_MTIME(sMtime);
+//        area.setS_ATIME(sAtime);
+        area.setS_FLAG(sFlag);
+        area.setNAME(name);
+        area.setP_ID(pid);
+        area.setPATH(path);
 
-        String info = "get   dept:" + dept;
+        String info = "get   area:" + area;
 
-        List<Dept> list = deptService.finds(dept, page);
-        page.setNum(deptService.count(dept));
+        List<Area> list = areaService.finds(area, page);
+        page.setNum(areaService.count(area));
         return Response.makePage(info, page, list);
     }
 

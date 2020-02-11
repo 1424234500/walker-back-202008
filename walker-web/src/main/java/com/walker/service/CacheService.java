@@ -1,25 +1,13 @@
 package com.walker.service;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.TypeReference;
-import com.walker.common.util.Bean;
-import com.walker.common.util.HttpBuilder;
-import com.walker.common.util.Page;
-import com.walker.common.util.ThreadUtil;
-import com.walker.config.Config;
-import com.walker.config.MakeConfig;
-import com.walker.core.scheduler.Task;
 import com.walker.dao.JdbcDao;
-import com.walker.mode.Dept;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

@@ -1,6 +1,8 @@
 package com.walker.mode;
 
 
+import com.walker.service.Config;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -40,8 +42,10 @@ public class User implements Cloneable,Serializable{
     private String MOBILE;
 
 
-    @Column(name = "DEPT_ID", columnDefinition = "varchar(32) default 'name' comment '部门' ")    //255
+    @Column(name = "DEPT_ID", columnDefinition = "varchar(64) default 'D_0' comment '部门' ")    //255
     private String DEPT_ID;
+    @Column(name = "AREA_ID", columnDefinition = "varchar(64) default 'A_0' comment '地理' ")    //255
+    private String AREA_ID;
 
     @Column(name = "PWD", columnDefinition = "varchar(128) default '' comment '密码' ")
     private String PWD;
@@ -49,6 +53,12 @@ public class User implements Cloneable,Serializable{
     public User(){
 
     }
+
+
+    /**
+     * 前缀标识  Dept Area User
+     */
+    public final static String prefix = "D_";
 
     public String getS_MTIME() {
         return S_MTIME;
@@ -66,6 +76,33 @@ public class User implements Cloneable,Serializable{
     public User setS_ATIME(String S_ATIME) {
         this.S_ATIME = S_ATIME;
         return this;
+    }
+
+    public String getAREA_ID() {
+        return AREA_ID;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "ID='" + ID + '\'' +
+                ", S_MTIME='" + S_MTIME + '\'' +
+                ", S_ATIME='" + S_ATIME + '\'' +
+                ", S_FLAG='" + S_FLAG + '\'' +
+                ", NAME='" + NAME + '\'' +
+                ", SEX='" + SEX + '\'' +
+                ", NICK_NAME='" + NICK_NAME + '\'' +
+                ", SIGN='" + SIGN + '\'' +
+                ", EMAIL='" + EMAIL + '\'' +
+                ", MOBILE='" + MOBILE + '\'' +
+                ", DEPT_ID='" + DEPT_ID + '\'' +
+                ", AREA_ID='" + AREA_ID + '\'' +
+                ", PWD='" + PWD + '\'' +
+                '}';
+    }
+
+    public void setAREA_ID(String AREA_ID) {
+        this.AREA_ID = AREA_ID;
     }
 
     public String getS_FLAG() {
@@ -91,6 +128,8 @@ public class User implements Cloneable,Serializable{
     }
 
     public User setID(String ID) {
+        ID = Config.makePrefix(prefix, ID);
+
         this.ID = ID;
         return this;
     }
@@ -138,24 +177,6 @@ public class User implements Cloneable,Serializable{
     public User setMOBILE(String MOBILE) {
         this.MOBILE = MOBILE;
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "ID='" + ID + '\'' +
-                ", S_MTIME='" + S_MTIME + '\'' +
-                ", S_ATIME='" + S_ATIME + '\'' +
-                ", S_FLAG='" + S_FLAG + '\'' +
-                ", NAME='" + NAME + '\'' +
-                ", SEX='" + SEX + '\'' +
-                ", NICK_NAME='" + NICK_NAME + '\'' +
-                ", SIGN='" + SIGN + '\'' +
-                ", EMAIL='" + EMAIL + '\'' +
-                ", MOBILE='" + MOBILE + '\'' +
-                ", DEPT_ID='" + DEPT_ID + '\'' +
-                ", PWD='" + PWD + '\'' +
-                '}';
     }
 
     public String getDEPT_ID() {

@@ -24,13 +24,18 @@ public abstract class TaskJob extends QuartzJobBean implements Runnable {
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException{
 		JobDetail jobDetail = context.getJobDetail();
 		Trigger trigger = context.getTrigger();
-		CronTrigger cronTrigger = (CronTrigger) trigger;
-
+		String info = "";
+		if(trigger instanceof CronTrigger) {
+			CronTrigger cronTrigger = (CronTrigger) trigger;
+			info = cronTrigger.getCronExpression() + " " + cronTrigger.getDescription();
+		}else{
+			info = trigger.toString();
+		}
 		String className = jobDetail.getJobClass().getName();
 		String status = "1";//状态0失败1执行中2成功
 		String about = "";
 		long startTime = System.currentTimeMillis();
-		log.info("Scheduler quartz " + className + " " + cronTrigger.getCronExpression() + " " + cronTrigger.getDescription());
+		log.info("Scheduler quartz " + className + " " + info);
 		log.info("Desc:" + jobDetail.getDescription());
 		JobHis jobHis = new JobHis()
 				.setID(LangUtil.getTimeSeqId())
@@ -38,7 +43,7 @@ public abstract class TaskJob extends QuartzJobBean implements Runnable {
 				.setS_TIME_START(TimeUtil.getTimeYmdHms(startTime))
 				.setSTATUS(status)
 				.setINFO(className)
-				.setTIP(jobDetail.getDescription() + " " + cronTrigger.getCronExpression() + " " + cronTrigger.getDescription())
+				.setTIP(jobDetail.getDescription() + " " + info)
 				;
 		logService.saveJobHis(jobHis);
 		try {
@@ -47,6 +52,8 @@ public abstract class TaskJob extends QuartzJobBean implements Runnable {
 		}catch (Exception e){
 			status = "0";
 			about += "Exception: " + e.getMessage();
+			log.error(about);
+
 			throw e;
 		}finally {
 			long stopTime = System.currentTimeMillis();
@@ -57,6 +64,7 @@ public abstract class TaskJob extends QuartzJobBean implements Runnable {
 			.setS_TIME_COST("" + cost)
 			.setABOUT(about)
 			;
+			log.info(jobHis.toString());
 			logService.saveJobHis(jobHis);
 		}
 

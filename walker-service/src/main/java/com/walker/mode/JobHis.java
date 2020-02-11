@@ -33,7 +33,7 @@ public class JobHis implements Cloneable,Serializable{
     private String STATUS;
     @Column(name = "INFO", columnDefinition = "varchar(128) default '' comment 'INFO' ")
     private String INFO;
-    @Column(name = "TIP", columnDefinition = "varchar(128) default '' comment 'TIP' ")
+    @Column(name = "TIP", columnDefinition = "varchar(888) default '' comment 'TIP' ")
     private String TIP;
     @Column(name = "ABOUT", columnDefinition = "varchar(888) default '' comment '说明' ")    //255
     private String ABOUT;
@@ -57,6 +57,9 @@ public class JobHis implements Cloneable,Serializable{
     }
 
     public JobHis setTIP(String TIP) {
+        if(TIP != null && TIP.length() > 800){
+            TIP = TIP.substring(0, 800);
+        }
         this.TIP = TIP;
         return this;
     }
@@ -122,5 +125,20 @@ public class JobHis implements Cloneable,Serializable{
     public JobHis setABOUT(String ABOUT) {
         this.ABOUT = ABOUT;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "JobHis{" +
+                "ID='" + ID + '\'' +
+                ", S_TIME_START='" + S_TIME_START + '\'' +
+                ", S_TIME_STOP='" + S_TIME_STOP + '\'' +
+                ", S_TIME_COST='" + S_TIME_COST + '\'' +
+                ", IP_PORT='" + IP_PORT + '\'' +
+                ", STATUS='" + STATUS + '\'' +
+                ", INFO='" + INFO + '\'' +
+                ", TIP='" + TIP + '\'' +
+                ", ABOUT='" + ABOUT + '\'' +
+                '}';
     }
 }

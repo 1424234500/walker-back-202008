@@ -6,7 +6,7 @@
          v-loading="loadingCols"
     >
       <form class="form-inline" >
-        <div class="form-group" v-for="(value, key) in colMapShow">
+        <div class="form-group" v-for="(value, key) in colMap">
           <label>{{value=='' ? key : value}}</label>
           <input
             type="text"
@@ -51,7 +51,7 @@
 
         <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
         <el-table-column
-          v-for="(value, key) in colMapShow"
+          v-for="(value, key) in colMap"
           :key="key"
           :property="key"
           :label="(value=='' ? key : value)"
@@ -63,25 +63,19 @@
             {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
           </template>
         </el-table-column>
-
-
         <el-table-column
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="120px"
+          min-width="180px"
         >
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowTrigger(scope.row)"></el-button>
-            <el-button size="mini" type="warning" icon="el-icon-search" circle @click.stop="handlerHis(scope.row)"></el-button>
+            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowRole(scope.row)"></el-button>
+            <el-button size="mini" type="warning" icon="el-icon-menu" circle @click.stop="handlerShowUser(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
-            <el-button size="mini" type="primary" @click.stop="handlerRun(scope.row)">立即执行</el-button>
-
           </template>
         </el-table-column>
-
-
       </el-table>
 
       <el-button
@@ -124,7 +118,7 @@
               :property="key"
               :label="(value=='' ? key : value)"
             >
-              <el-input v-model="rowUpdate[key]" type="text"  />
+              <el-input v-model="rowUpdate[key]" type="text" />
             </el-form-item>
 
             <el-form-item>
@@ -136,23 +130,20 @@
       </el-dialog>
 
       <el-dialog
-        title="调度执行"
-        :visible.sync="loadingUpdateTrigger"
+        title="拥有的角色"
+        :visible.sync="loadingUpdateRole"
         width="86%"
       >
         <template>
-          <label>触发器列表</label>
-          <el-button  class="btn btn-success" @click="handlerAddColumnTrigger()" style="margin:4px 0px 0 2px;">添加</el-button>
-          <el-button  class="btn btn-danger" @click="handlerSaveAllTriggers()" style="margin:4px 0px 0 2px;">保存</el-button>
-
+          部门角色:
           <el-table
-            v-loading="loadingTrigger"
-            :data="listTrigger"
+            v-loading="loadingRole"
+            :data="listRoleDept"
             :row-class-name="tableRowClassName"
-            @selection-change="handlerSelectionChangeTrigger"
-            @current-change="handlerCurrentChangeTableTrigger"
-            @open="handlerOnShowTrigger"
-            ref="multipleTableTrigger"
+            :default-sort = "{prop: 'S_FLAG', order: 'descending'}"
+            @selection-change="handlerSelectionChangeRole"
+            @open="handlerOnShowRole"
+            ref="multipleTableRoleUser"
             element-loading-text="Loading"
             border
             fit
@@ -169,7 +160,7 @@
 
             <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
             <el-table-column
-              v-for="(value, key) in colMapTrigger"
+              v-for="(value, key) in colMapRole"
               :key="key"
               :property="key"
               :label="(value=='' ? key : value)"
@@ -178,29 +169,29 @@
               min-width="100px"
             >
               <template slot-scope="scope">
-                <input
-                  type="text"
-                  class="form-control"
-                  style="width: 18em; margin-right: 1em;"
-                  :placeholder="scope.column.property"
-                  v-model="scope.row[scope.column.property]"
-                />
+                {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
               </template>
             </el-table-column>
           </el-table>
+          <el-button
+            class="btn btn-danger"
+            @click="handlerSaveAllRoles()"
+            style="margin:4px 0px 0 2px;"
+          >保存角色</el-button>
 
         </template>
-
       </el-dialog>
+
       <el-dialog
-        title="调度日志"
-        :visible.sync="showDialogLog"
+        title="部门用户"
+        :visible.sync="showDialogUser"
         width="86%"
       >
         <template>
-          <mtable :props='showDialogLogParams' ></mtable>
+          <user :props="showDialogUserParams"></user>
         </template>
       </el-dialog>
+
     </div>
 
 
@@ -233,7 +224,6 @@ export default {
     return {
       list: [],
       colMap: {},      //列名:别名
-      colMapShow: {}, //显示键
       colKey: "",     //主键名
       rowSearch: {},   //搜索 列明:搜索值
       rowUpdate: {},   //更新界面复制 列名:新值
@@ -252,26 +242,17 @@ export default {
       loadingSave: true,
       loadingUpdate: false,
 
-      nowRowTrigger: null,
-      loadingTrigger: false,
-      loadingHis: false,
-      loadingUpdateTrigger: false,
-      showTrigger: {}, //当前角色用户
-      colMapTrigger: {},
-      colKeyTrigger: {},
-      listTrigger: [],
-      colMapHis: {},
-      colKeyHis: '',
-      listHis: [],
-      listTriggerOld: [],
-      rowSelectTrigger: [],
-      rowSelectHis: [],
-      quartzTable: 'W_QRTZ_JOB_DETAILS',
-      quartzTableTrigger: 'W_QRTZ_CRON_TRIGGERS',
-      info: "",
-      info2: "",
-      showDialogLog: false,
-      showDialogLogParams: null,
+
+      loadingRole: false,
+      loadingUpdateRole: false,
+      deptShowRole: {}, //当前角色用户
+      colMapRole: {},
+      colKeyRole: {},
+      listRoleDept: [],
+      rowSelectRole: [],
+
+      showDialogUser: false,
+      showDialogUserParams: null,
     }
   },
   created() {
@@ -283,42 +264,15 @@ export default {
     //查询展示的行列信息 备注
     getColumns() {
       this.loadingCols = true
-      this.get('/common/getColsMap.do', {tableName: this.quartzTable}).then((res) => {
+      this.get('/common/getColsMap.do', {tableName: 'W_AREA'}).then((res) => {
         this.colMap = res.data.colMap
-        delete this.colMap.JOB_DATA
-        delete this.colMap.SCHED_NAME
-        delete this.colMap.JOB_GROUP
-        delete this.colMap.IS_DURABLE
-        delete this.colMap.IS_NONCONCURRENT
-        delete this.colMap.IS_UPDATE_DATA
-        delete this.colMap.REQUESTS_RECOVERY
-
-        //this.colMap['CRON_EXPRESSION'] = '触发器cron'
-
-        this.colMapShow = {}
-        this.colMapShow['JOB_NAME'] = this.colMap['JOB_NAME']
-        this.colMapShow['JOB_CLASS_NAME'] = this.colMap['JOB_CLASS_NAME']
-        this.colMapShow['DESCRIPTION'] = this.colMap['DESCRIPTION']
-        // this.colMapShow['STATUS'] = '状态'
-
-
-        this.colKey = 'JOB_NAME'  //res.data.colKey
+        this.colKey = res.data.colKey
         this.clearRowSearch()
         this.loadingCols = false
         this. getListPage()
       }).catch(() => {
         this.loadingCols = false
       })
-
-      this.get('/common/getColsMap.do', {tableName: 'W_JOB_HIS'}).then((res) => {
-        this.colMapHis = res.data.colMap
-        // delete this.colMap.REQUESTS_RECOVERY
-        this.colKeyHis = res.data.colKey
-      }).catch(() => {
-
-      })
-
-
 
     },
     //清空搜索条件
@@ -328,60 +282,31 @@ export default {
       }
       this.page.nowpage = 1
     },
-    //分页查询
-    getListPage() {
+     //分页查询
+     getListPage() {
       this.loadingList = true
+      // name/nowPage/showNum
       var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-      this.get('/quartz/findPage.do', params).then((res) => {
+      this.get('/area/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
-        this.info = res.info
         this.loadingList = false
       }).catch(() => {
         this.loadingList = false
       })
-
     },
     //当前高亮行
     handlerCurrentChangeTable(row){
       console.info("handlerCurrentChangeTable", row)
       this.nowRow = row
     },
-    //当前高亮行
-    handlerCurrentChangeTableTrigger(row){
-      console.info("handlerCurrentChangeTableTrigger", row)
-      this.nowRowTrigger = row
-    },
     //添加行
     handlerAddColumn(){
-      var newObj = Object.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
-
-      newObj["JOB_NAME"] = this.nowRow == null ? "" : this.nowRow["JOB_NAME"]
-      newObj["DESCRIPTION"] = this.nowRow == null ? "" : this.nowRow["DESCRIPTION"]
-      newObj['CRON_EXPRESSION'] = '0 0 10 * * ?'
+      let newObj = Object.assign({}, this.rowSearch)
+      newObj["P_ID"] = this.nowRow == null ? "" : this.nowRow["ID"]
+      newObj["S_FLAG"] = '1'
       this.list.push(newObj)
       this.handlerChange(newObj)
-    },
-    //添加行
-    handlerAddColumnTrigger(){
-      let newObj = Object.assign({}, {})
-      newObj["CRON_EXPRESSION"] = this.nowRowTrigger == null ? '0 0 10 * * ?' : this.nowRowTrigger["CRON_EXPRESSION"]
-      newObj["DESCRIPTION"] = ' 每1小时触发一次'
-      newObj["S_FLAG"] = '1'  //需要保存
-      this.listTrigger.push(newObj)
-      this.$nextTick(this.handlerOnShowTrigger())  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
-    },
-    //立即操作
-    handlerRun(val) {
-      console.info("handlerRun " + JSON.stringify(val))
-      this.loadingList = true
-      this.get('/quartz/run.do', val).then((res) => {
-        this.info = res.info
-        this.loadingList = false
-      }).catch(() => {
-        this.loadingList = false
-      })
-
     },
     //修改单行 展示弹框
     handlerChange(val) {
@@ -404,7 +329,7 @@ export default {
 
       Object.assign(this.rowUpdateFrom, this.rowUpdate)
       var params = this.rowUpdateFrom
-      this.post('/quartz/save.do', params).then((res) => {
+      this.post('/area/save.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
@@ -415,8 +340,8 @@ export default {
     handlerDelete(val, index) {
       console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
-      const params = {JOB_NAME: val[this.colKey]}
-      this.get('/quartz/delet.do', params).then((res) => {
+      const params = {ids: val[this.colKey]}
+      this.get('/area/delet.do', params).then((res) => {
         for(let j = 0; j < this.list.length; j++) {
           if(this.list[j] == val){
             this.list.splice(j, 1);
@@ -438,8 +363,8 @@ export default {
           ids += this.rowSelect[i][this.colKey] + ","
         }
         ids = ids.substring(0, ids.length - 1)
-        const params = {JOB_NAME: ids}
-        this.get('/quartz/delet.do', params).then((res) => {
+        const params = {ids: ids}
+        this.get('/area/delet.do', params).then((res) => {
           this.loadingList = false
           for(let i = 0; i < this.rowSelect.length; i++){
             for(let j = 0; j < this.list.length; j++) {
@@ -463,124 +388,83 @@ export default {
       // this.$refs.multipleTable.toggleAllSelection()
       // this.$refs.multipleTable.toggleRowSelection(VAL);
     },
-
-    //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
-    handlerShowTrigger(val) {
-      this.showTrigger = val
-      this.loadingUpdateTrigger = ! this.loadingUpdateTrigger
-      this.loadingTrigger = true
-      this.listTrigger = []
-      this.colMapTrigger = {}
-      this.colMapTrigger['CRON_EXPRESSION'] = '表达式'
-      this.colMapTrigger['DESCRIPTION'] = '描述'
-      this.colKeyTrigger = 'CRON_EXPRESSION'
-
-      var params = {nowPage: 1, showNum: 10}
-      params[this.colKey] = val[this.colKey]
-      this.get('/quartz/findPageTrigger.do', params).then((res) => {
-        this.listTrigger = res.data.data
-        // this.page = res.data.page
-        this.info = res.info
-        this.listTriggerOld = []
-        for(var i = 0; i < this.listTrigger.length; i++){
-          this.listTrigger[i].S_FLAG = '1'
-          this.listTriggerOld.push(this.listTrigger[i])
-        }
-        this.loadingTrigger = false
-        this.$nextTick(this.handlerOnShowTrigger())  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
+    handlerShowUser(val){
+      this.showDialogUserParams =  {
+        params: {
+          'DEPT_ID' : val[this.colKey]
+        },
+      }
+      this.showDialogUser = ! this.showDialogUser
+    },
+      //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
+    handlerShowRole(val) {
+      this.areaShowRole = val
+      this.loadingUpdateRole = ! this.loadingUpdateRole
+      this.loadingRole = true
+      this.listRoleDept = []
+      this.get('/common/getColsMap.do', {tableName: 'W_ROLE'}).then((res) => {
+        this.colMapRole = res.data.colMap
+        this.colKeyRole = res.data.colKey
+        var params = {ID:val.ID, S_FLAG:''}
+        this.get('/role/getDeptRoles.do', params).then((res) => {
+          this.listRoleDept = res.data.listDept
+          this.rowSelectRole = []
+          this.loadingRole = false
+          this.$nextTick(this.handlerOnShowRole)  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
+        }).catch(() => {
+          this.loadingRole = false
+        })
       }).catch(() => {
-        this.loadingTrigger = false
-      })
-
-
-
-      params = {nowPage: 1, showNum: 20}
-      params[this.colKey] = val[this.colKey]
-      this.loadingHis = true
-      this.get('/quartz/findPageJobHis.do', params).then((res) => {
-        this.listHis = res.data.data
-        // this.page = res.data.page
-        this.info2 = res.info
-        this.loadingHis = false
-      }).catch(() => {
-        this.loadingHis = false
+        this.loadingRole = false
+      }).then(res=>{
+        this.handlerOnShowRole()
       })
 
     },
     //默认选中
-    handlerOnShowTrigger(){
-      for(var i = 0; i < this.listTrigger.length; i++){
-        if(this.listTrigger[i].S_FLAG == '1'){
-          this.$refs.multipleTableTrigger.toggleRowSelection(this.listTrigger[i], true)
+    handlerOnShowRole(){
+      for(var i = 0; i < this.listRoleDept.length; i++){
+        if(this.listRoleDept[i].S_FLAG == '1'){
+          // this.rowSelectRole.push(this.listRoleDept[i])
+          this.$refs.multipleTableRoleUser.toggleRowSelection(this.listRoleDept[i], true)
         }
       }
 
     },
-    handlerHis(val){
-      this.showDialogLogParams =  {
-        database: '',
-        table: 'W_JOB_HIS',
-        params: {
-          'INFO' : val[this.colKey]
-        },
-      }
-      this.showDialogLog = ! this.showDialogLog
-
-      // params['INFO'] = val[this.colKey]
-      // this.$router.push({
-      //   path:'/db/table',
-      //   query: params,
-      // })
-    },
-    //新建的  取消勾选的 差异化 触发器保存
-    handlerSaveAllTriggers(){
-      this.loadingTrigger = true;
+    //用户角色 批量保存 删除 比对默认值 找出差异化 提交
+    handlerSaveAllRoles(){
       var listOn = []
       var listOff = []
       var map = {}
-      var mapOld = {}
-      for(var i = 0; i < this.rowSelectTrigger.length; i++){
-        map[this.rowSelectTrigger[i][this.colKeyTrigger]] = '1' //现在选中的
+      for(var i = 0; i < this.rowSelectRole.length; i++){
+        map[this.rowSelectRole[i][this.colKeyRole]] = '1'
       }
-      for(var i = 0; i < this.listTriggerOld.length; i++){
-        mapOld[this.listTriggerOld[i][this.colKeyTrigger]] = this.listTriggerOld[i]['S_FLAG'] //原来选中的
-      }
-
-      for (var key in mapOld) {
-        if(mapOld[key] == '1' && (map[key] == '0' || map[key] == null)){
-          listOff.push(key)
+      for(var i = 0; i < this.listRoleDept.length; i++){
+        var roleUser = this.listRoleDept[i]
+        var id = roleUser[this.colKeyRole]
+        var newFlag = map[id] == null ? '0' : '1'
+        var oldFlag = roleUser['S_FLAG']
+        if(oldFlag != newFlag){
+          newFlag == '1' ? listOn.push(id) : listOff.push(id)
         }
       }
-      for (var key in map) {
-        if((mapOld[key]==null || mapOld[key]=='0') && map[key] == '1'){
-          listOn.push(key)
-        }
-      }
-
       if(listOn.length > 0 || listOff.length > 0){
-        //console.info(this.showTrigger)
-        var params = Object.assign({}, this.showTrigger)
-        //debugger
-        params['ON'] =  listOn.join(",")
-        params['OFF'] = listOff.join(",")
-
-        this.get('/quartz/saveTriggers.do', params).then((res) => {
-          this.loadingTrigger = false
-          // this.loadingUpdateTrigger = false
+        var params = {ID: this.areaShowRole[this.colKey], ON: listOn.join(","), OFF: listOff.join(",")}
+        this.get('/role/saveRoles.do', params).then((res) => {
+          this.loadingRole = false
+          this.loadingUpdateRole = false
         }).catch(() => {
-          this.loadingTrigger = false
+          this.loadingRole = false
         })
       }else{
         this.$message({message:'没有改动', type:'waring'});
-        this.loadingTrigger = false;
-
       }
 
     },
     //多选改变role
-    handlerSelectionChangeTrigger(val) {
-      console.info("handlerSelectionChangeTrigger" + JSON.stringify(val))
-      this.rowSelectTrigger = val
+    handlerSelectionChangeRole(val) {
+      console.info("handlerSelectionChangeRole" + JSON.stringify(val))
+      this.rowSelectRole = val
     },
 
     //排序事件

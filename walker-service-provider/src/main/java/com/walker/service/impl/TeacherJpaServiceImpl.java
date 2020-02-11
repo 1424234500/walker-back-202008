@@ -7,14 +7,11 @@ import com.walker.mode.Teacher;
 import com.walker.service.TeacherService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
 import java.util.ArrayList;
 import java.util.List;
 

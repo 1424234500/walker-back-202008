@@ -2,6 +2,7 @@ package com.walker.mode;
 
 
 import com.walker.common.util.TimeUtil;
+import com.walker.service.Config;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,9 +13,18 @@ import java.util.List;
  * jpa实体类 地理信息 省市县区村
  */
 @Entity
-@Table(name = "W_AREA")
+@Table(name = "W_AREA"
+        , indexes = {
+                @Index(name = "INDEX_W_AREA_PATH", columnList = "PATH"),
+                @Index(name = "INDEX_W_AREA_PATH_NAME", columnList = "PATH_NAME"),
+                @Index(name = "INDEX_W_AREA_P_ID", columnList = "P_ID")
+            }
+        )
 public class Area implements Cloneable,Serializable {
 
+    /**
+     * 无需存表
+     */
     @Transient
     String url;
     @Transient
@@ -70,6 +80,10 @@ public class Area implements Cloneable,Serializable {
     private String LEVEL;
 
 
+    /**
+     * 前缀标识  Dept Area User
+     */
+    public final static String prefix = "A_";
 
 
     public String getID() {
@@ -77,6 +91,7 @@ public class Area implements Cloneable,Serializable {
     }
 
     public Area setID(String ID) {
+        ID = Config.makePrefix(prefix, ID);
         this.ID = ID;
         return this;
     }
@@ -112,8 +127,10 @@ public class Area implements Cloneable,Serializable {
         return P_ID;
     }
 
-    public Area setP_ID(String p_ID) {
-        P_ID = p_ID;
+    public Area setP_ID(String P_ID) {
+        P_ID = Config.makePrefix(prefix, P_ID);
+
+        this.P_ID = P_ID;
         return this;
     }
 

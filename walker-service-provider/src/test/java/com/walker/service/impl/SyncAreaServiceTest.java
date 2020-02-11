@@ -1,18 +1,17 @@
-package com.walker.service;
+package com.walker.service.impl;
 
 import com.walker.common.util.Tools;
+import com.walker.common.util.Watch;
 import com.walker.mode.Area;
+import com.walker.service.Config;
+import com.walker.service.impl.SyncAreaServiceImpl;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
-public class InitServiceTest extends InitService{
+public class SyncAreaServiceTest extends SyncAreaServiceImpl {
 //    @Autowired
 //    AreaService areaService;
     @Test
@@ -38,14 +37,26 @@ public class InitServiceTest extends InitService{
         //此处按照一级省 分别递归获取树
         Area root = getCityRootChina();
         getCity(root, false, null);
-        for(int i = 1; i < root.getChilds().size() && i < 2; i++){
+
+        for(int i = 2; i < root.getChilds().size() && i < 3; i++){
             Area item = root.getChilds().get(i);
+
+            Watch watch = new Watch("area.sync." + item.getNAME());
             getCity(item, true, null);  //html获取构建省 树
+            watch.cost("http");
+
             List<Area> list = tree2list(item, root.getID(), root.getPATH(), root.getPATH_NAME());   //递归构建树
+            watch.put(list.size());
+            watch.cost("tree");
             Tools.formatOut(list);
-//            areaService.saveAll(list);
+            watch.put("batch", list.size() / Config.getDbsize());
+            watch.cost("db");
+            Tools.out(watch.toPrettyString());
         }
 
+        Tools.out("sync area end");
+        
     }
+
 
 }
