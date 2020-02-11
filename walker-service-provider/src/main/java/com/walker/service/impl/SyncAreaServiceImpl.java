@@ -109,7 +109,7 @@ public class SyncAreaServiceImpl implements SyncAreaService {
      */
     public Area getCityRootChina(){
         Area root = new Area().setUrl("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html");
-        root.setID("0").setCODE("").setNAME("China").setLEVEL(""+0).setPATH("/" + root.getID()).setPATH_NAME("/" + root.getNAME());
+        root.setID("0").setS_FLAG(Config.TRUE).setCODE("").setNAME("China").setLEVEL(""+0).setPATH("/" + root.getID()).setPATH_NAME("/" + root.getNAME());
         return root;
     }
 
