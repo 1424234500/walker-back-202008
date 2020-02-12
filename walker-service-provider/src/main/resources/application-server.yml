@@ -60,7 +60,7 @@ spring:
     lettuce:
       pool:
         # 连接池最大连接数（使用负值表示没有限制）
-        max-active: 20
+        max-active: 100
         # 连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 3000
         # 连接池中的最小空闲连接
@@ -89,7 +89,7 @@ logging:
       - ref: ROLLING_FILE
   level:
     com.demo: DEBUG
-    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    org.springframework.jdbc.core.JdbcTemplate: INFO
 
 #
 #logging:

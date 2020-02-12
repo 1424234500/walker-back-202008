@@ -21,7 +21,7 @@ import com.walker.core.pipe.PipeMgr.Type;
  * 并提供缓冲功能
  * 
  */
-public class PipeListImpl<T> implements Pipe<T>{
+public class PipeListImpl<T> extends PipeAdapter<T>{
 	private static Logger log = Logger.getLogger(PipeListImpl.class);
 
 	private LinkedBlockingDeque<T> list;
@@ -54,12 +54,16 @@ public class PipeListImpl<T> implements Pipe<T>{
 
 	@Override
 	public boolean put(Collection<T> objs) {
-		return list.addAll(objs);
+		boolean res = list.addAll(objs);
+		afterAdd();
+		return res;
+
 	}
 
 	@Override
 	public boolean put(T obj) {
 		list.add(obj);
+		afterAdd();
 		return true;
 	}
 
@@ -68,73 +72,26 @@ public class PipeListImpl<T> implements Pipe<T>{
 		for(T t : objs) {
 			list.push(t);
 		}
+		afterAdd();
 		return true;
 	}
 
 	@Override
 	public boolean putHead(T obj) {
 		list.push(obj);
+		afterAdd();
 		return true;
+	}
+	private void afterAdd(){
+		if(threadPool != null){
+			threadPool.notifyAll();
+		}
 	}
 
 	@Override
 	public long size() {
 		return list.size();
 	}
-
-	@Override
-	public void startConsumer(int threadSize, final Fun<T> executer) {
-		log.warn("StartConsumer");
-		if(threadSize <= 0)return;
-
-		threadPool = Executors.newFixedThreadPool(threadSize);
-		for(int i = 0; i < threadSize; i++) {
-			final int now = i;
-			threadPool.execute(new Runnable() {
-				@Override
-				public void run() {
-					log.warn("Start thread " + now);
-					while(! Thread.interrupted()) {
-						//！！！！！！消费 加锁 互斥问题
-						T obj = get();
-						if(obj != null) {
-							log.debug("Comsumer get " + obj.toString());
-							executer.make(obj);
-						}else {
-							try {
-//								log.debug("sleep");
-								Thread.sleep(Pipe.SLEEP_THREAD);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					log.warn("Stop thread " + now);
-				}
-			});
-		}		
-	}
-
-	@Override
-	public void stopConsumer() {
-		if(threadPool != null && !threadPool.isShutdown()) {
-			threadPool.shutdown();
-		}
-	}
-
-	@Override
-	public void await(long timeout, TimeUnit unit) {
-		if(threadPool != null && !threadPool.isShutdown()) {
-			try {
-				threadPool.awaitTermination(timeout, unit);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	
-	
 
 	public static void main(String argv[]) {
 		Pipe<String> pipe = PipeMgr.getPipe(Type.PIPE, "test");

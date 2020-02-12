@@ -2,7 +2,9 @@ package com.walker.mode;
 
 
 /**
- * andorid 静态键配置化
+ * 静态键配置化
+ * andorid
+ * redis key
  */
 public class Key {
 
@@ -72,12 +74,41 @@ public class Key {
 	 * 已下载
 	 */
 	final public static String STA_TRUE = "101";
-	
-	
 
+
+	/**
+	 * 离线消息
+	 * @param key
+	 * @return
+	 */
 	public static String getKeyOffline(String key) {
-		return "offline:" + key;
+		return "offline:msg:" + key;
 	}
+
+	/**
+	 * 锁
+	 * @param key
+	 * @return
+	 */
+	public static String getLockRedis(String key){
+		return "lock:redis:" + key;
+	}
+	/**
+	 * url访问记录 zset
+	 */
+	public static String getUrlDone(){
+		return "url:done";
+
+	}
+
+	/**
+	 * 登录
+	 */
+	public static String getLoginToken(String key){
+		return "login:token:" + key;
+
+	}
+
 	
 	
 }

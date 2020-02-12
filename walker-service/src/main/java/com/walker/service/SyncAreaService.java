@@ -43,5 +43,19 @@ public interface SyncAreaService {
     void getCity(Area parent, boolean ifChild, List<Area> list);
 
 
+    /**
+     * 是否已经处理
+     * @param area
+     * @return
+     */
+    boolean isExists(Area area);
+
+    /**
+     * 已经处理
+     * @param area
+     * @return
+     */
+    boolean setDone(Area area);
+
 
 }

@@ -2,9 +2,11 @@ package com.walker.service.impl;
 
 
 import com.walker.common.util.*;
+import com.walker.config.MakeConfig;
 import com.walker.core.database.RedisUtil;
 import com.walker.dao.RedisDao;
 import com.walker.mode.Area;
+import com.walker.mode.Key;
 import com.walker.service.AreaService;
 import com.walker.service.Config;
 import com.walker.service.SyncAreaService;
@@ -33,12 +35,14 @@ public class SyncServiceImpl implements SyncService {
     SyncAreaService syncAreaService;
     @Autowired
     RedisDao redisDao;
+    @Autowired
+    MakeConfig makeConfig;
 
     @Override
     public Bean syncArea(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = getClass() + ".syncArea";
-        String value = redisDao.tryLock(key, 3600 * 10);
+        String key = Key.getLockRedis(getClass() + ".syncArea");
+        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea);
         res.set("value", value);
         if(value != null && value.length() > 0){
             ThreadUtil.execute(new Runnable() {
@@ -52,6 +56,7 @@ public class SyncServiceImpl implements SyncService {
             });
             res.set("info", "bean sync");
         }else{
+            log.warn("have being locked");
             res.set("info", "redis lock error, have being syncing ? ");
         }
         return res;

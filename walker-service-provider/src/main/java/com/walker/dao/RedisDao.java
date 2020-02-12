@@ -52,7 +52,7 @@ public class RedisDao {
      */
     @SuppressWarnings("unchecked")
     public String tryLock(String key, long expireSeconds) {
-        String value = "LOCK:REDIS:" + LangUtil.getGenerateId();
+        String value = "lock:redis:value:" + LangUtil.getGenerateId();
         byte[] keyByte = key.getBytes(StandardCharsets.UTF_8);
         byte[] valueByte = value.getBytes(StandardCharsets.UTF_8);
 
@@ -175,6 +175,22 @@ public class RedisDao {
         }
         return result;
     }
+    /**
+     * 写入时效时间 s
+     * @param key
+     * @return
+     */
+    public boolean expire(final String key, Long expireSeconds) {
+        boolean result = false;
+        try {
+            redisTemplate.expire(key, expireSeconds, TimeUnit.SECONDS);
+            result = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     /**
      * 批量删除对应的value
      * @param keys
@@ -307,9 +323,27 @@ public class RedisDao {
      * @param value
      * @param scoure
      */
-    public void zAdd(String key,Object value,double scoure){
-        ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
+    public <T> void zAdd(String key, T value,double scoure){
+        ZSetOperations<String, T> zset = redisTemplate.opsForZSet();
         zset.add(key,value,scoure);
+    }
+    /**
+     * score 不存在就会异常？
+     * @param key
+     * @param value
+     */
+    public <T> Double zScore(String key, T value){
+        Double res = -1d;
+        try {
+            ZSetOperations<String, T> zset = redisTemplate.opsForZSet();
+            res = zset.score(key, value);
+            if(res == null ){
+                res = -2d;
+            }
+        }catch (Exception e){
+            res = -3d;
+        }
+        return res;
     }
 
     /**

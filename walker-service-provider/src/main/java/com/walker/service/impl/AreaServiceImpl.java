@@ -149,6 +149,9 @@ public class AreaServiceImpl implements AreaService {
                 if (StringUtils.isNotEmpty(obj.getPATH_NAME())) {
                     list.add(criteriaBuilder.like(root.get("PATH_NAME"), "%" + obj.getPATH_NAME() + "%"));
                 }
+                if (StringUtils.isNotEmpty(obj.getCODE())) {
+                    list.add(criteriaBuilder.like(root.get("CODE"), "%" + obj.getCODE() + "%"));
+                }
                 return criteriaBuilder.and(list.toArray(new Predicate[0]));
             }
         };

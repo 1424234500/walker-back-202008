@@ -24,7 +24,7 @@ public class Config {
     }
 
     public static int getDbsize(){
-        return 200;
+        return 500;
     }
 
 

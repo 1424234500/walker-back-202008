@@ -43,7 +43,7 @@ public class JobUpdateArea extends TaskJob {
 	public void run() {
 		log.info("begin---------");
 
-		syncService.syncArea(new Bean().set("hello", "world"));
+		log.info(syncService.syncArea(new Bean().set("hello", "world")).toString());
 
 		log.info("end---------");
 

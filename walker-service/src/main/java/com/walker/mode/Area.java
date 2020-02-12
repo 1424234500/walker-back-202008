@@ -15,8 +15,8 @@ import java.util.List;
 @Entity
 @Table(name = "W_AREA"
         , indexes = {
-                @Index(name = "INDEX_W_AREA_PATH", columnList = "PATH"),
-                @Index(name = "INDEX_W_AREA_PATH_NAME", columnList = "PATH_NAME"),
+//                @Index(name = "INDEX_W_AREA_PATH", columnList = "PATH"),      //索引不能超过1000
+//                @Index(name = "INDEX_W_AREA_PATH_NAME", columnList = "PATH_NAME"),
                 @Index(name = "INDEX_W_AREA_P_ID", columnList = "P_ID")
             }
         )
@@ -161,9 +161,8 @@ public class Area implements Cloneable,Serializable {
         return this;
     }
 
-    public Integer getLEVEL() {
-        LEVEL = (LEVEL == null || LEVEL.length() == 0) ? "0" : LEVEL;
-        return Integer.valueOf(LEVEL);
+    public String getLEVEL() {
+        return LEVEL;
     }
 
     public Area setLEVEL(String LEVEL) {

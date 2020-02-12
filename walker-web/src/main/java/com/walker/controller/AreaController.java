@@ -96,7 +96,6 @@ public class AreaController {
     public Response findPage(
             @RequestParam(value = "ID", required = false, defaultValue = "") String id,
             @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
-            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
 
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
@@ -104,6 +103,9 @@ public class AreaController {
             @RequestParam(value = "P_ID_NULL", required = false, defaultValue = "false") String pidNull,
             @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid,
             @RequestParam(value = "PATH", required = false, defaultValue = "") String path,
+            @RequestParam(value = "PATH_NAME", required = false, defaultValue = "") String pathName,
+            @RequestParam(value = "CODE", required = false, defaultValue = "") String code,
+            @RequestParam(value = "LEVEL", required = false, defaultValue = "") String level,
 
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
@@ -119,11 +121,13 @@ public class AreaController {
         Area area = new Area();
         area.setID(id);
         area.setS_MTIME(sMtime);
-//        area.setS_ATIME(sAtime);
         area.setS_FLAG(sFlag);
         area.setNAME(name);
         area.setP_ID(pid);
         area.setPATH(path);
+        area.setPATH_NAME(pathName);
+        area.setCODE(code);
+        area.setLEVEL(level);
 
         String info = "get   area:" + area;
 

@@ -2,6 +2,9 @@ package com.walker.service.impl;
 
 
 import com.walker.common.util.*;
+import com.walker.config.MakeConfig;
+import com.walker.dao.RedisDao;
+import com.walker.mode.Key;
 import com.walker.service.Config;
 import com.walker.mode.Area;
 import com.walker.service.AreaService;
@@ -13,11 +16,14 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 初始化数据服务
@@ -26,11 +32,24 @@ import java.util.List;
 public class SyncAreaServiceImpl implements SyncAreaService {
     private Logger log = LoggerFactory.getLogger(getClass());
 
+//    @Autowired
+//    private RedisTemplate redisTemplate;
+    @Autowired
+    RedisDao redisDao;
+
+
+
     @Autowired
     AreaService areaService;
 
+    @Autowired
+    MakeConfig makeConfig;
+
     /**
      * 国家统计局 地区分级 遍历抓取数据
+     * 耗时 中断恢复进度问题？
+     *  使用redis存储已经ok的url，下次遇到则跳过， 仅重复上次的最后一个省级别或以下的最小单元
+     *
      */
     public void syncArea(){
         log.info("sync area begin thread");
@@ -43,10 +62,10 @@ public class SyncAreaServiceImpl implements SyncAreaService {
         for(int i = 0; i < root.getChilds().size() && i < 998; i++){
             Area item = root.getChilds().get(i);
 
-//            //单省作为线程
-//            ThreadUtil.execute(new Runnable() {
-//                @Override
-//                public void run() {
+            //单省作为线程
+            ThreadUtil.getExecutorServiceInstance(5).execute(new Runnable() {
+                @Override
+                public void run() {
                     Watch watch = new Watch("area.sync." + item.getNAME());
                     getCity(item, true, null);  //html获取构建省 树
                     watch.cost("http");
@@ -66,8 +85,8 @@ public class SyncAreaServiceImpl implements SyncAreaService {
                     watch.cost("db");
                     log.info(watch.toPrettyString());
                 }
-//            });
-//        }
+            });
+        }
         log.info("sync area end");
 
     }
@@ -115,6 +134,7 @@ public class SyncAreaServiceImpl implements SyncAreaService {
 
     /**
      *  遍历节点 字节点 生成树 或 获取list
+     *      构建树时 判断url是否已经访问过 若是则不再重复 过期时间
      *
      * @param parent    root节点
      * @param ifChild 是否递归子节点
@@ -124,10 +144,20 @@ public class SyncAreaServiceImpl implements SyncAreaService {
         try {
 //            http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html
 //            http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/51.html
-            String html1 = new HttpBuilder(parent.getUrl() + "?_t=" + System.currentTimeMillis(), HttpBuilder.Type.GET)
-                    .setConnectTimeout(3000).setRequestTimeout(5000).setSocketTimeout(5000)
-                    .setEncode("utf-8").setDecode("gbk").buildString();
-            Thread.sleep(50);   //休眠间隔避免 高频率导致封ip？
+
+            if(ifChild && isExists(parent)){ //若要遍历子节点 且 已经完成过了  不再遍历！！！ 例外了root 省级别
+                log.warn("have done the node " + parent);
+                return;
+            }
+
+            String html1 = "";
+
+            synchronized (this) {
+                html1 = new HttpBuilder(parent.getUrl() + "?_t=" + System.currentTimeMillis(), HttpBuilder.Type.GET)
+                        .setConnectTimeout(3000).setRequestTimeout(5000).setSocketTimeout(5000)
+                        .setEncode("utf-8").setDecode("gbk").buildString();
+                Thread.sleep(10);   //休眠间隔避免 高频率导致封ip？
+            }
 /*
 <tr class="citytr">
     <td><a href="51/5101.html">510100000000</a></td><td><a href="51/5101.html">成都市</a></td>
@@ -143,7 +173,7 @@ public class SyncAreaServiceImpl implements SyncAreaService {
                 elements = doc.select("tr[class=" + type + "]");//.select("a");
                 if(elements != null && elements.size() > 0) break;
             }
-            int newLevel = parent.getLEVEL() + 1;
+            int newLevel = Integer.valueOf(parent.getLEVEL()) + 1;
             String urlBase = FileUtil.getFilePath(parent.getUrl());
 
             for (int i = 0; i < elements.size(); i++) {
@@ -164,9 +194,8 @@ public class SyncAreaServiceImpl implements SyncAreaService {
 
                         Area area = new Area().setUrl(url);
                         area.setID(code).setNAME(name).setCODE(code1).setLEVEL("" + newLevel);
-                        Tools.out(newLevel, url, name, code, code1);
-
-                        //                深度构建树  或者 广度构建    由上而下  由下而上 ？
+//                        Tools.out(newLevel, url, name, code, code1);
+                        // 深度构建树  或者 广度构建    由上而下  由下而上 ？
                         parent.addChilds(Arrays.asList(area));
                         if (list != null) {
                             list.add(area);
@@ -212,11 +241,33 @@ public class SyncAreaServiceImpl implements SyncAreaService {
                     }
                 }
             }
+
+            //若顺利获取完毕 构建完毕 树 但还没存储 就认为已经存过
+            setDone(parent);
+
         }catch (Exception e){
+            log.error(parent.toString(), e);
         }
 
     }
 
 
+    public boolean isExists(Area area){
+        boolean res = false;
+
+        String key = Key.getUrlDone();
+        res = redisDao.zScore(key, area.getUrl()) > 0;
+
+        return res;
+    }
+    public boolean setDone(Area area){
+        boolean res = false;
+
+        String key = Key.getUrlDone();
+        redisDao.zAdd(key, area.getUrl(), System.currentTimeMillis());
+        redisDao.expire(key, makeConfig.expireUrlDone);
+
+        return res;
+    }
 
 }
