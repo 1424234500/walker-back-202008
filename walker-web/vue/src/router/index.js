@@ -122,6 +122,12 @@ export const constantRoutes = [
         meta: { title: 'DeptTree', icon: 'tree' }
       },
       {
+        path: 'area',
+        name: 'Area',
+        component: () => import('@/views/user/area'),
+        meta: {title: 'Area', icon: 'list'}
+      },
+      {
         path: 'role',
         name: 'Role',
         component: () => import('@/views/user/role'),
