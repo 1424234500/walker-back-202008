@@ -71,7 +71,7 @@
         >
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-<!--            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowRole(scope.row)"></el-button>-->
+            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowRole(scope.row)"></el-button>
             <el-button size="mini" type="warning" icon="el-icon-menu" circle @click.stop="handlerShowUser(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
           </template>
@@ -138,7 +138,7 @@
           部门角色:
           <el-table
             v-loading="loadingRole"
-            :data="listRoleArea"
+            :data="listRoleDept"
             :row-class-name="tableRowClassName"
             :default-sort = "{prop: 'S_FLAG', order: 'descending'}"
             @selection-change="handlerSelectionChangeRole"
@@ -245,10 +245,10 @@ export default {
 
       loadingRole: false,
       loadingUpdateRole: false,
-      areaShowRole: {}, //当前角色用户
+      deptShowRole: {}, //当前角色用户
       colMapRole: {},
       colKeyRole: {},
-      listRoleArea: [],
+      listRoleDept: [],
       rowSelectRole: [],
 
       showDialogUser: false,
@@ -391,7 +391,7 @@ export default {
     handlerShowUser(val){
       this.showDialogUserParams =  {
         params: {
-          'AREA_ID' : val[this.colKey]
+          'DEPT_ID' : val[this.colKey]
         },
       }
       this.showDialogUser = ! this.showDialogUser
@@ -401,13 +401,13 @@ export default {
       this.areaShowRole = val
       this.loadingUpdateRole = ! this.loadingUpdateRole
       this.loadingRole = true
-      this.listRoleArea = []
+      this.listRoleDept = []
       this.get('/common/getColsMap.do', {tableName: 'W_ROLE'}).then((res) => {
         this.colMapRole = res.data.colMap
         this.colKeyRole = res.data.colKey
         var params = {ID:val.ID, S_FLAG:''}
-        this.get('/role/getAreaRoles.do', params).then((res) => {
-          this.listRoleArea = res.data.listArea
+        this.get('/role/getDeptRoles.do', params).then((res) => {
+          this.listRoleDept = res.data.listDept
           this.rowSelectRole = []
           this.loadingRole = false
           this.$nextTick(this.handlerOnShowRole)  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
@@ -423,10 +423,10 @@ export default {
     },
     //默认选中
     handlerOnShowRole(){
-      for(var i = 0; i < this.listRoleArea.length; i++){
-        if(this.listRoleArea[i].S_FLAG == '1'){
-          // this.rowSelectRole.push(this.listRoleArea[i])
-          this.$refs.multipleTableRoleUser.toggleRowSelection(this.listRoleArea[i], true)
+      for(var i = 0; i < this.listRoleDept.length; i++){
+        if(this.listRoleDept[i].S_FLAG == '1'){
+          // this.rowSelectRole.push(this.listRoleDept[i])
+          this.$refs.multipleTableRoleUser.toggleRowSelection(this.listRoleDept[i], true)
         }
       }
 
@@ -439,8 +439,8 @@ export default {
       for(var i = 0; i < this.rowSelectRole.length; i++){
         map[this.rowSelectRole[i][this.colKeyRole]] = '1'
       }
-      for(var i = 0; i < this.listRoleArea.length; i++){
-        var roleUser = this.listRoleArea[i]
+      for(var i = 0; i < this.listRoleDept.length; i++){
+        var roleUser = this.listRoleDept[i]
         var id = roleUser[this.colKeyRole]
         var newFlag = map[id] == null ? '0' : '1'
         var oldFlag = roleUser['S_FLAG']

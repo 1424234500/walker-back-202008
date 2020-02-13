@@ -9,8 +9,10 @@ import com.walker.core.cache.CacheMgr;
 import com.walker.dao.JdbcDao;
 import com.walker.dao.JobHisRepository;
 import com.walker.dao.LogInfoRepository;
+import com.walker.dao.LogTimeRepository;
 import com.walker.mode.JobHis;
 import com.walker.mode.LogInfo;
+import com.walker.mode.LogTime;
 import com.walker.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ import java.util.Set;
 public class LogServiceImpl implements LogService {
     @Autowired
     private JdbcDao jdbcDao;
+    @Autowired
+	private LogTimeRepository logTimeRepository;
 
 	private Cache<String> cache = CacheMgr.getInstance();
 
@@ -84,19 +88,28 @@ public class LogServiceImpl implements LogService {
 		Bean bean = cache.get(CACHE_KEY, new Bean());
 		Set<Object> keys = bean.keySet();
 		if(keys != null && keys.size() > 0) {
-			List<List<Object>> list = new ArrayList<>();
+			List<LogTime> list = new ArrayList<>();
+//			List<List<Object>> list = new ArrayList<>();
 			for (Object key : keys) {
 				Bean map = bean.get(key, new Bean());
-				List<Object> line = Arrays.asList(map.get("IPPORT", "localhost:8080"), LangUtil.getGenerateId(), map.get("URL"), map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME"));
-				list.add(line);
+				LogTime logTime = new LogTime();
+				logTime.setCOSTTIME(map.get("COSTTIME", "0"));
+				logTime.setCOUNT(map.get("COUNT", "0"));
+				logTime.setID(LangUtil.getGenerateId());
+				logTime.setIPPORT(map.get("IPPORT", "localhost:9080"));
+				logTime.setTIME(TimeUtil.getTimeYmdHmss());
+				logTime.setURL(map.get("URL", ""));
+//				List<Object> line = Arrays.asList(map.get("IPPORT", "localhost:8080"), LangUtil.getGenerateId(), map.get("URL"), map.get("COUNT"), TimeUtil.getTimeYmdHmss(), map.get("COSTTIME"));
+//				list.add(line);
 			}
-			Integer[] res = jdbcDao.executeSql("insert into W_LOG_TIME"
-							+ "(IPPORT, ID, URL, COUNT, TIME, COSTTIME) "
-							+ "values"
-							+ "(?, ?, ?, ?, ?, ?) "
-					, list
-			);
-			log.info("batch save static " + res);
+			logTimeRepository.saveAll(list);
+//			Integer[] res = jdbcDao.executeSql("insert into W_LOG_TIME"
+//							+ "(IPPORT, ID, URL, COUNT, TIME, COSTTIME) "
+//							+ "values"
+//							+ "(?, ?, ?, ?, ?, ?) "
+//					, list
+//			);
+			log.info("batch save static " + list.size());
 		}
 		cache.remove(CACHE_KEY);
 

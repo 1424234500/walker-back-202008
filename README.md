@@ -18,6 +18,8 @@ mvn clean install -Dmaven.test.skip=true
 8095    dubbo-port
 8096    zookeeper-port
 
+
+8098    mysql 
 8099    vue node proxy
 
 ## 编程习惯

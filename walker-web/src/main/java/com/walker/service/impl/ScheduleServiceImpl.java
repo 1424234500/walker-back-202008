@@ -63,6 +63,29 @@ class ScheduleServiceImpl implements ScheduleService {
 		start();
 		return task;
 	}
+
+	@Override
+	public Task run(Task task) throws Exception {
+		log.info("run " + task.toString());
+
+		Scheduler scheduler = getScheduler();
+		JobDetail jobDetailNew = task.getJobDetail();
+		JobKey jobKey = jobDetailNew.getKey();
+
+		JobDetail job = jobDetailNew;
+		if(scheduler.checkExists(jobKey)) {
+			JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+			job = jobDetail;
+		}
+		TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
+		triggerBuilder.withSchedule(SimpleScheduleBuilder.repeatSecondlyForTotalCount(1, 1));
+		triggerBuilder.withDescription("run now once");
+		triggerBuilder.forJob(job);
+		scheduler.scheduleJob(triggerBuilder.build());
+
+		return task;
+	}
+
 	@Override
 	public Task remove(Task task) throws Exception {
 		log.info("remove " + task.toString());
@@ -110,10 +133,9 @@ class ScheduleServiceImpl implements ScheduleService {
 	 * @return
 	 */
 	@Override
-	public Task saveTrigger(String jobName, List<String> cronOn, List<String> cronOff) throws Exception {
-		log.info("saveTrigger " + jobName + " on:" + cronOff + " off:" + cronOn);
+	public Task saveTrigger(Task task, List<String> cronOn, List<String> cronOff) throws Exception {
+		log.info("saveTrigger " + task + " on:" + cronOff + " off:" + cronOn);
 		Scheduler scheduler = getScheduler();
-		Task task = new Task().setClassName(jobName);
 		JobDetail jobDetailNew = task.getJobDetail();
 //		List<Trigger> triggerList = task.getTriggers();
 		JobKey jobKey = jobDetailNew.getKey();
@@ -136,7 +158,7 @@ class ScheduleServiceImpl implements ScheduleService {
 			}
 
 		} else {
-			throw new RuntimeException("the job " + jobName + " is not exists ");
+			throw new RuntimeException("the job " + task + " is not exists ");
 		}
 		return task;
 	}

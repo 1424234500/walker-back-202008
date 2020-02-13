@@ -5,7 +5,7 @@ import com.walker.common.util.FileUtil;
 import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Watch;
-import com.walker.config.Config;
+import com.walker.service.Config;
 import com.walker.dao.JdbcDao;
 import com.walker.util.RequestUtil;
 import com.walker.mode.FileIndex;

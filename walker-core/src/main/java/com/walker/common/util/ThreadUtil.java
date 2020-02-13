@@ -73,7 +73,7 @@ public class ThreadUtil {
 	/**
 	 * ThreadPoolUtils构造函数
 	 * @param type         线程池类型
-	 * @param corePoolSize 只对Fixed和Scheduled线程池起效
+//	 * @param corePoolSize 只对Fixed和Scheduled线程池起效
 	 */
 	public static ExecutorService getExecutorServiceInstance(Type type) {
 		return getExecutorServiceInstance(type, CacheMgr.getInstance().get("corePoolSize", 5));
@@ -134,9 +134,9 @@ public class ThreadUtil {
 	 * @param type ThreadHelp.
 	 * @param runnables 命令
 	 */
-	public static void execute(Type type, List<Runnable> runables) {
+	public static void execute(Type type, List<Runnable> runnables) {
 		ExecutorService exec = getExecutorServiceInstance(type);
-	    for (Runnable runable : runables) {
+	    for (Runnable runable : runnables) {
 	        exec.execute(runable);
 	    }
 	}

@@ -47,6 +47,10 @@ public class Task {
 		pattern = new HashSet<>();
 		trigger = new ArrayList<>();
 	}
+	public Task(String id){
+		this();
+		this.id = id;
+	}
 	/**
 	 * 构造一个任务
 	 * new Task("util.scheduler.job.JobTest","quartz scheduler tools out", "");
@@ -82,8 +86,9 @@ public class Task {
 	 *
 	 *
 	 */
-	public Task(String className, String about, String...crons){
+	public Task(String id, String className, String about, String...crons){
 		this();
+		this.id = id;
 		this.className = className;
 		this.about = about;
 		if(crons.length > 0) {
@@ -106,11 +111,13 @@ public class Task {
 
 	@SuppressWarnings("unchecked")
 	public JobDetail getJobDetail(){
-		String name = this.className;
-		Class<? extends Job> clz = (Class<? extends Job>) ClassUtil.loadClass(className);
+		Class<? extends Job> clz = null;
+		if(className != null && className.length() > 0) {
+			clz = (Class<? extends Job>) ClassUtil.loadClass(className);
+		}
 		this.jobDetail = JobBuilder
 			.newJob (clz)
-			.withIdentity(name)	//主键
+			.withIdentity(this.id)	//主键
 			.withDescription(this.about)
 			.storeDurably()	//持久化
 			.build();
@@ -160,6 +167,14 @@ public class Task {
 		return sb.toString();
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public Task setId(String id) {
+		this.id = id;
+		return this;
+	}
 
 	public String getClassName() {
 		return className;

@@ -1,6 +1,8 @@
 package com.walker.mode;
 
 
+import com.walker.service.Config;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -53,13 +55,18 @@ public class Role implements Cloneable,Serializable{
                 '}';
     }
 
-
+    /**
+     * 前缀标识  Dept Area User
+     */
+    public final static String prefix = "R_";
 
     public String getID() {
         return ID;
     }
 
     public Role setID(String ID) {
+        ID = Config.makePrefix(prefix, ID);
+
         this.ID = ID;
         return this;
     }

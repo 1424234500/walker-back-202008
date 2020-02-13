@@ -1,6 +1,8 @@
 package com.walker.config;
 
+import com.walker.common.util.TimeUtil;
 import com.walker.dao.RedisDao;
+import com.walker.mode.Key;
 import com.walker.mode.User;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
@@ -190,12 +192,16 @@ public class ShiroConfig {
     }
     /**
      * 保存在线用户 token 放入redis缓存
-     * @param token
      * @param user
      */
-    public void onlineUser(String token, User user) {
+    public String onlineUser(User user) {
+        String token = Key.getLoginToken( user.getID() + ":" + TimeUtil.getTimeSequence());
+
         redisDao.set(token, user, sessionRedisExpiration);
+
         Context.getRequest().getSession().setAttribute("TOKEN",token);
+
+        return token;
     }
     /**
      * 刷新在线用户 token 放入redis缓存

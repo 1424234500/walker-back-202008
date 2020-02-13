@@ -6,6 +6,7 @@ import com.walker.common.util.TimeUtil;
 import com.walker.config.Context;
 import com.walker.config.ShiroConfig;
 import com.walker.dao.RedisDao;
+import com.walker.mode.Key;
 import com.walker.mode.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -82,11 +83,9 @@ public class ShiroController {
 //            SecurityUtils.getSubject().login(token);
 //            WebUser webUser = (WebUser) SecurityUtils.getSubject().getPrincipal();//登录成功之后，取出用户信息放进session存储域
 
-        String token = "T:" + username + ":" + TimeUtil.getTimeSequence();
-
         User user = new User().setNAME(username).setID(username).setPWD(password).setSIGN("sign");
 
-        shiroConfig.onlineUser(token, user);
+        String token = shiroConfig.onlineUser(user);
 
         Map<String, Object> res = new HashMap<>();
         res.put("USER", user);

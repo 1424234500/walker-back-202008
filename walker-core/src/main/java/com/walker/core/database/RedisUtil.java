@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.SerializeUtil;
 import com.walker.common.util.Tools;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
- 
+import redis.clients.jedis.exceptions.JedisException;
+
 /**
  * jedis设置存取 抽离
  * @author walker
@@ -241,13 +243,85 @@ public  class RedisUtil   {
 
 		out("--------------------------------------");
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+	public static String lockWithTimeout(Jedis jedis, String lockName, long acquireTimeout, long timeout) {
+		String key_identifier = null;
+		try {
+			String identifier = Thread.currentThread().getName() + ":" + LangUtil.getUUID(); // Thread
+			// just
+			// for
+			// debug
+			String lockKey = "lock:" + lockName;
+			int lockExpire = (int) (timeout / 1000);
+			long end = System.currentTimeMillis() + acquireTimeout;
+			while (System.currentTimeMillis() < end) {
+				if (jedis.setnx(lockKey, identifier) == 1) {// execute
+					// successfully will
+					// return "1"
+					jedis.expire(lockKey, lockExpire);
+					key_identifier = identifier;
+					System.out.println(Thread.currentThread().getName() + "  获取锁:"+key_identifier);
+					return key_identifier;
+				}
+				if (jedis.ttl(lockKey) == -1) {
+					jedis.expire(lockKey, lockExpire);
+				}
+				long lockKey_ttl = jedis.ttl(lockKey);
+				try {
+					out(Thread.currentThread().getName()
+							+ "  lock_withTimeout获取锁竞争失败，休息1秒，继续尝试获取,锁ttl剩余：" + lockKey_ttl);
+
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			}
+			out(Thread.currentThread().getName() + "  获取redis连接失败，放弃获取锁");
+		} catch (Exception e) {
+			out(Thread.currentThread().getName() + "  获取锁发生异常");
+			e.printStackTrace();
+		} finally {
+		}
+		return key_identifier;
+	}
+
+	public static boolean lockRelease(Jedis jedis, String lockName, String identifier) {
+		String lockKey = "lock:" + lockName;
+		boolean retFlag = false;
+		String _temp_identifier_from_redis = "";
+		try {
+			while (true) {
+				jedis.watch(lockKey);
+				_temp_identifier_from_redis = jedis.get(lockKey);
+				if (_temp_identifier_from_redis == null || "".equals(_temp_identifier_from_redis)) {
+					out(Thread.currentThread().getName() + "  锁已过期失效失效");
+				} else if (identifier.equals(_temp_identifier_from_redis)) {
+					long del_result = jedis.del(lockKey);
+					if (del_result == 1) {
+						out(Thread.currentThread().getName() + "  完成任务，释放锁");
+						retFlag = true;
+					} else {
+						out(Thread.currentThread().getName() + "  释放锁失败，锁已提前释放");
+						//continue;
+					}
+				} else {
+					out(Thread.currentThread().getName() + "  锁已过期失效，被污染");
+				}
+				jedis.unwatch();
+				break;
+			}
+		} catch (JedisException e) {
+			e.printStackTrace();
+		} finally {
+
+		}
+		return retFlag;
+	}
+
+
+
 	public static  void out(Object...objs){
 		Tools.out(objs);
 	}

@@ -29,7 +29,7 @@ import java.util.List;
 @Api(value = "service层 DEPT 实体类对象 ")
 @Controller
 @RequestMapping("/dept")
-public class DeptController {
+public class  DeptController {
     private Logger log = LoggerFactory.getLogger(getClass());
     @Autowired
     @Qualifier("baseService")
@@ -48,8 +48,8 @@ public class DeptController {
             @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "0") String sFlag,
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
-            @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid,
-            @RequestParam(value = "PATH", required = false, defaultValue = "") String path
+            @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid
+//            @RequestParam(value = "PATH", required = false, defaultValue = "") String path
 
             ) {
         Dept dept = new Dept();
@@ -59,7 +59,7 @@ public class DeptController {
         dept.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
         dept.setNAME(name);
         dept.setP_ID(pid);
-        dept.setPATH(path);
+//        dept.setPATH(path);
 
         String info = "post dept:" +dept.toString();
         List<Dept> res = deptService.saveAll(Arrays.asList(dept));
@@ -99,7 +99,6 @@ public class DeptController {
     public Response findPage(
             @RequestParam(value = "ID", required = false, defaultValue = "") String id,
             @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
-            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
 
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
@@ -122,7 +121,6 @@ public class DeptController {
         Dept dept = new Dept();
         dept.setID(id);
         dept.setS_MTIME(sMtime);
-//        dept.setS_ATIME(sAtime);
         dept.setS_FLAG(sFlag);
         dept.setNAME(name);
         dept.setP_ID(pid);

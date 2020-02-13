@@ -1,8 +1,7 @@
 package com.walker.listener;
 
-import com.walker.config.Config;
+import com.walker.service.Config;
 import com.walker.service.InitService;
-import com.walker.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

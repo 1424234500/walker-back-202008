@@ -3,6 +3,7 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Bean;
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.Page;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
@@ -51,21 +52,43 @@ public class QuartzController {
     @Qualifier("scheduleService")
     private ScheduleService scheduleService;
 
+    @ApiOperation(value = "立即执行任务", notes = "now")
+    @ResponseBody
+    @RequestMapping(value = "/run.do", method = RequestMethod.GET)
+    public Response run(
+            @RequestParam(value = "JOB_NAME", required = true, defaultValue = "") String jobName,
+            @RequestParam(value = "JOB_CLASS_NAME", required = true, defaultValue = "") String jobClassName,
+            @RequestParam(value = "DESCRIPTION", required = false, defaultValue = "") String description
+    ) throws Exception {
+        if(jobName.length() == 0){
+            jobName = LangUtil.getGenerateId();
+        }
+        Task task = null;
+        task = new Task(jobName, jobClassName, description);
+        task = scheduleService.run(task);
+        return Response.makeTrue("", task);
+    }
+
+
     @ApiOperation(value = "保存任务", notes = "通用存储")
     @ResponseBody
     @RequestMapping(value = "/save.do", method = RequestMethod.POST)
     public Response save(
             @RequestParam(value = "JOB_NAME", required = true, defaultValue = "") String jobName,
-            @RequestParam(value = "DESCRIPTION", required = false, defaultValue = "") String description,
-            @RequestParam(value = "CRON_EXPRESSION", required = false, defaultValue = "") String cronExpression
+            @RequestParam(value = "JOB_CLASS_NAME", required = true, defaultValue = "") String jobClassName,
+            @RequestParam(value = "DESCRIPTION", required = false, defaultValue = "") String description
+//            @RequestParam(value = "CRON_EXPRESSION", required = false, defaultValue = "") String cronExpression
 
     ) throws Exception {
-        Task task = null;
-        if(cronExpression.length() > 0){
-            task = new Task(jobName, description, cronExpression);
-        }else{
-            task = new Task(jobName, description);
+        if(jobName.length() == 0){
+            jobName = LangUtil.getGenerateId();
         }
+        Task task = null;
+//        if(cronExpression.length() > 0){
+//            task = new Task(jobName, description, cronExpression);
+//        }else{
+            task = new Task(jobName, jobClassName, description);
+//        }
         task = scheduleService.save(task);
         return Response.makeTrue("", task);
     }
@@ -74,6 +97,7 @@ public class QuartzController {
     @RequestMapping(value = "/saveTriggers.do", method = RequestMethod.GET)
     public Response saveTriggers(
             @RequestParam(value = "JOB_NAME", required = true, defaultValue = "") String jobName,
+            @RequestParam(value = "JOB_CLASS_NAME", required = true, defaultValue = "") String jobClassName,
             @RequestParam(value = "ON", required = false, defaultValue = "") String on,
             @RequestParam(value = "OFF", required = false, defaultValue = "") String off
     ) throws Exception {
@@ -86,7 +110,8 @@ public class QuartzController {
         if(jobName.length() == 0){
             return Response.makeFalse(info + " job is null ");
         }
-        Task task = scheduleService.saveTrigger(jobName, listOn, listOff);
+        Task task = new Task().setId(jobName).setClassName(jobClassName);
+        scheduleService.saveTrigger(task, listOn, listOff);
 
         return Response.makeTrue(info, task);
     }
@@ -103,7 +128,7 @@ public class QuartzController {
         String jobNames[] = jobName.split(",");
         List<Task> res = new ArrayList<>();
         for(String clz : jobNames) {
-            Task task = new Task(jobName, "");
+            Task task = new Task(jobName);
             task = scheduleService.remove(task);
             res.add(task);
         }
@@ -114,6 +139,7 @@ public class QuartzController {
     @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)
     public Response findPage(
             @RequestParam(value = "JOB_NAME", required = false, defaultValue = "") String jobName,
+            @RequestParam(value = "JOB_CLASS_NAME", required = false, defaultValue = "") String jobClassName,
             @RequestParam(value = "DESCRIPTION", required = false, defaultValue = "") String description,
 
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
@@ -127,6 +153,10 @@ public class QuartzController {
         if(jobName != null && jobName.length() > 0) {
             sb.append("and JOB_NAME like ? ");
             args.add("%" + jobName  + "%");
+        }
+        if(jobName != null && jobClassName.length() > 0) {
+            sb.append("and JOB_CLASS_NAME like ? ");
+            args.add("%" + jobClassName  + "%");
         }
         if(description != null && description.length() > 0) {
             sb.append("and DESCRIPTION like ? ");

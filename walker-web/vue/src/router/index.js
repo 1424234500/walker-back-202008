@@ -133,6 +133,18 @@ export const constantRoutes = [
         component: () => import('@/views/user/role'),
         meta: {title: 'Role', icon: 'theme'}
       },
+      {
+          path: 'area',
+          name: 'Area',
+          component: () => import('@/views/user/area'),
+          meta: {title: 'Area', icon: 'list'}
+      },
+      {
+        path: 'areatree',
+        name: 'AreaTree',
+        component: () => import('@/views/user/areatree'),
+        meta: { title: 'AreaTree', icon: 'tree' }
+      },
       // {
       //   path: 'roleuser',
       //   name: 'RoleUser',

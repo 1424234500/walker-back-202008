@@ -67,6 +67,9 @@
 
 
 
+    <!--    调度类型 触发 异步 耗时操作-->
+    <dubbo:reference id="syncService" interface="com.walker.service.SyncService" timeout="30000" version="1.0" />
+
 
 
 <!--    消息表服务 手动分表-->

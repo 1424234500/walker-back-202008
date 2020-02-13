@@ -4,7 +4,6 @@ import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
 import com.walker.config.Config;
 import com.walker.dao.AreaRepository;
-import com.walker.dao.RoleUserRepository;
 import com.walker.mode.Area;
 import com.walker.service.AreaService;
 import org.apache.commons.lang3.StringUtils;
@@ -41,26 +40,35 @@ public class AreaServiceImpl implements AreaService {
             if(obj.getP_ID() != null)   //可能没有上级
                 pids.add(obj.getP_ID());
         }
-        List<Area> pobjs = pids.size() > 0 ? areaRepository.findAllByID(pids) : new ArrayList<>();    //查找出所有上级
-        Map<String, Area> index = new HashMap<>();
+        Map<String, Area> index = new LinkedHashMap<>();
+
+        //1.上级在表中
+        List<Area> pobjs = pids.size() > 0 ? areaRepository.findAllByID(pids) : new ArrayList<>();
         for(Area obj : pobjs){
             index.put(obj.getID(), obj);
         }
+        //2.上级在list中
+        for(Area obj : objs){
+            index.put(obj.getID(), obj);
+        }
+
 
         List<Area> oks = new ArrayList<>();
         for(Area obj : objs){
-            if(obj.getP_ID() != null && obj.getP_ID().length() > 0){
+            if(obj.getP_ID() != null && obj.getP_ID().length() > 0 && ! obj.getP_ID().equals(obj.getID())){
                 Area pobj = index.get(obj.getP_ID());
-                if(pobj == null){//表中 上级不存在
+                if(pobj == null){//表中或list中 上级不存在
                     log.error("try save area not exists pid " + obj);
                 }else{//上级存在 复用机构树
-                    obj.setPATH(pobj.getPATH() + "," + obj.getID());
-                    obj.setPATH_NAME(pobj.getPATH_NAME() + "/" + obj.getNAME());
+                    if(obj.getPATH()==null || obj.getPATH().length() == 0) {
+                        obj.setPATH(pobj.getPATH() + "/" + obj.getID());
+                        obj.setPATH_NAME(pobj.getPATH_NAME() + "/" + obj.getNAME());
+                    }
                     oks.add(obj);
                 }
             }else{//无上级 root
-                obj.setPATH(obj.getID());
-                obj.setPATH_NAME(obj.getNAME());
+                obj.setPATH("/" + obj.getID());
+                obj.setPATH_NAME("/" + obj.getNAME());
                 oks.add(obj);
             }
         }
@@ -68,6 +76,9 @@ public class AreaServiceImpl implements AreaService {
             if(StringUtils.isEmpty(obj.getS_MTIME())){
                 obj.setS_MTIME(TimeUtil.getTimeYmdHms());
             }
+//            if(obj.getLEVEL() < 0){
+//                obj.setLEVEL(obj.getPATH().split("/").length + "");
+//            }
         }
 
         return areaRepository.saveAll(oks);
@@ -137,6 +148,9 @@ public class AreaServiceImpl implements AreaService {
                 }
                 if (StringUtils.isNotEmpty(obj.getPATH_NAME())) {
                     list.add(criteriaBuilder.like(root.get("PATH_NAME"), "%" + obj.getPATH_NAME() + "%"));
+                }
+                if (StringUtils.isNotEmpty(obj.getCODE())) {
+                    list.add(criteriaBuilder.like(root.get("CODE"), "%" + obj.getCODE() + "%"));
                 }
                 return criteriaBuilder.and(list.toArray(new Predicate[0]));
             }

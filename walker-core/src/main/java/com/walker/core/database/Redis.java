@@ -19,8 +19,12 @@ import redis.clients.jedis.*;
  *
  */
 public class Redis  extends TestAdapter{ 
-	protected static Logger log = Logger.getLogger(Redis.class); 
+	protected static Logger log = Logger.getLogger(Redis.class);
 	String host;
+	int port;
+	String password;
+	int timeout;
+	int database;
 	JedisPoolConfig config;
 	/**
 	 * 连接数计数器
@@ -113,10 +117,14 @@ public class Redis  extends TestAdapter{
 		config.setTestOnCreate(true);
 		config.setBlockWhenExhausted(true);
 
-        host = cache.get("redis_host", "localhost");
-        
-		pool = new JedisPool(config, host);
- 
+		host = cache.get("redis_host", "localhost");
+		port = cache.get("redis_port", 6379);
+		timeout = cache.get("redis_timeout", 10000);
+		password = cache.get("redis_password", "");
+		database = cache.get("redis_database", 0);
+
+//  public JedisPool(final GenericObjectPoolConfig poolConfig, final String host, int port, int timeout, final String password, final int database) {
+		pool = new JedisPool(config, host, port, timeout, password, database);
 		log.info("redis init ----------------------- " + cc++);
 		test();
 		log.info(this.toString());

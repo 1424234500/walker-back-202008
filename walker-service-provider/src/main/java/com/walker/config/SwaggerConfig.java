@@ -1,6 +1,7 @@
 package com.walker.config;
 
 
+import com.walker.service.Config;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

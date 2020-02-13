@@ -57,7 +57,7 @@ public class PluginMgr {
 //		初始化定时任务计算qps
 		Scheduler sch = SchedulerMgr.getInstance();
 		try {
-			sch.add(new Task("com.walker.socket.server_1.job.JobQpsMinute", "calc each minute qps job", "0 * * * * ?"));
+			sch.add(new Task("job_sys_JobQpsMinute", "com.walker.socket.server_1.job.JobQpsMinute", "calc each minute qps job", "0 * * * * ?"));
 //			sch.add(new Task("util.socket.server_1.job.JobQpsHour", "calc each Hour qps job", "0 0 * * * ?"));
 		} catch (Exception e) {
 			e.printStackTrace();

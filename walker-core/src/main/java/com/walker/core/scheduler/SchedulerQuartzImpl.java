@@ -65,6 +65,12 @@ class SchedulerQuartzImpl implements com.walker.core.scheduler.Scheduler {
 		start();
 		return task;
 	}
+
+	@Override
+	public Task run(Task task) throws Exception {
+		return null;
+	}
+
 	@Override
 	public Task remove(Task task) throws Exception {
 		log.info("remove " + task.toString());
@@ -112,10 +118,9 @@ class SchedulerQuartzImpl implements com.walker.core.scheduler.Scheduler {
 	 * @return
 	 */
 	@Override
-	public Task saveTrigger(String jobName, List<String> cronOn, List<String> cronOff) throws Exception {
-		log.info("saveTrigger " + jobName + " on:" + cronOff + " off:" + cronOn);
+	public Task saveTrigger(Task task, List<String> cronOn, List<String> cronOff) throws Exception {
+		log.info("saveTrigger " + task + " on:" + cronOff + " off:" + cronOn);
 		Scheduler scheduler = getScheduler();
-		Task task = new Task().setClassName(jobName);
 		JobDetail jobDetailNew = task.getJobDetail();
 //		List<Trigger> triggerList = task.getTriggers();
 		JobKey jobKey = jobDetailNew.getKey();
@@ -138,7 +143,7 @@ class SchedulerQuartzImpl implements com.walker.core.scheduler.Scheduler {
 			}
 
 		} else {
-			throw new RuntimeException("the job " + jobName + " is not exists ");
+			throw new RuntimeException("the job " + task + " is not exists ");
 		}
 		return task;
 	}

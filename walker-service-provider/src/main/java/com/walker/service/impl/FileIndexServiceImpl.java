@@ -3,22 +3,16 @@ package com.walker.service.impl;
 import com.walker.common.util.Page;
 import com.walker.config.Config;
 import com.walker.dao.FileIndexRepository;
-import com.walker.dao.FileIndexRepository;
 import com.walker.mode.FileIndex;
-import com.walker.service.FileIndexService;
 import com.walker.service.FileIndexService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

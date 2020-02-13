@@ -1,12 +1,12 @@
 package com.walker.config;
 
 
+import com.walker.service.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
@@ -22,6 +22,16 @@ public class MakeConfig {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
+    /**
+     * 同步 部分已同步 记录 过期时间 url:done 10d
+     */
+    @Value("${expire.url.done:864000}")
+    public Long expireUrlDone;
+    /**
+     * 同步 锁过期时间 10h
+     */
+    @Value("${expire.lock.redis.sync.area:36000}")
+    public Long expireLockRedisSyncArea;
 
     @Value("${push.jpush.APP_KEY}")
     public String pushJpushAppKey;

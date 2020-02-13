@@ -26,7 +26,7 @@ import java.util.List;
 测试 jap areaService
 
  */
-@Api(value = "service层 DEPT 实体类对象 ")
+@Api(value = "controller层 Area 实体类对象 ")
 @Controller
 @RequestMapping("/area")
 public class AreaController {
@@ -45,11 +45,9 @@ public class AreaController {
     public Response save(
             @RequestParam(value = "ID", required = false, defaultValue = "") String id,
             @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
-            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "0") String sFlag,
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
-            @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid,
-            @RequestParam(value = "PATH", required = false, defaultValue = "") String path
+            @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid
 
             ) {
         Area area = new Area();
@@ -59,7 +57,6 @@ public class AreaController {
         area.setS_FLAG(sFlag.equalsIgnoreCase("1") ? "1" : "0");
         area.setNAME(name);
         area.setP_ID(pid);
-        area.setPATH(path);
 
         String info = "post area:" +area.toString();
         List<Area> res = areaService.saveAll(Arrays.asList(area));
@@ -70,7 +67,7 @@ public class AreaController {
     @ResponseBody
     @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
     public Response delet(
-            @RequestParam(value = "ids", required = true, defaultValue = "") String ids
+            @RequestParam(value = "ID", required = true, defaultValue = "") String ids
     ) {
         String info = "delete ids:" + ids;
         if(ids == null || ids.length() <= 0)
@@ -83,7 +80,7 @@ public class AreaController {
     @ResponseBody
     @RequestMapping(value = "/get.do", method = RequestMethod.GET)
     public Response get(
-            @RequestParam(value = "id", required = true) String id
+            @RequestParam(value = "ID", required = true) String id
     ) {
         String info = "get id:" + id;
         Area model = areaService.get(new Area().setID(id));
@@ -99,7 +96,6 @@ public class AreaController {
     public Response findPage(
             @RequestParam(value = "ID", required = false, defaultValue = "") String id,
             @RequestParam(value = "S_MTIME", required = false, defaultValue = "") String sMtime,
-            @RequestParam(value = "S_ATIME", required = false, defaultValue = "") String sAtime,
             @RequestParam(value = "S_FLAG", required = false, defaultValue = "") String sFlag,
 
             @RequestParam(value = "NAME", required = false, defaultValue = "") String name,
@@ -107,6 +103,9 @@ public class AreaController {
             @RequestParam(value = "P_ID_NULL", required = false, defaultValue = "false") String pidNull,
             @RequestParam(value = "P_ID", required = false, defaultValue = "") String pid,
             @RequestParam(value = "PATH", required = false, defaultValue = "") String path,
+            @RequestParam(value = "PATH_NAME", required = false, defaultValue = "") String pathName,
+            @RequestParam(value = "CODE", required = false, defaultValue = "") String code,
+            @RequestParam(value = "LEVEL", required = false, defaultValue = "") String level,
 
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
@@ -122,11 +121,13 @@ public class AreaController {
         Area area = new Area();
         area.setID(id);
         area.setS_MTIME(sMtime);
-//        area.setS_ATIME(sAtime);
         area.setS_FLAG(sFlag);
         area.setNAME(name);
         area.setP_ID(pid);
         area.setPATH(path);
+        area.setPATH_NAME(pathName);
+        area.setCODE(code);
+        area.setLEVEL(level);
 
         String info = "get   area:" + area;
 

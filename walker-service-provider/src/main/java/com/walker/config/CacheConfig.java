@@ -3,6 +3,7 @@ package com.walker.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.walker.service.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +75,7 @@ public class CacheConfig extends CachingConfigurerSupport {
      */
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        log.info(Config.getPre() + "redisTemplate " );
+        log.info(com.walker.service.Config.getPre() + "redisTemplate " );
 
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
@@ -102,7 +103,7 @@ public class CacheConfig extends CachingConfigurerSupport {
      */
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        log.info(Config.getPre() + "cacheManager " +  redisDefaultExpiration);
+        log.info(com.walker.service.Config.getPre() + "cacheManager " +  redisDefaultExpiration);
 
 //        RedisCacheManager cacheManager = RedisCacheManager.create(factory);
 //        return cacheManager;

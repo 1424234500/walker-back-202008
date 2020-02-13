@@ -63,6 +63,8 @@
             {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
           </template>
         </el-table-column>
+
+
         <el-table-column
           label="操作"
           show-overflow-tooltip
@@ -74,8 +76,12 @@
             <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowTrigger(scope.row)"></el-button>
             <el-button size="mini" type="warning" icon="el-icon-search" circle @click.stop="handlerHis(scope.row)"></el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            <el-button size="mini" type="primary" @click.stop="handlerRun(scope.row)">立即执行</el-button>
+
           </template>
         </el-table-column>
+
+
       </el-table>
 
       <el-button
@@ -282,16 +288,16 @@ export default {
         delete this.colMap.JOB_DATA
         delete this.colMap.SCHED_NAME
         delete this.colMap.JOB_GROUP
-        delete this.colMap.JOB_CLASS_NAME
         delete this.colMap.IS_DURABLE
         delete this.colMap.IS_NONCONCURRENT
         delete this.colMap.IS_UPDATE_DATA
         delete this.colMap.REQUESTS_RECOVERY
 
-        this.colMap['CRON_EXPRESSION'] = '触发器cron'
+        //this.colMap['CRON_EXPRESSION'] = '触发器cron'
 
         this.colMapShow = {}
         this.colMapShow['JOB_NAME'] = this.colMap['JOB_NAME']
+        this.colMapShow['JOB_CLASS_NAME'] = this.colMap['JOB_CLASS_NAME']
         this.colMapShow['DESCRIPTION'] = this.colMap['DESCRIPTION']
         // this.colMapShow['STATUS'] = '状态'
 
@@ -364,6 +370,18 @@ export default {
       newObj["S_FLAG"] = '1'  //需要保存
       this.listTrigger.push(newObj)
       this.$nextTick(this.handlerOnShowTrigger())  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
+    },
+    //立即操作
+    handlerRun(val) {
+      console.info("handlerRun " + JSON.stringify(val))
+      this.loadingList = true
+      this.get('/quartz/run.do', val).then((res) => {
+        this.info = res.info
+        this.loadingList = false
+      }).catch(() => {
+        this.loadingList = false
+      })
+
     },
     //修改单行 展示弹框
     handlerChange(val) {
@@ -540,10 +558,12 @@ export default {
       }
 
       if(listOn.length > 0 || listOff.length > 0){
-        var params = {}
-        params[this.colKey] = this.showTrigger[this.colKey]
+        //console.info(this.showTrigger)
+        var params = Object.assign({}, this.showTrigger)
+        //debugger
         params['ON'] =  listOn.join(",")
         params['OFF'] = listOff.join(",")
+
         this.get('/quartz/saveTriggers.do', params).then((res) => {
           this.loadingTrigger = false
           // this.loadingUpdateTrigger = false
