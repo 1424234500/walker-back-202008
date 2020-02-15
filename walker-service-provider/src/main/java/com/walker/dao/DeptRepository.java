@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * sharding 分库 & 分表
@@ -35,13 +36,13 @@ public interface DeptRepository extends JpaRepository<Dept, String>, JpaSpecific
     @Transactional
     @Modifying
     @Query("delete from Dept t where t.ID in (?1) ")
-    Integer selfDeleteAll(List<String> ids);
+    Integer selfDeleteAll(Set<String> ids);
 
     @Query("select t from Dept t where t.ID in (?1) ")
-    List<Dept> findAllByID(List<String> ids);
+    List<Dept> findAllByID(Set<String> ids);
 
     @Query("select t from Dept t where t.P_ID in (?1) ")
-    List<Dept> findAllByP_ID(List<String> pids);
+    List<Dept> findAllByP_ID(Set<String> pids);
 
 
     @Query("select t from Dept t where t.PATH like CONCAT('%', ?1, '%') ")

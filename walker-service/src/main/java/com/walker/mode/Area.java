@@ -57,7 +57,7 @@ public class Area implements Cloneable,Serializable {
     @Column(name = "ID", columnDefinition = "varchar(32) default '' comment '主键' ")
     private String ID;
     @Column(name = "S_MTIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
-    private String S_MTIME = TimeUtil.getTimeYmdHmss();
+    private String S_MTIME;
 //    @Column(name = "S_ATIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '添加时间' ")
 //    private String S_ATIME;
     @Column(name = "S_FLAG", columnDefinition = "varchar(4) default '0' comment '1是0否' ")

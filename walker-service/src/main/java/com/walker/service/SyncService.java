@@ -24,13 +24,32 @@ public interface SyncService {
      */
     Bean syncDept(Bean args);
 
-
     /**
      * 高耗时 初始化信息 异步
      * @param args
      */
     Bean syncUser(Bean args);
 
+
+    /**
+     * 高耗时 初始化信息 异步
+     * @param args
+     */
+    Bean makeUser(Bean args);
+
+
+    /**
+     * 高耗时 初始化信息 异步
+     * @param args
+     */
+    Bean makeDept(Bean args);
+
+
+    /**
+     * 高耗时 初始化信息 异步
+     * @param args
+     */
+    Bean makeRole(Bean args);
 
 
 }

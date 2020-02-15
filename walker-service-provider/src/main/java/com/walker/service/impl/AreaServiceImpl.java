@@ -124,7 +124,7 @@ public class AreaServiceImpl implements AreaService {
 
                 List<Predicate> list = new ArrayList<>();
                 if (StringUtils.isNotEmpty(obj.getID())) {
-                    list.add(criteriaBuilder.like(root.get("ID"), "%" + obj.getID() + "%"));
+                    list.add(criteriaBuilder.like(root.get("ID"), obj.getID() + "%"));
                 }
                 if (StringUtils.isNotEmpty(obj.getS_MTIME())) {
                     list.add(criteriaBuilder.greaterThan(root.get("S_MTIME"), obj.getS_MTIME()));
@@ -133,7 +133,7 @@ public class AreaServiceImpl implements AreaService {
                     list.add(criteriaBuilder.equal(root.get("S_FLAG"), obj.getS_FLAG()));
                 }
 
-                if (StringUtils.isNotEmpty(""+obj.getLEVEL())) {
+                if (StringUtils.isNotEmpty(obj.getLEVEL())) {
                     list.add(criteriaBuilder.equal(root.get("LEVEL"), obj.getLEVEL()));
                 }
 
@@ -141,16 +141,16 @@ public class AreaServiceImpl implements AreaService {
                     list.add(criteriaBuilder.like(root.get("NAME"), "%" + obj.getNAME() + "%"));
                 }
                 if (StringUtils.isNotEmpty(obj.getP_ID())) {
-                    list.add(criteriaBuilder.like(root.get("P_ID"), "%" + obj.getP_ID() + "%"));
+                    list.add(criteriaBuilder.equal(root.get("P_ID"), obj.getP_ID()));
                 }
                 if (StringUtils.isNotEmpty(obj.getPATH())) {
-                    list.add(criteriaBuilder.like(root.get("PATH"), "%" + obj.getPATH() + "%"));
+                    list.add(criteriaBuilder.like(root.get("PATH"), obj.getPATH() + "%"));
                 }
                 if (StringUtils.isNotEmpty(obj.getPATH_NAME())) {
                     list.add(criteriaBuilder.like(root.get("PATH_NAME"), "%" + obj.getPATH_NAME() + "%"));
                 }
                 if (StringUtils.isNotEmpty(obj.getCODE())) {
-                    list.add(criteriaBuilder.like(root.get("CODE"), "%" + obj.getCODE() + "%"));
+                    list.add(criteriaBuilder.like(root.get("CODE"), obj.getCODE() + "%"));
                 }
                 return criteriaBuilder.and(list.toArray(new Predicate[0]));
             }
@@ -161,20 +161,21 @@ public class AreaServiceImpl implements AreaService {
     public Integer[] deleteAll(List<String> ids) {
         Integer[] res = new Integer[ids.size()];
         int i = 0;
-        for(String areaId : ids) {
-            List<Area> areas = areaRepository.findAllByPATH(areaId);
-            Set<String> areaIds = new LinkedHashSet<>();
-            areaIds.add(areaId);
-            for(Area obj : areas){
-                areaIds.add(obj.getID());
-            }
-            int cc = 0;
-            if(areaIds.size() > 0) {
-                cc = areaRepository.selfDeleteAll(areaIds);
-            }
-            res[i++] = cc;
-
-        }
+        areaRepository.selfDeleteAll(new HashSet<>(ids));
+//        for(String areaId : ids) {
+//            List<Area> areas = areaRepository.findAllByPATH(areaId);
+//            Set<String> areaIds = new LinkedHashSet<>();
+//            areaIds.add(areaId);
+//            for(Area obj : areas){
+//                areaIds.add(obj.getID());
+//            }
+//            int cc = 0;
+//            if(areaIds.size() > 0) {
+//                cc = areaRepository.selfDeleteAll(areaIds);
+//            }
+//            res[i++] = cc;
+//
+//        }
         return res;
     }
 }

@@ -17,10 +17,11 @@
             v-model="rowSearch[key]"
           />
         </div>
-
-        <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        <el-button-group>
+          <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+          <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+          <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        </el-button-group>
       </form>
     </div>
 
@@ -67,13 +68,15 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="180px"
+          min-width="161px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowRole(scope.row)"></el-button>
-            <el-button size="mini" type="warning" icon="el-icon-menu" circle @click.stop="handlerShowUser(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            <el-button-group>
+              <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+              <el-button size="mini" type="success" @click.stop="handlerShowRole(scope.row)">R</el-button>
+              <el-button size="mini" type="warning" @click.stop="handlerShowUser(scope.row)">U</el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -122,8 +125,10 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="handlerSave()">确定</el-button>
-              <el-button type="danger" @click="handlerCancel()">取消</el-button>
+              <el-button-group>
+                <el-button type="primary" @click="handlerSave()">确定</el-button>
+                <el-button type="danger" @click="handlerCancel()">取消</el-button>
+              </el-button-group>
             </el-form-item>
           </el-form>
         </template>
@@ -183,11 +188,11 @@
       </el-dialog>
 
       <el-dialog
-        title="部门用户"
+        title="地理用户"
         :visible.sync="showDialogUser"
         width="86%"
       >
-        <template>
+        <template v-if="showDialogUser">
           <user :props="showDialogUserParams"></user>
         </template>
       </el-dialog>
@@ -225,6 +230,7 @@ export default {
       list: [],
       colMap: {},      //列名:别名
       colKey: "",     //主键名
+      rowSearchDefault: {},//默认搜索 当传参过来指定条件嵌入
       rowSearch: {},   //搜索 列明:搜索值
       rowUpdate: {},   //更新界面复制 列名:新值
       rowUpdateFrom: {},//更新界面源对象 列名:旧值
@@ -255,10 +261,15 @@ export default {
       showDialogUserParams: null,
     }
   },
+  props:['props'],//组件传参
   created() {
+
+
+    if(this.props) {
+      var params = this.props
+      this.rowSearchDefault = Object.assign({}, params.params)
+    }
     this.getColumns()
-  },
-  filters: {
   },
   methods: {
     //查询展示的行列信息 备注
@@ -277,9 +288,8 @@ export default {
     },
     //清空搜索条件
     clearRowSearch(){
-      for (var key in this.colMap) {
-        this.rowSearch[key] = ''
-      }
+
+      this.rowSearch = Object.assign({}, this.rowSearchDefault)
       this.page.nowpage = 1
     },
      //分页查询
@@ -391,12 +401,12 @@ export default {
     handlerShowUser(val){
       this.showDialogUserParams =  {
         params: {
-          'DEPT_ID' : val[this.colKey]
+          'AREA_ID' : val[this.colKey]
         },
       }
       this.showDialogUser = ! this.showDialogUser
     },
-      //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
+    //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
     handlerShowRole(val) {
       this.areaShowRole = val
       this.loadingUpdateRole = ! this.loadingUpdateRole

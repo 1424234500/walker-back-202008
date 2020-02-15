@@ -17,10 +17,11 @@
             v-model="rowSearch[key]"
           />
         </div>
-
-        <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        <el-button-group>
+          <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+          <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+          <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        </el-button-group>
       </form>
     </div>
 
@@ -66,12 +67,14 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="140px"
+          min-width="111px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="success" icon="el-icon-download" circle @click.stop="download(scope.row)"></el-button>
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            <el-button-group>
+              <el-button size="mini" type="success" icon="el-icon-download" circle @click.stop="download(scope.row)"></el-button>
+              <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            </el-button-group>
           </template>success
         </el-table-column>
       </el-table>
@@ -179,8 +182,7 @@ export default {
   created() {
     this.getColumns()
   },
-  filters: {
-  },
+
   methods: {
     //查询展示的行列信息 备注
     getColumns() {

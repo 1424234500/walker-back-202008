@@ -22,6 +22,13 @@ public class MakeConfig {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
+
+    /**
+     * 造数 user 量级配置
+     */
+    @Value("${count.make.user:10}")
+    public int countMakeUser;
+
     /**
      * 同步 部分已同步 记录 过期时间 url:done 10d
      */
@@ -32,6 +39,10 @@ public class MakeConfig {
      */
     @Value("${expire.lock.redis.sync.area:36000}")
     public Long expireLockRedisSyncArea;
+
+
+
+
 
     @Value("${push.jpush.APP_KEY}")
     public String pushJpushAppKey;

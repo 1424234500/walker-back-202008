@@ -55,6 +55,7 @@ public class UserController {
             @RequestParam(value = "SIGN", required = false, defaultValue = "") String sign,
             @RequestParam(value = "EMAIL", required = false, defaultValue = "") String email,
             @RequestParam(value = "MOBILE", required = false, defaultValue = "") String mobile,
+            @RequestParam(value = "AREA_ID", required = false, defaultValue = "") String areaId,
             @RequestParam(value = "DEPT_ID", required = false, defaultValue = "") String deptCode,
             @RequestParam(value = "PWD", required = false, defaultValue = "") String pwd
     ) {
@@ -70,6 +71,7 @@ public class UserController {
         user.setEMAIL(email);
         user.setMOBILE(mobile);
         user.setDEPT_ID(deptCode);
+        user.setAREA_ID(areaId);
         user.setPWD(pwd);
 
         String info = "post user:" +user.toString();
@@ -113,6 +115,7 @@ public class UserController {
             @RequestParam(value = "SIGN", required = false, defaultValue = "") String sign,
             @RequestParam(value = "EMAIL", required = false, defaultValue = "") String email,
             @RequestParam(value = "MOBILE", required = false, defaultValue = "") String mobile,
+            @RequestParam(value = "AREA_ID", required = false, defaultValue = "") String areaId,
             @RequestParam(value = "DEPT_ID", required = false, defaultValue = "") String deptCode,
             @RequestParam(value = "PWD", required = false, defaultValue = "") String pwd,
 
@@ -133,6 +136,7 @@ public class UserController {
         user.setEMAIL(email);
         user.setMOBILE(mobile);
         user.setDEPT_ID(deptCode);
+        user.setAREA_ID(areaId);
         user.setPWD(pwd);
 
         String info = "get   user:" + user;

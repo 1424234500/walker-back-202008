@@ -17,10 +17,11 @@
             v-model="rowSearch[key]"
           />
         </div>
-
-        <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        <el-button-group>
+          <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+          <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+          <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        </el-button-group>
       </form>
     </div>
 
@@ -67,13 +68,16 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="180px"
+          min-width="201px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="success" icon="el-icon-tickets" circle @click.stop="handlerShowDept(scope.row)"></el-button>
-            <el-button size="mini" type="warning" icon="el-icon-menu" circle @click.stop="handlerShowRole(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            <el-button-group>
+              <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+              <el-button size="mini" type="success"  @click.stop="handlerShowDept(scope.row)">D</el-button>
+              <el-button size="mini" type="success"  @click.stop="handlerShowArea(scope.row)">A</el-button>
+              <el-button size="mini" type="warning"  @click.stop="handlerShowRole(scope.row)">R</el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -122,8 +126,10 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="handlerSave()">确定</el-button>
-              <el-button type="danger" @click="handlerCancel()">取消</el-button>
+              <el-button-group>
+                <el-button type="primary" @click="handlerSave()">确定</el-button>
+                <el-button type="danger" @click="handlerCancel()">取消</el-button>
+              </el-button-group>
             </el-form-item>
           </el-form>
         </template>
@@ -212,6 +218,9 @@
             :data="listRoleDept"
             :row-class-name="tableRowClassName"
             :default-sort = "{prop: 'S_FLAG', order: 'descending'}"
+            @selection-change="handlerSelectionChangeRole"
+            @open="handlerOnShowRole"
+            ref="multipleTableRoleDept"
             element-loading-text="Loading"
             border
             fit
@@ -241,6 +250,17 @@
             </el-table-column>
           </el-table>
 
+        </template>
+      </el-dialog>
+
+
+      <el-dialog
+        title="地理位置"
+        :visible.sync="showDialogArea"
+        width="86%"
+      >
+        <template v-if="showDialogArea">
+          <varea :props="showDialogAreaParams"></varea>
         </template>
       </el-dialog>
 
@@ -312,20 +332,18 @@ export default {
       listRoleDept: [],
       rowSelectRole: [],
 
-
+      showDialogArea: false,
+      showDialogAreaParams: null,
 
     }
   },
   props:['props'],//组件传参
   created() {
     if(this.props) {
-      debugger
       var params = this.props
       this.rowSearchDefault = Object.assign({}, params.params)
     }
     this.getColumns()
-  },
-  filters: {
   },
   methods: {
     //查询展示的行列信息 备注
@@ -397,13 +415,19 @@ export default {
         }).catch(() => {
           this.loadingDept = false
         })
-
       }).catch(() => {
         this.loadingDept = false
       })
+    },
+    //展示 关联表信息
+    handlerShowArea(val) {
 
-
-
+      this.showDialogAreaParams =  {
+        params: {
+          'ID' : val['AREA_ID']
+        },
+      }
+      this.showDialogArea = ! this.showDialogArea
     },
     //展示 并支持添加修改 关联角色属性 一个人有多种角色 部门角色 列表 提供添加和删除(非部门)
     handlerShowRole(val) {

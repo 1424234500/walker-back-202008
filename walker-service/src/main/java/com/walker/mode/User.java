@@ -58,7 +58,7 @@ public class User implements Cloneable,Serializable{
     /**
      * 前缀标识  Dept Area User
      */
-    public final static String prefix = "D_";
+    public final static String prefix = "U_";
 
     public String getS_MTIME() {
         return S_MTIME;
@@ -101,8 +101,11 @@ public class User implements Cloneable,Serializable{
                 '}';
     }
 
-    public void setAREA_ID(String AREA_ID) {
+    public User setAREA_ID(String AREA_ID) {
+        AREA_ID = Config.makePrefix(Area.prefix, AREA_ID);
+
         this.AREA_ID = AREA_ID;
+        return  this;
     }
 
     public String getS_FLAG() {
@@ -184,6 +187,7 @@ public class User implements Cloneable,Serializable{
     }
 
     public User setDEPT_ID(String DEPT_ID) {
+        DEPT_ID = Config.makePrefix(Dept.prefix, DEPT_ID);
         this.DEPT_ID = DEPT_ID;
         return this;
     }

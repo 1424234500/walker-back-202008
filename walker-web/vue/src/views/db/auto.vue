@@ -22,7 +22,9 @@
             >
             </el-option>
           </el-select>
-          <el-button  class="btn btn-primary" @click="getTables()" >查询</el-button>
+          <el-button-group>
+            <el-button  class="btn btn-primary" @click="getTables()" >查询</el-button>
+          </el-button-group>
         </div>
         <div class="form-group">
           <label>table</label>
@@ -41,7 +43,9 @@
             >
             </el-option>
           </el-select>
-          <el-button  class="btn btn-primary" @click="getColumns()" >查询</el-button>
+          <el-button-group>
+            <el-button  class="btn btn-primary" @click="getColumns()" >查询</el-button>
+          </el-button-group>
         </div>
 
       </form>
@@ -65,8 +69,10 @@
             </el-input>
           </el-tab-pane>
         </el-tabs>
-        <el-button  class="btn btn-warning" @click="getListPage()" >执行sql</el-button>
-        <el-button  class="btn btn-danger" @click="initTab()" >清空所有sql</el-button>
+        <el-button-group>
+          <el-button  class="btn btn-warning" @click="getListPage()" >执行sql</el-button>
+          <el-button  class="btn btn-danger" @click="initTab()" >清空所有sql</el-button>
+        </el-button-group>
       </div>
 
     </div>
@@ -201,8 +207,7 @@
       this.initTab()
       this.getDatabases()
     },
-    filters: {
-    },
+
     methods: {
       initTab(){
         if(!this.obj || this.obj.length == 0) {

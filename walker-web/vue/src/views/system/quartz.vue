@@ -17,10 +17,11 @@
             v-model="rowSearch[key]"
           />
         </div>
-
-        <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        <el-button-group>
+          <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+          <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+          <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        </el-button-group>
       </form>
     </div>
 
@@ -69,15 +70,16 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="120px"
+          min-width="221px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowTrigger(scope.row)"></el-button>
-            <el-button size="mini" type="warning" icon="el-icon-search" circle @click.stop="handlerHis(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
-            <el-button size="mini" type="primary" @click.stop="handlerRun(scope.row)">立即执行</el-button>
-
+            <el-button-group>
+              <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+              <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowTrigger(scope.row)"></el-button>
+              <el-button size="mini" type="warning" icon="el-icon-search" circle @click.stop="handlerHis(scope.row)"></el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+              <el-button size="mini" type="primary" @click.stop="handlerRun(scope.row)">立即执行</el-button>
+            </el-button-group>
           </template>
         </el-table-column>
 
@@ -128,23 +130,25 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="handlerSave()">确定</el-button>
-              <el-button type="danger" @click="handlerCancel()">取消</el-button>
+              <el-button-group>
+                <el-button type="primary" @click="handlerSave()">确定</el-button>
+                <el-button type="danger" @click="handlerCancel()">取消</el-button>
+              </el-button-group>
             </el-form-item>
           </el-form>
         </template>
       </el-dialog>
 
       <el-dialog
-        title="调度执行"
+        title="触发器列表"
         :visible.sync="loadingUpdateTrigger"
         width="86%"
       >
         <template>
-          <label>触发器列表</label>
-          <el-button  class="btn btn-success" @click="handlerAddColumnTrigger()" style="margin:4px 0px 0 2px;">添加</el-button>
-          <el-button  class="btn btn-danger" @click="handlerSaveAllTriggers()" style="margin:4px 0px 0 2px;">保存</el-button>
-
+          <el-button-group>
+            <el-button  class="btn btn-success" @click="handlerAddColumnTrigger()" >添加</el-button>
+            <el-button  class="btn btn-danger" @click="handlerSaveAllTriggers()" >保存</el-button>
+          </el-button-group>
           <el-table
             v-loading="loadingTrigger"
             :data="listTrigger"
@@ -197,7 +201,7 @@
         :visible.sync="showDialogLog"
         width="86%"
       >
-        <template>
+        <template v-if="showDialogLog">
           <mtable :props='showDialogLogParams' ></mtable>
         </template>
       </el-dialog>
@@ -277,8 +281,7 @@ export default {
   created() {
     this.getColumns()
   },
-  filters: {
-  },
+
   methods: {
     //查询展示的行列信息 备注
     getColumns() {
@@ -356,9 +359,9 @@ export default {
     handlerAddColumn(){
       var newObj = Object.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
 
-      newObj["JOB_NAME"] = this.nowRow == null ? "" : this.nowRow["JOB_NAME"]
-      newObj["DESCRIPTION"] = this.nowRow == null ? "" : this.nowRow["DESCRIPTION"]
-      newObj['CRON_EXPRESSION'] = '0 0 10 * * ?'
+      //newObj["JOB_NAME"] = this.nowRow == null ? "" : this.nowRow["JOB_NAME"]
+      //newObj["DESCRIPTION"] = this.nowRow == null ? "" : this.nowRow["DESCRIPTION"]
+      //newObj['CRON_EXPRESSION'] = '0 0 10 * * ?'
       this.list.push(newObj)
       this.handlerChange(newObj)
     },
@@ -521,7 +524,7 @@ export default {
         database: '',
         table: 'W_JOB_HIS',
         params: {
-          'INFO' : val[this.colKey]
+          'ID' : val[this.colKey]
         },
       }
       this.showDialogLog = ! this.showDialogLog
@@ -560,7 +563,7 @@ export default {
       if(listOn.length > 0 || listOff.length > 0){
         //console.info(this.showTrigger)
         var params = Object.assign({}, this.showTrigger)
-        //debugger
+        //
         params['ON'] =  listOn.join(",")
         params['OFF'] = listOff.join(",")
 

@@ -3,6 +3,7 @@ package com.walker.service.impl;
 
 import com.walker.common.util.*;
 import com.walker.config.MakeConfig;
+import com.walker.core.aop.TaskThreadPie;
 import com.walker.dao.RedisDao;
 import com.walker.mode.Key;
 import com.walker.service.Config;
@@ -58,14 +59,14 @@ public class SyncAreaServiceImpl implements SyncAreaService {
         Area root = getCityRootChina();
         getCity(root, false, null);
         areaService.saveAll(Arrays.asList(root));
-
+        Watch watchAll = new Watch("syncArea");
         for(int i = 0; i < root.getChilds().size() && i < 998; i++){
             Area item = root.getChilds().get(i);
 
-            //单省作为线程
-            ThreadUtil.getExecutorServiceInstance(5).execute(new Runnable() {
-                @Override
-                public void run() {
+            //单省作为线程  等待执行完毕 阻塞操作
+//            ThreadUtil.getExecutorServiceInstance(5).execute(new Runnable() {
+//                @Override
+//                public void run() {
                     Watch watch = new Watch("area.sync." + item.getNAME());
                     getCity(item, true, null);  //html获取构建省 树
                     watch.cost("http");
@@ -83,10 +84,15 @@ public class SyncAreaServiceImpl implements SyncAreaService {
                     }
                     watch.put("batch", list.size() / Config.getDbsize());
                     watch.cost("db");
-                    log.info(watch.toPrettyString());
-                }
-            });
+                    log.info(watch.res().toPrettyString());
+
+                    watchAll.cost(item.getNAME());
+
+//                }
+//            });
         }
+
+        log.info(watchAll.res().toPrettyString());
         log.info("sync area end");
 
     }

@@ -24,7 +24,9 @@
             >
             </el-option>
           </el-select>
-          <el-button  class="btn btn-primary" @click="getTables()" >查询</el-button>
+          <el-button-group>
+            <el-button  class="btn btn-primary" @click="getTables()" >查询</el-button>
+          </el-button-group>
         </div>
         <div class="form-group">
           <label>table</label>
@@ -43,8 +45,9 @@
             >
             </el-option>
           </el-select>
-          <el-button  class="btn btn-primary" @click="getColumns()" >查询</el-button>
-
+          <el-button-group>
+            <el-button  class="btn btn-primary" @click="getColumns()" >查询</el-button>
+          </el-button-group>
         </div>
       </form>
     </div>
@@ -66,10 +69,11 @@
             v-model="rowSearch[key]"
           />
         </div>
-
-        <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        <el-button-group>
+          <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+          <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+          <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        </el-button-group>
       </form>
     </div>
 
@@ -116,11 +120,13 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="90px"
+          min-width="81px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            <el-button-group>
+              <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -273,8 +279,7 @@
         this.getDatabases()
       }
     },
-    filters: {
-    },
+
     methods: {
       getDatabases() {
         this.loadingTables = true

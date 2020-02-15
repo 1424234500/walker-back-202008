@@ -38,31 +38,40 @@ public class DeptServiceImpl implements DeptService {
      */
     @Override
     public List<Dept> saveAll(List<Dept> objs) {
-        List<String> pids = new ArrayList<>();
+        Set<String> pids = new LinkedHashSet<>();
         for(Dept obj : objs){
             if(obj.getP_ID() != null)   //可能没有上级
                 pids.add(obj.getP_ID());
         }
-        List<Dept> pobjs = pids.size() > 0 ? deptRepository.findAllByID(pids) : new ArrayList<>();    //查找出所有上级
-        Map<String, Dept> index = new HashMap<>();
+        Map<String, Dept> index = new LinkedHashMap<>();
+
+        //1.上级在表中
+        List<Dept> pobjs = pids.size() > 0 ? deptRepository.findAllByID(pids) : new ArrayList<>();
         for(Dept obj : pobjs){
             index.put(obj.getID(), obj);
         }
+        //2.上级在list中
+        for(Dept obj : objs){
+            index.put(obj.getID(), obj);
+        }
+
 
         List<Dept> oks = new ArrayList<>();
         for(Dept obj : objs){
-            if(obj.getP_ID() != null && obj.getP_ID().length() > 0){
+            if(obj.getP_ID() != null && obj.getP_ID().length() > 0 && ! obj.getP_ID().equals(obj.getID())){
                 Dept pobj = index.get(obj.getP_ID());
-                if(pobj == null){//表中 上级不存在
+                if(pobj == null){//表中或list中 上级不存在
                     log.error("try save dept not exists pid " + obj);
                 }else{//上级存在 复用机构树
-                    obj.setPATH(pobj.getPATH() + "," + obj.getID());
-                    obj.setPATH_NAME(pobj.getPATH_NAME() + "/" + obj.getNAME());
+                    if(obj.getPATH()==null || obj.getPATH().length() == 0) {
+                        obj.setPATH(pobj.getPATH() + "/" + obj.getID());
+                        obj.setPATH_NAME(pobj.getPATH_NAME() + "/" + obj.getNAME());
+                    }
                     oks.add(obj);
                 }
             }else{//无上级 root
-                obj.setPATH(obj.getID());
-                obj.setPATH_NAME(obj.getNAME());
+                obj.setPATH("/" + obj.getID());
+                obj.setPATH_NAME("/" + obj.getNAME());
                 oks.add(obj);
             }
         }
@@ -70,6 +79,9 @@ public class DeptServiceImpl implements DeptService {
             if(StringUtils.isEmpty(obj.getS_MTIME())){
                 obj.setS_MTIME(TimeUtil.getTimeYmdHms());
             }
+//            if(obj.getLEVEL() < 0){
+//                obj.setLEVEL(obj.getPATH().split("/").length + "");
+//            }
         }
 
         return deptRepository.saveAll(oks);
@@ -130,10 +142,10 @@ public class DeptServiceImpl implements DeptService {
                     list.add(criteriaBuilder.like(root.get("NAME"), "%" + obj.getNAME() + "%"));
                 }
                 if (StringUtils.isNotEmpty(obj.getP_ID())) {
-                    list.add(criteriaBuilder.like(root.get("P_ID"), "%" + obj.getP_ID() + "%"));
+                    list.add(criteriaBuilder.equal(root.get("P_ID"), obj.getP_ID()));
                 }
                 if (StringUtils.isNotEmpty(obj.getPATH())) {
-                    list.add(criteriaBuilder.like(root.get("PATH"), "%" + obj.getPATH() + "%"));
+                    list.add(criteriaBuilder.like(root.get("PATH"), obj.getPATH() + "%"));
                 }
                 if (StringUtils.isNotEmpty(obj.getPATH_NAME())) {
                     list.add(criteriaBuilder.like(root.get("PATH_NAME"), "%" + obj.getPATH_NAME() + "%"));
@@ -147,21 +159,20 @@ public class DeptServiceImpl implements DeptService {
     public Integer[] deleteAll(List<String> ids) {
         Integer[] res = new Integer[ids.size()];
         int i = 0;
-        for(String deptId : ids) {
-            List<Dept> depts = deptRepository.findAllByPATH(deptId);
-            List<String> deptIds = new ArrayList<>();
-            deptIds.add(deptId);
-            for(Dept obj : depts){
-                deptIds.add(obj.getID());
-            }
-            int cc = 0;
-            if(deptIds.size() > 0) {
-                cc = deptRepository.selfDeleteAll(deptIds);
-                roleUserRepository.deleteAllByUserId(deptIds);
-            }
-            res[i++] = cc;
-
-        }
+        deptRepository.selfDeleteAll(new HashSet<>(ids));
+//        for(String deptId : ids) {
+//            List<Dept> depts = deptRepository.findAllByPATH(deptId);
+//            Set<String> deptIds = new LinkedHashSet<>();
+//            deptIds.add(deptId);
+//            for(Dept obj : depts){
+//                deptIds.add(obj.getID());
+//            }
+//            int cc = 0;
+//            if(deptIds.size() > 0) {
+//                cc = deptRepository.selfDeleteAll(deptIds);
+//            }
+//            res[i++] = cc;
+//        }
         return res;
     }
 }

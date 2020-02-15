@@ -99,6 +99,9 @@ public class UserServiceImpl implements UserService {
                 if (StringUtils.isNotEmpty(obj.getDEPT_ID())) {
                     list.add(criteriaBuilder.like(root.get("DEPT_ID"), "%" + obj.getDEPT_ID() + "%"));
                 }
+                if (StringUtils.isNotEmpty(obj.getAREA_ID())) {
+                    list.add(criteriaBuilder.like(root.get("AREA_ID"), "%" + obj.getAREA_ID() + "%"));
+                }
                 if (StringUtils.isNotEmpty(obj.getPWD())) {
                     list.add(criteriaBuilder.like(root.get("PWD"), "%" + obj.getPWD() + "%"));
                 }

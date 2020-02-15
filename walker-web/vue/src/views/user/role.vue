@@ -17,11 +17,12 @@
             v-model="rowSearch[key]"
           />
         </div>
-
-        <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
-      </form>
+        <el-button-group>
+          <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+          <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+          <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        </el-button-group>
+        </form>
     </div>
 
     <div
@@ -67,12 +68,14 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="130px"
+          min-width="121px"
         >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
-            <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowRoleUser(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            <el-button-group>
+              <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
+              <el-button size="mini" type="success" @click.stop="handlerShowRoleUser(scope.row)">U</el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -121,8 +124,10 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="handlerSave()">确定</el-button>
-              <el-button type="danger" @click="handlerCancel()">取消</el-button>
+              <el-button-group>
+                <el-button type="primary" @click="handlerSave()">确定</el-button>
+                <el-button type="danger" @click="handlerCancel()">取消</el-button>
+              </el-button-group>
             </el-form-item>
           </el-form>
         </template>
@@ -133,7 +138,7 @@
         :visible.sync="showDialogRoleUser"
         width="86%"
       >
-        <template>
+        <template v-if="showDialogRoleUser">
           <roleuser :id=id></roleuser>
         </template>
       </el-dialog>
@@ -205,7 +210,13 @@ export default {
   created() {
     this.getColumns()
   },
-  filters: {
+  props:['props'],//组件传参
+  created() {
+    if(this.props) {
+      var params = this.props
+      this.rowSearchDefault = Object.assign({}, params.params)
+    }
+    this.getColumns()
   },
   methods: {
     //查询展示的行列信息 备注

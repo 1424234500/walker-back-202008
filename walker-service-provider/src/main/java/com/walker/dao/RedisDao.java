@@ -6,6 +6,8 @@ import io.lettuce.core.SetArgs;
 import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.api.async.RedisScriptingAsyncCommands;
 import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -32,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Repository
 public class RedisDao {
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -82,6 +85,7 @@ public class RedisDao {
                 }
             }
         });
+        log.info("tryLock " + key + " " + expireSeconds + " result:" + result);
         boolean eq = "OK".equals(result);
         if(eq) {
             return value;
@@ -127,6 +131,8 @@ public class RedisDao {
                 }
             }
         });
+        log.info("releaseLock " + key + " " + value + " result:" + result);
+
         return result != null && (Long)result > 0;
     }
 

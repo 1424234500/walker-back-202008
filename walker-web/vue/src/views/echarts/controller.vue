@@ -21,9 +21,10 @@
             </el-select>
 
           </div>
-
-          <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-          <el-button  class="btn btn-danger" @click="clearColsSearch();getListPage();" >清除</el-button>
+          <el-button-group>
+            <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+            <el-button  class="btn btn-danger" @click="clearColsSearch();getListPage();" >清除</el-button>
+          </el-button-group>
         </form>
     </div>
 
@@ -101,8 +102,7 @@ export default {
     this.chart.dispose()
     this.chart = null
   },
-  filters: {
-  },
+
   methods: {
     //查询展示的行列信息 备注
     getColumns() {

@@ -68,7 +68,7 @@
           label="操作"
           show-overflow-tooltip
           fixed="right"
-          min-width="90px"
+          min-width="91px"
         >
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
@@ -214,6 +214,7 @@ export default {
       list: [],
       colMap: {},      //列名:别名
       colKey: "",     //主键名
+      rowSearchDefault: {},//默认搜索 当传参过来指定条件嵌入
       rowSearch: {},   //搜索 列明:搜索值
       rowUpdate: {},   //更新界面复制 列名:新值
       rowUpdateFrom: {},//更新界面源对象 列名:旧值
@@ -240,11 +241,13 @@ export default {
       rowSelectRole: [],
     }
   },
-  props:['id'],//组件传参
+  props:['props'],//组件传参
   created() {
+    if(this.props) {
+      var params = this.props
+      this.rowSearchDefault = Object.assign({}, params.params)
+    }
     this.getColumns()
-  },
-  filters: {
   },
   methods: {
     //查询展示的行列信息 备注
@@ -254,7 +257,6 @@ export default {
         this.colMap = res.data.colMap
         this.colKey = res.data.colKey
         this.clearRowSearch()
-        this.rowSearch['ROLE_ID'] = this.id //参数传递
 
         this.loadingCols = false
         this.getListPage()
@@ -265,9 +267,7 @@ export default {
     },
     //清空搜索条件
     clearRowSearch(){
-      for (var key in this.colMap) {
-        this.rowSearch[key] = ''
-      }
+      this.rowSearch = Object.assign({}, this.rowSearchDefault)
       this.page.nowpage = 1
     },
      //分页查询

@@ -22,6 +22,11 @@ import router from './router'
 import mtable from './views/db/mtable'
 Vue.component('mtable', mtable)
 
+import varea from './views/user/varea'
+Vue.component('varea', varea)
+import areatree from './views/user/areatree'
+Vue.component('areatree', areatree)
+
 import dept from './views/user/dept'
 Vue.component('dept', dept)
 import depttree from './views/user/depttree'

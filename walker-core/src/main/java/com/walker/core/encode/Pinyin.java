@@ -44,7 +44,6 @@ public class Pinyin {
 				}
 			}
 		} catch (BadHanyuPinyinOutputFormatCombination e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return t4;
@@ -91,11 +90,12 @@ public class Pinyin {
  
 	/**
 	 * 获取指定位数汉字  count个
+	 * getRandomName(10, 1, null);
 	 * @param len
 	 * @param count
 	 * @param fun
 	 */
-	public static void getRandomName(int len, int count, Fun<String> fun) {
+	public static String getRandomName(int len, int count, Fun<String> fun) {
 		String res = "";
 		 for(int i = 0; i < count; i++){
 			 String name = "";
@@ -105,16 +105,18 @@ public class Pinyin {
 			 if(fun != null)
 				 fun.make(name);
 		     res += name + ",";
-			 }
+		 }
 		 res = count > 0 ? res.substring(0, res.length() - 1) : "";
+		 return res;
 	}
 	/**
 	 * 获取随机名字 count个
+	 * getRandomName(1, null);
 	 * @param count
 	 * @param fun
 	 */
 	public static String getRandomName(int count, Fun<String> fun){
-		 Random random=new Random(System.currentTimeMillis());  
+		 Random random=new Random((long) (System.currentTimeMillis() + Math.random() * 998));
 		 String res = "";
 		 for(int i = 0; i < count; i++){
 			 int index=random.nextInt(NAME_FIRST.length-1);       
