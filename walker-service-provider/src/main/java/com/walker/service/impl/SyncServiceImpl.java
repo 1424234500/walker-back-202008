@@ -99,7 +99,7 @@ public class SyncServiceImpl implements SyncService {
     @Override
     public Bean makeUser(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = Key.getLockRedis(getClass().getName() + ".syncArea");
+        String key = Key.getLockRedis(getClass().getName() + ".makeUser");
         String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea);
         res.set("KEY", key);
         res.set("VALUE", value);
