@@ -51,171 +51,174 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '主页', icon: 'dashboard' }
     }]
   },
 
   {
-    path: '/db',
+    path: '/data',
     component: Layout,
-    redirect: '/db/Student',
-    name: 'Db',
-    meta: { title: 'Tables', icon: 'table' },
+    name: 'Data',
+    meta: { title: '数据管理', icon: 'user' },
     children: [
       {
-        path: 'student',
-        name: 'Student',
-        component: () => import('@/views/db/student'),
-        meta: { title: 'Student', icon: 'people' }
+        path: 'echarts',
+        name: 'Echarts',
+        meta: { title: '图表', icon: 'chart' },
+        component: () => import('@/views/menu1'), // Parent router-view
+        children: [
+          {
+            path: 'controller',
+            name: 'Controller',
+            component: () => import('@/views/echarts/controller'),
+            meta: { title: 'Controller', icon: 'tree-table' }
+          },
+          {
+            path: 'socket',
+            name: 'Socket',
+            component: () => import('@/views/echarts/socket'),
+            meta: { title: 'Socket', icon: 'tree' }
+          }
+        ]
       },
       {
-        path: 'teacher',
-        name: 'Teacher',
-        component: () => import('@/views/db/teacher'),
-        meta: { title: 'Teacher', icon: 'user' }
+        path: 'file',
+        name: 'File',
+        meta: { title: '文件数据', icon: 'documentation' },
+        component: () => import('@/views/menu1'), // Parent router-view
+        children: [
+          {
+            path: 'fileindex',
+            name: 'Fileindex',
+            component: () => import('@/views/file/fileindex'),
+            meta: { title: '文件索引', icon: 'tree-table' }
+          },
+          {
+            path: 'file',
+            name: 'File',
+            component: () => import('@/views/file/file'),
+            meta: {title: '文件夹', icon: 'tab'}
+          },
+          {
+            path: 'tree',
+            name: 'Tree',
+            component: () => import('@/views/file/tree'),
+            meta: { title: '文件树', icon: 'tree' }
+          },
+        ]
       },
       {
-        path: 'mtable',
-        name: 'Mtable',
-        component: () => import('@/views/db/mtable'),
-        meta: { title: 'Mtable', icon: 'table',
-          keepAlive: true ,//当前的.vue文件需要缓存
-        }
-      },
-      {
-        path: 'auto',
-        name: 'Auto',
-        component: () => import('@/views/db/auto'),
-        meta: { title: 'Auto', icon: 'table' ,
-          keepAlive: true ,//当前的.vue文件需要缓存
-        },
-
-      },
-    ]
-  },
-
-
-
-  {
-    path: '/user',
-    component: Layout,
-    redirect: '/user/user',
-    name: 'User',
-    meta: { title: 'User', icon: 'user' },
-    children: [
-      {
-        path: 'user',
-        name: 'User',
-        component: () => import('@/views/user/user'),
-        meta: { title: 'User', icon: 'people' }
-      },
-      {
-        path: 'dept',
-        name: 'Dept',
-        component: () => import('@/views/user/dept'),
-        meta: {title: 'Dept', icon: 'list'}
-      },
-      {
-        path: 'depttree',
-        name: 'DeptTree',
-        component: () => import('@/views/user/depttree'),
-        meta: { title: 'DeptTree', icon: 'tree' }
-      },
-      {
-        path: 'varea',
-        name: 'varea',
-        component: () => import('@/views/user/varea'),
-        meta: {title: 'vArea', icon: 'list'}
-      },
-      {
-        path: 'role',
-        name: 'Role',
-        component: () => import('@/views/user/role'),
-        meta: {title: 'Role', icon: 'theme'}
-      },
-      {
-        path: 'areatree',
-        name: 'AreaTree',
-        component: () => import('@/views/user/areatree'),
-        meta: { title: 'AreaTree', icon: 'tree' }
-      },
-      // {
-      //   path: 'roleuser',
-      //   name: 'RoleUser',
-      //   component: () => import('@/views/user/roleuser'),
-      //   meta: {title: 'RoleUser', icon: 'theme'}
-      // },
+        path: '/users',
+        name: 'Users',
+        meta: { title: '用户数据', icon: 'user' },
+        component: () => import('@/views/menu1'), // Parent router-view
+        children: [
+          {
+            path: 'user',
+            name: 'User',
+            component: () => import('@/views/user/user'),
+            meta: { title: '用户', icon: 'people' }
+          },
+          {
+            path: 'dept',
+            name: 'Dept',
+            component: () => import('@/views/user/dept'),
+            meta: {title: '部门', icon: 'list'}
+          },
+          {
+            path: 'depttree',
+            name: 'DeptTree',
+            component: () => import('@/views/user/depttree'),
+            meta: { title: '部门树', icon: 'tree' }
+          },
+          {
+            path: 'varea',
+            name: 'varea',
+            component: () => import('@/views/user/varea'),
+            meta: {title: '地理', icon: 'list'}
+          },
+          {
+            path: 'role',
+            name: 'Role',
+            component: () => import('@/views/user/role'),
+            meta: {title: '角色', icon: 'theme'}
+          },
+          {
+            path: 'areatree',
+            name: 'AreaTree',
+            component: () => import('@/views/user/areatree'),
+            meta: { title: '地理树', icon: 'tree' }
+          },
+          // {
+          //   path: 'roleuser',
+          //   name: 'RoleUser',
+          //   component: () => import('@/views/user/roleuser'),
+          //   meta: {title: 'RoleUser', icon: 'theme'}
+          // },
+        ]
+      }
     ]
   },
   {
     path: '/system',
     component: Layout,
-    redirect: '/system/quartz',
     name: 'System',
-    meta: { title: 'System', icon: 'documentation' },
+    meta: { title: '系统管理', icon: 'documentation' },
     children: [
+      {
+        path: '/db',
+        name: 'Db',
+        meta: { title: '数据库', icon: 'table' },
+        component: () => import('@/views/menu1'), // Parent router-view
+        children: [
+          {
+            path: 'student',
+            name: 'Student',
+            component: () => import('@/views/db/student'),
+            meta: { title: 'Student', icon: 'people' }
+          },
+          {
+            path: 'teacher',
+            name: 'Teacher',
+            component: () => import('@/views/db/teacher'),
+            meta: { title: 'Teacher', icon: 'user' }
+          },
+          {
+            path: 'mtable',
+            name: 'Mtable',
+            component: () => import('@/views/db/mtable'),
+            meta: { title: '表查询', icon: 'table',
+              keepAlive: true ,//当前的.vue文件需要缓存
+            }
+          },
+          {
+            path: 'auto',
+            name: 'Auto',
+            component: () => import('@/views/db/auto'),
+            meta: { title: 'sql执行', icon: 'table' ,
+              keepAlive: true ,//当前的.vue文件需要缓存
+            },
+
+          },
+        ]
+      },
+
       {
         path: 'quartz',
         name: 'Quartz',
         component: () => import('@/views/system/quartz'),
-        meta: { title: 'Quartz', icon: 'tree-table' }
+        meta: { title: '任务调度', icon: 'tree-table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/file/tree'),
-        meta: { title: 'Tree', icon: 'tree' }
-      },
-    ]
-  },
-  {
-    path: '/file',
-    component: Layout,
-    redirect: '/file/file',
-    name: 'File',
-    meta: { title: 'File', icon: 'documentation' },
-    children: [
-      {
-        path: 'fileindex',
-        name: 'Fileindex',
-        component: () => import('@/views/file/fileindex'),
-        meta: { title: 'Fileindex', icon: 'tree-table' }
-      },
-      {
-        path: 'file',
-        name: 'File',
-        component: () => import('@/views/file/file'),
-        meta: {title: 'File', icon: 'tab'}
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/file/tree'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'action',
+        name: 'Action',
+        component: () => import('@/views/system/action'),
+        meta: { title: '任务队列', icon: 'tree' }
       },
     ]
   },
-  {
-    path: '/echarts',
-    component: Layout,
-    redirect: '/echarts/controller',
-    name: 'Echarts',
-    meta: { title: 'Echarts', icon: 'chart' },
-    children: [
-      {
-        path: 'controller',
-        name: 'Controller',
-        component: () => import('@/views/echarts/controller'),
-        meta: { title: 'Controller', icon: 'tree-table' }
-      },
-      {
-        path: 'socket',
-        name: 'Socket',
-        component: () => import('@/views/echarts/socket'),
-        meta: { title: 'Socket', icon: 'tree' }
-      }
-    ]
-  },
+
+
 
   {
     path: '/other',
@@ -256,10 +259,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/menu/menu1',
     name: 'Menu',
-    meta: {
-      title: 'Menu',
-      icon: 'nested'
-    },
+    meta: {  title: 'Menu', icon: 'nested'  },
     children: [
       {
         path: 'menu1',

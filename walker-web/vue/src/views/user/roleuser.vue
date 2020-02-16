@@ -245,7 +245,7 @@ export default {
   created() {
     if(this.props) {
       var params = this.props
-      this.rowSearchDefault = Object.assign({}, params.params)
+      this.rowSearchDefault = this.assign({}, params.params)
     }
     this.getColumns()
   },
@@ -267,14 +267,14 @@ export default {
     },
     //清空搜索条件
     clearRowSearch(){
-      this.rowSearch = Object.assign({}, this.rowSearchDefault)
+      this.rowSearch = this.assign({}, this.rowSearchDefault)
       this.page.nowpage = 1
     },
      //分页查询
      getListPage() {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+      var params = this.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
       this.get('/roleUser/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
@@ -290,9 +290,10 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-      let newObj = Object.assign({}, this.rowSearch)
-      newObj["P_ID"] = this.nowRow == null ? "" : this.nowRow["ID"]
+      var newObj = this.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
+      newObj[this.colKey] = ''
       newObj["S_FLAG"] = '1'
+      newObj["P_ID"] = this.nowRow == null ? "" : this.nowRow["ID"]
       this.list.push(newObj)
       this.handlerChange(newObj)
     },
@@ -315,7 +316,7 @@ export default {
       console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
       this.loadingSave = true
 
-      Object.assign(this.rowUpdateFrom, this.rowUpdate)
+      this.rowUpdateFrom = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
       var params = this.rowUpdateFrom
       this.post('/roleUser/save.do', params).then((res) => {
         this.loadingSave = false

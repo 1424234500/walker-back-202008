@@ -237,7 +237,7 @@ export default {
       this.loadingCols = true
       this.get('/file/getColsMap.do', {}).then((res) => {
         this.colMap = res.data.colMap
-        this.colMapShow = Object.assign({}, this.colMap)
+        this.colMapShow = this.assign({}, this.colMap)
         delete this.colMapShow["PATH"]
         delete this.colMapShow["EXT"]
 
@@ -252,9 +252,7 @@ export default {
     },
     //清空搜索条件
     clearRowSearch(){
-      for (var key in this.colMap) {
-        this.rowSearch[key] = ''
-      }
+      this.rowSearch = {} //clear map
       this.page.nowpage = 1
       this.files = null
       this.dir = ''
@@ -263,7 +261,7 @@ export default {
      getListPage() {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({dir : this.dir}, this.rowSearch)
+      var params = this.assign({dir : this.dir}, this.rowSearch)
       this.get('/file/dir.do', params).then((res) => {
         this.list = res.data.list
         this.dir = res.data.dir
@@ -274,7 +272,11 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-
+      var newObj = this.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
+      newObj[this.colKey] = ''
+      newObj["S_FLAG"] = '1'
+      this.list.push(newObj)
+      this.handlerChange(newObj)
     },
     //上一级目录
     goParent(){
@@ -325,7 +327,7 @@ export default {
       this.loadingSave = true
 
       var params = {oldPath: this.rowUpdateFrom.PATH, newPath: this.rowUpdate.PATH}
-      Object.assign(this.rowUpdateFrom, this.rowUpdate)
+      this.rowUpdateFrom = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
 
       this.get('/file/update.do', params).then((res) => {
         this.loadingSave = false

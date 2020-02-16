@@ -127,7 +127,7 @@ export default {
     getListPage(data, resolve) {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({dir : data == null ? '/' : data.PATH }, this.rowSearch)
+      var params = this.assign({dir : data == null ? '/' : data.PATH }, this.rowSearch)
       this.get('/file/dir.do', params).then((res) => {
         for(var i = 0; i < res.data.list.length; i++){
           var obj = res.data.list[i]

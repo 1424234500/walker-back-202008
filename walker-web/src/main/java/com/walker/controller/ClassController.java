@@ -79,7 +79,7 @@ public class ClassController {
             return Response.makeFalse(var10.toString());
         }
     }
-    @ApiOperation(value="查询类详情函数列表")
+    @ApiOperation(value="执行一段代码")
     @ResponseBody
     @RequestMapping(value="/docode.do",method= RequestMethod.GET)
     public Response doMethod(

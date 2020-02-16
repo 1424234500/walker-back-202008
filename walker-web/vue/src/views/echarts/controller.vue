@@ -123,7 +123,7 @@ export default {
         if(this.queryUrl == null || this.queryUrl.length <= 0)
           this.queryUrl =  data.option.xAxis.data;
 
-        this.option = Object.assign(data.option, this.other)
+        this.option = this.assign(data.option, this.other)
         this.chart.setOption(this.option, true)
 
         this.loadingList = false
@@ -134,7 +134,7 @@ export default {
          data = data.data
          this.queryUrlCount =  data.option.xAxis.data;
 
-         this.option2 = Object.assign(data.option, this.other)
+         this.option2 = this.assign(data.option, this.other)
          this.chart2.setOption(this.option2, true)
          this.loadingList = false
        }).catch(() => {

@@ -145,15 +145,18 @@ public class SyncAreaServiceImpl implements SyncAreaService {
      * @param parent    root节点
      * @param ifChild 是否递归子节点
      * @param list  若不为null 则把节点都添加进去   大量数据不应当使用
+     *
+     * @return int 返回异常次数
      */
-    public void getCity(Area parent, boolean ifChild, List<Area> list){
+    public int getCity(Area parent, boolean ifChild, List<Area> list){
+        int res = 0;
         try {
 //            http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html
 //            http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/51.html
 
             if(ifChild && isExists(parent)){ //若要遍历子节点 且 已经完成过了  不再遍历！！！ 例外了root 省级别
                 log.warn("have done the node " + parent);
-                return;
+                return res;
             }
 
             String html1 = "";
@@ -207,7 +210,7 @@ public class SyncAreaServiceImpl implements SyncAreaService {
                             list.add(area);
                         }
                         if (url != null && url.length() > 0 && ifChild) {
-                            getCity(area, ifChild, list);
+                            res += getCity(area, ifChild, list);
                         }
                     }
                 }else {
@@ -243,17 +246,21 @@ public class SyncAreaServiceImpl implements SyncAreaService {
                         list.add(area);
                     }
                     if (url != null && url.length() > 0 && ifChild) {
-                        getCity(area, ifChild, list);
+                        res += getCity(area, ifChild, list);
                     }
                 }
             }
 
-            //若顺利获取完毕 构建完毕 树 但还没存储 就认为已经存过
-            setDone(parent);
-
+            //若顺利获取完毕 构建完毕 树 但还没存储 就认为已经存过 有异常数则不记录成功， 子节点成功会记录 避免反复
+            if(res == 0) {
+                setDone(parent);
+            }
         }catch (Exception e){
             log.error(parent.toString(), e);
+            res ++;
         }
+
+        return res;
 
     }
 

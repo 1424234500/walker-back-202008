@@ -84,7 +84,6 @@
     <bean id="roleUserService" class="com.walker.service.impl.RoleUserServiceImpl" />
     <dubbo:service ref="roleUserService" interface="com.walker.service.RoleUserService" timeout="30000" version="1.0" delay="-1" />
 
-
     <!--    调度类型 触发 异步 耗时操作-->
     <bean id="syncService" class="com.walker.service.impl.SyncServiceImpl" />
     <dubbo:service ref="syncService" interface="com.walker.service.SyncService" timeout="30000" version="1.0" delay="-1" />

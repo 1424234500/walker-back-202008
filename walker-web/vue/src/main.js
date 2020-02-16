@@ -51,12 +51,20 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 
-//将方法挂载到Vue原型上
+//将方法挂载到Vue原型上 vue上下文 全局 this.get
 import { get, post, put, delet } from '@/utils/http'
 Vue.prototype.get = get
 Vue.prototype.post = post
 Vue.prototype.delet = delet
 Vue.prototype.put = put
+
+import { assign, clone} from '@/utils/index'
+Vue.prototype.assign = assign
+Vue.prototype.clone = clone
+
+
+
+
 
 /**
  * If you don't want to use mock-server

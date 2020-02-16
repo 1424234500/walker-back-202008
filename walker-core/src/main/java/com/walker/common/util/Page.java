@@ -1,6 +1,11 @@
 package com.walker.common.util;
 
+import com.walker.core.aop.Fun;
+import com.walker.core.aop.FunArgsS;
+
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -144,5 +149,38 @@ public class Page implements Serializable{
 		return this;
 	}
 
-	
+
+	/**
+	 * 分页回调
+	 * @param collection
+	 * @param batchSize
+	 * @param fun
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> int batch(List<T> collection, int batchSize, FunArgsS<List<T>, Integer> fun){
+		int res = 0;
+		assert collection != null;
+		assert collection.size() > 0;
+		assert batchSize > 0;
+
+		if(batchSize <= 0){
+			Tools.out("batch batchSize is null ");
+		}else if(collection == null || collection.size() <= 0){
+			Tools.out("batch collection is null ");
+		}else{
+			res = (int) Math.ceil(1d * collection.size() / batchSize);
+			if(fun != null){
+//				for(int i = 0; i < collection.size(); i+=batchSize){
+//					fun.make(collection.subList(i, Math.min(i+batchSize, collection.size())));
+//				}
+				for(int pageNow = 0; pageNow < res; pageNow++){
+					fun.make(collection.subList(pageNow*batchSize, Math.min(pageNow*batchSize+batchSize, collection.size())), pageNow);
+				}
+			}
+		}
+		return res;
+	}
+
+
 }

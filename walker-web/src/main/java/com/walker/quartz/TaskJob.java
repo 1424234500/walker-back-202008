@@ -39,6 +39,7 @@ public abstract class TaskJob extends QuartzJobBean implements Runnable {
 		log.info("Desc:" + jobDetail.getDescription());
 		JobHis jobHis = new JobHis()
 				.setID(LangUtil.getTimeSeqId())
+				.setJOB_NAME(jobDetail.getKey().getName())
 				.setIP_PORT(Pc.getIp())
 				.setS_TIME_START(TimeUtil.getTimeYmdHms(startTime))
 				.setSTATUS(status)

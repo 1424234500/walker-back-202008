@@ -154,7 +154,7 @@ export default {
     getListPage(data, resolve) {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+      var params = this.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
       if(data == null || !data['ID']){
         params['P_ID_NULL'] = 'true' //root根规则
       }else {
@@ -167,8 +167,8 @@ export default {
         for(var i = 0; i < list.length; i++){
           var obj = list[i]
           obj.id = obj.ID
-          obj.label = obj.NAME
-          obj.isLeaf = (obj.ID == 'dir' ? false: false)
+          obj.label = obj.NAME + ' \t ' + obj.PATH_NAME + ' \t ' + obj.PATH
+          obj.isLeaf = (obj.NAME.indexOf('居委') >= 0 ? true: false)
         }
         if(data == null){
           this.data = list

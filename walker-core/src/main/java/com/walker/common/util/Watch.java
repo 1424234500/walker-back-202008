@@ -169,6 +169,16 @@ public class Watch {
 	 * @param e
 	 * @return
 	 */
+	public Watch exception(Throwable e) {
+		this.put("exception", Tools.toString(e));
+//		throw new ErrorException(this);
+		return this;
+	}
+	/**
+	 * 异常结果 不抛出异常
+	 * @param e
+	 * @return
+	 */
 	public Watch exception(Throwable e,  Logger log) {
 		this.put("exception", Tools.toString(e));
 		this.res(log);

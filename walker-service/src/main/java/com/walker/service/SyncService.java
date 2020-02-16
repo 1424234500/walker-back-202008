@@ -7,9 +7,29 @@ import com.walker.mode.Area;
 import java.util.List;
 
 /**
- * 初始化数据服务 调度器
+ * 调度器
+ *
+ * 周期执行任务
+ *      sql操作
+ *
+ * 初始化数据
+ *
+ * 造数
+ *
+ * 同步数据
+ *
+ *
+ *
  */
 public interface SyncService {
+
+    /**
+     * 周期执行sql列表
+     */
+    Bean doAction(Bean args);
+
+
+
 
     /**
      * 高耗时 初始化地理信息 异步

@@ -264,7 +264,7 @@
         this.table = params.table
         delete params.table
         delete params.database
-        this.rowSearchDefault = Object.assign({}, params)
+        this.rowSearchDefault = this.assign({}, params)
         this.getColumns()
       }else if(this.props) {
         var params = this.props
@@ -272,7 +272,7 @@
         this.database = params.database
         this.database = this.database ? this.database : ''
         this.table = params.table
-        this.rowSearchDefault = Object.assign({}, params.params)
+        this.rowSearchDefault = this.assign({}, params.params)
         this.getColumns()
       }else{
         this.showChoseDb = true
@@ -283,7 +283,7 @@
     methods: {
       getDatabases() {
         this.loadingTables = true
-        var params = Object.assign({}, {})
+        var params = this.assign({}, {})
         this.get('/common/getDatabasesOrUsers.do', params).then((res) => {
           this.queryDatabase = res.data
           this.database = res.data != null && res.data.length > 0 ? res.data[0] : 'walker'
@@ -298,7 +298,7 @@
       //查询展示的行列信息 备注
       getTables() {
         this.loadingTables = true
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
+        var params = this.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
         this.get('/common/getTables.do', params).then((res) => {
           this.queryTable = res.data
           this.table = res.data != null && res.data.length > 0 ? res.data[0] : ''
@@ -315,7 +315,7 @@
       //查询展示的行列信息 备注
       getColumns() {
         this.loadingCols = true
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
+        var params = this.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
         this.get('/common/getColsMap.do', {tableName: this.table}).then((res) => {
           this.colMap = res.data.colMap
           this.colKey = res.data.colKey
@@ -329,7 +329,7 @@
       },
       //清空搜索条件
       clearRowSearch(){
-        this.rowSearch = Object.assign({}, this.rowSearchDefault)
+        this.rowSearch = this.assign({}, this.rowSearchDefault)
         this.page.nowpage = 1
         this.page.order = ''
       },
@@ -337,8 +337,8 @@
       getListPage() {
         this.loadingList = true
         // name/nowPage/showNum
-        var obj = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, obj)
+        var obj = this.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+        var params = this.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, obj)
         this.get('/common/findPage.do', params).then((res) => {
           this.list = res.data.data
           this.page = res.data.page
@@ -351,7 +351,9 @@
       },
       //添加行
       handlerAddColumn(){
-        var newObj = Object.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
+        var newObj = this.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
+        newObj[this.colKey] = ''
+        newObj["S_FLAG"] = '1'
         this.list.push(newObj)
         this.handlerChange(this.list[this.list.length - 1])
       },
@@ -374,8 +376,8 @@
         console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
         this.loadingSave = true
 
-        Object.assign(this.rowUpdateFrom, this.rowUpdate)
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, this.rowUpdateFrom)
+        this.rowUpdateFrom = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
+        var params = this.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, this.rowUpdateFrom)
         this.post('/common/save.do', params).then((res) => {
           this.loadingSave = false
           this.loadingUpdate = ! this.loadingUpdate
@@ -389,7 +391,7 @@
       handlerDelete(val) {
         console.info("handlerDelete " + " " + JSON.stringify(val))
         this.loadingList = true
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, val)
+        var params = this.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, val)
         this.get('/common/delet.do', params).then((res) => {
           for(let j = 0; j < this.list.length; j++) {
             if(this.list[j] == val){

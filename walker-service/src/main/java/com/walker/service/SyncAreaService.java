@@ -39,8 +39,9 @@ public interface SyncAreaService {
      * @param parent    root节点
      * @param ifChild 是否递归子节点
      * @param list  若不为null 则把节点都添加进去   大量数据不应当使用
+     * @return int 返回异常html次数
      */
-    void getCity(Area parent, boolean ifChild, List<Area> list);
+    int getCity(Area parent, boolean ifChild, List<Area> list);
 
 
     /**

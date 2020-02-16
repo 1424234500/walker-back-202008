@@ -239,7 +239,7 @@
       },
       getDatabases() {
         this.loadingTables = true
-        var params = Object.assign({}, {})
+        var params = this.assign({}, {})
         this.get('/common/getDatabasesOrUsers.do', params).then((res) => {
           this.queryDatabase = res.data
           this.database = res.data != null && res.data.length > 0 ? res.data[0] : 'walker'
@@ -254,7 +254,7 @@
       //查询展示的行列信息 备注
       getTables() {
         this.loadingTables = true
-        var params = Object.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
+        var params = this.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, {})
         this.get('/common/getTables.do', params).then((res) => {
           this.queryTable = res.data
           this.table = res.data != null && res.data.length > 0 ? res.data[0] : 'W_USER'
@@ -291,8 +291,8 @@
 
         // var tab = this.listTab[parseInt(this.listTabValue)]
         var sql = tab.content
-        var obj = Object.assign({nowPage: this.obj[this.listTabValue].page.nowpage, showNum: this.obj[this.listTabValue].page.shownum, order: this.obj[this.listTabValue].page.order}, {})
-        var params = Object.assign({"_SQL_": sql}, obj)
+        var obj = this.assign({nowPage: this.obj[this.listTabValue].page.nowpage, showNum: this.obj[this.listTabValue].page.shownum, order: this.obj[this.listTabValue].page.order}, {})
+        var params = this.assign({"_SQL_": sql}, obj)
         this.get('/common/exeSql.do', params).then((res) => {
           if(res.data.data != null){
             // this.list = res.data.data

@@ -5,11 +5,9 @@ import com.walker.common.util.*;
 import com.walker.config.MakeConfig;
 import com.walker.core.database.RedisUtil;
 import com.walker.core.encode.Pinyin;
+import com.walker.dao.JdbcDao;
 import com.walker.dao.RedisDao;
-import com.walker.mode.Area;
-import com.walker.mode.Dept;
-import com.walker.mode.Key;
-import com.walker.mode.User;
+import com.walker.mode.*;
 import com.walker.service.*;
 import io.swagger.models.auth.In;
 import org.jsoup.Jsoup;
@@ -27,7 +25,19 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * 初始化数据服务 调度器
+ * 调度器
+ *
+ * 周期执行任务
+ *      sql操作
+ *
+ * 初始化数据
+ *
+ * 造数
+ *
+ * 同步数据
+ *
+ *
+ *
  */
 @Service("syncService")
 public class SyncServiceImpl implements SyncService {
@@ -46,11 +56,89 @@ public class SyncServiceImpl implements SyncService {
     @Autowired
     RoleService roleService;
 
+    @Autowired
+    ActionService actionService;
 
+    @Autowired
+    JdbcDao jdbcDao;
     @Autowired
     RedisDao redisDao;
     @Autowired
     MakeConfig makeConfig;
+
+    @Override
+    public Bean doAction(Bean args) {
+
+        Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
+        String key = Key.getLockRedis(getClass().getName() + ".doSql");
+        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea);
+        res.set("KEY", key);
+        res.set("VALUE", value);
+        if(value != null && value.length() > 0){
+            ThreadUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    log.info("sync begin key:" + key + " value:" + value + " args:" + args);
+                    Watch watch = new Watch(key);
+                    try {
+
+                        List<Action> list = actionService.finds(
+                                new Action(),//.setS_FLAG(Config.TRUE), //异常jpa?????????
+                                new Page()
+                                .setNowpage(1)
+                                .setShownum(Config.getDbsize())
+                                .setOrder("S_MTIME")
+                        );
+
+                        watch.cost("finddb");
+
+                        for(int i = 0; i < list.size(); i++) {
+                            Action action = list.get(i);
+                            Watch watch1 = new Watch(action);
+                            try {
+                                Object res = null;
+                                if(action.getTYPE().equalsIgnoreCase("sql")){
+                                    if(action.getVALUE().endsWith(";")){
+                                        action.setVALUE(action.getVALUE().substring(0, action.getVALUE().length() - 1));
+                                    }
+                                    res = jdbcDao.executeSql(action.getVALUE());
+                                }else if(action.getTYPE().equalsIgnoreCase("url")){
+                                    res = new HttpBuilder(action.getVALUE(), HttpBuilder.Type.GET).buildString();
+                                }else if(action.getTYPE().equalsIgnoreCase("class")){
+                                    res = ClassUtil.doPackage(action.getVALUE());
+                                }
+
+                                watch1.res(res);
+                                log.info(watch1.toString());
+                            } catch (Exception e) {
+                                watch1.exception(e);
+                                log.error(watch1.toString(), e);
+                            } finally {
+                                watch.cost(action.getNAME());
+                            }
+                        }
+
+
+                    }finally {
+                        watch.res();
+                        log.info(watch.toPrettyString());
+                        log.info("sync end key:" + key + " value:" + value + " args:" + args);
+
+                        if(! redisDao.releaseLock(key, value)){
+                            log.error("unlock error expire ? key:" + key + ", value:" + redisDao.get(key) + " should be value:" + value);
+                        }
+                    }
+                }
+            });
+            res.set("INFO", "ok, sync in thread ");
+            log.info("have being running " + res + " args:" + args);
+        }else{
+            res.set("INFO", "waring, redis lock error, have being syncing ? ");
+            log.warn("have being locked " + res + " args:" + args);
+        }
+        return res;
+
+    }
 
     @Override
     public Bean syncArea(Bean args) {
@@ -63,9 +151,11 @@ public class SyncServiceImpl implements SyncService {
             ThreadUtil.execute(new Runnable() {
                 @Override
                 public void run() {
+                    log.info("sync begin key:" + key + " value:" + value + " args:" + args);
                     try {
                         syncAreaService.syncArea();
                     }finally {
+                        log.info("sync end key:" + key + " value:" + value + " args:" + args);
                         if(! redisDao.releaseLock(key, value)){
                             log.error("unlock error expire ? key:" + key + ", value:" + redisDao.get(key) + " should be value:" + value);
                         }
@@ -107,6 +197,8 @@ public class SyncServiceImpl implements SyncService {
             ThreadUtil.execute(new Runnable() {
                 @Override
                 public void run() {
+                    log.info("sync begin key:" + key + " value:" + value + " args:" + args);
+
                     Watch watch = new Watch(key);
 
                     try {
@@ -175,6 +267,7 @@ public class SyncServiceImpl implements SyncService {
                     }finally {
                         watch.res();
                         log.info(watch.toPrettyString());
+                        log.info("sync end key:" + key + " value:" + value + " args:" + args);
 
                         if(! redisDao.releaseLock(key, value)){
                             log.error("unlock error expire ? key:" + key + ", value:" + redisDao.get(key) + " should be value:" + value);

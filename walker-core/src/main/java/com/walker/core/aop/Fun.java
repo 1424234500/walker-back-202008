@@ -1,7 +1,10 @@
 package com.walker.core.aop;
 /**
  * 通用泛型回调接口
- * 返回值采取协变? 或者 泛型定义
+ *
+ * 参数	泛型定义
+ * 返回值	协变
+ *
  * @param <A>
  */
 public interface Fun<A>{ 

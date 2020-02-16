@@ -1,3 +1,29 @@
+-- 用户 数据库 分表
+-- CREATE DATABASE IF NOT EXISTS walker default charset utf8 COLLATE utf8_general_ci;
+-- GRANT ALL PRIVILEGES ON *.* TO 'walker'@'%' IDENTIFIED BY 'qwer' WITH GRANT OPTION;
+
+
+
+
+---通用字段
+---ID       VARCHAR2(32)     主键
+---S_MTIME  VARCHAR2(32)	 long/字符串ymdhms 修改时间 自动设置	YYYY-MM-DD HH24:MM-SS:SSS
+---S_ATIME  VARCHAR2(32)	 long/字符串ymdhms 添加时间 自动设置	YYYY-MM-DD HH24:MM-SS:SSS
+---S_FLAG   VARCHAR2(2)      0/1     假删除 配合S_MTIME增量查询
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- # Quartz - mysql - init sql
 -- # Quartz seems to work best with the driver mm.mysql-2.0.7-bin.jar

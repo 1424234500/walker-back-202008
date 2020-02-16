@@ -20,6 +20,9 @@ public class JobHis implements Cloneable,Serializable{
 //    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
     private String ID;
+    @Column(name="JOB_NAME", columnDefinition = "varchar(32) default '' comment '任务ID' ")
+    private String JOB_NAME;
+
     @Column(name = "S_TIME_START", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '开始时间' ")
     private String S_TIME_START;
     @Column(name = "S_TIME_STOP", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '结束时间' ")
@@ -97,6 +100,15 @@ public class JobHis implements Cloneable,Serializable{
 
     public JobHis setIP_PORT(String IP_PORT) {
         this.IP_PORT = IP_PORT;
+        return this;
+    }
+
+    public String getJOB_NAME() {
+        return JOB_NAME;
+    }
+
+    public JobHis setJOB_NAME(String JOB_NAME) {
+        this.JOB_NAME = JOB_NAME;
         return this;
     }
 

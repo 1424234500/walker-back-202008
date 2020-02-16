@@ -124,7 +124,7 @@ public class LogInterceptors implements HandlerInterceptor{
 	            cla = handlerMethod.getBean().toString();
 	            cla = cla.substring(0, cla.indexOf("@"));
         	}catch(Exception e){
-        		e.printStackTrace();
+        		log.error(method.toString(), e);
         	}
         }
         User user = Context.getUser();

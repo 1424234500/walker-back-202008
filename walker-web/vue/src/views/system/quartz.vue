@@ -326,15 +326,13 @@ export default {
     },
     //清空搜索条件
     clearRowSearch(){
-      for (var key in this.colMap) {
-        this.rowSearch[key] = ''
-      }
+      this.rowSearch = {} //clear map
       this.page.nowpage = 1
     },
     //分页查询
     getListPage() {
       this.loadingList = true
-      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+      var params = this.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
       this.get('/quartz/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
@@ -357,8 +355,8 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-      var newObj = Object.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
-
+      var newObj = this.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
+      newObj[this.colKey] = ''
       //newObj["JOB_NAME"] = this.nowRow == null ? "" : this.nowRow["JOB_NAME"]
       //newObj["DESCRIPTION"] = this.nowRow == null ? "" : this.nowRow["DESCRIPTION"]
       //newObj['CRON_EXPRESSION'] = '0 0 10 * * ?'
@@ -367,7 +365,7 @@ export default {
     },
     //添加行
     handlerAddColumnTrigger(){
-      let newObj = Object.assign({}, {})
+      let newObj = this.assign({}, {})
       newObj["CRON_EXPRESSION"] = this.nowRowTrigger == null ? '0 0 10 * * ?' : this.nowRowTrigger["CRON_EXPRESSION"]
       newObj["DESCRIPTION"] = ' 每1小时触发一次'
       newObj["S_FLAG"] = '1'  //需要保存
@@ -405,7 +403,7 @@ export default {
       console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
       this.loadingSave = true
 
-      Object.assign(this.rowUpdateFrom, this.rowUpdate)
+      this.rowUpdateFrom = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
       var params = this.rowUpdateFrom
       this.post('/quartz/save.do', params).then((res) => {
         this.loadingSave = false
@@ -524,7 +522,7 @@ export default {
         database: '',
         table: 'W_JOB_HIS',
         params: {
-          'ID' : val[this.colKey]
+          'JOB_NAME' : val[this.colKey]
         },
       }
       this.showDialogLog = ! this.showDialogLog
@@ -562,7 +560,7 @@ export default {
 
       if(listOn.length > 0 || listOff.length > 0){
         //console.info(this.showTrigger)
-        var params = Object.assign({}, this.showTrigger)
+        var params = this.assign({}, this.showTrigger)
         //
         params['ON'] =  listOn.join(",")
         params['OFF'] = listOff.join(",")

@@ -166,6 +166,7 @@ export default {
       rowUpdate: {},   //更新界面复制 列名:新值
       rowUpdateFrom: {},//更新界面源对象 列名:旧值
       rowSelect: [],   //选中行
+      nowRow: null,     //当前行
       page: {
         nowpage: 1,
         num: 0,
@@ -200,16 +201,14 @@ export default {
     },
     //清空搜索条件
     clearRowSearch(){
-      for (var key in this.colMap) {
-        this.rowSearch[key] = ''
-      }
+      this.rowSearch = {} //clear map
       this.page.nowpage = 1
     },
      //分页查询
      getListPage() {
       this.loadingList = true
       // name/nowPage/showNum
-      var params = Object.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+      var params = this.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
       this.get('/file/findPage.do', params).then((res) => {
         this.list = res.data.data
         this.page = res.data.page
@@ -220,8 +219,16 @@ export default {
     },
     //添加行
     handlerAddColumn(){
-      this.list.push(Object.assign({}, this.rowSearch))
+      var newObj = this.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
+      newObj[this.colKey] = ''
+      newObj["S_FLAG"] = '1'
+      this.list.push(newObj)
       this.handlerChange(this.list[this.list.length - 1])
+    },
+    //当前高亮行
+    handlerCurrentChangeTable(row){
+      console.info("handlerCurrentChangeTable", row)
+      this.nowRow = row
     },
     //修改单行 展示弹框
     handlerChange(val) {
@@ -242,7 +249,7 @@ export default {
       console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
       this.loadingSave = true
 
-      Object.assign(this.rowUpdateFrom, this.rowUpdate)
+      this.rowUpdateFrom = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
       var params = this.rowUpdateFrom
       this.post('/file/save.do', params).then((res) => {
         this.loadingSave = false

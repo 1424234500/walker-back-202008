@@ -138,11 +138,11 @@ export default {
         data = data.data
         this.queryUrl =  data.items
         this.colsSearch = data.arg
-        this.option = Object.assign(data.option, this.other)
+        this.option = this.assign(data.option, this.other)
         this.chart.setOption(this.option, true)
 
 
-        this.option2 = Object.assign(data.option2, this.other)
+        this.option2 = this.assign(data.option2, this.other)
         this.chart2.setOption(this.option2, true)
 
         this.loadingList = false
