@@ -7,7 +7,16 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * 基本模型 用于测试 分库分表 walker0 walker1
+ * 统计模型	某个时间段的统计结果
+ *
+ * 某台服务器
+ * 某个时间点
+ * 受理某接口
+ * 成功多少次
+ * 成功共耗时
+ *
+ * 失败多少次
+ * 失败总耗时
  *
  * (IPPORT, ID, URL, COUNT, TIME, COSTTIME)
  */

@@ -1,8 +1,12 @@
 package com.walker.intercept;
 
+import com.walker.common.util.Pc;
 import com.walker.common.util.Tools;
 import com.walker.config.Context;
+import com.walker.config.ControllerConfig;
+import com.walker.mode.LogModel;
 import com.walker.mode.User;
+import com.walker.service.Config;
 import com.walker.util.RequestUtil;
 import com.walker.util.SpringContextUtil;
 import com.walker.service.LogService;
@@ -71,6 +75,7 @@ public class LogInterceptors implements HandlerInterceptor{
         User user = Context.getUser();
         //登录用户操作日志 记录 用户id,操作url权限?,用户操作ip/mac/端口
         String id = user == null ? "" : user.getID();
+        int status = response.getStatus();
         String requestUri = request.getRequestURI();
         String contextPath = request.getContextPath();
         String url = requestUri.substring(contextPath.length());  //[/student/listm]
@@ -79,15 +84,23 @@ public class LogInterceptors implements HandlerInterceptor{
         String params = RequestUtil.getRequestBean(request).toString();
         String host=request.getRemoteHost();//返回发出请求的客户机的主机名
         int port =request.getRemotePort();//返回发出请求的客户机的端口号。
+        String res = String.valueOf(request.getAttribute(ControllerConfig.KEY));
+        res = res.length() > Config.getDbVarcharLengthLong() ? res.substring(0, Config.getDbVarcharLengthLong()) : res;
+        LogModel logModel = new LogModel()
+                .setID(id).setARGS(params)
+                .setIP_PORT_FROM(ip + ":" + port).setURL(url)
+                .setIP_PORT_TO(Pc.getIp())
+                .setCATE("controller")
+                .setCOST(time + "")
+                .setIS_EXCEPTION(e == null ? "0" : "1").setEXCEPTION(Tools.toString(e))
+                .setIS_OK(status+"")
+                .setRES(res);
+        request.removeAttribute(ControllerConfig.KEY);
 
-        logService.saveControl(id, url, ip, host, port, params);
-
-        logService.saveStatis(url, params, time);   //统计耗时
-
+        logService.saveControl(logModel);
 
         Context.clear();
-        
-    }  
+    }
     /** 
      * 该方法在目标方法调用之后，渲染视图之前被调用； 
      * 可以对请求域中的属性或视图做出修改 
@@ -141,7 +154,7 @@ public class LogInterceptors implements HandlerInterceptor{
         Context.setInfo(info);
         //日志 记录 输出
 //        log.info("++++++++ ");
-	    log.info(info);
+	    log.info(info); //输出入口日志
 
         return true;
     }  

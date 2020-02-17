@@ -272,18 +272,21 @@ public class Pc {
 		res += " totalMemory: " + Tools.calcSize(runtime.totalMemory()) + " \n";
 		return res;
 	}
+
+	static String IP = "";
 	/**
 	 * 获取本机ip
 	 */
 	public static String getIp(){
-		String addr = "";
-		try {
-			addr = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			addr = "127.0.0.1";
+		if(IP.length() <= 0) {
+			try {
+				IP = InetAddress.getLocalHost().getHostAddress();
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+				return "127.0.0.1";
+			}
 		}
-		return addr;
+		return IP;
 	}
 	/**
 	 * 超时应该在3钞以上

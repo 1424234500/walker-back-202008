@@ -26,7 +26,9 @@ public class Config {
     public static int getDbsize(){
         return 500;
     }
-
+    public static int getDbVarcharLengthLong(){
+        return 1990;
+    }
 
     public static String makePrefix(String prefix, String ID) {
         if(ID != null && ID.length() > 0 && !ID.startsWith(prefix)){

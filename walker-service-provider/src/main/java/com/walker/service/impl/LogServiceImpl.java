@@ -8,10 +8,10 @@ import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.dao.JdbcDao;
 import com.walker.dao.JobHisRepository;
-import com.walker.dao.LogInfoRepository;
+import com.walker.dao.LogModelRepository;
 import com.walker.dao.LogTimeRepository;
 import com.walker.mode.JobHis;
-import com.walker.mode.LogInfo;
+import com.walker.mode.LogModel;
 import com.walker.mode.LogTime;
 import com.walker.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class LogServiceImpl implements LogService {
 	private Cache<String> cache = CacheMgr.getInstance();
 
 	@Autowired
-	LogInfoRepository logInfoRepository;
+	LogModelRepository logModelRepository;
 
 
 	@Autowired
@@ -52,38 +52,27 @@ public class LogServiceImpl implements LogService {
     //info:
     //id,userid,time,url,ip,mac,port,about
 	@Override
-	public void saveControl(String userid, String url, String ip, String host, int port, String params) {
-		List<LogInfo> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
-		params = Tools.cutString(params, 180);
-		LogInfo line = new LogInfo();
-		line.setId(LangUtil.getGenerateId());
-		line.setTime(TimeUtil.getTimeYmdHmss());
-		line.setUSERID(userid);
-		line.setURL(url);
-		line.setIP(ip + ":" + port);
-		line.setHOST(host);
-		line.setABOUT(params);
-		list.add(line);
+	public void saveControl(LogModel logModel) {
+		List<LogModel> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
+		list.add(logModel);
 		cache.put(CACHE_KEY_CONTROL, list);
-	}
 
-	/**
-	 * 切换 线程安全的计数方案
-	 */
-	@Override
-	public void saveStatis(String url, String params, long costtime) {
+		String url = logModel.getURL();
 		url = url.split("\\.")[0]; //url编码
 		Bean bean = cache.get(CACHE_KEY, new Bean());
 		Bean beanUrl = bean.get(url, new Bean());
-		beanUrl.put("URL", url);
 		AtomicLong cost = bean.get("COSTTIME", new AtomicLong(0));
-		beanUrl.put("COSTTIME", cost.addAndGet(costtime));
+		beanUrl.put("COSTTIME", cost.addAndGet(Long.valueOf( logModel.getCOST() ) ));
 		AtomicLong count = bean.get("COUNT", new AtomicLong(0));
 		beanUrl.put("COUNT", bean.get(count.addAndGet(1)));
 
+		beanUrl.put("IPPORT", Pc.getIp());
+
 		bean.put(url, beanUrl);
 		cache.put(CACHE_KEY, bean);
+
 	}
+
 	@Override
 	public void saveStatis() {
 		log.info("begin batch save");
@@ -126,9 +115,9 @@ public class LogServiceImpl implements LogService {
 		cache.remove(CACHE_KEY);
 
 
-		List<LogInfo> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
+		List<LogModel> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
 		if(list.size() > 0) {
-			list = logInfoRepository.saveAll(list);
+			list = logModelRepository.saveAll(list);
 			cache.remove(CACHE_KEY_CONTROL);
 			log.info("batch save Control " + list.size());
 		}

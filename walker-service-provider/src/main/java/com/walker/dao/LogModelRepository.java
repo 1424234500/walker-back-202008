@@ -1,7 +1,6 @@
 package com.walker.dao;
 
-import com.walker.mode.LogInfo;
-import com.walker.mode.Man;
+import com.walker.mode.LogModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * sharding 分库 & 分表
  */
 @Repository
-public interface LogInfoRepository extends JpaRepository<LogInfo, String> {//实体类 主键类型
+public interface LogModelRepository extends JpaRepository<LogModel, String> {//实体类 主键类型
 //    List<T> findAll();
 //    List<T> findAll(Sort var1);
 //    List<T> findAllById(Iterable<ID> var1);
