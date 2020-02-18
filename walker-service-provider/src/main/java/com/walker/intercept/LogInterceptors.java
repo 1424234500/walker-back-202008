@@ -91,13 +91,13 @@ public class LogInterceptors implements HandlerInterceptor{
                 .setIP_PORT_FROM(ip + ":" + port).setURL(url)
                 .setIP_PORT_TO(Pc.getIp())
                 .setCATE("controller")
-                .setCOST(time + "")
+                .setCOST(time)
                 .setIS_EXCEPTION(e == null ? "0" : "1").setEXCEPTION(Tools.toString(e))
                 .setIS_OK(status+"")
                 .setRES(res);
         request.removeAttribute(ControllerConfig.KEY);
 
-        logService.saveControl(logModel);
+        logService.saveLogModel(logModel);
 
         Context.clear();
     }

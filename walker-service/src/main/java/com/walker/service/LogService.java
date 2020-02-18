@@ -1,6 +1,5 @@
 package com.walker.service;
 
-import com.walker.mode.JobHis;
 import com.walker.mode.LogModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,21 +12,16 @@ public interface LogService  {
 	String CACHE_KEY = "cache-url-request";
 	String CACHE_KEY_CONTROL = "cache-url-request-control";
 
-	/**
-	 * 保存jobhis quartz类执行日志
-	 * @param jobHis
-	 */
-	public void saveJobHis(JobHis jobHis);
 
 	/**
-	 * 登陆用户操作 记录
+	 * 日志记录模型 controller job
 	 */
-	public void saveControl(LogModel logModel);
+	void saveLogModel(LogModel logModel);
 
 	/**
-	 * 把统计在redis中的数据导出到oracle
+	 * 把缓冲的日志记录和 日志统计结果记录 持久化
 	 */
-	public void saveStatis();
+	void saveStatis();
 
 
 }

@@ -5,11 +5,10 @@ import com.walker.core.scheduler.TaskJob;
 
 public class JobQpsDay extends TaskJob{
 
-	@Override
-	public void run() {
-		Tools.out("scheduler quartz run test");
-		
-	}
 
-	
+	@Override
+	public String make() {
+		Tools.out("scheduler quartz run test");
+		return "world";
+	}
 }

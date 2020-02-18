@@ -45,11 +45,11 @@ public class LogModel implements Cloneable, Serializable {
 	private String IP_PORT_FROM;
 	@Column(name = "IP_PORT_TO", columnDefinition = "varchar(128) default '' comment '受理服务器的ip:port' ")
 	private String IP_PORT_TO;
-	@Column(name = "URL", columnDefinition = "varchar(1998) default '' comment 'URL' ")    //255
+	@Column(name = "URL", columnDefinition = "varchar(1998) default '' comment 'URL' ")    //www.baidu.com	类名
 	private String URL;
-	@Column(name = "WAY", columnDefinition = "varchar(1998) default '' comment '方式' ")    //255
+	@Column(name = "WAY", columnDefinition = "varchar(998) default '' comment '方式' ")    //post	任务id
 	private String WAY;
-	@Column(name = "ARGS", columnDefinition = "varchar(1998) default '' comment '参数' ")
+	@Column(name = "ARGS", columnDefinition = "varchar(1998) default '' comment '参数' ")	//wd=123	触发器规则
 	private String ARGS;
 	@Column(name = "IS_EXCEPTION", columnDefinition = "varchar(2) default '' comment '1是0否异常' ")
 	private String IS_EXCEPTION;
@@ -203,12 +203,12 @@ public class LogModel implements Cloneable, Serializable {
 		return this;
 	}
 
-	public String getCOST() {
-		return COST;
+	public Long getCOST() {
+		return Long.valueOf(COST);
 	}
 
-	public LogModel setCOST(String COST) {
-		this.COST = COST;
+	public LogModel setCOST(Long COST) {
+		this.COST = "" + COST;
 		return this;
 	}
 

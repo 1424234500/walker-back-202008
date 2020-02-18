@@ -31,10 +31,17 @@ import java.util.Map;
 public class TomcatController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
+
+    final static public String sqlStaticsMysqlCount =
+"  SELECT T2.LEV, IFNULL(T1.TIME, '0') TIME FROM   ( SELECT HOUR, (0 + SUM(COSTTIME)/SUM(COUNT)/1000) TIME FROM (  SELECT  SUBSTR(LT.TIME,12,2) HOUR, LT.COUNT, LT.COSTTIME FROM W_LOG_TIME LT WHERE 1=1 AND LT.URL=?  ) T GROUP BY HOUR   ) T1 RIGHT JOIN  ( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=24    ) T2 ON T1.HOUR=T2.LEV ORDER BY LEV	  "
+    ;
+
+
+
     @Autowired
     JdbcDao baseService;
     
-    @ApiOperation(value = "统计mc访问", notes = "")
+    @ApiOperation(value = "统计行为次数分布", notes = "")
     @ResponseBody
     @RequestMapping(value = "/statics.do", method = RequestMethod.GET)
     public Response statics(
@@ -46,7 +53,7 @@ public class TomcatController {
             if (baseService.getDs().equals("oracle")) {
                 list = MapListUtil.toArrayAndTurn(baseService.find(" SELECT LEV, NVL(TIME, '0') TIME FROM  ( SELECT HOUR, CAST(SUM(COSTTIME)/SUM(COUNT)/1000 AS NUMBER(8, 3)) TIME FROM (  SELECT  TO_CHAR(LT.TIME, 'HH24') HOUR, LT.COUNT, LT.COSTTIME FROM W_LOG_TIME LT WHERE 1=1 AND LT.URL=?  )GROUP BY HOUR   ) T1,  ( SELECT LPAD(LEVEL, 2, '0') LEV FROM DUAL CONNECT BY LEVEL <= 24    ) T2 WHERE T1.HOUR(+) = T2.LEV  ORDER BY LEV ", new Object[]{url}));
             } else {
-                list = MapListUtil.toArrayAndTurn(baseService.find(" SELECT T2.LEV, IFNULL(T1.TIME, '0') TIME FROM   ( SELECT HOUR, (0 + SUM(COSTTIME)/SUM(COUNT)/1000) TIME FROM (  SELECT  SUBSTR(LT.TIME,12,2) HOUR, LT.COUNT, LT.COSTTIME FROM W_LOG_TIME LT WHERE 1=1 AND LT.URL=?  ) T GROUP BY HOUR   ) T1 RIGHT JOIN  ( select lpad(level, 2, '0') lev from (select  (@i/*'*/:=/*'*/@i+1) level from  information_schema.COLUMNS t ,(select   @i/*'*/:=/*'*/0) it ) t  where level<=24    ) T2 ON T1.HOUR=T2.LEV ORDER BY LEV\t", new Object[]{url}));
+                list = MapListUtil.toArrayAndTurn(baseService.find(sqlStaticsMysqlCount, new Object[]{url}));
             }
         } else if (baseService.getDs().equals("oracle")) {
             list = MapListUtil.toArrayAndTurn(baseService.find("SELECT URL,CAST(SUM(COSTTIME)/SUM(COUNT)/1000 AS NUMBER(8, 3)) TIME FROM W_LOG_TIME WHERE 1=1 GROUP BY URL ORDER BY URL ", new Object[0]));
@@ -85,7 +92,7 @@ public class TomcatController {
         return Response.makeTrue(url, res);
     }
 
-    @ApiOperation(value = "统计mc访问耗时", notes = "")
+    @ApiOperation(value = "统计行为耗时", notes = "")
     @ResponseBody
     @RequestMapping(value = "/staticscount.do", method = RequestMethod.GET)
     public Response staticscount(

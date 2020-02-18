@@ -277,6 +277,7 @@ export default {
       this.loadingCols = true
       this.get('/common/getColsMap.do', {tableName: 'W_AREA'}).then((res) => {
         this.colMap = res.data.colMap
+          this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
         this.colKey = res.data.colKey
         this.clearRowSearch()
         this.loadingCols = false

@@ -40,7 +40,8 @@ public class MakeConfig {
     @Value("${expire.lock.redis.sync.area:36000}")
     public Long expireLockRedisSyncArea;
 
-
+    @Value("${expire.lock.redis.make.user:3600}")
+    public Long expireLockRedisMakeUser;
 
 
 

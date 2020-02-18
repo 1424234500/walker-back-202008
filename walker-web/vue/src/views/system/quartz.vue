@@ -76,7 +76,7 @@
             <el-button-group>
               <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
               <el-button size="mini" type="success" icon="el-icon-menu" circle @click.stop="handlerShowTrigger(scope.row)"></el-button>
-              <el-button size="mini" type="warning" icon="el-icon-search" circle @click.stop="handlerHis(scope.row)"></el-button>
+              <el-button size="mini" type="warning" icon="el-icon-search" circle @click.stop="handlerShowHis(scope.row)"></el-button>
               <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
               <el-button size="mini" type="primary" @click.stop="handlerRun(scope.row)">立即执行</el-button>
             </el-button-group>
@@ -288,6 +288,7 @@ export default {
       this.loadingCols = true
       this.get('/common/getColsMap.do', {tableName: this.quartzTable}).then((res) => {
         this.colMap = res.data.colMap
+          this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
         delete this.colMap.JOB_DATA
         delete this.colMap.SCHED_NAME
         delete this.colMap.JOB_GROUP
@@ -366,8 +367,8 @@ export default {
     //添加行
     handlerAddColumnTrigger(){
       let newObj = this.assign({}, {})
-      newObj["CRON_EXPRESSION"] = this.nowRowTrigger == null ? '0 0 10 * * ?' : this.nowRowTrigger["CRON_EXPRESSION"]
-      newObj["DESCRIPTION"] = ' 每1小时触发一次'
+      newObj["CRON_EXPRESSION"] = this.nowRowTrigger == null ? '0 0 0 * * ?' : this.nowRowTrigger["CRON_EXPRESSION"]
+      newObj["DESCRIPTION"] = ' 每天0点0分0秒 触发'
       newObj["S_FLAG"] = '1'  //需要保存
       this.listTrigger.push(newObj)
       this.$nextTick(this.handlerOnShowTrigger())  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
@@ -493,20 +494,6 @@ export default {
         this.loadingTrigger = false
       })
 
-
-
-      params = {nowPage: 1, showNum: 20}
-      params[this.colKey] = val[this.colKey]
-      this.loadingHis = true
-      this.get('/quartz/findPageJobHis.do', params).then((res) => {
-        this.listHis = res.data.data
-        // this.page = res.data.page
-        this.info2 = res.info
-        this.loadingHis = false
-      }).catch(() => {
-        this.loadingHis = false
-      })
-
     },
     //默认选中
     handlerOnShowTrigger(){
@@ -517,12 +504,13 @@ export default {
       }
 
     },
-    handlerHis(val){
+    handlerShowHis(val){
       this.showDialogLogParams =  {
         database: '',
-        table: 'W_JOB_HIS',
+        table: 'W_LOG_MODEL',
         params: {
-          'JOB_NAME' : val[this.colKey]
+          'WAY' : val['JOB_NAME'],
+          'URL' : val['JOB_CLASS_NAME']
         },
       }
       this.showDialogLog = ! this.showDialogLog

@@ -38,4 +38,15 @@ public class Config {
     }
 
 
+    public static String getSystemUser() {
+        return "system";
+    }
+    public static String getCateController() {
+        return "controller";
+    }
+    public static String getCateJob() {
+        return "job";
+    }
+
+
 }

@@ -16,6 +16,8 @@ import com.walker.core.scheduler.TaskJob;
 import redis.clients.jedis.Jedis;
 
 public class JobQpsMinute extends TaskJob{
+
+
 	static Logger log = Logger.getLogger(JobQpsMinute.class); 
 	static String[] types = {"net", "wait", "done"};
 	static Bean mapLastCount = new Bean();
@@ -30,9 +32,10 @@ public class JobQpsMinute extends TaskJob{
 	}
 	
 	static Long timeLast = 0L;
-	
+
+
 	@Override
-	public void run() {
+	public String make() {
 		Redis.doJedis(new Fun<Object>() {
 			
 			@Override
@@ -111,7 +114,8 @@ public class JobQpsMinute extends TaskJob{
 			}
 
 		});
-		
+
+		return "ok";
 	}
 	
 }

@@ -23,24 +23,16 @@ public class JobMakeRole extends TaskJob {
 	//此处不能自动注入? 扫描注入包配置问题
 	SyncService syncService = SpringContextUtil.getBean("syncService");
 
-	/**
-	 * When an object implementing interface <code>Runnable</code> is used
-	 * to create a thread, starting the thread causes the object's
-	 * <code>run</code> method to be called in that separately executing
-	 * thread.
-	 * <p>
-	 * The general contract of the method <code>run</code> is that it may
-	 * take any action whatsoever.
-	 *
-	 * @see Thread#run()
-	 */
 	@Override
-	public void run() {
+	public String make() {
 		log.info("begin---------");
 
-		log.info(syncService.makeRole(new Bean().set("hello", "world")).toString());
+		Bean bean = syncService.makeRole(new Bean().set("hello", "world"));
+		String res = String.valueOf(bean);
+		log.info(res);
 
 		log.info("end---------");
-
+		return res;
 	}
+
 }

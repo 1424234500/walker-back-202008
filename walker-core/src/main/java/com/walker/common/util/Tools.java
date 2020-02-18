@@ -76,6 +76,9 @@ public class Tools {
 	 * @return
 	 */
 	public static String toString(Throwable e) {
+		if(e == null){
+			return "";
+		}
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 

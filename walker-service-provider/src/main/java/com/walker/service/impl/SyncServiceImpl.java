@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 调度器
@@ -66,6 +67,8 @@ public class SyncServiceImpl implements SyncService {
     @Autowired
     MakeConfig makeConfig;
 
+    ExecutorService executorService = ThreadUtil.getExecutorServiceInstance(10);
+
     @Override
     public Bean doAction(Bean args) {
 
@@ -75,7 +78,7 @@ public class SyncServiceImpl implements SyncService {
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
-            ThreadUtil.execute(new Runnable() {
+            executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     log.info("sync begin key:" + key + " value:" + value + " args:" + args);
@@ -148,7 +151,7 @@ public class SyncServiceImpl implements SyncService {
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
-            ThreadUtil.execute(new Runnable() {
+            executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     log.info("sync begin key:" + key + " value:" + value + " args:" + args);
@@ -190,11 +193,11 @@ public class SyncServiceImpl implements SyncService {
     public Bean makeUser(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
         String key = Key.getLockRedis(getClass().getName() + ".makeUser");
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea);
+        String value = redisDao.tryLock(key, makeConfig.expireLockRedisMakeUser);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
-            ThreadUtil.execute(new Runnable() {
+            executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     log.info("sync begin key:" + key + " value:" + value + " args:" + args);

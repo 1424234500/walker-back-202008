@@ -202,7 +202,7 @@ public class QuartzController {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
 
         StringBuilder sb = new StringBuilder(
-                "select j.JOB_NAME, h.* from  W_QRTZ_JOB_DETAILS j, W_JOB_HIS h  where 1=1 and j.JOB_NAME=? and j.JOB_NAME=h.INFO order by h.S_TIME_START desc " );
+                "select h.* from  W_QRTZ_JOB_DETAILS j, W_JOB_HIS h  where 1=1 and j.JOB_NAME=? and j.JOB_NAME=h.INFO order by h.S_TIME_START desc " );
 
         log.info("make sql " + sb.toString());
         List<?> res = jdbcDao.findPage(page, sb.toString(), jobName);

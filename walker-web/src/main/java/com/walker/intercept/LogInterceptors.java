@@ -84,20 +84,26 @@ public class LogInterceptors implements HandlerInterceptor{
         String params = RequestUtil.getRequestBean(request).toString();
         String host=request.getRemoteHost();//返回发出请求的客户机的主机名
         int port =request.getRemotePort();//返回发出请求的客户机的端口号。
+        String way = request.getMethod();
         String res = String.valueOf(request.getAttribute(ControllerConfig.KEY));
         res = res.length() > Config.getDbVarcharLengthLong() ? res.substring(0, Config.getDbVarcharLengthLong()) : res;
         LogModel logModel = new LogModel()
-                .setID(id).setARGS(params)
-                .setIP_PORT_FROM(ip + ":" + port).setURL(url)
+                .setCATE(Config.getCateController())
+                .setUSER(id)
+                .setIP_PORT_FROM(ip + ":" + port)
                 .setIP_PORT_TO(Pc.getIp())
-                .setCATE("controller")
-                .setCOST(time + "")
-                .setIS_EXCEPTION(e == null ? "0" : "1").setEXCEPTION(Tools.toString(e))
-                .setIS_OK(status+"")
-                .setRES(res);
+                .setWAY(way)
+                .setURL(url)
+                .setARGS(params)
+                .setCOST(time)
+                .setIS_EXCEPTION(e == null ? Config.FALSE : Config.TRUE).setEXCEPTION(Tools.toString(e))
+                .setIS_OK(e == null ? Config.FALSE : Config.TRUE)
+                .setRES(res)
+                .setABOUT(status + "")
+                ;
         request.removeAttribute(ControllerConfig.KEY);
 
-        logService.saveControl(logModel);
+        logService.saveLogModel(logModel);
 
         Context.clear();
     }

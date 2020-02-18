@@ -1,5 +1,6 @@
 package com.walker.job;
 
+import com.walker.common.util.Bean;
 import com.walker.quartz.TaskJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.PersistJobDataAfterExecution;
@@ -12,21 +13,14 @@ public class JobTest extends TaskJob {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 
-
-	/**
-	 * When an object implementing interface <code>Runnable</code> is used
-	 * to create a thread, starting the thread causes the object's
-	 * <code>run</code> method to be called in that separately executing
-	 * thread.
-	 * <p>
-	 * The general contract of the method <code>run</code> is that it may
-	 * take any action whatsoever.
-	 *
-	 * @see Thread#run()
-	 */
 	@Override
-	public void run() {
-		log.info("jobTest---------");
+	public String make() {
+		log.info("begin---------");
 
+		String res = "jobTest";
+		log.info(res);
+
+		log.info("end---------");
+		return res;
 	}
 }

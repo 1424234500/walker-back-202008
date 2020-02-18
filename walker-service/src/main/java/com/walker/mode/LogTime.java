@@ -27,74 +27,123 @@ public class LogTime implements Cloneable, Serializable {
 	@Id     //主键
 	@Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
 	private String ID;
-	@Column(name = "TIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
-    private String TIME;
-	@Column(name = "IPPORT", columnDefinition = "varchar(64) default '' comment 'IPPORT' ")    //255
-	private String IPPORT;
-	@Column(name = "URL", columnDefinition = "varchar(512) default '' comment 'url' ")    //255
+	@Column(name = "CATE", columnDefinition = "varchar(256) default '1970-01-01 00:00:00' comment '类别' ")	//sql http controller job
+	private String CATE;
+	@Column(name = "S_MTIME", columnDefinition = "varchar(32) default '' comment '修改时间' ")    //255
+	private String S_MTIME;
+	@Column(name = "IP_PORT", columnDefinition = "varchar(128) default '' comment '统计服务器ip:port' ")
+	private String IP_PORT;
+	@Column(name = "URL", columnDefinition = "varchar(1998) default '' comment '受理接口' ")    // xxx.xxx.do
 	private String URL;
-	@Column(name = "COUNT", columnDefinition = "varchar(64) default '' comment '次数' ")
-	private String COUNT;
-	@Column(name = "COSTTIME", columnDefinition = "varchar(64) default '' comment '耗时' ")
-	private String COSTTIME;
+	@Column(name = "COUNT_OK", columnDefinition = "varchar(128) default '' comment '成功次数' ")    //
+	private String COUNT_OK;
+	@Column(name = "AVE_COST_OK", columnDefinition = "varchar(1998) default '' comment '成功平均耗时' ")	//
+	private String AVE_COST_OK;
+
+	@Column(name = "COUNT_NO", columnDefinition = "varchar(128) default '' comment '失败次数' ")    //
+	private String COUNT_NO;
+	@Column(name = "AVE_COST_NO", columnDefinition = "varchar(128) default '' comment '失败平均耗时' ")	//
+	private String AVE_COST_NO;
+
+	@Override
+	public String toString() {
+		return "LogTime{" +
+				"ID='" + ID + '\'' +
+				", CATE='" + CATE + '\'' +
+				", S_MTIME='" + S_MTIME + '\'' +
+				", IP_PORT='" + IP_PORT + '\'' +
+				", URL='" + URL + '\'' +
+				", COUNT_OK='" + COUNT_OK + '\'' +
+				", AVE_COST_OK='" + AVE_COST_OK + '\'' +
+				", COUNT_NO='" + COUNT_NO + '\'' +
+				", AVE_COST_NO='" + AVE_COST_NO + '\'' +
+				'}';
+	}
 
 	public String getID() {
 		return ID;
 	}
 
-	public void setID(String ID) {
+	public LogTime setID(String ID) {
 		this.ID = ID;
+		return this;
 	}
 
-	public String getTIME() {
-		return TIME;
+	public String getCATE() {
+		return CATE;
 	}
 
-	public void setTIME(String TIME) {
-		this.TIME = TIME;
+	public LogTime setCATE(String CATE) {
+		this.CATE = CATE;
+		return this;
 	}
 
-	public String getIPPORT() {
-		return IPPORT;
+	public String getS_MTIME() {
+		return S_MTIME;
 	}
 
-	public void setIPPORT(String IPPORT) {
-		this.IPPORT = IPPORT;
+	public LogTime setS_MTIME(String s_MTIME) {
+		S_MTIME = s_MTIME;
+		return this;
+	}
+
+	public String getIP_PORT() {
+		return IP_PORT;
+	}
+
+	public LogTime setIP_PORT(String IP_PORT) {
+		this.IP_PORT = IP_PORT;
+		return this;
 	}
 
 	public String getURL() {
 		return URL;
 	}
 
-	public void setURL(String URL) {
+	public LogTime setURL(String URL) {
 		this.URL = URL;
+		return this;
 	}
 
-	public String getCOUNT() {
-		return COUNT;
+	public LogTime setCOUNT_OK(Integer COUNT_OK) {
+		this.COUNT_OK = "" + COUNT_OK;
+		return this;
 	}
 
-	public void setCOUNT(String COUNT) {
-		this.COUNT = COUNT;
+	public Integer getCOUNT_OK() {
+		if(COUNT_OK  == null || COUNT_OK.length() == 0){
+			return 0;
+		}
+		return Integer.valueOf(COUNT_OK);
 	}
 
-	public String getCOSTTIME() {
-		return COSTTIME;
+	public Float getAVE_COST_OK() {
+		return Float.valueOf(AVE_COST_OK);
 	}
 
-	public void setCOSTTIME(String COSTTIME) {
-		this.COSTTIME = COSTTIME;
+	public LogTime setAVE_COST_OK(Float AVE_COST_OK) {
+		this.AVE_COST_OK = "" + AVE_COST_OK;
+		return this;
 	}
 
-	@Override
-	public String toString() {
-		return "LogTime{" +
-				"ID='" + ID + '\'' +
-				", TIME='" + TIME + '\'' +
-				", IPPORT='" + IPPORT + '\'' +
-				", URL='" + URL + '\'' +
-				", COUNT='" + COUNT + '\'' +
-				", COSTTIME='" + COSTTIME + '\'' +
-				'}';
+	public Integer getCOUNT_NO() {
+		if(COUNT_NO  == null || COUNT_NO.length() == 0){
+			return 0;
+		}
+		return Integer.valueOf(COUNT_NO);
+	}
+
+	public LogTime setCOUNT_NO(Integer COUNT_NO) {
+		this.COUNT_NO = "" + COUNT_NO;
+		return this;
+	}
+
+	public Float getAVE_COST_NO() {
+		return Float.valueOf(AVE_COST_NO);
+	}
+
+	public LogTime setAVE_COST_NO(Float AVE_COST_NO) {
+		this.AVE_COST_NO = "" + AVE_COST_NO;
+		return this;
 	}
 }
