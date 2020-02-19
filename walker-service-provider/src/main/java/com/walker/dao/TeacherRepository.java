@@ -175,27 +175,27 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, JpaSp
     /**
      * JPQL查询数量
      */
-    @Query("select count(t.id) from Teacher t where t.NAME like CONCAT('%', ?1, '%') ")
+    @Query("select count(t.id) from Teacher t where t.NAME like CONCAT('%', CONCAT(?1, '%')) ")
     int selfCount(String name);
 
     /**
      * JPQL 分页查询定制 只获取数据
      */
-    @Query("select t from Teacher t where t.NAME like CONCAT('%', ?1, '%') ")
+    @Query("select t from Teacher t where t.NAME like CONCAT('%', CONCAT(?1, '%')) ")
     List<Teacher> selfFindPage(String name, Pageable page);
 
     /**
      * 分页查询 native    同时获取分页信息  cost 900
      */
-    @Query(value = "select t.* from W_TEACHER t where t.NAME like CONCAT('%', ?1, '%')",
-            countQuery = "select count(t.id) from W_TEACHER t where t.NAME like CONCAT('%', ?1, '%')",
+    @Query(value = "select t.* from W_TEACHER t where t.NAME like CONCAT('%', CONCAT(?1, '%'))",
+            countQuery = "select count(t.id) from W_TEACHER t where t.NAME like CONCAT('%', CONCAT(?1, '%'))",
             nativeQuery = true)
     Page<Teacher> selfFindPageOnceSql(String name, Pageable pageable);
 
     /**
      * 分页查询 JPQL    同时获取分页信息    cost 500
      */
-    @Query(value = "select t from Teacher t where t.NAME like CONCAT('%', ?1, '%')")
+    @Query(value = "select t from Teacher t where t.NAME like CONCAT('%', CONCAT(?1, '%'))")
     Page<Teacher> selfFindPageOnceJpql(String name, Pageable pageable);
 
 

@@ -315,8 +315,8 @@ class CacheRedisImpl extends CacheAdapter<String>{//implements Cache<String> {
 	public List<Map<?,?>> mapToList(Map<?, ?> theMap, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
 		List<Map<?,?>> res = new ArrayList<>();
 		Set<?> set = theMap.entrySet();
-		int start = page.start();
-		int stop = page.stop();
+		int start = page.getStart();
+		int stop = page.getStop();
 		int count = 0;
 //		boolean ffExpire = false;
 		for(Object item1 : set){
@@ -354,8 +354,8 @@ class CacheRedisImpl extends CacheAdapter<String>{//implements Cache<String> {
 	}
 	public List<Map<?,?>> listToList(List<?> theList, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
 		List<Map<?,?>> res = new ArrayList<>();
-		int start = page.start();
-		int stop = page.stop();
+		int start = page.getStart();
+		int stop = page.getStop();
 		int count = 0;
 		boolean ffExpire = false;
 		for(int i = 0; i < theList.size(); i++){

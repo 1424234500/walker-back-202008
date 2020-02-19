@@ -357,8 +357,8 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 		List<Map<?,?>> res = new ArrayList<>();
 		Set<?> set = theMap.entrySet();
 		Index index = null;
-		int start = page.start();
-		int stop = page.stop();
+		int start = page.getStart();
+		int stop = page.getStop();
 		int count = 0;
 		boolean ffExpire = false;
 		if(rootKey.length() > 0){
@@ -405,8 +405,8 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 	public List<Map<?,?>> listToList(List<?> theList, Page page, String rootKey, String toUrl, String key, String value, int expire, int type){
 		List<Map<?,?>> res = new ArrayList<>();
 		Index index = null;
-		int start = page.start();
-		int stop = page.stop();
+		int start = page.getStart();
+		int stop = page.getStop();
 		int count = 0;
 		boolean ffExpire = false;
 		if(rootKey.length() > 0){

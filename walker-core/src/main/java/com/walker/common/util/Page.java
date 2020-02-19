@@ -69,10 +69,10 @@ public class Page implements Serializable{
 		return res;
 	}
 	
-	public int start(){
+	public int getStart(){
 		return (nowpage -1) * shownum;
 	}
-	public int stop(){
+	public int getStop(){
 		return nowpage * shownum;
 	}
 	public long getNum() {

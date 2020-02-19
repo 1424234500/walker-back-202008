@@ -45,7 +45,7 @@ public interface AreaRepository extends JpaRepository<Area, String>, JpaSpecific
     List<Area> findAllByP_ID(Set<String> pids);
 
 
-    @Query("select t from Area t where t.PATH like CONCAT('%', ?1, '%') ")
+    @Query("select t from Area t where t.PATH like CONCAT('%', CONCAT(?1, '%')) ")
     List<Area> findAllByPATH(String path);
 
     @Query("select t from Area t where t.P_ID is null or t.P_ID='' or t.P_ID=t.ID ")
