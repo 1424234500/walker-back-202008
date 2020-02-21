@@ -33,7 +33,7 @@ CREATE TABLE `W_LOG_TIME` (
     <select id="findAction" resultType="java.util.Map" >
         select t.* from (
             select URL X, sum(COUNT_OK) Y1, ( sum(COUNT_OK * AVE_COST_OK) / sum(COUNT_OK) ) Y2
-            , sum(COUNT_NO) Y3, ( sum(COUNT_NO * AVE_COST_NO) / sum(COUNT_NO) ) Y4
+            , sum(COUNT_NO) Y3, ifnull( sum(COUNT_NO * AVE_COST_NO) / sum(COUNT_NO), 0) Y4
             , ( sum(COUNT_NO) / sum(COUNT_OK) ) Y5
             from W_LOG_TIME
             group by URL

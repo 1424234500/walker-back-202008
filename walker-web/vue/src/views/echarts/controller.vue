@@ -1,14 +1,19 @@
 <template>
   <div class="app-container" >
 
+
+    <div>socket统计</div>
+
 <!--搜索-->
+   <!--
     <div class="div-box-down"
          v-loading="loadingList"
     >
+
         <form class="form-inline" >
           <div class="form-group">
             <label>url</label>
-            <el-select v-model="url"
+            <el-select v-model="colsSearch.url"
                        clearable filterable allow-create
                        placeholder="请选择" no-match-text="新建">
               <el-option
@@ -19,7 +24,24 @@
               >
               </el-option>
             </el-select>
-
+            <label>from</label>
+            <input
+              type="text"
+              class="form-control"
+              style="width: 10em; margin-right: 1em;"
+              v-on:keyup.13="getListPage()"
+              placeholder="yyyy-MM-dd HH:mm"
+              v-model="colsSearch.from"
+            />
+            <label>to</label>
+            <input
+              type="text"
+              class="form-control"
+              style="width: 10em; margin-right: 1em;"
+              v-on:keyup.13="getListPage()"
+              placeholder="yyyy-MM-dd HH:mm"
+              v-model="colsSearch.to"
+            />
           </div>
           <el-button-group>
             <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
@@ -27,14 +49,9 @@
           </el-button-group>
         </form>
     </div>
-
-
-    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-    <div :id="chartId2" class="echart-big-small" style="width: 100%;height: 26em;"></div>
-
+-->
     <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
     <div :id="chartId" class="echart-big-small" style="width: 100%;height: 26em;"></div>
-
 
 
   </div>
@@ -48,22 +65,27 @@ export default {
   data() {
     return {
       list: [],
-      colsMap: {},      //列名:别名
-      rowSearch: '',   //搜索 列明:搜索值
+      colsSearch: {},      //列名:别名
       queryUrl: [],
-      url: "",
-      queryUrlCount: [],
       urlCount: "",
       loadingList: true,
       loadingCols: true,
       chart: null,        //chart对象
       chartId: 'chartsId', //对象对应dom id
       option: {},  //对应数据
-
-      chart2: null,
-      chartId2: 'chartId2',
-      option2: {},
-
+      optionTest:{
+         xAxis: {
+             type: 'category',
+             data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+         },
+         yAxis: {
+             type: 'value'
+         },
+         series: [{
+             data: [820, 932, 901, 934, 1290, 1330, 1320],
+             type: 'line'
+         }]
+      },
       other: {
         tooltip: {
           trigger: 'axis',
@@ -112,42 +134,38 @@ export default {
     },
     //清空搜索条件
     clearColsSearch(){
-      this.url = "";
+      //for (var key in this.colsSearch) {
+      //  this.colsSearch[key] = '';
+      //}
+      this.colsSearch = {} //clear map
+
     },
      //分页查询
      getListPage() {
       this.loadingList = true
-      var params = {url:this.url}
+      var params = this.colsSearch
       this.get('/tomcat/statics.do', params).then((data) => {
         data = data.data
-        if(this.queryUrl == null || this.queryUrl.length <= 0)
-          this.queryUrl =  data.option.xAxis.data;
-
-        this.option = this.assign(data.option, this.other)
+        this.queryUrl =  data.items
+        this.colsSearch = data.arg
+        debugger
+        this.option = Object.assign(data.option, this.other)
+        console.log(this.option)
         this.chart.setOption(this.option, true)
 
         this.loadingList = false
-      }).catch(() => {
+      }).catch((e) => {
+        debugger
         this.loadingList = false
+        console.log(e)
+        this.option =  this.assign(this.optionTest, this.other)
+        this.chart.setOption(this.option, true)
       })
-       this.get('/tomcat/staticscount.do', params).then((data) => {
-         data = data.data
-         this.queryUrlCount =  data.option.xAxis.data;
-
-         this.option2 = this.assign(data.option, this.other)
-         this.chart2.setOption(this.option2, true)
-         this.loadingList = false
-       }).catch(() => {
-         this.loadingList = false
-       })
-
 
     },
 
     initChart() {
       this.chart = echarts.init(document.getElementById(this.chartId))
-      this.chart2 = echarts.init(document.getElementById(this.chartId2))
-      this.option2 = this.option
     },
 
 

@@ -64,14 +64,6 @@ public class LogInterceptors implements HandlerInterceptor{
         long time = endTime - beginTime;
         String info = Context.getInfo() + "[cost " + time + "]" + (e == null ? "" : Tools.toString(e));
 
-        // 此处认为处理时间超过500毫秒的请求为慢请求
-        if(time > 3000){
-            log.error(info);
-        }else if(time > 1000){
-            log.warn(info);
-        }else{
-            log.info(info);
-        }
         User user = Context.getUser();
         //登录用户操作日志 记录 用户id,操作url权限?,用户操作ip/mac/端口
         String id = user == null ? "" : user.getID();
@@ -105,6 +97,14 @@ public class LogInterceptors implements HandlerInterceptor{
 
         logService.saveLogModel(logModel);
 
+        // 此处认为处理时间超过500毫秒的请求为慢请求
+        if(time > 3000){
+            log.error("slow3 " + logModel.toString());
+        }else if(time > 1000){
+            log.warn("slow2 " + logModel.toString());
+        }else{
+            log.info(logModel.toString());
+        }
         Context.clear();
     }
     /** 

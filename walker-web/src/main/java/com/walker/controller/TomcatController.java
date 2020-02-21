@@ -47,6 +47,7 @@ public class TomcatController {
     ){
 
         List<List<String>> list = null;
+        List<Map<String, Object>> listDb = null;
         if (Tools.notNull(new Object[]{url}) && !url.toLowerCase().equals("undefined") && !url.toLowerCase().equals("null")) {
             if (baseService.getDs().equals("oracle")) {
                 list = MapListUtil.toArrayAndTurn(baseService.find(" SELECT LEV, NVL(TIME, '0') TIME FROM  ( SELECT HOUR, CAST(SUM(COSTTIME)/SUM(COUNT)/1000 AS NUMBER(8, 3)) TIME FROM (  SELECT  TO_CHAR(LT.TIME, 'HH24') HOUR, LT.COUNT, LT.COSTTIME FROM W_LOG_TIME LT WHERE 1=1 AND LT.URL=?  )GROUP BY HOUR   ) T1,  ( SELECT LPAD(LEVEL, 2, '0') LEV FROM DUAL CONNECT BY LEVEL <= 24    ) T2 WHERE T1.HOUR(+) = T2.LEV  ORDER BY LEV ", new Object[]{url}));
@@ -57,61 +58,84 @@ public class TomcatController {
             list = MapListUtil.toArrayAndTurn(baseService.find("SELECT URL,CAST(SUM(COSTTIME)/SUM(COUNT)/1000 AS NUMBER(8, 3)) TIME FROM W_LOG_TIME WHERE 1=1 GROUP BY URL ORDER BY URL ", new Object[0]));
         } else {
 //            list = MapListUtil.toArrayAndTurn(baseService.find("SELECT URL,(0 + SUM(COSTTIME)/SUM(COUNT)/1000) TIME FROM W_LOG_TIME WHERE 1=1 GROUP BY URL ORDER BY URL ", new Object[0]));
-            list = MapListUtil.toArrayAndTurn(statisticsMapper.findAction());
+            listDb = statisticsMapper.findAction();
+            list = MapListUtil.toArrayAndTurn(listDb);
         }
 //| X                            | Y1   | Y2   | Y3   | Y4   | Y5   |
 //| com.walker.job.JobMakeUser   |   10 |    0 |    0 | NULL |    0 |
 //| /common/findPage.do          |    2 |    0 |    0 | NULL |    0 |
 //| com.walker.job.JobUpdateArea |    1 |    0 |    0 | NULL |    0 |
+//        转置矩阵
 //  url1, url2, url3
 //  y1-1, y1-2, y1-3
 //  y2-2, y2-2, y2-3
+//  com.walker.job.JobMakeUser      /common/findPage.do        com.walker.job.JobUpdateArea
+//  10                              2                           0
+//  0                               0                           0
+//  0                               0                           0
+//
 /**
  * 多指标  按   接口排名
  * X      Y1        Y2              Y3          Y4              Y5
  * 接口名  成功次数  成功平均耗时      失败次数      失败平均耗时     成功率0～100
  */
         String[] names = {"成功次数", "成功耗时", "失败次数", "失败耗时", "成功率"};
-        String[] types = {"line", "bar", "bar", "bar", "bar"};
+        String[] types = {"bar", "bar", "bar", "bar", "line"};
+        String[] stacks = {"1", "1", "1", "1", "2"};    //分组 堆叠
+
         final String format = "yyyy-MM-dd HH:mm";
         final List<String> listXs = list.get(0);
         final List<Bean> series = new ArrayList();
         final Set<String> items = new HashSet();
-
-        for(int i = 0; i < list.size(); i++){
-            for(int j = 0; j < list.get(i).size(); j++) {
-                series.add(
-                        new Bean().put("name", names[j]).put("type", types[j])
-                                .put("stack", "stack" + i).put("data", list.get(i) )
-                );
-            }
+        //指标 结构 [ {  name: '百度', type: 'bar', stack: '搜索引擎', data: [620, 732, 701, 734, 1090, 1130, 1120]  }, ]
+        for(int i = 1; i < list.size(); i++){
+            List<String> line = list.get(i);
+            series.add(new Bean().set("name", names[i - 1]).set("type", types[i - 1]).set("stack", stacks[ i - 1]).set("data", line)   );
         }
-        List<String> listLineNames = new ArrayList();
-        listLineNames.addAll(listXs);
-
-        Bean legend = (new Bean()).put("data", listLineNames);
-        Bean xAxis = (new Bean()).put("data", listXs);
 
         Map option = MapListUtil.map()
                 .put("title", "统计action")
-                .put("legend", legend)
+                .put("legend", new Bean().put("data", names))   //线 y轴值中文名列表
                 .put("tooltip", new HashMap())
-                .put("xAxis", xAxis)
-                .put("yAxis", new HashMap()) //若无报错YAxis 0 not found
-                .put("series", series)
+                .put("xAxis", Arrays.asList(new Bean().put("data", listXs)))     //x轴 坐标中文名列表
+                .put("yAxis", Arrays.asList(new HashMap())) //若无报错YAxis 0 not found
+                .put("series", series)      //指标 结构 [ {  name: '百度', type: 'bar', stack: '搜索引擎', data: [620, 732, 701, 734, 1090, 1130, 1120]  }, ]
                 .build();
 
 
         Map res = MapListUtil.getMap()
                 .put("res", "true")
                 .put("option", option)
+                .put("items", listXs)
+                .put("args", new Bean())
                 .build();
-
-        log.info(res.toString());
 
         return Response.makeTrue("", res);
 
     }
+//option = {
+//        legend: {
+//            data: ['百度', '谷歌', '必应', '其他']
+//        },
+//        xAxis: [
+//            {
+//                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+//            }
+//        ],
+//        yAxis: [
+//            {  }
+//        ],
+//        series: [
+//            {
+//                name: '百度', type: 'bar', stack: '搜索引擎',
+//                data: [620, 732, 701, 734, 1090, 1130, 1120]
+//            },
+//            {
+//                name: '谷歌', type: 'bar', stack: '搜索引擎',
+//                data: [120, 132, 101, 134, 290, 230, 220]
+//            },
+//        ]
+//    };
 
     @ApiOperation(value = "统计行为耗时", notes = "")
     @ResponseBody

@@ -78,6 +78,19 @@ export default {
       chart2: null,        //chart对象
       chartId2: 'chartsId2', //对象对应dom id
       option2: {},  //对应数据
+      optionTest:{
+           xAxis: {
+               type: 'category',
+               data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+           },
+           yAxis: {
+               type: 'value'
+           },
+           series: [{
+               data: [820, 932, 901, 934, 1290, 1330, 1320],
+               type: 'line'
+           }]
+       },
       other: {
         tooltip: {
           trigger: 'axis',
@@ -148,6 +161,9 @@ export default {
         this.loadingList = false
       }).catch(() => {
         this.loadingList = false
+        this.option = this.optionTest
+        this.chart.setOption(this.option, true)
+
       })
 
     },

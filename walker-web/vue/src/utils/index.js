@@ -2,7 +2,6 @@
 export function assign(obj1, obj2){
   obj1 = clone(obj1)
   obj2 = clone(obj2)
-  debugger
   var res = Object.assign(obj1, obj2)
   return res
 }
