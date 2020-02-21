@@ -18,7 +18,35 @@ import java.io.Serializable;
  * 失败多少次
  * 失败总耗时
  *
- * (IPPORT, ID, URL, COUNT, TIME, COSTTIME)
+ * logModel转logTime统计结果
+
+ insert into W_LOG_TIME (ID, AVE_COST_NO, COUNT_OK, CATE, IP_PORT, URL)
+ select concat("id:", w.minu) ID
+ , avg(w.COST) AVE_COST_NO
+ , count(*) COUNT_OK
+ , w.CATE
+ , w.IP_PORT_TO IP_PORT
+ , w.URL URL
+ from
+ ( select t.*, SUBSTRING_INDEX(t.S_MTIME, ':', 2) minu  from W_LOG_MODEL t ) w
+ where w.minu is not null
+ group by w.minu, w.CATE, w.IP_PORT_TO,w.URL
+
+ CREATE TABLE `W_LOG_TIME` (
+ `ID` varchar(32) NOT NULL DEFAULT '' COMMENT '主键',
+ `AVE_COST_NO` varchar(128) DEFAULT '' COMMENT '失败平均耗时',
+ `AVE_COST_OK` varchar(1998) DEFAULT '' COMMENT '成功平均耗时',
+ `CATE` varchar(256) DEFAULT '1970-01-01 00:00:00' COMMENT '类别',
+ `COUNT_NO` varchar(128) DEFAULT '' COMMENT '失败次数',
+ `COUNT_OK` varchar(128) DEFAULT '' COMMENT '成功次数',
+ `IP_PORT` varchar(128) DEFAULT '' COMMENT '统计服务器ip:port',
+ `S_MTIME` varchar(32) DEFAULT '' COMMENT '修改时间',
+ `URL` varchar(1998) DEFAULT '' COMMENT '受理接口',
+ PRIMARY KEY (`ID`)
+ ) ENGINE=MyISAM DEFAULT CHARSET=utf8
+
+
+
  */
 
 @Entity
@@ -118,6 +146,9 @@ public class LogTime implements Cloneable, Serializable {
 	}
 
 	public Float getAVE_COST_OK() {
+		if(this.AVE_COST_OK == null || this.AVE_COST_OK.length() == 0){
+			return 0f;
+		}
 		return Float.valueOf(AVE_COST_OK);
 	}
 
@@ -139,6 +170,9 @@ public class LogTime implements Cloneable, Serializable {
 	}
 
 	public Float getAVE_COST_NO() {
+		if(this.AVE_COST_NO == null || this.AVE_COST_NO.length() == 0){
+			return 0f;
+		}
 		return Float.valueOf(AVE_COST_NO);
 	}
 

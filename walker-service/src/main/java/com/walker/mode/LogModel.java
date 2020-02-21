@@ -204,6 +204,9 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public Long getCOST() {
+		if(this.COST == null || this.COST.length() == 0){
+			return 0l;
+		}
 		return Long.valueOf(COST);
 	}
 
