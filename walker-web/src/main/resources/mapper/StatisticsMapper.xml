@@ -32,7 +32,7 @@ CREATE TABLE `W_LOG_TIME` (
         select t.* from (
             select URL X, sum(COUNT_OK) Y1, ( sum(COUNT_OK * AVE_COST_OK) / sum(COUNT_OK) ) Y2
             , sum(COUNT_NO) Y3, ifnull( sum(COUNT_NO * AVE_COST_NO) / sum(COUNT_NO), 0) Y4
-            , ( sum(COUNT_NO) / sum(COUNT_OK) ) Y5
+            , ( 100 * sum(COUNT_OK) / sum(COUNT_OK + COUNT_NO) ) Y5
             from W_LOG_TIME
             <where>
                 <if test="from != null and from != '' ">
@@ -65,7 +65,7 @@ CREATE TABLE `W_LOG_TIME` (
         select t.* from (
             select w.minu, sum(w.COUNT_OK) Y1, ( sum(w.COUNT_OK * w.AVE_COST_OK) / sum(w.COUNT_OK) ) Y2
             , sum(w.COUNT_NO) Y3, ifnull( sum(w.COUNT_NO * w.AVE_COST_NO) / sum(w.COUNT_NO), 0) Y4
-            , ( sum(w.COUNT_NO) / sum(w.COUNT_OK) ) Y5
+            , ( 100 * sum(w.COUNT_OK) / sum(w.COUNT_OK + w.COUNT_NO) ) Y5
             from
             ( select t.*, SUBSTRING_INDEX(t.S_MTIME, ':', 2) minu
                 from W_LOG_TIME t
