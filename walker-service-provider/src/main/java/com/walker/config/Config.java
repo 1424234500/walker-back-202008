@@ -15,12 +15,14 @@ public class Config extends com.walker.service.Config {
         /**
          * 如何构造多排序条件问题
          */
-        Sort sort = orders[0].length() > 0 ?
-                new Sort(orders.length > 1 && orders[1].equalsIgnoreCase("DESC") ?
-                        Sort.Direction.DESC
-                        : Sort.Direction.ASC, orders[0])
-                : null;
-
+        Sort sort = null;
+        if(orders[0].length() > 0) {
+            if(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")){
+                sort = new Sort(Sort.Direction.DESC, orders[0]);
+            }else{
+                sort = new Sort(Sort.Direction.ASC, orders[0]);
+            }
+        }
         //jpa分页从0开始
         Pageable pageable =
                 sort == null

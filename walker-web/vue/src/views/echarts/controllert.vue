@@ -12,6 +12,18 @@
 
         <form class="form-inline" >
           <div class="form-group">
+            <label>url</label>
+            <el-select v-model="colsSearch.url"
+                       clearable filterable allow-create
+                       placeholder="请选择" no-match-text="新建">
+              <el-option
+                v-for="item in queryUrl"
+                :key="item"
+                :label="item"
+                :value="item"
+              >
+              </el-option>
+            </el-select>
             <label>from</label>
             <input
               type="text"
@@ -131,7 +143,7 @@ export default {
      getListPage() {
       this.loadingList = true
       var params = this.colsSearch
-      this.get('/tomcat/statics.do', params).then((data) => {
+      this.get('/tomcat/staticsDetail.do', params).then((data) => {
         data = data.data
         this.queryUrl =  data.items
         this.colsSearch = data.args

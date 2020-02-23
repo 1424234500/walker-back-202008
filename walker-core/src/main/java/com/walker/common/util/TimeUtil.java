@@ -16,6 +16,7 @@ public class TimeUtil {
 	public final static String sss = "SSS";
 	public final static String seq = "yyyyMMddHHmmss";
 	public final static String seq1 = "yyyyMMddHHmmssSSS";
+	public final static long daymills = 24 * 3600 * 1000L;
 	/**
 	 * 获取指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
 	 */
@@ -100,13 +101,26 @@ public class TimeUtil {
 	 * 获取差值几天的 指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
 	 */
 	public static String getTime(String format, int detaDays) {
-		return getTime(format, detaDays * 24 * 3600 * 1000L);
+		return getTime(format, detaDays * daymills);
+	}
+	/**
+	 * 获取差值几天的 指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
+	 */
+	public static String getTime(String fromStr, String format, int detaDays) {
+		return getTime(fromStr, format, detaDays * daymills);
 	}
 	/**
 	 * 获取差值s 指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
 	 */
 	public static String getTime(String format, long detaMills) {
 		long t = System.currentTimeMillis() + detaMills;
+		return getTime(t, format);
+	}
+	/**
+	 * 获取差值s 指定格式的时间yyyy-MM-dd HH:mm:ss:SSS
+	 */
+	public static String getTime(String fromStr, String format, long detaMills) {
+		long t = format(fromStr, format) + detaMills;
 		return getTime(t, format);
 	}
 	/**

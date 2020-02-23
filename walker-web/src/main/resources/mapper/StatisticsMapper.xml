@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.walker.dao.mapper.StatisticsMapper" >
+<mapper namespace="com.walker.mapper.StatisticsMapper" >
     <!--/**
     * 多指标  按   接口排名
     * x      y1        y2              y3          y4              y5
@@ -23,24 +23,67 @@ CREATE TABLE `W_LOG_TIME` (
     -->
 
 <!--
-+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+
 | X                            | Y1   | Y2   | Y3   | Y4   | Y5   |
-+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+
 | com.walker.job.JobMakeUser   |   10 |    0 |    0 | NULL |    0 |
 | /common/findPage.do          |    2 |    0 |    0 | NULL |    0 |
 | com.walker.job.JobUpdateArea |    1 |    0 |    0 | NULL |    0 |
-+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+&#45;&#45;&#45;&#45;&#45;&#45;+-->
+-->
     <select id="findAction" resultType="java.util.Map" >
         select t.* from (
             select URL X, sum(COUNT_OK) Y1, ( sum(COUNT_OK * AVE_COST_OK) / sum(COUNT_OK) ) Y2
             , sum(COUNT_NO) Y3, ifnull( sum(COUNT_NO * AVE_COST_NO) / sum(COUNT_NO), 0) Y4
             , ( sum(COUNT_NO) / sum(COUNT_OK) ) Y5
             from W_LOG_TIME
+            <where>
+                <if test="from != null and from != '' ">
+                    and  S_MTIME &gt;= #{from}
+                </if>
+                <if test="to != null and to != '' ">
+                    and  S_MTIME &lt;= #{to}
+                </if>
+            </where>
             group by URL
         ) t order by t.Y1 desc
 
     </select>
 
+    <select id="findActionUrl" resultType="java.util.Map" >
+        select distinct URL from W_LOG_TIME
+        <where>
+            <if test="from != null and from != '' ">
+                and  S_MTIME &gt;= #{from}
+            </if>
+            <if test="to != null and to != '' ">
+                and  S_MTIME &lt;= #{to}
+            </if>
+        </where>
+        order by URL
 
+    </select>
+
+    <select id="findActionDetail" resultType="java.util.Map" >
+        select t.* from (
+            select w.minu, sum(w.COUNT_OK) Y1, ( sum(w.COUNT_OK * w.AVE_COST_OK) / sum(w.COUNT_OK) ) Y2
+            , sum(w.COUNT_NO) Y3, ifnull( sum(w.COUNT_NO * w.AVE_COST_NO) / sum(w.COUNT_NO), 0) Y4
+            , ( sum(w.COUNT_NO) / sum(w.COUNT_OK) ) Y5
+            from
+            ( select t.*, SUBSTRING_INDEX(t.S_MTIME, ':', 2) minu
+                from W_LOG_TIME t
+                <where>
+                    <if test="url != null and url != '' ">
+                        and  t.URL = #{url}
+                    </if>
+                    <if test="from != null and from != '' ">
+                        and  t.S_MTIME &gt;= #{from}
+                    </if>
+                    <if test="to != null and to != '' ">
+                        and  t.S_MTIME &lt;= #{to}
+                    </if>
+                </where>
+            ) w
+            group by w.minu
+        ) t order by t.minu
+
+    </select>
 
 </mapper>

@@ -71,7 +71,13 @@ export const constantRoutes = [
             path: 'controller',
             name: 'Controller',
             component: () => import('@/views/echarts/controller'),
-            meta: { title: 'Controller', icon: 'tree-table' }
+            meta: { title: '统计概览', icon: 'tree-table' }
+          },
+          {
+            path: 'controllert',
+            name: 'Controllert',
+            component: () => import('@/views/echarts/controllert'),
+            meta: { title: '统计详情', icon: 'tree-table' }
           },
           {
             path: 'socket',

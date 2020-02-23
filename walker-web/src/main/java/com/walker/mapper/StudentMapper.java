@@ -1,16 +1,17 @@
-package com.walker.dao.mapper;
+package com.walker.mapper;
 
 import com.walker.common.util.Page;
 import com.walker.mode.Student;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 对象操作
  *
  */
+@Mapper
 public interface StudentMapper {
     /**
      * 分页查询 排序

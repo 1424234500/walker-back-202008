@@ -237,7 +237,7 @@ export default {
       this.loadingCols = true
       this.get('/file/getColsMap.do', {}).then((res) => {
         this.colMap = res.data.colMap
-          this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
+          //this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
         this.colMapShow = this.assign({}, this.colMap)
         delete this.colMapShow["PATH"]
         delete this.colMapShow["EXT"]

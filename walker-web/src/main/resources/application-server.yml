@@ -118,5 +118,7 @@ session:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    call-setters-on-nulls: true #当查询数据为空时字段返回为null，不加这个查询数据为空时，字段将被隐藏
 #  config-location: classpath:mybatis-config.xml
 

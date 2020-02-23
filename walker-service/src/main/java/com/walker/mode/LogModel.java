@@ -1,5 +1,7 @@
 package com.walker.mode;
 
+import com.walker.service.Config;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -88,6 +90,8 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setWAY(String WAY) {
+		WAY = Config.cutString(1998, WAY);
+
 		this.WAY = WAY;
 		return this;
 	}
@@ -133,6 +137,8 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setURL(String URL) {
+		URL = Config.cutString(1998, URL);
+
 		this.URL = URL;
 		return this;
 	}
@@ -163,6 +169,8 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setARGS(String ARGS) {
+		ARGS = Config.cutString(1998, ARGS);
+
 		this.ARGS = ARGS;
 		return this;
 	}
@@ -181,6 +189,7 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setEXCEPTION(String EXCEPTION) {
+		EXCEPTION = Config.cutString(1998, EXCEPTION);
 		this.EXCEPTION = EXCEPTION;
 		return this;
 	}
@@ -199,6 +208,7 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setRES(String RES) {
+		RES = Config.cutString(1998, RES);
 		this.RES = RES;
 		return this;
 	}
@@ -220,6 +230,8 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setABOUT(String ABOUT) {
+		ABOUT = Config.cutString(1998, ABOUT);
+
 		this.ABOUT = ABOUT;
 		return this;
 	}

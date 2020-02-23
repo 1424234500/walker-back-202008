@@ -36,6 +36,13 @@ public class Config {
         }
         return ID;
     }
+    public static String cutString(int len, String str) {
+        len--;
+        if(str != null && str.length() > len ){
+            str = str.substring(0, len);
+        }
+        return str;
+    }
 
 
     public static String getSystemUser() {

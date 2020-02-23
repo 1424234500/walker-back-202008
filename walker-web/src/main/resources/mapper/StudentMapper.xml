@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.walker.dao.mapper.StudentMapper" >
+<mapper namespace="com.walker.mapper.StudentMapper" >
  <!--
     <resultMap id="BaseResultMap" type="com.walker.mode.Student" >
         <id column="ID" property="ID" jdbcType="" />
@@ -64,7 +64,6 @@
         <include refid="SQL_TABLE_NAME" />
         <where>
             <include refid="SQL_COLUMN_ALL_LIKE" />
-
         </where>
         <if test="page != null ">
             <if test="page.order != null and page.order != '' ">

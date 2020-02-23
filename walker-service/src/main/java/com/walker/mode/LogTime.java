@@ -20,17 +20,19 @@ import java.io.Serializable;
  *
  * logModel转logTime统计结果
 
- insert into W_LOG_TIME (ID, AVE_COST_NO, COUNT_OK, CATE, IP_PORT, URL)
- select concat("id:", w.minu) ID
+ insert into W_LOG_TIME (ID, AVE_COST_NO, COUNT_OK, CATE, IP_PORT, URL, S_MTIME)
+ select concat(w.minu,w.CATE) ID
  , avg(w.COST) AVE_COST_NO
  , count(*) COUNT_OK
  , w.CATE
  , w.IP_PORT_TO IP_PORT
  , w.URL URL
+ , w.minu
  from
- ( select t.*, SUBSTRING_INDEX(t.S_MTIME, ':', 2) minu  from W_LOG_MODEL t ) w
+ 	( select t.*, SUBSTRING_INDEX(t.S_MTIME, ':', 2) minu  from W_LOG_MODEL t ) w
  where w.minu is not null
  group by w.minu, w.CATE, w.IP_PORT_TO,w.URL
+
 
  CREATE TABLE `W_LOG_TIME` (
  `ID` varchar(32) NOT NULL DEFAULT '' COMMENT '主键',

@@ -1,4 +1,4 @@
-package com.walker.dao.mapper;
+package com.walker.mapper;
 
 import com.walker.ApplicationTests;
 import com.walker.common.util.Page;
@@ -8,11 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.*;
 
 public class StudentMapperTest extends ApplicationTests {
 

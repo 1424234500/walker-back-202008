@@ -50,7 +50,14 @@ public class LogServiceImpl implements LogService {
 		url = url.split("\\?")[0]; //url编码
 		Bean bean = cache.get(CACHE_KEY, new Bean());	//url : obj
 
-		LogTime logTime = bean.get(url, new LogTime()).setIP_PORT(Pc.getIp()).setS_MTIME(TimeUtil.getTimeYmdHmss());
+		LogTime logTime = bean.get(url, null);
+		if(logTime == null){
+			logTime = new LogTime()
+					.setIP_PORT(Pc.getIp())
+					.setS_MTIME(TimeUtil.getTimeYmdHmss())
+					.setID(LangUtil.getGenerateId())
+					.setURL(url);
+		}
 		if(logModel.getIS_OK().equalsIgnoreCase(Config.TRUE)){
 			int count = logTime.getCOUNT_OK();
 			float ave = logTime.getAVE_COST_OK();

@@ -3,15 +3,7 @@ package com.walker.common.util;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 
 
 /**
@@ -97,6 +89,112 @@ public class MapListUtil {
 
 
 	}
+
+
+	/**
+	 * 构造echarts数据结构
+	 *
+	 *
+	 *
+	 * 调用案例
+	 *
+	 //			avg		max		sum
+	 //2010		1		20		200
+	 //2011		2		21		203
+	 //2012		2		10		122
+	 //2013		3		15		27
+	 //y轴三条线 avg max sum
+	 //x轴时间戳	2010 2011 2012 2013
+	 //
+	 //		指标按行查询出来 首列为x轴坐标, 后续每列为每一条线 指标
+	 List<Map<String, Object>> listDb = statisticsMapper.findAction(from, to);
+
+	 //    每条线名称
+	 List<String> lineNames = Arrays.asList("平均值", "最大值", "和");
+	 //    每条线类型
+	 List<String> lineTypes = Arrays.asList("bar", "bar", "bar");
+	 //    每条线堆叠类型
+	 List<String> lineStacks = Arrays.asList("1", "1", "2");
+
+	 Map option = MapListUtil.makeEchartOption("Action概览", "W_LOG_TIME", ""
+	 , listDb, lineNames, lineTypes, lineStacks);
+
+	 * @param title
+	 * @param subtitle
+	 * @param sublink
+	 * @param listDb	数据库数据	行数代表采样点x轴数值的数量	(列数-1)代表采样点对于的多个y值 线的数量
+	 * @param lineNames	每条线名称			默认 Y1, Y2...Yn
+	 * @param lineTypes	每条线类型			默认 bar, bar...bar
+	 * @param lineStacks	每条线堆叠类型	默认 无 1, 1...1
+	 * @return
+	 */
+	public static Bean makeEchartOption(String title, String subtitle, String sublink, List<Map<String, Object>> listDb, List<String> lineNames, List<String> lineTypes, List<String> lineStacks){
+
+//        矩阵转置
+		List<List<String>> list = MapListUtil.toArrayAndTurn(listDb);
+//		  第一行代表x轴
+//		  第二行代表y1 值1 线1
+		List<String> listXs = list.size() > 0 ? list.get(0) : new ArrayList<>();
+		List<Bean> series = new ArrayList();
+//		构造各线属性 默认值
+		if(lineNames == null){
+			lineNames = new ArrayList<>();
+		}
+		for(int i = lineNames.size(); i < list.size() - 1; i++){	//六行 则 五列	需五个属性配置
+			lineNames.add("Y" + i);
+		}
+		if(lineTypes == null){
+			lineTypes = new ArrayList<>();
+		}
+		for(int i = lineTypes.size(); i < list.size() - 1; i++){	//六行 则 五列	需五个属性配置
+			lineTypes.add("bar");
+		}
+		if(lineStacks == null){
+			lineStacks = new ArrayList<>();
+		}
+		for(int i = lineStacks.size(); i < list.size() - 1; i++){	//六行 则 五列	需五个属性配置
+			lineStacks.add(lineNames.get(i));
+		}
+
+		//指标 结构 [ {  name: '百度', type: 'bar', stack: '搜索引擎', data: [620, 732, 701, 734, 1090, 1130, 1120]  }, ]
+		for(int i = 0; i < list.size() - 1; i++){
+			List<String> line = list.get(i + 1);
+			series.add(new Bean()
+					.set("name", lineNames.get(i))
+					.set("type", lineTypes.get(i))
+					.set("stack", lineStacks.get(i))
+					.set("data", line)
+			);
+		}
+
+		Bean option = new Bean()
+				.put("title", new Bean()
+						.put("text", title)
+						.put("subtext", subtitle)
+						.put("sublink", sublink)
+				)
+				.put("legend", new Bean()
+						.put("data", lineNames)
+				)   //线 y轴值中文名列表
+				.put("tooltip", new HashMap())
+				.put("xAxis", Arrays.asList(
+						new Bean()
+								.put("data", listXs)
+						)
+				)     //x轴 坐标中文名列表
+				.put("yAxis", Arrays.asList(new HashMap())) //若无报错YAxis 0 not found
+				.put("series", series)      //指标 结构 [ {  name: '百度', type: 'bar', stack: '搜索引擎', data: [620, 732, 701, 734, 1090, 1130, 1120]  }, ]
+				;
+
+		return option;
+	}
+
+
+
+
+
+
+
 	@SuppressWarnings({ "rawtypes" })
 	public static Map copy(Map<Object, Object> map){
 		return copy(map, map.keySet().toArray());
@@ -166,13 +264,39 @@ public class MapListUtil {
 		}
 		return res;
 	}
+	/**
+	 * 获取list<map>对应的二维数组的 某列
+	 */
+	public static List<Object> getListCol(List<Map<String, Object>> list, int colIndex){
+		List<Object> res = new ArrayList<>();
 
+		if(list != null){
+			for(int i = 0; i < list.size(); i++){
+				Map<String, Object> map = list.get(i);
+				if(map == null){
+					res.add(null);
+				}else{
+					String[] ss = map.keySet().toArray(new String[0]);
+					if(ss.length > colIndex){
+						res.add(map.get(ss[colIndex]));
+					}else{
+						res.add(null);
+					}
+				}
+			}
+		}
+
+		return res;
+	}
 	/**
 	 * 获取list<map>的第i行name列
 	 */
 	public static String getList(List<Map<String, Object>> list, int i, String name){
 		return getList(list, i, name, "null");
 	}
+	/**
+	 * 获取list<map>的第i行name列 默认值
+	 */
 	public static String getList(List<Map<String, Object>> list, int i, String name, String defaultValue){
 		if(list == null) return "list is null";
 		if(i < 0)return "i < 0";

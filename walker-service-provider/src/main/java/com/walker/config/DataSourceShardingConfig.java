@@ -2,9 +2,6 @@ package com.walker.config;
 
 import com.walker.service.Config;
 import io.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,22 +48,22 @@ public class DataSourceShardingConfig extends SpringBootConfiguration {
     public JdbcTemplate shardingJdbcTemplate(@Qualifier("shardingDataSource") DataSource shardingDataSource) throws  Exception{
         return new JdbcTemplate(shardingDataSource);
     }
-    @Bean(name = "shardingSqlSessionFactory")
-    public SqlSessionFactory shardingSqlSessionFactory(@Qualifier("shardingDataSource") DataSource dataSource) throws Exception{
-        SqlSessionFactoryBean bean=new SqlSessionFactoryBean();
-        bean.setDataSource(dataSource);
-        return bean.getObject();
-    }
-
-//    //创建事务管理器
-//    @Bean(name = "shardingTransactionManager")
-//    public DataSourceTransactionManager shardingTransactionManager(@Qualifier("shardingDataSource") DataSource dataSource){
-//        return new DataSourceTransactionManager(dataSource);
+//    @Bean(name = "shardingSqlSessionFactory")
+//    public SqlSessionFactory shardingSqlSessionFactory(@Qualifier("shardingDataSource") DataSource dataSource) throws Exception{
+//        SqlSessionFactoryBean bean=new SqlSessionFactoryBean();
+//        bean.setDataSource(dataSource);
+//        return bean.getObject();
 //    }
-    //创建SqlSessionTemplate
-    @Bean(name = "shardingSqlSessionTemplate")
-    public SqlSessionTemplate shardingSqlSessionTemplate(@Qualifier("shardingSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws  Exception{
-        return new SqlSessionTemplate(sqlSessionFactory);
-    }
+//
+////    //创建事务管理器
+////    @Bean(name = "shardingTransactionManager")
+////    public DataSourceTransactionManager shardingTransactionManager(@Qualifier("shardingDataSource") DataSource dataSource){
+////        return new DataSourceTransactionManager(dataSource);
+////    }
+//    //创建SqlSessionTemplate
+//    @Bean(name = "shardingSqlSessionTemplate")
+//    public SqlSessionTemplate shardingSqlSessionTemplate(@Qualifier("shardingSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws  Exception{
+//        return new SqlSessionTemplate(sqlSessionFactory);
+//    }
 
 }
