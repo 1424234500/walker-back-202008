@@ -29,21 +29,27 @@ CREATE TABLE `W_LOG_TIME` (
 | com.walker.job.JobUpdateArea |    1 |    0 |    0 | NULL |    0 |
 -->
     <select id="findAction" resultType="java.util.Map" >
-        select t.* from (
-            select URL X, sum(COUNT_OK) Y1, ( sum(COUNT_OK * AVE_COST_OK) / sum(COUNT_OK) ) Y2
-            , sum(COUNT_NO) Y3, ifnull( sum(COUNT_NO * AVE_COST_NO) / sum(COUNT_NO), 0) Y4
-            , ( 100 * sum(COUNT_OK) / sum(COUNT_OK + COUNT_NO) ) Y5
-            from W_LOG_TIME
-            <where>
-                <if test="from != null and from != '' ">
-                    and  S_MTIME &gt;= #{from}
-                </if>
-                <if test="to != null and to != '' ">
-                    and  S_MTIME &lt;= #{to}
-                </if>
-            </where>
-            group by URL
-        ) t order by t.Y1 desc
+        select w.URL X
+        , w.OK Y1, ifnull(w.COST_OK / w.OK, 0) Y2
+        , w.NO Y3,  ifnull(w.COST_NO / w.NO, 0) Y4
+        , ifnull(w.OK / (w.OK + w.NO), 0) Y5
+        from
+            (
+                select URL
+                , ifnull(sum(COUNT_OK), 0) OK, ifnull(sum(COUNT_NO), 0) NO
+                , ifnull(sum(COUNT_OK * AVE_COST_OK), 0) COST_OK, ifnull(sum(COUNT_NO * AVE_COST_NO), 0) COST_NO
+                from W_LOG_TIME
+                <where>
+                    <if test="from != null and from != '' ">
+                        and  S_MTIME &gt;= #{from}
+                    </if>
+                    <if test="to != null and to != '' ">
+                        and  S_MTIME &lt;= #{to}
+                    </if>
+                </where>
+                group by URL
+            ) w
+        order by w.OK desc
 
     </select>
 
@@ -62,27 +68,31 @@ CREATE TABLE `W_LOG_TIME` (
     </select>
 
     <select id="findActionDetail" resultType="java.util.Map" >
-        select t.* from (
-            select w.minu, sum(w.COUNT_OK) Y1, ( sum(w.COUNT_OK * w.AVE_COST_OK) / sum(w.COUNT_OK) ) Y2
-            , sum(w.COUNT_NO) Y3, ifnull( sum(w.COUNT_NO * w.AVE_COST_NO) / sum(w.COUNT_NO), 0) Y4
-            , ( 100 * sum(w.COUNT_OK) / sum(w.COUNT_OK + w.COUNT_NO) ) Y5
-            from
-            ( select t.*, SUBSTRING_INDEX(t.S_MTIME, ':', 2) minu
-                from W_LOG_TIME t
-                <where>
-                    <if test="url != null and url != '' ">
-                        and  t.URL = #{url}
-                    </if>
-                    <if test="from != null and from != '' ">
-                        and  t.S_MTIME &gt;= #{from}
-                    </if>
-                    <if test="to != null and to != '' ">
-                        and  t.S_MTIME &lt;= #{to}
-                    </if>
-                </where>
-            ) w
-            group by w.minu
-        ) t order by t.minu
+
+        select w.minu X
+        , w.OK Y1, ifnull(w.COST_OK / w.OK, 0) Y2
+        , w.NO Y3,  ifnull(w.COST_NO / w.NO, 0) Y4
+        , ifnull(w.OK / (w.OK + w.NO), 0) Y5
+        from
+        (
+            select SUBSTRING_INDEX(S_MTIME, ':', 2) minu
+            , ifnull(sum(COUNT_OK), 0) OK, ifnull(sum(COUNT_NO), 0) NO
+            , ifnull(sum(COUNT_OK * AVE_COST_OK), 0) COST_OK, ifnull(sum(COUNT_NO * AVE_COST_NO), 0) COST_NO
+            from W_LOG_TIME
+            <where>
+                <if test="url != null and url != '' ">
+                    and  URL = #{url}
+                </if>
+                <if test="from != null and from != '' ">
+                    and  S_MTIME &gt;= #{from}
+                </if>
+                <if test="to != null and to != '' ">
+                    and  S_MTIME &lt;= #{to}
+                </if>
+            </where>
+            group by SUBSTRING_INDEX(S_MTIME, ':', 2)
+        ) w
+        order by w.minu desc
 
     </select>
 
