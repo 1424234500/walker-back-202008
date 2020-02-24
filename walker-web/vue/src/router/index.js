@@ -216,6 +216,12 @@ export const constantRoutes = [
         meta: { title: '任务调度', icon: 'tree-table' }
       },
       {
+              path: 'lock',
+              name: 'Lock',
+              component: () => import('@/views/system/lock'),
+              meta: { title: 'redis       锁', icon: 'tree' }
+      },
+      {
         path: 'action',
         name: 'Action',
         component: () => import('@/views/system/action'),

@@ -32,7 +32,7 @@ CREATE TABLE `W_LOG_TIME` (
         select w.URL X
         , w.OK Y1, ifnull(w.COST_OK / w.OK, 0) Y2
         , w.NO Y3,  ifnull(w.COST_NO / w.NO, 0) Y4
-        , ifnull(w.OK / (w.OK + w.NO), 0) Y5
+        , ifnull(100 * w.OK / (w.OK + w.NO), 0) Y5
         from
             (
                 select URL
@@ -72,7 +72,7 @@ CREATE TABLE `W_LOG_TIME` (
         select w.minu X
         , w.OK Y1, ifnull(w.COST_OK / w.OK, 0) Y2
         , w.NO Y3,  ifnull(w.COST_NO / w.NO, 0) Y4
-        , ifnull(w.OK / (w.OK + w.NO), 0) Y5
+        , ifnull(100 * w.OK / (w.OK + w.NO), 0) Y5
         from
         (
             select SUBSTRING_INDEX(S_MTIME, ':', 2) minu
@@ -93,6 +93,64 @@ CREATE TABLE `W_LOG_TIME` (
             group by SUBSTRING_INDEX(S_MTIME, ':', 2)
         ) w
         order by w.minu desc
+
+    </select>
+
+
+    <select id="findUserData" resultType="java.util.Map" >
+
+        select * from
+
+        (
+            select count(*) CC, SUBSTRING_INDEX(S_MTIME, ' ', 1) DAY from W_USER
+            <where>
+                <if test="from != null and from != '' ">
+                    and  S_MTIME &gt;= #{from}
+                </if>
+                <if test="to != null and to != '' ">
+                    and  S_MTIME &lt;= #{to}
+                </if>
+            </where>
+            group by SUBSTRING_INDEX(S_MTIME, ' ', 1)
+        ) u,
+        (
+            select count(*) CC, SUBSTRING_INDEX(S_MTIME, ' ', 1) DAY from W_DEPT
+            <where>
+                <if test="from != null and from != '' ">
+                    and  S_MTIME &gt;= #{from}
+                </if>
+                <if test="to != null and to != '' ">
+                    and  S_MTIME &lt;= #{to}
+                </if>
+            </where>
+            group by SUBSTRING_INDEX(S_MTIME, ' ', 1)
+        ) d,
+        (
+            select count(*) CC, SUBSTRING_INDEX(S_MTIME, ' ', 1) DAY from W_AREA
+            <where>
+                <if test="from != null and from != '' ">
+                    and  S_MTIME &gt;= #{from}
+                </if>
+                <if test="to != null and to != '' ">
+                    and  S_MTIME &lt;= #{to}
+                </if>
+            </where>
+            group by SUBSTRING_INDEX(S_MTIME, ' ', 1)
+        ) a,
+        (
+            select count(*) CC, SUBSTRING_INDEX(S_MTIME, ' ', 1) DAY from W_ROLE
+            <where>
+                <if test="from != null and from != '' ">
+                    and  S_MTIME &gt;= #{from}
+                </if>
+                <if test="to != null and to != '' ">
+                    and  S_MTIME &lt;= #{to}
+                </if>
+            </where>
+            group by SUBSTRING_INDEX(S_MTIME, ' ', 1)
+        ) r
+        where 1=1
+
 
     </select>
 

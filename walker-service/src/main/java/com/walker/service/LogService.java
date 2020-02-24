@@ -12,11 +12,15 @@ public interface LogService  {
 	String CACHE_KEY = "cache-url-request";
 	String CACHE_KEY_CONTROL = "cache-url-request-control";
 
+	/**
+	 * 记录临时日志 用于状态机 任务执行中 无耗时  再次主键覆盖才计时 计成功率 立即存储
+	 */
+	LogModel saveLogModelNoTime(LogModel logModel);
 
 	/**
-	 * 日志记录模型 controller job
+	 * 日志记录模型 controller job	缓存存储
 	 */
-	void saveLogModel(LogModel logModel);
+	LogModel saveLogModel(LogModel logModel);
 
 	/**
 	 * 把缓冲的日志记录和 日志统计结果记录 持久化

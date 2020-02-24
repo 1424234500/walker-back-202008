@@ -1,5 +1,6 @@
 package com.walker.quartz;
 
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.Pc;
 import com.walker.common.util.Tools;
 import com.walker.core.aop.FunReturn;
@@ -40,6 +41,7 @@ public abstract class TaskJob extends QuartzJobBean {
 		log.info("Desc:" + jobDetail.getDescription());
 		//任务名 类名 触发器名
 		LogModel logModel = new LogModel()
+				.setID(LangUtil.getGenerateId())
 				.setCATE(Config.getCateJob())
 				.setUSER(Config.getSystemUser())
 				.setIP_PORT_FROM(Pc.getIp())
@@ -51,9 +53,9 @@ public abstract class TaskJob extends QuartzJobBean {
 				.setIS_EXCEPTION(Config.FALSE)
 				.setIS_OK(status)
 				.setABOUT("任务调度日志")
-				.setRES("");
+				.setRES(null);
 
-		logService.saveLogModel(logModel);
+		logModel = logService.saveLogModelNoTime(logModel);
 		try {
 			String res = this.make();
 
@@ -74,7 +76,7 @@ public abstract class TaskJob extends QuartzJobBean {
 			}else{
 				log.info(logModel.toString());
 			}
-			logService.saveLogModel(logModel);
+			logModel = logService.saveLogModel(logModel);
 		}
 
 	}

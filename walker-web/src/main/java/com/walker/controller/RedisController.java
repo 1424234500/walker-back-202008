@@ -2,20 +2,22 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Bean;
+import com.walker.common.util.Page;
 import com.walker.common.util.TimeUtil;
 import com.walker.core.database.Redis;
 import com.walker.core.database.Redis.Fun;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.walker.mode.PushBindModel;
+import com.walker.service.Config;
+import com.walker.service.LockService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +31,8 @@ import redis.clients.jedis.Tuple;
 public class RedisController  {
     private Logger log = LoggerFactory.getLogger(getClass());
 
+    @Autowired
+    LockService lockService;
 
     @ApiOperation(value = "统计socket", notes = "")
     @ResponseBody
@@ -153,4 +157,63 @@ public class RedisController  {
         log.info(res.toString());
         return Response.makeTrue("", res);
     }
+
+
+
+
+    @ApiOperation(value = "查询redis锁集合", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)
+    public Response locks(
+            @RequestParam(value = "keys", required = true, defaultValue = "") String keys,
+
+            @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
+            @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
+            @RequestParam(value = "order", required = false, defaultValue = "") String order
+    ) {
+        Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
+
+        List<?> res = lockService.getLocks(keys);
+        page.setNum(res.size());
+        return Response.makePage("get redis key value", page, res);
+    }
+
+    @ApiOperation(value = "删除redis锁集合", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
+    public Response delet(
+            @RequestParam(value = "ids", required = true, defaultValue = "") String ids
+    ) {
+
+        long res = lockService.delLocks(Arrays.asList(ids.split(",")));
+
+        return Response.makeTrue("rm locks " + ids, res);
+    }
+    @ApiOperation(value = "添加redis锁集合", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/save.do", method = RequestMethod.GET)
+    public Response addLocks(
+            @RequestParam(value = "KEY", required = true, defaultValue = "") String KEY,
+            @RequestParam(value = "VALUE", required = true, defaultValue = "") String VALUE
+    ) {
+
+        long res = lockService.addLocks(KEY, VALUE);
+
+        return Response.makeTrue("add locks " + KEY + " " + VALUE, res);
+    }
+
+
+    @ApiOperation(value = "获取需要前段展示的表列名 备注名", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/getColsMap.do", method = RequestMethod.GET)
+    public Response getColsMap(
+    ) {
+        Map<String, String> colMap = lockService.getColsMapCache();
+        Map<String, Object> res = new HashMap<>();
+        res.put("colMap", colMap);
+        res.put("colKey", colMap.keySet().toArray()[0]);
+        return Response.makeTrue("redis key value", res);
+    }
+
+
 }

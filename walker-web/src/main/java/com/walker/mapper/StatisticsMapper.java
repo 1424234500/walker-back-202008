@@ -33,6 +33,13 @@ public interface StatisticsMapper {
     List<Map<String, Object>> findActionDetail(@Param("from") String from, @Param("to") String to, @Param("url") String url);
 
 
+    /**
+     * 多指标  按   时间展开
+     * X      Y1        Y2              Y3          Y4              Y5
+     * 时间戳  成功次数  成功平均耗时      失败次数      失败平均耗时     成功率0～100
+     */
+    List<Map<String, Object>> findUserData(@Param("from") String from, @Param("to") String to);
+
 
 
 

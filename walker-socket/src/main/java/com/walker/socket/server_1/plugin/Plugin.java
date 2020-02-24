@@ -104,7 +104,7 @@ public abstract class Plugin<T> {
 			try {
 				pushAgentService.push(pushModel);
 			}catch (Exception e){
-				pushAgentService = null;
+//				pushAgentService = null;
 				log.error(e.toString(), e);
 			}
 		}

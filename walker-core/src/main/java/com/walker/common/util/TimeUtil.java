@@ -11,6 +11,8 @@ public class TimeUtil {
 	public final static String hms = "HH:mm:ss";
 	public final static String ymd = "yyyy-MM-dd";
 	public final static String ymd1= "yyyyMMdd";
+	public final static String ymdh = "yyyy-MM-dd HH";
+	public final static String ymdhm = "yyyy-MM-dd HH:mm";
 	public final static String ymdhms = "yyyy-MM-dd HH:mm:ss";
 	public final static String ymdhmsS = "yyyy-MM-dd HH:mm:ss:SSS";
 	public final static String sss = "SSS";

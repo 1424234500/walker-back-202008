@@ -3,26 +3,21 @@ package com.walker.service.impl;
 
 import com.walker.common.util.*;
 import com.walker.config.MakeConfig;
-import com.walker.core.database.RedisUtil;
 import com.walker.core.encode.Pinyin;
+import com.walker.dao.BaseDateRepository;
 import com.walker.dao.JdbcDao;
 import com.walker.dao.RedisDao;
 import com.walker.mode.*;
 import com.walker.service.*;
-import io.swagger.models.auth.In;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -61,6 +56,9 @@ public class SyncServiceImpl implements SyncService {
     ActionService actionService;
 
     @Autowired
+    BaseDateRepository baseDateRepository;
+
+    @Autowired
     JdbcDao jdbcDao;
     @Autowired
     RedisDao redisDao;
@@ -68,6 +66,84 @@ public class SyncServiceImpl implements SyncService {
     MakeConfig makeConfig;
 
     ExecutorService executorService = ThreadUtil.getExecutorServiceInstance(10);
+
+
+    @Override
+    public Bean doBaseData(Bean args) {
+        Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
+        String key = Key.getLockRedis(getClass().getName() + ".doBaseData");
+        String value = redisDao.tryLock(key, makeConfig.expireLockRedisMakeUser);
+        res.set("KEY", key);
+        res.set("VALUE", value);
+        if(value != null && value.length() > 0){
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    log.info("sync begin key:" + key + " value:" + value + " args:" + args);
+                    Watch watch = new Watch(key);
+                    String format = TimeUtil.ymdh;
+                    //保留100天
+                    String day100 = TimeUtil.getTime(format, -100);
+                    //任务名 类名 触发器名
+                    LogModel logModel = new LogModel()
+                            .setID(LangUtil.getGenerateId())
+                            .setCATE(Config.getCateJob())
+                            .setUSER(Config.getSystemUser())
+                            .setIP_PORT_FROM(Pc.getIp())
+                            .setIP_PORT_TO(Pc.getIp())
+                            .setARGS(String.valueOf(args))
+                            .setCOST(System.currentTimeMillis())
+                            .setIS_EXCEPTION(Config.FALSE)
+                            .setABOUT("制造日期序列数据")
+                            .setRES(null);
+                    try {
+
+                        org.springframework.data.domain.Page<BaseDate> list = baseDateRepository.findsRecently(PageRequest.of(0, 1));
+                        if(list.getContent().size() > 0){
+                            baseDateRepository.delete(day100);
+                            String str = list.getContent().get(0).getS_MTIME();
+                            if(str == null || str.length() == 0){
+                                log.error("base date no correct");
+                                logModel.setABOUT("base date no correct" + list.getContent());
+                            }else{
+                                day100 = str;
+                            }
+                        }
+                        watch.cost("finddb");
+                        //构造时间序列 day100 -> tomorry
+                        long tfrom = TimeUtil.format(day100, TimeUtil.ymdh);
+                        long tto = System.currentTimeMillis() + 10 * TimeUtil.daymills;
+                        log.info(TimeUtil.getTime(tfrom, TimeUtil.ymdhms) + " " + TimeUtil.getTime(tto, TimeUtil.ymdhms));
+                        List<BaseDate> list1 = new ArrayList<>();
+                        for(long i = tfrom; i < tto; i+=60*60*1000L) {//小时最细
+                             list1.add(new BaseDate().setS_MTIME(TimeUtil.getTime(i, format)));
+                        }
+                        baseDateRepository.saveAll(list1);
+                        watch.res(list1.size());
+                        logModel.setIS_OK(Config.TRUE);
+                    }catch (Exception e){
+                        watch.exception(e);
+                        logModel.setIS_EXCEPTION(Config.TRUE).setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
+                        log.error(watch.toString(), e);
+                    } finally {
+                        logModel.setRES(watch.toPrettyString()).setCOST(System.currentTimeMillis() - logModel.getCOST());
+                        log.info(watch.toPrettyString());
+                        log.info("sync end key:" + key + " value:" + value + " args:" + args);
+
+                        if(! redisDao.releaseLock(key, value)){
+                            log.error("unlock error expire ? key:" + key + ", value:" + redisDao.get(key) + " should be value:" + value);
+                        }
+                    }
+                }
+            });
+            res.set("INFO", "ok, sync in thread ");
+            log.info("have being running " + res + " args:" + args);
+        }else{
+            res.set("INFO", "waring, redis lock error, have being syncing ? ");
+            log.warn("have being locked " + res + " args:" + args);
+        }
+        return res;
+    }
 
     @Override
     public Bean doAction(Bean args) {
@@ -83,6 +159,18 @@ public class SyncServiceImpl implements SyncService {
                 public void run() {
                     log.info("sync begin key:" + key + " value:" + value + " args:" + args);
                     Watch watch = new Watch(key);
+                    //任务名 类名 触发器名
+                    LogModel logModel = new LogModel()
+                            .setID(LangUtil.getGenerateId())
+                            .setCATE(Config.getCateJob())
+                            .setUSER(Config.getSystemUser())
+                            .setIP_PORT_FROM(Pc.getIp())
+                            .setIP_PORT_TO(Pc.getIp())
+                            .setARGS(String.valueOf(args))
+                            .setCOST(System.currentTimeMillis())
+                            .setIS_EXCEPTION(Config.FALSE)
+                            .setABOUT("任务队列执行清空框")
+                            .setRES(null);
                     try {
 
                         List<Action> list = actionService.finds(
@@ -97,8 +185,8 @@ public class SyncServiceImpl implements SyncService {
 
                         for(int i = 0; i < list.size(); i++) {
                             Action action = list.get(i);
-                            Watch watch1 = new Watch(action);
                             try {
+                                watch.put("type", action.getTYPE()).put("value", action.getVALUE());
                                 Object res = null;
                                 if(action.getTYPE().equalsIgnoreCase("sql")){
                                     if(action.getVALUE().endsWith(";")){
@@ -110,20 +198,23 @@ public class SyncServiceImpl implements SyncService {
                                 }else if(action.getTYPE().equalsIgnoreCase("class")){
                                     res = ClassUtil.doPackage(action.getVALUE());
                                 }
-
-                                watch1.res(res);
-                                log.info(watch1.toString());
+                                watch.put("res", res);
+                                log.info(watch.toString());
                             } catch (Exception e) {
-                                watch1.exception(e);
-                                log.error(watch1.toString(), e);
+                                watch.put(e.getMessage());
+                                log.error(watch.toString(), e);
                             } finally {
                                 watch.cost(action.getNAME());
                             }
                         }
-
-
-                    }finally {
+                        logModel.setIS_OK(Config.TRUE);
+                    }catch (Exception e){
+                        watch.exception(e);
+                        logModel.setIS_EXCEPTION(Config.TRUE).setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
+                        log.error(watch.toString(), e);
+                    } finally {
                         watch.res();
+                        logModel.setRES(watch.toPrettyString()).setCOST(System.currentTimeMillis() - logModel.getCOST());
                         log.info(watch.toPrettyString());
                         log.info("sync end key:" + key + " value:" + value + " args:" + args);
 

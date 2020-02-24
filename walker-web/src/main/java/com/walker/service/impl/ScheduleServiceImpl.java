@@ -144,12 +144,18 @@ class ScheduleServiceImpl implements ScheduleService {
 			task.setAbout(jobDetail.getDescription());
 			List<? extends Trigger> triggerList = scheduler.getTriggersOfJob(jobKey);
 			for(Trigger trigger : triggerList){
-				CronTrigger cronTrigger = (CronTrigger) trigger;
-				String key = cronTrigger.getCronExpression();
-				if(cronOff.contains(key)){
-					log.info("drop old trigger " + key);
-					scheduler.unscheduleJob(cronTrigger.getKey());
+				if(trigger instanceof  CronTrigger) {	//多种触发器问题
+					CronTrigger cronTrigger = (CronTrigger) trigger;
+					String key = cronTrigger.getCronExpression();
+					if (cronOff.contains(key)) {
+						log.info("drop old trigger " + key);
+						scheduler.unscheduleJob(cronTrigger.getKey());
+					}
+				}else{
+					log.info("drop old trigger " + trigger);
+					scheduler.unscheduleJob(trigger.getKey());
 				}
+
 			}
 			triggerList = Task.getTriggers(cronOn, jobDetail);
 			for(Trigger trigger : triggerList){

@@ -22,6 +22,12 @@ import java.util.List;
  *
  */
 public interface SyncService {
+    /**
+     * 初始化周期基本数据
+     * @param args
+     * @return
+     */
+    Bean doBaseData(Bean args);
 
     /**
      * 周期执行sql列表

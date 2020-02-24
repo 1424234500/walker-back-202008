@@ -34,10 +34,22 @@ public class LogServiceImpl implements LogService {
 	@Autowired
 	LogModelRepository logModelRepository;
 
-
-
 	@Override
-	public void saveLogModel(LogModel logModel) {
+	public LogModel saveLogModelNoTime(LogModel logModel) {
+		if(logModel.getID() == null || logModel.getID().length() == 0){
+			logModel.setID(LangUtil.getTimeSeqId());
+		}
+		logModel.setS_MTIME(TimeUtil.getTimeYmdHmss());
+		logModelRepository.save(logModel);
+		return logModel;
+	}
+
+	/**
+	 * 需注意引用传递在dubbo中失效
+	 * @param logModel
+	 */
+	@Override
+	public LogModel saveLogModel(LogModel logModel) {
 		List<LogModel> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
 		if(logModel.getID() == null || logModel.getID().length() == 0){
 			logModel.setID(LangUtil.getTimeSeqId());
@@ -71,6 +83,7 @@ public class LogServiceImpl implements LogService {
 		}
 		bean.put(url, logTime);
 		cache.put(CACHE_KEY, bean);
+		return logModel;
 	}
 
 	@Override
