@@ -163,6 +163,12 @@ public abstract class BaseDaoAdapter implements BaseDao {
 		sql = SqlUtil.makeSqlPage(getDs(), sql, page, rows);
 		return this.find(sql, objects);
 	}
+	@Override
+	public List<Map<String, Object>> findPageRand(int size, String sql, Object... objects) {
+		sql = SqlUtil.makeSqlPageRand(getDs(), sql, size);
+		return this.find(sql, objects);
+	}
+
 
 	@Override
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... objects) {

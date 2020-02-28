@@ -24,6 +24,9 @@ public class DaoTest {
 		Tools.out(new Dao().getColumnsMapByTableName("", "W_TEACHER"));
 		Tools.out(new Dao().getColumnsMapByTableName("walker", "W_TEACHER"));
 
+		Tools.out(new Dao().findPageRand(3, "select * from W_AREA"));
+
+
 
 	}
 	@Test

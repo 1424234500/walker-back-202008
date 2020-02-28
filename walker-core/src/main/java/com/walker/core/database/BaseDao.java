@@ -66,6 +66,8 @@ public interface BaseDao extends BaseJdbc{
 	 */
 	public Map<String, Object> findOne(String sql, Object... params);
 
+
+
 	/**
 	 * 获得结果集
 	 * 
@@ -77,15 +79,27 @@ public interface BaseDao extends BaseJdbc{
 	 */
 	public List<Map<String, Object>> findPage(String sql, Integer page, Integer rows, Object... params);
 
+
+
 	/**
 	 * 获得结果集 分页
-	 * 
+	 *
 	 * @param sql    SQL语句
 	 * @param params 参数
 	 * @param page   分页对象 排序
 	 * @return 结果集
 	 */
 	public List<Map<String, Object>> findPage(Page page, String sql, Object... params);
+
+
+	/**
+	 * 获得结果集 随机 分页
+	 *
+	 * @param sql    SQL语句
+	 * @param params 参数
+	 * @return 结果集
+	 */
+	public List<Map<String, Object>> findPageRand(int size, String sql, Object... params);
 
 	/**
 	 * 统计

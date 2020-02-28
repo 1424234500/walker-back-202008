@@ -227,6 +227,20 @@ public class SqlUtil{
 		return sql;
 	}
 
+	public static String makeSqlPageRand(String dsName, String sql, int size) {
+		dsName = String.valueOf(dsName);
+		if(dsName.equals("mysql") || dsName.equals("sqlite")) {
+			sql = "select * from ( " + sql + " ) t order by RAND() limit " + size;	//2,5 -> 56789 -> 5,5
+		}else if(dsName.equals("oracle")) {										//2,5 -> 67890 -> 5,10
+			sql = " select * from ( select t.*,rownum rowno from ( "
+					+ sql +
+					" ) t where rownum <=  " + size + " order by DBMS_RANDOM.RANDOM() )";
+		}else{
+			throw new ErrorException("no implements  " + dsName);
+		}
+		return sql;
+	}
+
 	/**
 	 * 用户/数据库列表sql
 	 * @param dsName
