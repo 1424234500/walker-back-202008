@@ -19,7 +19,7 @@ public class DesTest {
         Assert.assertEquals(s, str);
 
     }
-    
+
 
 
 }
