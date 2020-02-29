@@ -92,6 +92,8 @@ public class LogServiceImpl implements LogService {
 
 		try {
 			Bean bean = cache.get(CACHE_KEY, new Bean());
+			cache.remove(CACHE_KEY);
+
 			Set<Object> keys = bean.keySet();
 			if (keys != null && keys.size() > 0) {
 				List<LogTime> list = new ArrayList<>();
@@ -108,13 +110,14 @@ public class LogServiceImpl implements LogService {
 				});
 				log.info("batch save static " + CACHE_KEY + " " + list.size() + " pages:" + pages);
 			}
-			cache.remove(CACHE_KEY);
 		}catch (Exception e){
 			log.error("saveStatis error " + CACHE_KEY, e);
 		}
 
 		try {
 			List<LogModel> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
+			cache.remove(CACHE_KEY_CONTROL);
+
 			if (list.size() > 0) {
 				int pages = Page.batch(list, Config.getDbsize(), new FunArgsS<List<LogModel>, Integer>() {
 					@Override
@@ -124,7 +127,6 @@ public class LogServiceImpl implements LogService {
 				});
 				log.info("batch save static " + CACHE_KEY_CONTROL + " " + list.size() + " pages:" + pages);
 			}
-			cache.remove(CACHE_KEY_CONTROL);
 		}catch (Exception e){
 			log.error("saveStatis error " + CACHE_KEY_CONTROL, e);
 		}

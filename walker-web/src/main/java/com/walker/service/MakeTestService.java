@@ -2,9 +2,11 @@ package com.walker.service;
 
 
 import com.walker.common.util.*;
+import com.walker.config.ShiroConfig;
 import com.walker.dao.JdbcDao;
 import com.walker.mode.Key;
 import com.walker.mode.LogModel;
+import com.walker.mode.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ public class MakeTestService {
     LogService logService;
     @Autowired
     JdbcDao jdbcDao;
+    @Autowired
+    ShiroConfig shiroConfig;
 
     ExecutorService executorService = ThreadUtil.getExecutorServiceInstance(4);
     @Autowired
@@ -75,13 +79,20 @@ public class MakeTestService {
         logModel = logService.saveLogModelNoTime(logModel);
         AtomicLong count = new AtomicLong(0);
         try{
-            ExecutorService service = Executors.newFixedThreadPool(threadSize);
+            ExecutorService service = Executors.newFixedThreadPool(threadSize + 1);
             for(int i = 0; i < threadSize; i++) {
+                final int tno = i;
                 service.execute(new Runnable() {
                     @Override
                     public void run() {
+//                        登录
+                        String token = shiroConfig.onlineUser(new User().setID("test" + tno).setPWD("test"));
 
-                        List<Map<String, Object>> list = jdbcDao.findPageRand(100, "select * from W_LOG_MODEL t where 1=1 and t.WAY='GET' and t.CATE=? ", Config.getCateController() );
+                        List<Map<String, Object>> list = jdbcDao.findPageRand(100,
+                                "select * from W_LOG_MODEL t where 1=1 " +
+                                        "and t.WAY='GET' " +
+                                        "and ( t.URL like '%find%' or t.URL like '%get%' ) " +
+                                        "and t.CATE=? ", Config.getCateController() );
                         if(list.size() == 0){
                             log.error("no date to do");
                             return ;
@@ -96,9 +107,10 @@ public class MakeTestService {
                                 url = "http://127.0.0.1:8090" + url;
                                 Bean args = JsonUtil.get(argsStr);
                                 String res = new HttpBuilder(url, HttpBuilder.Type.GET)
-                                        .setConnectTimeout(200)
-                                        .setRequestTimeout(300)
-                                        .setSocketTimeout(200)
+                                        .setHeaders(new Bean().put("TOKEN", token))
+                                        .setConnectTimeout(3000)
+                                        .setRequestTimeout(3000)
+                                        .setSocketTimeout(4000)
                                         .setData(args)
                                         .buildString()
                                 ;

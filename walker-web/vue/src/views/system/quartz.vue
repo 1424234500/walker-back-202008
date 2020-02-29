@@ -288,7 +288,7 @@ export default {
       this.loadingCols = true
       this.get('/common/getColsMap.do', {tableName: this.quartzTable}).then((res) => {
         this.colMap = res.data.colMap
-          //this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
+         this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
         delete this.colMap.JOB_DATA
         delete this.colMap.SCHED_NAME
         delete this.colMap.JOB_GROUP

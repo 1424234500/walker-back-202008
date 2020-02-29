@@ -268,7 +268,7 @@ export default {
       this.loadingCols = true
       this.get('/redis/getColsMap.do', {}).then((res) => {
         this.colMap = res.data.colMap
-          //this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
+         this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
         this.colKey = res.data.colKey
         this.clearRowSearch()
         this.loadingCols = false

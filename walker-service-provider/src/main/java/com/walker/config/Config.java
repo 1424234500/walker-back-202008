@@ -17,10 +17,13 @@ public class Config extends com.walker.service.Config {
          */
         Sort sort = null;
         if(orders[0].length() > 0) {
+            String key = "\\Q" + orders[0] + "\\E";
             if(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")){
-                sort = new Sort(Sort.Direction.DESC, orders[0]);
+//                sort = new Sort(Sort.Direction.DESC, key);
+                sort = new Sort( new Sort.Order(Sort.Direction.DESC, key).ignoreCase() );
             }else{
-                sort = new Sort(Sort.Direction.ASC, orders[0]);
+//                sort = new Sort(Sort.Direction.ASC, key);
+                sort = new Sort( new Sort.Order(Sort.Direction.ASC, key).ignoreCase() );
             }
         }
         //jpa分页从0开始
@@ -30,6 +33,7 @@ public class Config extends com.walker.service.Config {
                         : PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
         return pageable;
     }
+
 
 
 }

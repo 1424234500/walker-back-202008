@@ -11,12 +11,19 @@ public class Config extends com.walker.service.Config {
         String order = page.getOrder();
         String[] orders = order.split(" ");
 
-        Sort sort = orders[0].length() > 0
-                ? new Sort(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC, orders[0])
-                : null;
+        /**
+         * 如何构造多排序条件问题
+         */
+        Sort sort = null;
 
+        if(orders[0].length() > 0) {
+            String key = "\\Q" + orders[0] + "\\E";
+            if(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")){
+                sort = new Sort(Sort.Direction.DESC, key);
+            }else{
+                sort = new Sort(Sort.Direction.ASC, key);
+            }
+        }
         //jpa分页从0开始
         Pageable pageable =
                 sort == null
@@ -24,6 +31,7 @@ public class Config extends com.walker.service.Config {
                         : PageRequest.of(page.getNowpage()-1, page.getShownum(), sort);
         return pageable;
     }
+
 
 
 }

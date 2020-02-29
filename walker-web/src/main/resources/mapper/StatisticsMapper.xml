@@ -49,7 +49,7 @@ CREATE TABLE `W_LOG_TIME` (
                 </where>
                 group by URL
             ) w
-        order by w.OK desc
+        order by w.OK desc,w.NO
 
     </select>
 
@@ -92,7 +92,7 @@ CREATE TABLE `W_LOG_TIME` (
             </where>
             group by SUBSTRING_INDEX(S_MTIME, ':', 2)
         ) w
-        order by w.minu desc
+        order by w.minu asc
 
     </select>
 

@@ -199,8 +199,9 @@ public class ShiroConfig {
 
         redisDao.set(token, user, sessionRedisExpiration);
 
-        Context.getRequest().getSession().setAttribute("TOKEN",token);
-
+        if(Context.getRequest() != null) {
+            Context.getRequest().getSession().setAttribute("TOKEN", token);
+        }
         return token;
     }
     /**

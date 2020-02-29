@@ -61,7 +61,6 @@ public class ActionServiceImpl implements ActionService {
         return new Specification<Action>(){
             @Override
             public Predicate toPredicate(Root<Action> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-
                 List<Predicate> list = new ArrayList<>();
                 if (StringUtils.isNotEmpty(obj.getID())) {
                     list.add(criteriaBuilder.like(root.get("ID"), "%" + obj.getID() + "%"));
@@ -83,7 +82,7 @@ public class ActionServiceImpl implements ActionService {
                 }
                 if (StringUtils.isNotEmpty(obj.getVALUE())) {
                     list.add(criteriaBuilder.like(root.get("VALUE"), "%" + obj.getVALUE() + "%"));
-                } 
+                }
                 return criteriaBuilder.and(list.toArray(new Predicate[0]));
             }
         };

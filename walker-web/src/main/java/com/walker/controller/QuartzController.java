@@ -104,6 +104,9 @@ public class QuartzController {
         String info = "JOB_NAME:" + jobName + " ON:" + on + " OFF:" + off;
         List<String> listOn = on.length() > 0 ? Arrays.asList(on.split(",")) : new ArrayList<>();
         List<String> listOff = off.length() > 0 ? Arrays.asList(off.split(",")) : new ArrayList<>();
+        listOn = new ArrayList<>(new HashSet<>(listOn));
+        listOff = new ArrayList<>(new HashSet<>(listOff));
+
         if(listOn.size() == 0 && listOff.size() == 0){
             return Response.makeFalse(info + " on off is null ");
         }

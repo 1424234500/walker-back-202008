@@ -140,7 +140,7 @@ public class Task {
 	}
 	public static List<Trigger> getTriggers(List<String> trr, JobDetail jobDetail){
 		List<Trigger> trigger = new ArrayList<>();
-		for(String cron : trr){
+		for(String cron : new HashSet<String>(trr)){
 			TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
 			triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cron));
 			triggerBuilder.withDescription(makeInfo(cron));

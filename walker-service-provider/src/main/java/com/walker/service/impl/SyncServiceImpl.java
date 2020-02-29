@@ -174,7 +174,7 @@ public class SyncServiceImpl implements SyncService {
                     try {
 
                         List<Action> list = actionService.finds(
-                                new Action(),//.setS_FLAG(Config.TRUE), //异常jpa?????????
+                                new Action().setS_FLAG(Config.TRUE), //异常jpa?????????
                                 new Page()
                                 .setNowpage(1)
                                 .setShownum(Config.getDbsize())
