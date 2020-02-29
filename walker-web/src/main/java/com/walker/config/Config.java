@@ -19,9 +19,9 @@ public class Config extends com.walker.service.Config {
         if(orders[0].length() > 0) {
             String key = "\\Q" + orders[0] + "\\E";
             if(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")){
-                sort = new Sort(Sort.Direction.DESC, key);
+//                sort = new Sort(Sort.Direction.DESC, key);
             }else{
-                sort = new Sort(Sort.Direction.ASC, key);
+//                sort = new Sort(Sort.Direction.ASC, key);
             }
         }
         //jpa分页从0开始

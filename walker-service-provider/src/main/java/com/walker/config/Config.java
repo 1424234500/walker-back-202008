@@ -20,10 +20,10 @@ public class Config extends com.walker.service.Config {
             String key = "\\Q" + orders[0] + "\\E";
             if(orders.length > 1 && orders[1].equalsIgnoreCase("DESC")){
 //                sort = new Sort(Sort.Direction.DESC, key);
-                sort = new Sort( new Sort.Order(Sort.Direction.DESC, key).ignoreCase() );
+//                sort = new Sort( new Sort.Order(Sort.Direction.DESC, key).ignoreCase() );
             }else{
 //                sort = new Sort(Sort.Direction.ASC, key);
-                sort = new Sort( new Sort.Order(Sort.Direction.ASC, key).ignoreCase() );
+//                sort = new Sort( new Sort.Order(Sort.Direction.ASC, key).ignoreCase() );
             }
         }
         //jpa分页从0开始
