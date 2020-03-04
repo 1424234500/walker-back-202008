@@ -1,6 +1,6 @@
 package com.walker.intercept;
 
-import com.walker.common.util.Pc;
+import com.walker.core.tool.Pc;
 import com.walker.common.util.Tools;
 import com.walker.config.Context;
 import com.walker.config.ControllerConfig;

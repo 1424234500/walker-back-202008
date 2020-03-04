@@ -5,6 +5,7 @@ import com.walker.config.Config;
 import com.walker.core.aop.FunArgsS;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
+import com.walker.core.tool.Pc;
 import com.walker.dao.JdbcDao;
 import com.walker.dao.LogModelRepository;
 import com.walker.dao.LogTimeRepository;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Transactional
 @Service("logService")

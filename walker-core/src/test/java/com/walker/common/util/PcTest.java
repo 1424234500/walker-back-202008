@@ -1,10 +1,9 @@
 package com.walker.common.util;
 
+import com.walker.core.tool.Pc;
 import org.junit.Test;
 
 import java.io.IOException;
-
-import static org.junit.Assert.*;
 
 public class PcTest {
 

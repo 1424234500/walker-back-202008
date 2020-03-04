@@ -27,7 +27,29 @@ import com.walker.core.aop.Fun;
 public class FileUtil {
 	final static int SIZE_BUFFER = 1024 * 4;
 	final static int SIZE_FLUSH = 1024 * 1024;
-	
+	public String copyFromStream(InputStream inputStream) throws IOException {
+		return copyFromStream(inputStream, "utf-8");
+	}
+	public String copyFromStream(InputStream inputStream, String decode) throws IOException {
+		String res = "";
+		if (inputStream != null) {
+			ByteArrayOutputStream os = new ByteArrayOutputStream(FileUtil.SIZE_BUFFER);
+			// getResponse
+			try {
+				FileUtil.copyStream(inputStream, os);
+				if(decode != null && decode.length() > 0)
+					res = os.toString(decode);
+				else
+					res = os.toString();
+			}finally {
+				if(os != null) {
+					os.close();
+				}
+			}
+		}
+		return res;
+	}
+
 	/**
 	 * 文件集合排序
 	 * 

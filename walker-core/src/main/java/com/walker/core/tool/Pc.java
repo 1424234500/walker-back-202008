@@ -1,4 +1,8 @@
-package com.walker.common.util;
+package com.walker.core.tool;
+
+import com.walker.common.util.FileUtil;
+import com.walker.common.util.Tools;
+import com.walker.common.util.Tuple;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
