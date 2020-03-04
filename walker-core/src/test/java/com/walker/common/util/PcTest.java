@@ -25,7 +25,7 @@ public class PcTest {
 
     @Test
     public void getCpu() throws IOException, InterruptedException {
-        Tools.out(Pc.getCpu());
+        Tools.out("cpu", Pc.getCpu());
         Tools.out(Pc.doCmdString("top -bn 2 "));
 //        Tools.out(Pc.doCmdString("top -bn1"));
         Tools.out(Pc.doCmdString("echo ----------------"));
