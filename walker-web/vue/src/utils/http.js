@@ -174,8 +174,9 @@ function afterReject(url, params, type, err){
       type: 'error'
     });
   }else{
+//  JSON.stringify(err)
     Message({
-      message: 'Error other ' + JSON.stringify(err),
+      message: 'Error other ' ,
       type: 'error'
     });
   }
