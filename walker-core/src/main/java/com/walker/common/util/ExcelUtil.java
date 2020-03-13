@@ -70,7 +70,7 @@ public class ExcelUtil {
      * @MethodName : listToExcel
      * @Description : 导出Excel（可以导出到本地文件系统，也可以导出到浏览器，工作表大小为2003支持的最大值）
      */
-    public static <T> void toExcel(
+    public static void toExcel(
             List<Bean> objList,
             List<String> keyList,
             List<String> titleList,
@@ -140,7 +140,7 @@ public class ExcelUtil {
      * @MethodName : listToExcel
      * @Description : 导出Excel（可以导出到本地文件系统，也可以导出到浏览器，工作表大小为2003支持的最大值）
      */
-    public static <T> void toExcel(
+    public static void toExcel(
             Object[][] objList,
             Object[] titleList,
             String sheetName,
@@ -199,6 +199,22 @@ public class ExcelUtil {
  
         }
  
+    }
+
+
+    /**
+     * 读入excel文件，解析后返回
+     * @param file
+     * @throws IOException
+     */
+    public static List<List<String>> readExcelList(File file) throws IOException{
+        List<List<String>> list = new ArrayList<>();
+
+        for(String[] line : readExcel(file)){
+            list.add(Arrays.asList(line));
+        }
+
+        return list;
     }
     /** 
      * 读入excel文件，解析后返回 

@@ -1,4 +1,4 @@
-package com.walker.core.struct;
+package com.walker.core.mode;
 
 import java.util.*;
 

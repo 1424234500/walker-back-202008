@@ -2,9 +2,7 @@ package com.walker.core.scheduler;
 
 import org.apache.log4j.Logger;
 
-import com.walker.common.util.Call;
 import com.walker.core.aop.TestAdapter;
-import com.walker.core.route.SubPubMgr;
 
 /**
  * 管理器

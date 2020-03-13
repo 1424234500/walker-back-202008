@@ -4,11 +4,7 @@ import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -104,15 +100,83 @@ public class SqlUtil{
 	public static  String file(String value, int tolen, char c){
 		return " lpad(" + value + ", " + tolen + ", '" + c + "') ";
 	}
-	
-	
 	/**
+	 * 根据map制作建表语句
+	 */
+	public static String makeSqlCreate(String tableName, Map<String, Object> map){
+		Set<String> keys = map.keySet();
+		List<Integer> lengths = new ArrayList<>();
+		for(String key : keys){
+			lengths.add(String.valueOf(map.get(key)).length() + 10);
+		}
+		return makeSqlCreate(tableName, keys, lengths, 20);
+	}
+	/**
+	 * 根据map制作建表语句
+	 */
+	public static String makeSqlCreate(String tableName, Set<String> keys, List<Integer> lengths, Integer defaultLength){
+		if(tableName == null || tableName.length() == 0){
+			throw new RuntimeException("tableName can't null ");
+		}
+		if(keys == null || keys.size() == 0){
+			throw new RuntimeException("keys can't null ");
+		}
+		if(lengths == null){
+			lengths = new ArrayList<>();
+		}
+		for(int i = lengths.size(); i < keys.size(); i++){
+			lengths.add(defaultLength);
+		}
+		Object[] keyss = keys.toArray();
+		StringBuilder sb = new StringBuilder("create table ").append(tableName).append("(");
+		for(int i = 0; i < keyss.length; i++){
+			String key= String.valueOf(keyss[i])
+					.replace("'", "")
+					.replace("\"", "")
+					;
+			sb.append(key).append(" varchar(").append(lengths.get(i)).append("), ");
+		}
+		sb.setLength(sb.length() - ", ".length());
+
+		sb.append(" )");
+		return sb.toString();
+	}
+	/**
+	 * 根据map制作建表语句
+	 */
+	public static String makeSqlInsert(String tableName, Set<String> keys){
+		if(tableName == null || tableName.length() == 0){
+			throw new RuntimeException("tableName can't null ");
+		}
+		if(keys == null || keys.size() == 0){
+			throw new RuntimeException("keys can't null ");
+		}
+		Object[] keyss = keys.toArray();
+		StringBuilder sb = new StringBuilder("insert into ").append(tableName).append("(");
+		for(int i = 0; i < keyss.length; i++){
+			String key= String.valueOf(keyss[i])
+					.replace("'", "")
+					.replace("\"", "")
+					;
+			sb.append(key).append(", ");
+		}
+		sb.setLength(sb.length() - ", ".length());
+
+		sb.append(" )")
+				.append(" values (")
+				.append(makePosition("?", keyss.length))
+				.append(")");
+		return sb.toString();
+	}
+	/**
+	 * 为map的每个键 制作占位符
 	 * ?, ?, ?
 	 */
 	public static String makeMapPosis(Map<?, ?> map){
 		return makePosition("?", map.size());
 	}
 	/**
+	 * 为map的每个键制作别名
 	 * id, value, name
 	 */
 	public static String makeMapKeys(Map<?, ?> map){

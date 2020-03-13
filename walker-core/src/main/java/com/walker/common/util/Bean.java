@@ -118,6 +118,10 @@ public class Bean extends HashMap<Object, Object>{
            putAll(bean);
        }
    }
+
+
+
+
 @Override
 public String toString() {
 	return JsonUtil.makeJson(this);

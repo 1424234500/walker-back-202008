@@ -113,7 +113,7 @@ public class PipeRedisBroadcastImpl implements Pipe<String>{
 	 * 多线程 各自轮询 消费 消费完后继续拿资源
 	 */
 	@Override
-	public void startConsumer(int threadSize, final  com.walker.core.aop.Fun<String> executer) {
+	public void startConsumer(int threadSize, final com.walker.core.aop.Fun<String> executer) {
 		log.warn("StartConsumer");
 		if(threadSize <= 0)return;
 

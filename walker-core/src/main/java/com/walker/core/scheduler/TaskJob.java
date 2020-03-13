@@ -1,7 +1,5 @@
 package com.walker.core.scheduler;
 
-import com.walker.common.util.Bean;
-import com.walker.core.aop.FunReturn;
 import org.apache.log4j.Logger;
 import org.quartz.*;
 

@@ -1,13 +1,9 @@
 package com.walker.common.util;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.net.URL;
 
 import org.junit.Test;
-
-import com.walker.core.aop.Fun;
 
 public class ContextTest {
 

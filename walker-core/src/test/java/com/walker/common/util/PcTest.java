@@ -1,6 +1,6 @@
 package com.walker.common.util;
 
-import com.walker.core.tool.Pc;
+import com.walker.system.Pc;
 import org.junit.Test;
 
 import java.io.IOException;

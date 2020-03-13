@@ -1,7 +1,6 @@
 package com.walker.core.annotation;
 import org.apache.log4j.Logger;
 
-import com.walker.common.util.Call;
 import com.walker.core.aop.TestAdapter;
 
 /**

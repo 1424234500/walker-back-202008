@@ -1,11 +1,10 @@
-package com.walker.core.tool;
+package com.walker.core.system;
 
 import com.walker.common.util.Tools;
 import com.walker.core.exception.InfoException;
 import com.walker.core.mode.Server;
+import com.walker.system.Ssh;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class SshTest {
 

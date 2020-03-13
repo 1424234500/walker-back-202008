@@ -1,10 +1,9 @@
-package com.walker.core.aop;
+package com.walker.box;
 
 
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
 
-import javax.tools.Tool;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,6 +28,10 @@ public abstract class TaskThreadPie implements Pie{
 
     AtomicInteger countNow;
     int countAll;
+
+    TaskThreadPie(int countAll){
+
+    }
 
     TaskThreadPie(int poolSize, int threadNum, long schTimeDeta, int countAll){
         countNow = new AtomicInteger(0);

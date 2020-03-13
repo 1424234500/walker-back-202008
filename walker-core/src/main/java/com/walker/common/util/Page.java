@@ -1,10 +1,8 @@
 package com.walker.common.util;
 
-import com.walker.core.aop.Fun;
 import com.walker.core.aop.FunArgsS;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;

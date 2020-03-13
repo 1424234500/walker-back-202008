@@ -1,13 +1,10 @@
 package com.walker.core.pipe;
 
 import com.walker.core.aop.Fun;
-import com.walker.core.pipe.PipeMgr.Type;
 import org.apache.log4j.Logger;
 
-import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 /**

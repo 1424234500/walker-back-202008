@@ -1,10 +1,7 @@
-package com.walker.core.struct;
+package com.walker.core.mode;
 
 import java.util.Iterator;
 
-import org.apache.log4j.PropertyConfigurator;
-
-import com.walker.common.util.Context;
 import com.walker.common.util.Tools;
 
 /**

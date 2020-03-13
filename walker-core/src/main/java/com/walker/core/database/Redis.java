@@ -1,10 +1,7 @@
 package com.walker.core.database;
 
-import java.util.*;
-
 import org.apache.log4j.Logger;
 
-import com.walker.core.aop.Fun;
 import com.walker.core.aop.TestAdapter;
 import com.walker.core.cache.*;
 

@@ -3,7 +3,6 @@ package com.walker.service.impl;
 
 import com.walker.common.util.*;
 import com.walker.config.MakeConfig;
-import com.walker.core.aop.TaskThreadPie;
 import com.walker.dao.RedisDao;
 import com.walker.mode.Key;
 import com.walker.service.Config;
@@ -17,14 +16,11 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 初始化数据服务
