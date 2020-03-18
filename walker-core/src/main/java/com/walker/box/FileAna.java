@@ -31,7 +31,7 @@ public class FileAna {
 
     }
 
-    
+
 
 
     public void parseFile(File file){
