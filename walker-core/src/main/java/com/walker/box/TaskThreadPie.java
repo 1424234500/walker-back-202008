@@ -3,61 +3,132 @@ package com.walker.box;
 
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
+import com.walker.system.Pc;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 多线程协作统计工具抽象
+ *
+ * 我有多少个任务
+ *
+ * 你按配置开启10个线程协作完成任务
+ * 你按配置控制队列最多允许排队200个
+ * 你得让我实现每个任务 你得告诉我该实现第n个任务  要能迭代器模式
+ * 你得按配置定时5s展示一下进度信息
+ * 你得在所有任务完成后 展示结果统计 执行了都少个任务 异常了多少个 耗时了多久
+ *
+ *
+ *
  */
-interface Pie{
-    void onStartThread(int threadNo);
-    void onScheduleRun();
-    void onAllThreadFinished();
-    String process();
-    Integer processAdd(Integer count);
-
+abstract class Pie{
+    abstract void onStartThread(int threadNo);
+    void onScheduleRun(){
+        Tools.out(process());
+    };
+    void onAllThreadFinished(long costAll, int countAll, int countException){
+        Tools.out(process());
+    };
+    abstract String process();
 }
-public abstract class TaskThreadPie implements Pie{
+public abstract class TaskThreadPie extends Pie{
+    boolean isDetail = false;
+    int threadSize = Runtime.getRuntime().availableProcessors();
+    long sleepTimeSch = 5000;
+
     long timeStart = System.currentTimeMillis();
-    ExecutorService pool;
+    ThreadPoolExecutor pool;
     ScheduledExecutorService sch;
 
-    AtomicInteger countNow;
-    int countAll;
+    AtomicInteger countNow; //当前完成数量
+    AtomicInteger countException; //当前异常数量
+    int countAll;   //总任务数量
 
-    TaskThreadPie(int countAll){
-
+    public boolean isDetail() {
+        return isDetail;
     }
 
-    TaskThreadPie(int poolSize, int threadNum, long schTimeDeta, int countAll){
-        countNow = new AtomicInteger(0);
+    public TaskThreadPie setDetail(boolean detail) {
+        isDetail = detail;
+        return this;
+    }
+
+    public int getThreadSize() {
+        return threadSize;
+    }
+
+    public TaskThreadPie setThreadSize(int threadSize) {
+        this.threadSize = threadSize;
+        return this;
+    }
+
+    public long getSleepTimeSch() {
+        return sleepTimeSch;
+    }
+
+    public TaskThreadPie setSleepTimeSch(long sleepTimeSch) {
+        this.sleepTimeSch = sleepTimeSch;
+        return this;
+    }
+
+    public int getCountAll() {
+        return countAll;
+    }
+
+    public TaskThreadPie setCountAll(int countAll) {
         this.countAll = countAll;
-        pool = Executors.newFixedThreadPool(poolSize);
+        return this;
+    }
+
+    TaskThreadPie(int countAll){
+        this.countAll = countAll;
+    }
+    void start() {
+        Tools.out("start pie ", threadSize, countAll, sleepTimeSch, isDetail);
+        countException = new AtomicInteger(0);
+        countNow = new AtomicInteger(0);
+        pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(this.threadSize);
         sch = Executors.newSingleThreadScheduledExecutor();
         sch.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 onScheduleRun();
             }
-        }, 0, schTimeDeta, TimeUnit.MILLISECONDS);
-        for(int i = 0; i < threadNum; i++){
-            final int tno = i;
-            pool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    Tools.out("##thread start " + tno);
-                    long timeStart = System.currentTimeMillis();
-                    onStartThread(tno);
-                    long deta = System.currentTimeMillis() - timeStart;
-                    Tools.out("##thread finish " + tno + " " + Tools.calcTime(deta));
+        }, 0, this.sleepTimeSch, TimeUnit.MILLISECONDS);
+        int nowi = 0;
+        while (nowi < countAll) {
+            int ccc = pool.getCorePoolSize();
+            int acc = pool.getActiveCount();
+            int qcc = pool.getQueue().size();
+            if(qcc < ccc * 100) {
+                final int tno = nowi++;
+                detail("init start thread", tno, acc, qcc, ccc);
+                pool.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        detail("##thread start " + tno);
+                        long timeStart = System.currentTimeMillis();
+                        try {
+                            onStartThread(tno);
+                        } catch (Exception e) {
+                            countException.addAndGet(1);
+                            throw e;
+                        } finally {
+                            countNow.addAndGet(1);
+                            long deta = System.currentTimeMillis() - timeStart;
+                            detail("##thread finish " + tno + " " + Tools.calcTime(deta));
+                        }
+                    }
+                });
+            }else if(sleepTimeSch > 0){
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            });
+            }
         }
-
         pool.shutdown();
         try{
             pool.awaitTermination(9999999, TimeUnit.DAYS);
@@ -65,51 +136,24 @@ public abstract class TaskThreadPie implements Pie{
             e.printStackTrace();
         }
         sch.shutdownNow();
-        Tools.out("onAllThreadFinished");
-
-        onAllThreadFinished();
-
+        onAllThreadFinished(System.currentTimeMillis() - timeStart, countAll, countException.get());
     }
 
     @Override
     public String process() {
+//        deta countNow = all countAll
         long deta = System.currentTimeMillis() - timeStart;
-        long last = (long) (1f * (countAll - countNow.get())  / countNow.get() * deta);
-
-        return "Process[count " + countNow + "/" + countAll
+        long all = (long) (1f * deta * countAll / countNow.get());
+        long last =  all - deta;
+        return "Process[count " + countNow + "/" + countException + "/" + countAll
                 + " percent " + (int)(countNow.get() * 1000f / countAll) / 10f + "% " +
-                " cost " + Tools.calcTime(deta) + " last " + Tools.calcTime(last) + "]";
+                " cost " + Tools.calcTime(deta) + " last " + Tools.calcTime(last) + " all " + Tools.calcTime(all) + "]";
     }
 
-    @Override
-    public Integer processAdd(Integer count) {
-        return countNow.addAndGet(count);
-    }
 
-    public static void main(String[] argv){
-        new TaskThreadPie(2, 4, 3 * 1000, 40){
-
-            @Override
-            public void onStartThread(int threadNo) {
-                for(int i = 0; i < 10; i++){
-                    Tools.out(threadNo, i, "do");
-                    this.processAdd(1);
-                    ThreadUtil.sleep(1000);
-                }
-            }
-
-            @Override
-            public void onScheduleRun() {
-                Tools.out(this.process());
-            }
-
-            @Override
-            public void onAllThreadFinished() {
-                Tools.out(this.process());
-            }
-        };
-
-
+    private void detail(Object...objects){
+        if(this.isDetail)
+        Tools.out(objects);
     }
 
 
