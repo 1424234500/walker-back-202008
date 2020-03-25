@@ -88,7 +88,28 @@ public abstract class TaskThreadPie extends Pie{
         Tools.out("start pie ", threadSize, countAll, sleepTimeSch, isDetail);
         countException = new AtomicInteger(0);
         countNow = new AtomicInteger(0);
-        pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(this.threadSize);
+//        pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(this.threadSize){
+        pool = new ThreadPoolExecutor(this.threadSize, this.threadSize
+                , 0L, TimeUnit.MILLISECONDS
+                , new LinkedBlockingQueue<Runnable>(this.countAll)
+                , new ThreadPoolExecutor.AbortPolicy()
+        ){
+            @Override
+            protected void beforeExecute(Thread t, Runnable r) {
+//                System.out.println("准备执行线程：" + r.toString() +"==="  + t.getName());
+            }
+
+            @Override
+            protected void afterExecute(Runnable r, Throwable t) {
+//                System.out.println("执行完成线程：" + r.toString());
+            }
+
+            @Override
+            protected void terminated() {
+                Tools.out("thread pool exit" );
+            }
+
+        };
         sch = Executors.newSingleThreadScheduledExecutor();
         sch.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -107,7 +128,6 @@ public abstract class TaskThreadPie extends Pie{
                 pool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        detail("##thread start " + tno);
                         long timeStart = System.currentTimeMillis();
                         try {
                             onStartThread(tno);

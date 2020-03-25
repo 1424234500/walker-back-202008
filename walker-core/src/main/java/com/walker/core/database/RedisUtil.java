@@ -1,9 +1,6 @@
 package com.walker.core.database;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.SerializeUtil;
@@ -12,6 +9,7 @@ import com.walker.common.util.Tools;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisException;
+import redis.clients.jedis.params.SetParams;
 
 /**
  * jedis设置存取 抽离
@@ -245,79 +243,53 @@ public  class RedisUtil   {
 	}
 
 
-
-	public static String lockWithTimeout(Jedis jedis, String lockName, long acquireTimeout, long timeout) {
-		String key_identifier = null;
+	/**
+	 * 尝试获取分布式锁
+	 * @param jedis Redis客户端
+	 * @param lockName 锁
+	 * @param expireTime 超期时间
+	 * @return 是否获取成功
+	 */
+	public static String tryLock(Jedis jedis, String lockName, int expireTime) {
+		String lockKey = "lock:" + lockName;
+		String value = Thread.currentThread().getName() + ":" + LangUtil.getUUID(); // Thread
 		try {
-			String identifier = Thread.currentThread().getName() + ":" + LangUtil.getUUID(); // Thread
-			// just
-			// for
-			// debug
-			String lockKey = "lock:" + lockName;
-			int lockExpire = (int) (timeout / 1000);
-			long end = System.currentTimeMillis() + acquireTimeout;
-			while (System.currentTimeMillis() < end) {
-				if (jedis.setnx(lockKey, identifier) == 1) {// execute
-					// successfully will
-					// return "1"
-					jedis.expire(lockKey, lockExpire);
-					key_identifier = identifier;
-					System.out.println(Thread.currentThread().getName() + "  获取锁:"+key_identifier);
-					return key_identifier;
-				}
-				if (jedis.ttl(lockKey) == -1) {
-					jedis.expire(lockKey, lockExpire);
-				}
-				long lockKey_ttl = jedis.ttl(lockKey);
-				try {
-					out(Thread.currentThread().getName()
-							+ "  lock_withTimeout获取锁竞争失败，休息1秒，继续尝试获取,锁ttl剩余：" + lockKey_ttl);
+			String result = jedis.set(lockKey, value, new SetParams().nx().px(expireTime));
+//		String result = jedis.set(lockKey, requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
 
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
+			if (String.valueOf(result).toUpperCase().contains("OK")) {
+				return value;
 			}
-			out(Thread.currentThread().getName() + "  获取redis连接失败，放弃获取锁");
-		} catch (Exception e) {
-			out(Thread.currentThread().getName() + "  获取锁发生异常");
+		}catch (Exception e){
 			e.printStackTrace();
-		} finally {
+			out(lockName, expireTime,"tryLock error", e.getMessage());
 		}
-		return key_identifier;
+		return "";
 	}
 
-	public static boolean lockRelease(Jedis jedis, String lockName, String identifier) {
+	/**
+	 * 释放分布式锁
+	 * @param jedis Redis客户端
+	 * @param lockName 锁
+	 * @param identifier 识别码
+	 * @return 是否释放成功
+	 */
+	public static boolean releaseLock(Jedis jedis, String lockName, String identifier) {
 		String lockKey = "lock:" + lockName;
-		boolean retFlag = false;
-		String _temp_identifier_from_redis = "";
-		try {
-			while (true) {
-				jedis.watch(lockKey);
-				_temp_identifier_from_redis = jedis.get(lockKey);
-				if (_temp_identifier_from_redis == null || "".equals(_temp_identifier_from_redis)) {
-					out(Thread.currentThread().getName() + "  锁已过期失效失效");
-				} else if (identifier.equals(_temp_identifier_from_redis)) {
-					long del_result = jedis.del(lockKey);
-					if (del_result == 1) {
-						out(Thread.currentThread().getName() + "  完成任务，释放锁");
-						retFlag = true;
-					} else {
-						out(Thread.currentThread().getName() + "  释放锁失败，锁已提前释放");
-						//continue;
-					}
-				} else {
-					out(Thread.currentThread().getName() + "  锁已过期失效，被污染");
-				}
-				jedis.unwatch();
-				break;
-			}
-		} catch (JedisException e) {
-			e.printStackTrace();
-		} finally {
 
+		try {
+			String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+			Object result = jedis.eval(script, Collections.singletonList(lockKey), Collections.singletonList(identifier));
+
+			if (String.valueOf(result).toUpperCase().contains("OK")) {
+				return true;
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			out(lockName, identifier,"release lock  error", e.getMessage());
 		}
-		return retFlag;
+		return false;
+
 	}
 
 
