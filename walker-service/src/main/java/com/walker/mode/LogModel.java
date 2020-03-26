@@ -1,6 +1,9 @@
 package com.walker.mode;
 
+import com.walker.common.util.LangUtil;
+import com.walker.common.util.TimeUtil;
 import com.walker.service.Config;
+import com.walker.system.Pc;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,7 +45,7 @@ public class LogModel implements Cloneable, Serializable {
 	@Column(name = "CATE", columnDefinition = "varchar(256) default '1970-01-01 00:00:00' comment '类别' ")
 	private String CATE;
 	@Column(name = "S_MTIME", columnDefinition = "varchar(32) default '' comment '修改时间' ")    //255
-	private String S_MTIME;
+	private String S_MTIME = TimeUtil.getTimeYmdHmss();
 	@Column(name = "IP_PORT_FROM", columnDefinition = "varchar(128) default '' comment '用户的ip:port' ")
 	private String IP_PORT_FROM;
 	@Column(name = "IP_PORT_TO", columnDefinition = "varchar(128) default '' comment '受理服务器的ip:port' ")
@@ -66,6 +69,42 @@ public class LogModel implements Cloneable, Serializable {
 
 	@Column(name = "ABOUT", columnDefinition = "varchar(1998) default '' comment '说明' ")
 	private String ABOUT;
+
+
+	public static LogModel getDefaultModel(){
+		LogModel logModel = new LogModel()
+				.setS_MTIME(TimeUtil.getTimeYmdHmss())
+				.setIS_EXCEPTION(Config.FALSE)
+				.setIS_OK(Config.TRUE)
+				.setIP_PORT_FROM(Pc.getIp())
+				.setIP_PORT_TO(Pc.getIp())
+				;
+		return logModel;
+
+	}
+	public void make(){
+		if(getID() == null || getID().length() == 0){
+			setID(LangUtil.getTimeSeqId());
+		}
+		if(getS_MTIME() == null || getS_MTIME().length() == 0) {
+			setS_MTIME(TimeUtil.getTimeYmdHmss());
+		}
+		if(getCOST() == 0){
+			long start = TimeUtil.format(getS_MTIME(), TimeUtil.ymdhmsS);
+			setCOST(System.currentTimeMillis() - start);
+		}
+		if(getEXCEPTION() != null && getEXCEPTION().length() != 0){
+			setIS_EXCEPTION(Config.TRUE);
+		}
+		if(getIP_PORT_FROM() == null || getIP_PORT_FROM().length() == 0){
+			setIP_PORT_FROM(Pc.getIp());
+		}
+		if(getIP_PORT_TO() == null || getIP_PORT_TO().length() == 0){
+			setIP_PORT_TO(Pc.getIp());
+		}
+	}
+
+
 
 	public String getID() {
 		return ID;

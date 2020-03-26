@@ -63,15 +63,12 @@ public class MakeTestService {
         }
         final long timeDeta = timeD;
         final long timeAll = timeA;
-        LogModel logModel = new LogModel()
+        LogModel logModel = LogModel.getDefaultModel()
                 .setCATE(Config.getCateTest())
                 .setUSER("test")
-                .setIP_PORT_FROM(Pc.getIp())
-                .setIP_PORT_TO(Pc.getIp())
                 .setWAY("")
                 .setURL("makeUrlTestRandom")
                 .setARGS(new Bean().put("timeAll", timeAll).put("timeDeta", timeDeta).put("threadSize", threadSize).toString())
-                .setCOST(System.currentTimeMillis())
                 ;
         log.info("start makeUrlTestRandom " + logModel);
         logModel = logService.saveLogModelNoTime(logModel);
@@ -133,9 +130,8 @@ public class MakeTestService {
             service.awaitTermination(timeAll + 3000, TimeUnit.MILLISECONDS);
             logModel.setRES(count.toString());
         }catch (Exception e){
-            logModel.setIS_EXCEPTION(Config.TRUE).setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
+            logModel.setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
         }finally {
-            logModel.setCOST(System.currentTimeMillis() - logModel.getCOST());
             logService.saveLogModel(logModel);
         }
 

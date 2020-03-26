@@ -89,7 +89,7 @@ public class LogInterceptors implements HandlerInterceptor{
                 .setARGS(params)
                 .setCOST(time)
                 .setIS_EXCEPTION(e == null ? Config.FALSE : Config.TRUE).setEXCEPTION(Tools.toString(e))
-                .setIS_OK(e == null ? Config.FALSE : Config.TRUE)
+                .setIS_OK(e == null ? Config.TRUE : Config.FALSE)
                 .setRES(res)
                 .setABOUT(status + "")
                 ;

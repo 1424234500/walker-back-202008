@@ -86,15 +86,10 @@ public class SyncServiceImpl implements SyncService {
                     //保留100天
                     String day100 = TimeUtil.getTime(format, -100);
                     //任务名 类名 触发器名
-                    LogModel logModel = new LogModel()
-                            .setID(LangUtil.getGenerateId())
+                    LogModel logModel = LogModel.getDefaultModel()
                             .setCATE(Config.getCateJob())
                             .setUSER(Config.getSystemUser())
-                            .setIP_PORT_FROM(Pc.getIp())
-                            .setIP_PORT_TO(Pc.getIp())
                             .setARGS(String.valueOf(args))
-                            .setCOST(System.currentTimeMillis())
-                            .setIS_EXCEPTION(Config.FALSE)
                             .setABOUT("制造日期序列数据")
                             .setRES(null);
                     try {
@@ -124,10 +119,10 @@ public class SyncServiceImpl implements SyncService {
                         logModel.setIS_OK(Config.TRUE);
                     }catch (Exception e){
                         watch.exception(e);
-                        logModel.setIS_EXCEPTION(Config.TRUE).setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
+                        logModel.setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
                         log.error(watch.toString(), e);
                     } finally {
-                        logModel.setRES(watch.toPrettyString()).setCOST(System.currentTimeMillis() - logModel.getCOST());
+                        logModel.setRES(watch.toPrettyString());
                         log.info(watch.toPrettyString());
                         log.info("sync end key:" + key + " value:" + value + " args:" + args);
 
@@ -168,7 +163,6 @@ public class SyncServiceImpl implements SyncService {
                             .setIP_PORT_FROM(Pc.getIp())
                             .setIP_PORT_TO(Pc.getIp())
                             .setARGS(String.valueOf(args))
-                            .setCOST(System.currentTimeMillis())
                             .setIS_EXCEPTION(Config.FALSE)
                             .setABOUT("任务队列执行清空框")
                             .setRES(null);
@@ -211,11 +205,11 @@ public class SyncServiceImpl implements SyncService {
                         logModel.setIS_OK(Config.TRUE);
                     }catch (Exception e){
                         watch.exception(e);
-                        logModel.setIS_EXCEPTION(Config.TRUE).setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
+                        logModel.setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
                         log.error(watch.toString(), e);
                     } finally {
                         watch.res();
-                        logModel.setRES(watch.toPrettyString()).setCOST(System.currentTimeMillis() - logModel.getCOST());
+                        logModel.setRES(watch.toPrettyString());
                         log.info(watch.toPrettyString());
                         log.info("sync end key:" + key + " value:" + value + " args:" + args);
 

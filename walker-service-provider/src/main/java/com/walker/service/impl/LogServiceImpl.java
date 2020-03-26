@@ -36,10 +36,7 @@ public class LogServiceImpl implements LogService {
 
 	@Override
 	public LogModel saveLogModelNoTime(LogModel logModel) {
-		if(logModel.getID() == null || logModel.getID().length() == 0){
-			logModel.setID(LangUtil.getTimeSeqId());
-		}
-		logModel.setS_MTIME(TimeUtil.getTimeYmdHmss());
+		logModel.make();
 		logModelRepository.save(logModel);
 		return logModel;
 	}
@@ -51,10 +48,7 @@ public class LogServiceImpl implements LogService {
 	@Override
 	public LogModel saveLogModel(LogModel logModel) {
 		List<LogModel> list = cache.get(CACHE_KEY_CONTROL, new ArrayList<>());
-		if(logModel.getID() == null || logModel.getID().length() == 0){
-			logModel.setID(LangUtil.getTimeSeqId());
-		}
-		logModel.setS_MTIME(TimeUtil.getTimeYmdHmss());
+		logModel.make();
 		list.add(logModel);
 		cache.put(CACHE_KEY_CONTROL, list);
 

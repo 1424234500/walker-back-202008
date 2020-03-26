@@ -34,22 +34,17 @@ public abstract class TaskJob extends QuartzJobBean {
 		}
 		String jobName = jobDetail.getKey().getName();
 		String className = jobDetail.getJobClass().getName();
-		String status = "1";//状态0失败1执行中2成功
+		String status = "2";//状态0失败2执行中1成功
 		long startTime = System.currentTimeMillis();
 		log.info("Scheduler quartz " + className + " " + triggerInfo);
 		log.info("Desc:" + jobDetail.getDescription());
 		//任务名 类名 触发器名
-		LogModel logModel = new LogModel()
-				.setID(LangUtil.getGenerateId())
+		LogModel logModel = LogModel.getDefaultModel()
 				.setCATE(Config.getCateJob())
 				.setUSER(Config.getSystemUser())
-				.setIP_PORT_FROM(Pc.getIp())
-				.setIP_PORT_TO(Pc.getIp())
 				.setWAY(jobName)
 				.setURL(className)
 				.setARGS(triggerInfo)
-				.setCOST(0l)
-				.setIS_EXCEPTION(Config.FALSE)
 				.setIS_OK(status)
 				.setABOUT("任务调度日志")
 				.setRES(null);
@@ -58,18 +53,16 @@ public abstract class TaskJob extends QuartzJobBean {
 		try {
 			String res = this.make();
 
-			status = "2";
+			status = "1";
 			logModel.setIS_EXCEPTION(Config.FALSE)
 					.setRES(res)
 					;
 		}catch (Exception e){
 			status = "0";
-			logModel.setIS_EXCEPTION(Config.TRUE).setEXCEPTION(Tools.toString(e));
+			logModel.setEXCEPTION(Tools.toString(e));
 			throw e;
 		}finally {
-			long stopTime = System.currentTimeMillis();
-			long cost = stopTime - startTime;
-			logModel.setIS_OK(status).setCOST(cost);
+			logModel.setIS_OK(status);
 			if(logModel.getIS_EXCEPTION().equalsIgnoreCase(Config.TRUE)){
 				log.error(logModel.toString());
 			}else{

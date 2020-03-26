@@ -39,7 +39,7 @@ public class Config {
     public static String cutString(int len, String str) {
         len--;
         if(str != null && str.length() > len ){
-            str = str.substring(0, len);
+            str = str.substring(0, len/2) + "..." + str.substring(str.length() - len/2);
         }
         return str;
     }
