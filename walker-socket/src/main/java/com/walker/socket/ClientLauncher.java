@@ -1,5 +1,7 @@
 package com.walker.socket;
 
+import com.walker.socket.client.ClientAIO;
+import com.walker.socket.client.ClientNIO;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.walker.common.setting.Setting;
@@ -27,6 +29,16 @@ public class ClientLauncher {
 		}
 		try {
 			new ClientUI(new ClientNetty("127.0.0.1",	 Setting.get("socket_port_netty", 8093)), "netty-netty-client-127");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		try {
+			new ClientUI(new ClientNIO("127.0.0.1", 8082), "nio-nio-client-127");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		try {
+			new ClientUI(new ClientAIO("127.0.0.1", 8083), "aio-aio-client-127");
 		}catch (Exception e){
 			e.printStackTrace();
 		}

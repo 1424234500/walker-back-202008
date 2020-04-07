@@ -17,7 +17,7 @@ public class ClientNIO extends ClientAdapter {
 	int serverPort = 8090;
 	//回调
 	private OnSocket onSocket; 
-	ClientNIO(String ip, int port){
+	public ClientNIO(String ip, int port){
 		this.serverIp = ip;
 		this.serverPort = port;
 	}

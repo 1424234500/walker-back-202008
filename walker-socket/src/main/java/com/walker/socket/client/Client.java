@@ -32,14 +32,12 @@ public interface Client{
 	 * 启动 
 	 * 仅在未启动时启动
 	 * 
-	 * @throws 异常
 	 */
 	public void start();
 	/**
 	 * 关闭 
 	 * 仅在启动时关闭
 	 * 
-	 * @throws 异常
 	 */
 	public void stop();
 
@@ -47,7 +45,6 @@ public interface Client{
 	/**
 	 * socket 写入字符串 
 	 * 
-	 * @throws 异常
 	 */
 	public void send(String str);
 	

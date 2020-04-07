@@ -2,6 +2,7 @@ package com.walker.socket;
 
 import com.walker.dubbo.DubboMgr;
 import com.walker.service.EchoService;
+import com.walker.socket.server_0.SocketNIO;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.walker.common.util.Context;
