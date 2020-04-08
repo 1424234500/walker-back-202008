@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import com.walker.core.aop.FunArgsReturn;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
@@ -23,8 +24,8 @@ import org.apache.commons.io.LineIterator;
 import com.walker.core.aop.Fun;
 
 public class FileUtil {
-	final static int SIZE_BUFFER = 1024 * 4;
-	final static int SIZE_FLUSH = 1024 * 1024;
+	public final static int SIZE_BUFFER = 1024 * 4;
+	public final static int SIZE_FLUSH = 1024 * 1024;
 	public String copyFromStream(InputStream inputStream) throws IOException {
 		return copyFromStream(inputStream, "utf-8");
 	}
@@ -100,7 +101,7 @@ public class FileUtil {
 	 * 创建文件
 	 */
 	public static boolean mkfile(String path) {
-		if (path == null)
+		if (path == null || path.length() == 0)
 			return false;
 		File file = new File(path);
 		if (file.exists() || file.isFile()) {
@@ -153,7 +154,9 @@ public class FileUtil {
 	private static void showDir(File file, final List<File> files, final Fun<File> funFileOrDir) {
 		if (file == null || !file.exists())
 			return;
-		files.add(file); // 添加当前 节点
+		if(funFileOrDir == null ) {
+			files.add(file); // 添加当前 节点
+		}
 		if (file.isDirectory()) { // 若是文件夹 则递归子节点 深度优先
 			File[] fillArr = file.listFiles();
 			if (fillArr == null)
@@ -216,7 +219,7 @@ public class FileUtil {
 	 * @return 读取长度
 	 */
 	public static int copyStream(InputStream is, OutputStream os) throws IOException {
-		return copyStream(is, os, FileUtil.SIZE_BUFFER, FileUtil.SIZE_FLUSH);
+		return copyStream(is, os, FileUtil.SIZE_BUFFER, FileUtil.SIZE_FLUSH, null);
 	}
 	/**
 	 * 流写入写出 不关闭
@@ -224,14 +227,18 @@ public class FileUtil {
 	 * @throws IOException 
 	 * @return 读取长度
 	 */
-	public static int copyStream(InputStream is, OutputStream os, int bufferSize, int flushSize) throws IOException {
+	public static int copyStream(InputStream is, OutputStream os, int bufferSize, int flushSize, FunArgsReturn<byte[], byte[]> encode) throws IOException {
 //		return IOUtils.copy(is, os);
 		int count = 0;
 		int size = 0;
 		int length = 0;
 		byte[] buffer = new byte[bufferSize];
 		while ((size = is.read(buffer)) != -1) {
-			os.write(buffer, 0, size);
+			byte[] writeBuffer = buffer;
+			if(encode != null){
+				writeBuffer = encode.make(buffer);
+			}
+			os.write(writeBuffer, 0, size);
 			count += size;
 			length += size;
 			if (count > flushSize) {
@@ -566,7 +573,7 @@ public class FileUtil {
 	 * 
 	 * @param oldPath
 	 *            原文件路径 如：c:/fqf
-	 * @param newPathth
+	 * @param newPath
 	 *            复制后路径 如：f:/fqf/ff
 	 */
 	public static void cp(String oldPath, String newPath) {

@@ -5,6 +5,7 @@ import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
 import com.walker.system.Pc;
 
+import java.io.IOException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 abstract class Pie{
-    abstract void onStartThread(int threadNo);
+    abstract void onStartThread(int threadNo) throws IOException, Exception;
     void onScheduleRun(){
         Tools.out(process());
     };
@@ -133,7 +134,6 @@ public abstract class TaskThreadPie extends Pie{
                             onStartThread(tno);
                         } catch (Exception e) {
                             countException.addAndGet(1);
-                            throw e;
                         } finally {
                             countNow.addAndGet(1);
                             long deta = System.currentTimeMillis() - timeStart;

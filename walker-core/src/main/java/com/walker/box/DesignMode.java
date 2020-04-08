@@ -146,7 +146,7 @@ class Prototype implements Cloneable{
  */
 class  Decorator implements User{
 	User user;
-	 Decorator(User user){
+	Decorator(User user){
 		this.user = user;
 	}
 	public void show() {

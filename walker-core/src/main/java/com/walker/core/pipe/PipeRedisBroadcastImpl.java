@@ -153,7 +153,7 @@ public class PipeRedisBroadcastImpl implements Pipe<String>{
 			try {
 				threadPool.awaitTermination(timeout, unit);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 			}
 		}
 	}
