@@ -28,7 +28,7 @@ public class DirMakeDecode {
                         ;
                 to = to.substring(0, to.length() - ext.length());
 
-                IOEncode.encode(from, to);
+                IOEncode.decode(from, to);
             }
         }.setThreadSize(4).start();
 

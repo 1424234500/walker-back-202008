@@ -195,21 +195,5 @@ public class XmlUtil {
         return parseElement(Context.getPathRoot() +File.separator + fileName);
 	}
 
-    public static void main(String[] args) throws DocumentException {
-    	Object bean = parseConfig("test_temp.xml");
-//    	debug(JsonUtil.makeJson(bean, 0));
-    	debug(JsonUtil.makeJson(bean, 6));
-    	
-    	
-    	String path = ClassLoader.getSystemResource("").getPath() + "plugin.json";
-    	String str = FileUtil.readByLines(path, null, "utf-8");
-    	log.warn("plugin mgr init file: " + path);
-    	log.warn(str);
-    	
-		Bean bb = JsonUtil.get(str);
-    	String s = turnElement(bb);
-    	debug(s);
-    	
-    }
     
 }

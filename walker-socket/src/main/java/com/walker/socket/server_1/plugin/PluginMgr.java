@@ -10,6 +10,8 @@ import com.walker.socket.server_1.SocketException;
 import com.walker.socket.server_1.plugin.aop.Aop;
 import org.apache.log4j.Logger;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class PluginMgr {
@@ -44,8 +46,13 @@ public class PluginMgr {
 	
 	void init() {
 		String path = Context.getPathConf("plugin.json");
-    	String str = FileUtil.readByLines(path, null, "utf-8");
-    	log.warn("plugin mgr init file: " + path);
+		String str = null;
+		try {
+			str = FileUtil.readByLines(path, null, "utf-8");
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(new File(path).getAbsolutePath() + " not exists ");
+		}
+		log.warn("plugin mgr init file: " + path);
     	log.warn(str);
     	
 		Bean bean = JsonUtil.get(str);

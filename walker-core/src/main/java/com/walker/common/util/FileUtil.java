@@ -328,7 +328,7 @@ public class FileUtil {
 	 * @return 返回行数
 	 * @throws IOException 
 	 */
-	public static int readByLines(File file, Fun<String> fun, String encode) {
+	public static int readByLines(File file, Fun<String> fun, String encode) throws IOException {
 		encode = makeEncode(encode);
 
 		int lines = 0;
@@ -340,22 +340,15 @@ public class FileUtil {
 				lines++;
 				fun.make(line);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
+		}  finally {
 			if(it != null)
 				it.close();
 		}
 
 		return lines;
 	}
-	public static String readByLines(String path, Fun<String> fun, String encode)   {
-		try {
-			return readByLines(new FileInputStream(path), fun, encode);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return  "-1";
+	public static String readByLines(String path, Fun<String> fun, String encode) throws FileNotFoundException {
+		return readByLines(new FileInputStream(path), fun, encode);
 	}
 
 	/**
