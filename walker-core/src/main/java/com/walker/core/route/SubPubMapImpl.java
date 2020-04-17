@@ -1,14 +1,19 @@
 package com.walker.core.route;
 
-import java.util.*;
-import java.util.concurrent.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class SubPubMapImpl<T, V> implements SubPub<T, V>{
 //	private ExecutorService pool;
 	private Map<String, Set<OnSubscribe<T, V>>> subscribeTable;
-	private static Logger log = Logger.getLogger(SubPubMapImpl.class); 
+	private static Logger log = LoggerFactory.getLogger(SubPubMapImpl.class);
 
 	
 	@Override

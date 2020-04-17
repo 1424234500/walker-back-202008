@@ -1,27 +1,13 @@
 package com.walker.common.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.util.*;
-
+import com.walker.core.aop.Fun;
 import com.walker.core.aop.FunArgsReturn;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 
-import com.walker.core.aop.Fun;
+import java.io.*;
+import java.util.*;
 
 public class FileUtil {
 	public final static int SIZE_BUFFER = 1024 * 4;
@@ -208,9 +194,11 @@ public class FileUtil {
 			}
 		}
 	}
-
+	public static String toString(InputStream is, String encode){
+		return readByLines(is, null, encode);
+	}
 	public static String toString(InputStream is){
-		return readByLines(is, null, null);
+		return toString(is, null);
 	}
 
 	/**
@@ -328,7 +316,7 @@ public class FileUtil {
 	 * @return 返回行数
 	 * @throws IOException 
 	 */
-	public static int readByLines(File file, Fun<String> fun, String encode) throws IOException {
+	public static int readByLines(File file, Fun<String> fun, String encode) {
 		encode = makeEncode(encode);
 
 		int lines = 0;
@@ -340,15 +328,21 @@ public class FileUtil {
 				lines++;
 				fun.make(line);
 			}
-		}  finally {
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
 			if(it != null)
 				it.close();
 		}
 
 		return lines;
 	}
-	public static String readByLines(String path, Fun<String> fun, String encode) throws FileNotFoundException {
-		return readByLines(new FileInputStream(path), fun, encode);
+	public static String readByLines(String path, Fun<String> fun, String encode)   {
+		try {
+			return readByLines(new FileInputStream(path), fun, encode);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(new File(path).getAbsolutePath()  + " not exists ");
+		}
 	}
 
 	/**
@@ -372,7 +366,10 @@ public class FileUtil {
 			}
 			else {
 				while ((temp = bufferedReader.readLine()) != null) {
-					sb.append(temp).append("\r\n");
+					if(sb.length() > 0){
+						sb.append("\r\n");
+					}
+					sb.append(temp);
 				}
 			}
 			content = sb.toString();

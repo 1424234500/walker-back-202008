@@ -1,22 +1,14 @@
 package com.walker.common.util;
 
+import com.walker.core.aop.Fun;
+import com.walker.core.cache.CacheMgr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.apache.log4j.Logger;
-
-import com.walker.core.aop.Fun;
-import com.walker.core.cache.CacheMgr;
+import java.util.concurrent.*;
 
 
 /**
@@ -25,7 +17,8 @@ import com.walker.core.cache.CacheMgr;
  *
  */
 public class ThreadUtil {
-	private static Logger log = Logger.getLogger("Thread"); 
+	private static Logger log = LoggerFactory.getLogger("Thread");
+
 
 	public enum Type{
 

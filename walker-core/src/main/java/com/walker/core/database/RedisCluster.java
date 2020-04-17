@@ -1,13 +1,16 @@
 package com.walker.core.database;
 
-import java.util.*;
-
-import org.apache.log4j.Logger;
-
 import com.walker.core.aop.TestAdapter;
-import com.walker.core.cache.*;
+import com.walker.core.cache.Cache;
+import com.walker.core.cache.CacheMgr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPoolConfig;
 
-import redis.clients.jedis.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * redis 集群模式
@@ -18,7 +21,7 @@ import redis.clients.jedis.*;
  *
  */
 public class RedisCluster  extends TestAdapter{ 
-	protected static Logger log = Logger.getLogger(RedisCluster.class); 
+	protected static Logger log = LoggerFactory.getLogger(RedisCluster.class);
 	String host;
 	JedisPoolConfig config;
 	/**

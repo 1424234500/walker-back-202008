@@ -1,19 +1,19 @@
 package com.walker.core.cache;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import com.walker.common.setting.SettingUtil;
 import com.walker.common.util.Bean;
 import com.walker.common.util.Context;
 import com.walker.common.util.FileUtil;
 import com.walker.core.aop.TestAdapter;
 import com.walker.core.database.Dao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 缓存构造 构造完毕后并初始化缓存 
@@ -22,7 +22,7 @@ import com.walker.core.database.Dao;
  *
  */
 public class CacheMgr extends TestAdapter{
-	private static Logger log = Logger.getLogger("Cache"); 
+	private static Logger log = LoggerFactory.getLogger("Cache");
 	static public Type DEFAULT_TYPE = Type.MAP;
 	
 	public CacheMgr() {

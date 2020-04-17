@@ -1,13 +1,15 @@
 package com.walker.common.util;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 单例
  * Singleton.getInstance()
  */
 public class SingletonTemp {
-	private static Logger log = Logger.getLogger(SingletonTemp.class); 
+	private static Logger log = LoggerFactory.getLogger(SingletonTemp.class);
 
 	/**
 	 * 私有构造器

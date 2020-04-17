@@ -1,13 +1,13 @@
 package com.walker.core.pipe;
 
+import com.walker.core.aop.Fun;
+import com.walker.core.pipe.PipeMgr.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
-
-import org.apache.log4j.Logger;
-
-import com.walker.core.aop.Fun;
-import com.walker.core.pipe.PipeMgr.Type;
 
 /**
  * LinkedBlockingQueue实现 
@@ -20,7 +20,7 @@ import com.walker.core.pipe.PipeMgr.Type;
  * 
  */
 public class PipeListImpl<T> extends PipeAdapter<T>{
-	private static Logger log = Logger.getLogger(PipeListImpl.class);
+	private static Logger log = LoggerFactory.getLogger(PipeListImpl.class);
 
 	private LinkedBlockingDeque<T> list;
 	

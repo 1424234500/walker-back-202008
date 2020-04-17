@@ -1,18 +1,17 @@
 package com.walker.core.pipe;
 
+import com.walker.core.database.Redis;
+import com.walker.core.database.Redis.Fun;
+import com.walker.core.database.RedisUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPubSub;
+
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
-
-import com.walker.core.database.Redis;
-import com.walker.core.database.RedisUtil;
-import com.walker.core.database.Redis.Fun;
-
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 
 /**
  * 
@@ -27,7 +26,7 @@ import redis.clients.jedis.JedisPubSub;
  * 
  */
 public class PipeRedisBroadcastImpl implements Pipe<String>{
-	private static Logger log = Logger.getLogger(PipeRedisBroadcastImpl.class);
+	private static Logger log = LoggerFactory.getLogger(PipeRedisBroadcastImpl.class);
 
 	/**
 	 * 簇列

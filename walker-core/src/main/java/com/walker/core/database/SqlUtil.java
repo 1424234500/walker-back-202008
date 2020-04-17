@@ -1,27 +1,28 @@
 package com.walker.core.database;
 
+import com.walker.common.util.FileUtil;
+import com.walker.common.util.Tools;
+import com.walker.core.aop.Fun;
+import com.walker.core.exception.ErrorException;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
-import com.walker.common.util.FileUtil;
-import com.walker.common.util.Tools;
-import com.walker.core.aop.Fun;
-import com.walker.core.exception.ErrorException;
-
 /**
  * 数据库sql语句帮助
  * @author Walker
  * 2017年9月18日17:33:25
  */
-public class SqlUtil{ 
-	 
-	
+public class SqlUtil{
+	private static Logger log = LoggerFactory.getLogger(SqlUtil.class);
+
+
 	/**
 	 * 字符串模糊查询 添加符号  "%" + value + "%" 
 	 */
@@ -411,7 +412,6 @@ public class SqlUtil{
 		return res;
 	}
 
-	private static Logger log = Logger.getLogger(SqlUtil.class);
 	/**
 	 * 执行sql文件
 	 * @param baseDao
@@ -428,7 +428,7 @@ public class SqlUtil{
 						baseDao.executeSql(obj);
 					}
 				}catch(Exception e) {
-					log.error(e);
+					log.error(e.getMessage(), e);
 				}
 				return null;
 			}

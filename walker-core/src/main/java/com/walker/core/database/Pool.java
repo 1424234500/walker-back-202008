@@ -1,17 +1,17 @@
 package com.walker.core.database;
 
+import com.walker.common.util.ClassUtil;
+import com.walker.core.cache.Cache;
+import com.walker.core.cache.CacheMgr;
+import com.walker.core.exception.ErrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
-
-import com.walker.common.util.ClassUtil;
-import com.walker.core.cache.Cache;
-import com.walker.core.cache.CacheMgr;
-import com.walker.core.exception.ErrorException;
 
 /**
  * 连接接口
@@ -20,7 +20,7 @@ import com.walker.core.exception.ErrorException;
  *
  */
 abstract class Pool {
-	protected static Logger log = Logger.getLogger(Pool.class); 
+	protected static Logger log = LoggerFactory.getLogger(PoolC3p0Impl.class);
 
 	/**
 	 * 配置的jdbc集合配置

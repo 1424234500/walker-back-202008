@@ -10,7 +10,7 @@ public interface BaseJdbc {
      *
      * @param ds
      */
-    public void setDs(String ds);
+    public BaseJdbc setDs(String ds);
     public String getDs() ;
 
 

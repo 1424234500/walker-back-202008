@@ -4,7 +4,6 @@ import com.walker.common.util.FileUtil;
 import com.walker.core.encode.IOEncode;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class DirMakeEncode {
@@ -12,15 +11,15 @@ public class DirMakeEncode {
 
     public static void main(String[] argv){
 
-        String dirFrom = "D:\\workspace\\walker\\walker-core";
-        String dirTo = "D:\\workspace\\walkerEncode\\walker-core";
+        String dirFrom = "D:\\workspace\\walker\\walker-core\\src";
+        String dirTo = "D:\\workspace\\walker-encode";
 
         List<File> list = FileUtil.showDir(dirFrom,null);
 
         new TaskThreadPie(list.size()){
 
             @Override
-            void onStartThread(int threadNo) throws Exception {
+            public void onStartThread(int threadNo) throws Exception {
                 File file = list.get(threadNo);
                 if(file.isDirectory())return;
 

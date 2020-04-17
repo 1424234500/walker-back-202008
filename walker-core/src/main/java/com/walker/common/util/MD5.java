@@ -1,13 +1,13 @@
 package com.walker.common.util;
 
+import com.walker.common.setting.Setting;
+import com.walker.core.aop.Fun;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import com.walker.common.setting.Setting;
-import com.walker.core.aop.Fun;
 
 //MD5加密工具类  
 public class MD5 {

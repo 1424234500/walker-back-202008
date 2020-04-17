@@ -1,17 +1,17 @@
 package com.walker.core.route;
 
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.log4j.Logger;
-
 import com.walker.core.aop.TestAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 发布订阅控制器 
  *
  */
 public class SubPubMgr extends TestAdapter{
-	private static Logger log = Logger.getLogger("subpub"); 
+	private static Logger log = LoggerFactory.getLogger("subpub");
 
 	private static ConcurrentHashMap<String, SubPub<?,?>> index = new ConcurrentHashMap<>();
 	

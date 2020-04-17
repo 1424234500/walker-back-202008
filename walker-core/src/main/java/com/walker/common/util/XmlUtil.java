@@ -1,21 +1,26 @@
 package com.walker.common.util;
 
-import java.io.File;
-import java.util.*;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.dom4j.*;
-import org.dom4j.io.*;
+import org.dom4j.Attribute;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.walker.core.cache.CacheMgr;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * xml工具类
  */
 public class XmlUtil {
-	protected static Logger log = Logger.getLogger(XmlUtil.class); 
+	protected static Logger log = LoggerFactory.getLogger(XmlUtil.class);
 
 	public static String toFullXml(Bean bean) {
 		// TODO Auto-generated method stub
@@ -195,5 +200,21 @@ public class XmlUtil {
         return parseElement(Context.getPathRoot() +File.separator + fileName);
 	}
 
+    public static void main(String[] args) throws DocumentException {
+    	Object bean = parseConfig("test_temp.xml");
+//    	debug(JsonUtil.makeJson(bean, 0));
+    	debug(JsonUtil.makeJson(bean, 6));
+    	
+    	
+    	String path = ClassLoader.getSystemResource("").getPath() + "plugin.json";
+    	String str = FileUtil.readByLines(path, null, "utf-8");
+    	log.warn("plugin mgr init file: " + path);
+    	log.warn(str);
+    	
+		Bean bb = JsonUtil.get(str);
+    	String s = turnElement(bb);
+    	debug(s);
+    	
+    }
     
 }

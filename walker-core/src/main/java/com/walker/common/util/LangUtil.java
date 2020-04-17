@@ -1,19 +1,19 @@
 package com.walker.common.util;
 
+import com.walker.core.exception.ErrorException;
+import org.apache.http.client.utils.CloneUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.util.*;
-
-import org.apache.http.client.utils.CloneUtils;
-import org.apache.log4j.Logger;
-
-import com.walker.core.exception.ErrorException;
 
 /**
  * 对象类型转换工具
  *
  */
 public class LangUtil {
-	private static Logger log = Logger.getLogger("Lang");
+	private static Logger log = LoggerFactory.getLogger("Lang");
 
 	public interface Call{
 		void onMap(Map<?,?> map);

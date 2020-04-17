@@ -1,10 +1,10 @@
 package com.walker.common.util;
 
-import java.io.File;
-import java.net.URL;
-
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.exception.ErrorException;
+
+import java.io.File;
+import java.net.URL;
 
 /**
  * 运行上下文 
@@ -175,5 +175,5 @@ System.getProperty("user.dir") 	/home/walker/e/workspace_my/walker/walker-socket
 		return CacheMgr.getInstance().get("SHOW_NUM", 5);
 	}
 
-	
+
 }

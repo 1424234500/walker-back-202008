@@ -25,7 +25,7 @@ public class TaskThreadPieTest {
         new TaskThreadPie(ll.size()){
 
             @Override
-            void onStartThread(int threadNo) {
+            public void onStartThread(int threadNo) {
 
                 String task = ll.get(threadNo);
                 Tools.out(threadNo, "run", task);
@@ -49,7 +49,7 @@ public class TaskThreadPieTest {
         new TaskThreadPie(ll.size()){
 
             @Override
-            void onStartThread(int threadNo) {
+            public void onStartThread(int threadNo) {
 
 //                String task = ll.get(threadNo);
                 if(! it.hasNext()){

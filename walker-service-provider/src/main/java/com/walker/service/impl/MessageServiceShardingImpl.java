@@ -14,7 +14,8 @@ import com.walker.mode.Message;
 import com.walker.mode.MessageUser;
 import com.walker.mode.Msg;
 import com.walker.service.MessageService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +37,7 @@ import java.util.*;
  */
 @Service("messageServiceSharding")
 public class MessageServiceShardingImpl implements MessageService {
-	Logger log = Logger.getLogger(getClass());
+	Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	RedisDao redisDao;
@@ -68,7 +69,7 @@ public class MessageServiceShardingImpl implements MessageService {
 
 		res.add((int) messageRepository.count());
 
-		log.info(res);
+		log.info(res.toString());
 		return res;
 	}
 	/**
@@ -77,7 +78,7 @@ public class MessageServiceShardingImpl implements MessageService {
 	public List<Integer> sizeMsgUser(){
 		List<Integer> res = new ArrayList<>();
 		res.add((int) messageUserRepository.count());
-		log.info(res);
+		log.info(res.toString());
 		return res;
 	}
 	

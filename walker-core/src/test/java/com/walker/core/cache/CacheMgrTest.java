@@ -2,7 +2,6 @@ package com.walker.core.cache;
 
 import java.io.File;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
 
 import com.walker.common.util.TestBase;

@@ -2,7 +2,8 @@ package com.walker.listener;
 
 import com.walker.common.util.*;
 import com.walker.system.Pc;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class ContextListener implements ServletContextListener {
-    private static Logger log = Logger.getLogger("ContextListener");
+    private static Logger log = LoggerFactory.getLogger("ContextListener");
 
     /**
      * 初始化系统

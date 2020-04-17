@@ -1,11 +1,12 @@
 package com.walker.core.scheduler;
 
-import org.apache.log4j.Logger;
 import org.quartz.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public abstract class TaskJob implements Job {
-	private static Logger log = Logger.getLogger(TaskJob.class);
+	private static Logger log = LoggerFactory.getLogger(TaskJob.class);
 
 
 	@Override

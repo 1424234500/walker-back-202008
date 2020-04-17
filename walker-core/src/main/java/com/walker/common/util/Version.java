@@ -1,14 +1,12 @@
 package com.walker.common.util;
 
-import java.io.File;
-import java.net.URL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 
-import com.walker.core.cache.CacheMgr;
-import com.walker.core.exception.ErrorException;
 
 /**
  * 获取jar包版本号
@@ -17,7 +15,7 @@ import com.walker.core.exception.ErrorException;
 public final class Version {  
 
     private Version() {}  
-	protected static Logger logger = Logger.getLogger(XmlUtil.class); 
+	protected static Logger logger = LoggerFactory.getLogger(XmlUtil.class);
 
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("([0-9][0-9\\.\\-]*)\\.jar");  

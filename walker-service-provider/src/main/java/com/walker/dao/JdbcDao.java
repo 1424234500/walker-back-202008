@@ -27,8 +27,9 @@ public class JdbcDao extends BaseDaoAdapter {
 
     String ds = "mysql";
     @Override
-    public void setDs(String ds) {
+    public JdbcDao setDs(String ds) {
         this.ds = ds;
+        return this;
     }
 
     @Override

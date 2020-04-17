@@ -1,5 +1,14 @@
 package com.walker.core.service.rmi;
 
+import com.walker.common.util.ClassUtil;
+import com.walker.common.util.Tools;
+import com.walker.core.aop.TestAdapter;
+import com.walker.core.cache.Cache;
+import com.walker.core.cache.CacheMgr;
+import com.walker.core.service.service.ServiceClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -7,22 +16,13 @@ import java.rmi.registry.LocateRegistry;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
-import com.walker.common.util.ClassUtil;
-import com.walker.common.util.Tools;
-import com.walker.core.aop.TestAdapter;
-import com.walker.core.cache.Cache;
-import com.walker.core.cache.CacheMgr;
-import com.walker.core.service.service.ServiceClass;
-
 
 /**
  * Rmi 远程调用提供者 服务端 提供服务
  *
  */
 public class Provider extends TestAdapter{
-	private static Logger log = Logger.getLogger(Provider.class); 
+	private static Logger log = LoggerFactory.getLogger(Provider.class);
 	private static Map<String, Remote> map;
 	static {
 		map = new HashMap<>();

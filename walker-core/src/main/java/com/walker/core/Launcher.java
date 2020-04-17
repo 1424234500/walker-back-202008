@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.PropertyConfigurator;
 
 import com.walker.common.util.Context;
 import com.walker.common.util.FileUtil;
 import com.walker.common.util.Tools;
+import org.apache.log4j.PropertyConfigurator;
 
 public class Launcher {
 
@@ -20,8 +20,8 @@ public class Launcher {
 	public Launcher() {
 //		web项目需要配置于WEB-INF/classes 	spring.xml	 web.xml寻址classpath:   ? 
 		System.setProperty("path_conf", "conf");
-		PropertyConfigurator.configure(Context.getPathConf("log4j.properties"));
-		
+//		PropertyConfigurator.configure(Context.getPathConf("log4j.properties"));
+
 
 		Tools.out("-----------------launcher-------------------");
 		String root = Context.getPathRoot();

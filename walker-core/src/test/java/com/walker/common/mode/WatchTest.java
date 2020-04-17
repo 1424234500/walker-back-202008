@@ -1,16 +1,16 @@
 package com.walker.common.mode;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
 import com.walker.common.util.Watch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WatchTest {
-	private static Logger log = Logger.getLogger(WatchTest.class); 
+	private static Logger log = LoggerFactory.getLogger(WatchTest.class);
 
- 
 	@Test
 	public void testWatch2() {
 		Watch w = new Watch("query");

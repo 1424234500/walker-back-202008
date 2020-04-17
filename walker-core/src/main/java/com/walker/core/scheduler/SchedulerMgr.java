@@ -1,15 +1,16 @@
 package com.walker.core.scheduler;
 
-import org.apache.log4j.Logger;
 
 import com.walker.core.aop.TestAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 管理器
  *
  */
 public class SchedulerMgr extends TestAdapter{
-	private static Logger log = Logger.getLogger(SchedulerMgr.class);
+	private static Logger log = LoggerFactory.getLogger(SchedulerMgr.class);
 
 	private static Scheduler scheduler = null;
 

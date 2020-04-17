@@ -1,19 +1,15 @@
 package com.walker.core.service.webservice;
 
-import java.net.URL;
-import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceException;
-
-import org.apache.log4j.Logger;
-
 import com.walker.common.util.Tools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.ws.BindingProvider;
+import java.util.Map;
 
 
 public class WebServiceTool {
-	private static Logger log = Logger.getLogger("webservice"); 
+	private static Logger log = LoggerFactory.getLogger("webservice");
 
 	/**
 	 * webservice超时设置
@@ -21,8 +17,6 @@ public class WebServiceTool {
 	 * 写入超时
 	 * 请求超时
 	 * 分别应对兼容 sun jdk 和 ibm jdk
-	 * @param webservice soap
-	 * @return webservice soap
 	 */
 	public static <T> T webserviceConfig(T soap) {
 		int connect = 2000;

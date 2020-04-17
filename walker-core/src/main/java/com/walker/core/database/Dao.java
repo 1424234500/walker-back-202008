@@ -1,12 +1,8 @@
 package com.walker.core.database;
 
-import com.walker.common.util.MapListUtil;
-import com.walker.common.util.Page;
 import com.walker.common.util.Watch;
-import org.apache.log4j.Logger;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +32,9 @@ public class Dao extends BaseDaoAdapter {
 		if (conn == null || conn.isClosed()) {
 			conn = this.pool.getConn(dsName);
 		}
+		if(conn == null){
+			throw new SQLException("ds:" + dsName + " is not init ? setDs jdbc.properties ");
+		}
 		return conn;
 	}
 
@@ -53,8 +52,9 @@ public class Dao extends BaseDaoAdapter {
 
 	String dsName = "mysql";
 
-	public void setDs(String dsName) {
+	public Dao setDs(String dsName) {
 		this.dsName = dsName;
+		return this;
 	}
 
 	@Override

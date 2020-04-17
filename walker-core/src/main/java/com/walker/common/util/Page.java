@@ -2,10 +2,9 @@ package com.walker.common.util;
 
 import com.walker.core.aop.FunArgsS;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class Page implements Serializable{
 	private static final long serialVersionUID = 1L;

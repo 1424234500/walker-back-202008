@@ -1,12 +1,12 @@
 package com.walker.core.cache;
 
+import com.walker.common.util.Bean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
-
-import com.walker.common.util.Bean;
 
 
 /**
@@ -16,7 +16,7 @@ import com.walker.common.util.Bean;
  * by Walker
  */
 public interface Cache<K> {
-	static Logger log = Logger.getLogger(Cache.class); 
+	Logger log = LoggerFactory.getLogger(Cache.class);
 
 	/**
 	 * 缓存监控接口

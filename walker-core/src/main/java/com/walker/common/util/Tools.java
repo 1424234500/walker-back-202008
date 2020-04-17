@@ -1,6 +1,8 @@
 package com.walker.common.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLogger;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -156,9 +158,9 @@ public class Tools {
 		return "";
 	}
 
-	private static Logger log = Logger.getLogger("Tools");
+	private static Logger log = LoggerFactory.getLogger("Tools");
 	public static String out(String str) {
-		if(log.getAllAppenders() == null || System.getProperty("path_conf") == null) {
+		if(log == null || log instanceof NOPLogger || System.getProperty("path_conf") == null) {
 			System.out.println(TimeUtil.getTimeHms() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
 		}else {
 			log.info(str);

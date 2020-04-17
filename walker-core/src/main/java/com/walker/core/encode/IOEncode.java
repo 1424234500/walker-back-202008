@@ -2,15 +2,11 @@ package com.walker.core.encode;
 
 import com.walker.common.util.FileUtil;
 import com.walker.core.aop.FunArgsReturn;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
-import java.security.SecureRandom;
 
 /**
  * 输入流编码转输出流
@@ -18,7 +14,7 @@ import java.security.SecureRandom;
 public class IOEncode {
  	public static final String encode = "utf-8";
 
-	private static Logger log = Logger.getLogger(IOEncode.class);
+	private static Logger log = LoggerFactory.getLogger(IOEncode.class);
 
 
 

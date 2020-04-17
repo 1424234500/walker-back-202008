@@ -1,26 +1,14 @@
 package com.walker.common.util;
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
+
+import java.io.File;
+import java.lang.reflect.*;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 class ObjectClassEntry{
 	List<Object> objs = new ArrayList<Object>();
 	List<Class<?>> clss = new ArrayList<Class<?>>();
@@ -885,7 +873,7 @@ public class ClassUtil {
 		out("testDocode", ClassUtil.doClassMethod("com.walker.common.util.ClassUtil", "testDocode"));
 
 //		Tools.formatOut(ClassUtil.getPackageClassBean("", true));
-//		Tools.formatOut(ClassUtil.getMethod("com.mode.mode"));
+//		Tools.formatOut(ClassUtil.getMethodNative("com.mode.mode"));
 		
 //		Tools.formatOut(ClassUtil.getClassName("util", true));
 //		Tools.formatOut(ClassUtil.getClassName("org.dom4j", true));

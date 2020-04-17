@@ -27,8 +27,9 @@ public class BaseServiceImpl extends BaseDaoAdapter implements BaseService,Seria
 
 	String ds = "mysql";
 	@Override
-	public void setDs(String ds) {
+	public BaseServiceImpl setDs(String ds) {
 		this.ds = ds;
+		return this;
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class DirMakeDecode {
         new TaskThreadPie(list.size()){
 
             @Override
-            void onStartThread(int threadNo) throws Exception {
+            public void onStartThread(int threadNo) throws Exception {
                 File file = list.get(threadNo);
                 if(file.isDirectory())return;
 
@@ -28,7 +28,7 @@ public class DirMakeDecode {
                         ;
                 to = to.substring(0, to.length() - ext.length());
 
-                IOEncode.decode(from, to);
+                IOEncode.encode(from, to);
             }
         }.setThreadSize(4).start();
 

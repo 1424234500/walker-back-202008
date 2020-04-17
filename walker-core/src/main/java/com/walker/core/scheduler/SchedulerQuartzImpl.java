@@ -1,9 +1,10 @@
 package com.walker.core.scheduler;
 
-import org.apache.log4j.Logger;
-import org.quartz.*;
 import org.quartz.Scheduler;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  *
  */
 class SchedulerQuartzImpl implements com.walker.core.scheduler.Scheduler {
-	private static Logger log = Logger.getLogger(SchedulerQuartzImpl.class);
+	private static Logger log = LoggerFactory.getLogger(SchedulerQuartzImpl.class);
 
 	SchedulerFactory schedulerFactory;
 	Scheduler scheduler;

@@ -1,10 +1,9 @@
 package com.walker.box;
 
-import com.walker.core.aop.Fun;
 import com.walker.common.util.FileUtil;
+import com.walker.core.aop.Fun;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class FileAna {
 
 
 
-    public void parseFile(File file) throws IOException {
+    public void parseFile(File file){
 
         int lines = FileUtil.readByLines(file, new Fun<String>() {
             @Override

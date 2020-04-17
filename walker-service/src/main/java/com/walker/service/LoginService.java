@@ -1,12 +1,13 @@
 package com.walker.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 登录服务
  */
 public interface LoginService  {
-	Logger log = Logger.getLogger(LoginService.class);
+	Logger log = LoggerFactory.getLogger(LoginService.class);
 	String CACHE_KEY = "cache-user-token";
 	/**
 	 * 默认 游客登录

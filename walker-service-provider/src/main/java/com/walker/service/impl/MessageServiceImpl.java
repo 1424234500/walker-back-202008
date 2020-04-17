@@ -7,7 +7,8 @@ import com.walker.dao.RedisDao;
 import com.walker.mode.Key;
 import com.walker.mode.Msg;
 import com.walker.service.MessageService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,7 +32,7 @@ import java.util.Set;
  */
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {
-	Logger log = Logger.getLogger(getClass());
+	Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	RedisDao redisDao;
@@ -58,7 +59,7 @@ public class MessageServiceImpl implements MessageService {
 		for(int i = 0; i < COUNT_MSG; i++) {
 			res.add(jdbcDao.count( "select * from " + TABLE_MSG_ + i));
 		}
-		log.info(res);
+		log.info(res.toString());
 		return res;
 	}
 	/**
@@ -70,7 +71,7 @@ public class MessageServiceImpl implements MessageService {
 			res.add(jdbcDao.count( "select * from " + TABLE_MSG_USER_ + i));
 
 		}
-		log.info(res);
+		log.info(res.toString());
 		return res;
 	}
 	

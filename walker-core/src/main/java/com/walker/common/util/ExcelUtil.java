@@ -1,37 +1,47 @@
 package com.walker.common.util;
 
-import java.io.*;
-import java.util.*;
-
-import org.apache.commons.lang3.*;
-import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.*;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class ExcelUtil {
- 
-	private static Logger log = Logger.getLogger(ExcelUtil.class);
+
+    protected static Logger log = LoggerFactory.getLogger(ExcelUtil.class);
  
     private static final String SHEET_NAME = "new sheet";
 
     public static void saveToExcel(
-            List<List<Object>> objList,
-            List<Object> titleList,
+            List<List<?>> objList,
+            List<?> titleList,
             String sheetName,
             String saveFilePath
     ) throws IOException {
         Object[][] ll = new Object[objList.size()][];
         int i = 0;
-        for(List<Object> line : objList){
-            ll[i] = line.toArray();
+        for(List<?> line : objList){
+            ll[i++] = line.toArray();
         }
         saveToExcel(ll, titleList.toArray(), sheetName, saveFilePath);
 
     }
-    public static void saveToExcel(
+    public static void  saveToExcel(
             Object[][] objList,
             Object[] titleList,
             String sheetName,
@@ -41,10 +51,17 @@ public class ExcelUtil {
     	if(file.exists()) {
     		log.warn("file is exist " + file.toString());
     	}
-    	FileOutputStream os = new FileOutputStream(file);
-    	toExcel(objList, titleList, sheetName, os);
-    	os.flush();
-    	os.close();
+    	FileOutputStream os = null;
+    	try {
+            os = new FileOutputStream(file);
+            toExcel(objList, titleList, sheetName, os);
+        }finally {
+    	    if(os != null ) {
+                os.flush();
+                os.close();
+            }
+        }
+
     }
     public static void saveToExcel(
             List<Bean> objList,
@@ -53,14 +70,21 @@ public class ExcelUtil {
             String sheetName,
             String saveFilePath
     ) throws IOException {
-    	File file = new File(saveFilePath);
-    	if(file.exists()) {
-    		log.warn("file is exist " + file.toString());
-    	}
-    	FileOutputStream os = new FileOutputStream(file);
-    	toExcel(objList, keyList, titleList, sheetName, os);
-    	os.flush();
-    	os.close();
+
+        File file = new File(saveFilePath);
+        if(file.exists()) {
+            log.warn("file is exist " + file.toString());
+        }
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            toExcel(objList, keyList, titleList, sheetName, os);
+        }finally {
+            if(os != null ) {
+                os.flush();
+                os.close();
+            }
+        }
     }
     
     /**
@@ -82,11 +106,8 @@ public class ExcelUtil {
         if (objList == null || keyList == null) {
         	w.put("参数异常");
         }
-    	
         sheetName = StringUtils.isNotBlank(sheetName) ? sheetName : SHEET_NAME;
- 
         XSSFWorkbook wb = new XSSFWorkbook();
- 
         //sheet样式定义【getColumnTopStyle()/getStyle()均为自定义方法 - 在下面  - 可扩展】
         //获取列头样式对象
         XSSFCellStyle columnTopStyle = getColumnTopStyle(wb);
@@ -94,16 +115,16 @@ public class ExcelUtil {
         XSSFCellStyle style = getStyle(wb);
  
         XSSFSheet sheet = wb.createSheet(sheetName);
-        XSSFRow row = sheet.createRow(0);
- 
-        //写入第一行
-        for (Integer i = 0; i < titleList.size(); i++) {
-            XSSFCell cell = row.createCell(i);
-            cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-            cell.setCellValue(titleList.get(i));
-            cell.setCellStyle(columnTopStyle);
+        if(titleList != null && titleList.size() > 0) {
+            XSSFRow row = sheet.createRow(0);
+            //写入第一行
+            for (Integer i = 0; i < titleList.size(); i++) {
+                XSSFCell cell = row.createCell(i);
+                cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+                cell.setCellValue(titleList.get(i));
+                cell.setCellStyle(columnTopStyle);
+            }
         }
- 
         //遍历对象值
         try {
            Integer rowNum = 1;
@@ -162,19 +183,22 @@ public class ExcelUtil {
         XSSFCellStyle style = getStyle(wb);
  
         XSSFSheet sheet = wb.createSheet(sheetName);
-        XSSFRow row = sheet.createRow(0);
- 
-        //写入第一行
-        for (Integer i = 0; i < titleList.length; i++) {
-            XSSFCell cell = row.createCell(i);
-            cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-            cell.setCellValue(String.valueOf(titleList[i]));
-            cell.setCellStyle(columnTopStyle);
+
+        if(titleList != null && titleList.length > 0) {
+            XSSFRow row = sheet.createRow(0);
+            //写入第一行
+            for (Integer i = 0; i < titleList.length; i++) {
+                XSSFCell cell = row.createCell(i);
+                cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+                cell.setCellValue(String.valueOf(titleList[i]));
+                cell.setCellStyle(columnTopStyle);
+            }
         }
  
         //遍历对象值
         try {
-           for(Integer rowNum = 0; rowNum < objList.length; rowNum++) {
+            if(objList != null)
+            for(Integer rowNum = 0; rowNum < objList.length; rowNum++) {
             	Object[] line = objList[rowNum];
                 XSSFRow row1 = sheet.createRow(rowNum);
                 for (Integer col = 0; col < line.length; col++) {
@@ -184,7 +208,7 @@ public class ExcelUtil {
                     cell.setCellValue(String.valueOf(line[col]));
                     cell.setCellStyle(style);
                 }
-            }
+             }
  
             try {
                 wb.write(outputStream);
@@ -322,21 +346,20 @@ public class ExcelUtil {
      * 列头单元格样式
      */
     private static XSSFCellStyle getColumnTopStyle(XSSFWorkbook workbook) {
- 
         // 设置字体
         XSSFFont font = workbook.createFont();
         //设置字体大小
-        font.setFontHeightInPoints((short) 11);
+        font.setFontHeightInPoints((short) 12);
         //字体加粗
         font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         //设置字体名字
-        font.setFontName("Courier New");
+        font.setFontName("Consolars");
         //设置样式;
         XSSFCellStyle style = workbook.createCellStyle();
         //设置底边框;
         style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         //设置底边框颜色;
-        style.setBottomBorderColor(HSSFColor.BLACK.index);
+        style.setBottomBorderColor(HSSFColor.RED.index);
         //设置左边框;
         style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         //设置左边框颜色;
@@ -373,7 +396,7 @@ public class ExcelUtil {
         //字体加粗
         //font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         //设置字体名字
-        font.setFontName("Courier New");
+        font.setFontName("Consolars");
         //设置样式;
         XSSFCellStyle style = workbook.createCellStyle();
         //设置底边框;

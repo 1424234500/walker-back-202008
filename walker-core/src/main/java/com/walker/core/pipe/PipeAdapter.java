@@ -1,7 +1,8 @@
 package com.walker.core.pipe;
 
 import com.walker.core.aop.Fun;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * 
  */
 public abstract class PipeAdapter<T> implements Pipe<T>{
-	private static Logger log = Logger.getLogger(PipeAdapter.class);
+	private static Logger log = LoggerFactory.getLogger(PipeAdapter.class);
 
 
 	/**

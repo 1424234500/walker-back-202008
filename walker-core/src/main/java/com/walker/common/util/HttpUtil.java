@@ -1,5 +1,23 @@
 package com.walker.common.util;
 
+import com.walker.core.cache.Cache;
+import com.walker.core.cache.CacheMgr;
+import com.walker.core.exception.InfoException;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpMessage;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,28 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpMessage;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.Logger;
-
-import com.walker.core.cache.Cache;
-import com.walker.core.cache.CacheMgr;
-import com.walker.core.exception.InfoException;
 
 /**
  * Http工具类
@@ -57,7 +53,7 @@ import com.walker.core.exception.InfoException;
  *
  */
 public class HttpUtil {
-	private static Logger log = Logger.getLogger("Http");
+	protected static Logger log = LoggerFactory.getLogger(HttpUtil.class);
 	//	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36
 	private final static String DEFAULT_BROWSER = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
 
@@ -407,7 +403,7 @@ public class HttpUtil {
 	 */
 	public static void download(String url, File file) throws IOException, InfoException{
 		Watch w = new Watch("http download " + url + " " + file.getAbsolutePath()   );
-		log.info(w);
+		log.info(w.toString());
 		long length = 0;
 		
 		InputStream is = null;

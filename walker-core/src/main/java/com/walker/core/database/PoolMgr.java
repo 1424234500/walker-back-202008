@@ -1,10 +1,10 @@
 package com.walker.core.database;
 
-import java.util.EnumMap;
-
-import org.apache.log4j.Logger;
-
 import com.walker.core.aop.TestAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.EnumMap;
 
 
 /**
@@ -13,7 +13,7 @@ import com.walker.core.aop.TestAdapter;
  *
  */
 class PoolMgr extends TestAdapter{
-	private static Logger log = Logger.getLogger("pool"); 
+	private static Logger log = LoggerFactory.getLogger("pool");
 
 	private PoolMgr() {
 	}

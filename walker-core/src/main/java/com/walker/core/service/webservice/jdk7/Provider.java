@@ -1,11 +1,5 @@
 package com.walker.core.service.webservice.jdk7;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
-import org.apache.log4j.Logger;
-
 import com.walker.common.util.Call;
 import com.walker.common.util.ClassUtil;
 import com.walker.common.util.Tools;
@@ -13,6 +7,11 @@ import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImpl;
 import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassImplService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * webService 服务初始化 
@@ -27,7 +26,7 @@ import com.walker.core.service.webservice.jdk7.client.ServiceClass.ServiceClassI
  *e,调用
  */
 public class Provider implements Call{
-	private static Logger log = Logger.getLogger(Provider.class); 
+	private static Logger log = LoggerFactory.getLogger(Provider.class);
 	private static Map<String, Object> map;
 	static {
 		map = new HashMap<>();

@@ -1,10 +1,12 @@
 package com.walker.common.util;
 
-import java.util.*;
-
-import org.apache.log4j.Logger;
-
 import com.walker.core.exception.ErrorException;
+import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 耗时监控 提示信息工具
@@ -102,7 +104,7 @@ public class Watch {
 		long deta = now - last;
 		this.put("total", deta + "");
 		if(log != null)
-		log.info(this);
+		log.info(this.toString());
 		return this;
 	}
 	public Watch resSlf4j(  ) {

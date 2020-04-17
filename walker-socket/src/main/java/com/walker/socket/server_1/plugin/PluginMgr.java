@@ -49,7 +49,7 @@ public class PluginMgr {
 		String str = null;
 		try {
 			str = FileUtil.readByLines(path, null, "utf-8");
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(new File(path).getAbsolutePath() + " not exists ");
 		}
 		log.warn("plugin mgr init file: " + path);

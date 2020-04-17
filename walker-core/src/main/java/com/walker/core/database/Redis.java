@@ -1,11 +1,14 @@
 package com.walker.core.database;
 
-import org.apache.log4j.Logger;
 
 import com.walker.core.aop.TestAdapter;
-import com.walker.core.cache.*;
-
-import redis.clients.jedis.*;
+import com.walker.core.cache.Cache;
+import com.walker.core.cache.CacheMgr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * redis数据库
@@ -16,7 +19,7 @@ import redis.clients.jedis.*;
  *
  */
 public class Redis  extends TestAdapter{ 
-	protected static Logger log = Logger.getLogger(Redis.class);
+	protected static Logger log = LoggerFactory.getLogger(Redis.class);
 	String host;
 	int port;
 	String password;

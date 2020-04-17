@@ -1,9 +1,9 @@
 package com.walker.core.aop;
 
-import org.apache.log4j.Logger;
-
 import com.walker.common.util.Context;
 import com.walker.core.exception.ErrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 测试接口
@@ -18,7 +18,7 @@ import com.walker.core.exception.ErrorException;
 
 
 public abstract class TestAdapter implements Test{
-	protected Logger log = Logger.getLogger("test"); 
+	protected Logger log = LoggerFactory.getLogger("test");
 
 	@Override
 	public void test() {
@@ -28,7 +28,7 @@ public abstract class TestAdapter implements Test{
 			res = doTest();
 		}catch(Exception e) {
 			res = false;
-			log.error(e);
+			log.error(e.getMessage(), e);
 			throw new ErrorException(e);
 		}
 		if(res) {
@@ -55,7 +55,7 @@ public abstract class TestAdapter implements Test{
 		}catch(Exception e) {
 			res = false;
 			e.printStackTrace();
-			log.error(e);
+			log.error(e.getMessage(), e);
 		} 
 		if(res) {
 			log.warn(Context.okTip(getClass()));
@@ -74,7 +74,7 @@ public abstract class TestAdapter implements Test{
 		}catch(Exception e) {
 			res = false;
 			e.printStackTrace();
-			log.error(e);
+			log.error(e.getMessage(), e);
 		} 
 		if(res) {
 			log.warn(Context.okTip(getClass()));

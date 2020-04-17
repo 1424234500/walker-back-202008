@@ -3,9 +3,13 @@ package com.walker.core.database;
 import com.walker.common.util.MapListUtil;
 import com.walker.common.util.Page;
 import com.walker.core.exception.ErrorException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 数据库常用操作工具 选择一种连接池实现 每种连接池对应多种数据源 多种数据库
@@ -15,9 +19,8 @@ import java.util.*;
  * 部分实现 抽离关键 子实现
  */
 public abstract class BaseDaoAdapter implements BaseDao {
-	protected static Logger log = Logger.getLogger(BaseDaoAdapter.class);
 
-
+	protected static Logger log = LoggerFactory.getLogger(BaseDaoAdapter.class);
 
 	@Override
 	public List<String> getColumnsByTableName(String dbOrUser, String tableName) {

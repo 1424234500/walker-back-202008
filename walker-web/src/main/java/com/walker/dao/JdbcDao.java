@@ -2,6 +2,7 @@ package com.walker.dao;
 
 import com.walker.common.util.Watch;
 import com.walker.core.database.BaseDaoAdapter;
+import com.walker.core.database.Dao;
 import com.walker.core.database.SqlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,8 +35,9 @@ public class JdbcDao extends BaseDaoAdapter {
     }
 
     @Override
-    public void setDs(String ds) {
+    public JdbcDao setDs(String ds) {
         this.ds = ds;
+        return this;
     }
 
     @Override

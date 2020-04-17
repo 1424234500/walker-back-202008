@@ -1,9 +1,7 @@
 package com.walker.box;
 
 
-import com.walker.common.util.ThreadUtil;
 import com.walker.common.util.Tools;
-import com.walker.system.Pc;
 
 import java.io.IOException;
 import java.util.concurrent.*;
@@ -24,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 abstract class Pie{
-    abstract void onStartThread(int threadNo) throws IOException, Exception;
+    public abstract void onStartThread(int threadNo) throws IOException, Exception;
     void onScheduleRun(){
         Tools.out(process());
     };
@@ -82,11 +80,16 @@ public abstract class TaskThreadPie extends Pie{
         return this;
     }
 
-    TaskThreadPie(int countAll){
+    public TaskThreadPie(int countAll){
         this.countAll = countAll;
+//        避免全部cpu占用
+        if(this.threadSize > 1){
+            this.threadSize -= 1;
+        }
     }
-    void start() {
+    public void start() {
         Tools.out("start pie ", threadSize, countAll, sleepTimeSch, isDetail);
+        if(countAll <= 0) return;
         countException = new AtomicInteger(0);
         countNow = new AtomicInteger(0);
 //        pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(this.threadSize){
@@ -134,6 +137,7 @@ public abstract class TaskThreadPie extends Pie{
                             onStartThread(tno);
                         } catch (Exception e) {
                             countException.addAndGet(1);
+                            e.printStackTrace();
                         } finally {
                             countNow.addAndGet(1);
                             long deta = System.currentTimeMillis() - timeStart;
@@ -165,7 +169,8 @@ public abstract class TaskThreadPie extends Pie{
         long deta = System.currentTimeMillis() - timeStart;
         long all = (long) (1f * deta * countAll / countNow.get());
         long last =  all - deta;
-        return "Process[count " + countNow + "/" + countException + "/" + countAll
+
+        return "Process[count " + countNow + "/" + countException + "/" + countAll + " qps " + (int)(countNow.get() * 1000f * 100f / deta) / 100f + "/s"
                 + " percent " + (int)(countNow.get() * 1000f / countAll) / 10f + "% " +
                 " cost " + Tools.calcTime(deta) + " last " + Tools.calcTime(last) + " all " + Tools.calcTime(all) + "]";
     }
