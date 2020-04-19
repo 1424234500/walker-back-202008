@@ -210,7 +210,7 @@ public class ClassUtil {
 			method.setAccessible(true);
 			res = method.invoke(instance, methodArgs);
 		} catch (Exception e) {
-			out("反射[" + instance.getClass().getName() + "." + method + "]" + Arrays.toString(methodArgs) + " 异常 " + e.toString());
+			out("反射" + "[" + instance.getClass().getName() + "." + method + " : " + Arrays.toString(methodArgs) + "]" + " 异常 " + e.toString());
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
