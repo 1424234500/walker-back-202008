@@ -8,26 +8,85 @@ import java.util.*;
  *
  */
 public class NodeList<E, WEIGHT> {
-	Map<Node<E>, Map<Node<E>, WEIGHT>> lines;
+	Map<E, Map<E, WEIGHT>> lines;
 
-	public NodeList<E, WEIGHT> setLine(Node<E> from, Node<E> to, WEIGHT weight){
-		Map<Node<E>, WEIGHT> tos = lines.get(from);
+	public WEIGHT setLineN(int f, int t, WEIGHT defaultWeight) {
+		if (f < 0 || f > size || t < 0 || t > size || f >= t) {
+			throw new NoSuchElementException("args err " + f + " " + t);
+		}
+		return setLine(this.get(f), this.get(f), defaultWeight);
+	}
+	/**
+	 * 设置节点之间的距离
+	 * @param from
+	 * @param to
+	 * @param weight null则删除
+	 * @return
+	 */
+	public WEIGHT setLine(E from, E to, WEIGHT weight){
+		WEIGHT res = null;
+
+		checkNodeNull(from);
+		checkNodeNull(to);
+
+		Map<E, WEIGHT> tos = lines.get(from);
 		if(tos == null){
 			tos = new LinkedHashMap<>();
 			lines.put(from, tos);
 		}
 		if(weight == null){
-			tos.remove(to);
+			res = tos.remove(to);
 			if(tos.size() <= 0){
 				lines.remove(from);
 			}
 		}else {
 			tos.put(to, weight);
 		}
-		return this;
+		return res;
 	}
-	public WEIGHT getLine(Node<E> from, Node<E> to, WEIGHT defaultWeight){
-		Map<Node<E>, WEIGHT> tos = lines.get(from);
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer("NodeList size:" + size);
+		sb.append(",");
+		if(this.size > 0) {
+			sb.append(this.get(0));
+			for (int i = 1; i < size; i++) {
+				WEIGHT weight = this.getLineN(i - 1, i, null);
+				sb.append(" - ").append(weight).append(" - ");
+				sb.append(this.get(i));
+			}
+		}
+
+		return sb.toString();
+	}
+
+	private void checkNodeNull(Object node) {
+		if(node == null){
+			throw new NullPointerException();
+		}
+	}
+
+	/**
+	 * 获取相邻节点的距离
+	 * @param f
+	 * @param t
+	 * @param defaultWeight
+	 * @return
+	 */
+	public WEIGHT getLineN(int f, int t, WEIGHT defaultWeight){
+		if(f < 0 || f > size || t < 0 || t > size || f >= t){
+			throw new NoSuchElementException("args err " + f + " " + t);
+		}
+		E from = this.get(f);
+		E to = this.get(t);
+		return getLine(from, to, defaultWeight);
+	}
+	public WEIGHT getLine(E from, E to, WEIGHT defaultWeight){
+		checkNodeNull(from);
+		checkNodeNull(to);
+
+		Map<E, WEIGHT> tos = lines.get(from);
 		WEIGHT weight = defaultWeight;
 		if(tos != null){
 			weight = tos.get(to);
@@ -35,9 +94,84 @@ public class NodeList<E, WEIGHT> {
 				weight = defaultWeight;
 			}
 		}
-
 		return weight;
 	}
+
+	/**
+	 * 获取节点之间 的权重值 多个WEIGHT和
+	 */
+	public List<WEIGHT> getLines(E from, E to, WEIGHT defaultWeight){
+		int f = indexOf(from);
+		int t = indexOf(to);
+		if(from == null){
+			f = 0;
+		}
+		if(to == null){
+			t = size - 1;
+		}
+		return getLinesN(f, t, defaultWeight);
+	}
+	/**
+	 * 获取节点之间 的权重值 多个WEIGHT和
+	 */
+	public List<WEIGHT> getLinesN(int f, int t, WEIGHT defaultWeight){
+		List<WEIGHT> res = new ArrayList<>();
+		if(this.size > 1) {
+			if(f < 0 || f > size || t < 0 || t > size || f >= t){
+				throw new NoSuchElementException("args err " + f + " " + t);
+			}
+			//from to必为list中节点
+			if(f < t){
+				//从from遍历到to
+				for (int i = f; i < t; i++) {
+					WEIGHT weight = getLine(this.get(i), this.get(i + 1), defaultWeight);
+					res.add(weight);
+				}
+			}
+		}
+		return res;
+	}
+
+
+	/**
+	 * 反转
+	 * @return
+	 */
+	public NodeList<E, WEIGHT> reverse(){
+		if(size > 1){
+			Node<E> now = first, nowPrev = null, nowNext = null;
+			last = now;
+			while(now != null){
+
+				nowPrev = now.prev;
+				nowNext = now.next;
+
+				if(nowPrev == null){	//first
+				}
+				if(nowNext == null){	//last
+				}
+				now.next = nowPrev;
+				now.prev = nowNext;
+
+				if(nowNext != null && now != null) {
+					setLine(nowNext.item, now.item
+							, setLine(now.item, nowNext.item, null)
+					);
+				}
+				now = nowNext;
+			}
+			first = nowPrev;
+
+
+		}
+
+		return this;
+	}
+
+
+
+
+
 
 
 
