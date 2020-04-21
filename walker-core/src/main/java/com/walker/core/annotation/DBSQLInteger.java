@@ -32,7 +32,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DBSQLInteger {
-	
+
+	/**
+	 * 字段名
+	 * @return
+	 */
 	String name() default "";
 	/**
 	 * 嵌套约束 默认值填充

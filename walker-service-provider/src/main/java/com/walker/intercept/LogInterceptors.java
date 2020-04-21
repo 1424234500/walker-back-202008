@@ -87,7 +87,7 @@ public class LogInterceptors implements HandlerInterceptor{
         String res = String.valueOf(request.getAttribute(ControllerConfig.KEY));
         res = res.length() > Config.getDbVarcharLengthLong() ? res.substring(0, Config.getDbVarcharLengthLong()) : res;
         LogModel logModel = new LogModel()
-                .setID(id).setARGS(params)
+                .setUSER(id).setARGS(params)
                 .setIP_PORT_FROM(ip + ":" + port).setURL(url)
                 .setIP_PORT_TO(Pc.getIp())
                 .setCATE("controller")

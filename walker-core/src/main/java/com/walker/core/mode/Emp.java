@@ -11,18 +11,13 @@ public class Emp {
 	public String id = "test";
 	String name;
 	String dept;
+
 	static{
 		System.out.println("emp static{}");
 	}
+
 	public Emp(){
 		System.out.println("emp init");
-	}
-
-	public Emp(String id, String name, String dept) {
-		this();
-		this.id = id;
-		this.name = name;
-		this.dept = dept;
 	}
 
 	@Override
@@ -34,29 +29,41 @@ public class Emp {
 				'}';
 	}
 
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
+	public Emp(String id, String name, String dept) {
+		this();
 		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
 		this.name = name;
-	}
-	public String getDept() {
-		return dept;
-	}
-	public void setDept(String dept) {
 		this.dept = dept;
 	}
-	
+
 	public void fun(){
 		System.out.println("emp fun this.id:" + this.id  );
 	}
 
+	public String getId() {
+		return id;
+	}
 
+	public Emp setId(String id) {
+		this.id = id;
+		return this;
+	}
 
+	public String getName() {
+		return name;
+	}
+
+	public Emp setName(String name) {
+		this.name = name;
+		return this;
+	}
+
+	public String getDept() {
+		return dept;
+	}
+
+	public Emp setDept(String dept) {
+		this.dept = dept;
+		return this;
+	}
 }

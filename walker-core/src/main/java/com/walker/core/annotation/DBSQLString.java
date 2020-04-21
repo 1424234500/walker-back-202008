@@ -36,8 +36,22 @@ public @interface DBSQLString {
 	/**
 	 * 如果命名 为value 仅此 并且是没有其他需要赋值的 则可以 使用注解 时省略键名 直接写值 
 	 */
-	int value() default 0; 
+	/**
+	 * 长度
+	 * @return
+	 */
+	int value() default 40;
+
+	/**
+	 * 字段名
+	 * @return
+	 */
 	String name() default "";
+
+	/**
+	 * 约束
+	 * 嵌套约束 默认值填充
+	 */
 	DBConstraints DBConstraints() default @DBConstraints;
 	
 	

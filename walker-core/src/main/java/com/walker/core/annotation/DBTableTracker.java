@@ -22,8 +22,10 @@ public class DBTableTracker implements OnAnnotation{
 	@Override
 	public Status make(Annotation annotation, ElementType type, Object object, Class<?> cls) {
 		Tools.out(this, annotation, type, object);
-		if(type.equals(ElementType.TYPE))	
+		if(type.equals(ElementType.TYPE))
 			track(annotation, (Class<?>)object);
+		else if(type.equals(ElementType.FIELD))
+			Tools.out("db field no make");
 		return null;
 	} 
 	
@@ -34,7 +36,7 @@ public class DBTableTracker implements OnAnnotation{
 		
 		String tname = dbTable.name();
 		if(tname.length() < 1){ //默认类名
-			tname = cl.getName().toUpperCase();
+			tname = cl.getSimpleName().toUpperCase();
 		}
 		List<String> colDefs = new ArrayList<String>();
 		for(Field field : cl.getDeclaredFields()){
@@ -47,24 +49,26 @@ public class DBTableTracker implements OnAnnotation{
 			//不能继承 上转 所以只能特定转换 处理
 			if(anns[0] instanceof DBSQLInteger){
 				DBSQLInteger sint = (DBSQLInteger)anns[0];
-				if(sint.name().length() < 1){
+				colName = sint.name();
+				if(colName.length() < 1){
 					colName = field.getName().toUpperCase(); //默认变量名
 				}
 				colDefs.add(colName + " INT" + getConstraints(sint.DBConstraints()));
 			}
 			if(anns[0] instanceof DBSQLString){
 				DBSQLString sint = (DBSQLString)anns[0];
-				if(sint.name().length() < 1){
+				colName = sint.name();
+				if(colName.length() < 1){
 					colName = field.getName().toUpperCase(); //默认变量名
 				}
 				colDefs.add(colName + " VARCHAR(" + sint.value() + ") " + getConstraints(sint.DBConstraints()));
 			}
 		}
-		StringBuilder sb = new StringBuilder(" Create table " + tname + "( ");
+		StringBuilder sb = new StringBuilder("\ncreate table " + tname + "( ");
 		for(String item : colDefs){
 			sb.append("\n\t" + item + ",");
 		}
-		String sql = sb.substring(0, sb.length() - 1) + " );";
+		String sql = sb.substring(0, sb.length() - 1) + " \n" + " );";
 		Tools.out(sql);
 		
 		

@@ -5,7 +5,13 @@ import org.apache.http.client.utils.CloneUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -104,7 +110,23 @@ public class LangUtil {
 		}
 		return "null!";
 	}
-	
+
+	public static List<Map<String, Object>> turnObj2MapList(List<?> obj) {
+		List<Map<String, Object>> res = new ArrayList<>();
+		if(obj != null)
+		for(Object item : obj){
+			res.add(turnObj2Map(item));
+		}
+		return res;
+	}
+	public static <T> List<T> turnMap2ObjList(List<Map<String, Object>> map, Class<T> clz) {
+		List<T> res = new ArrayList<>();
+		if(map != null)
+			for(Map<String, Object> item : map){
+				res.add(turnMap2Obj(item, clz));
+			}
+		return res;
+	}
 	/**
 	 * class bean对象转换为map
 	 * @param obj
@@ -128,7 +150,38 @@ public class LangUtil {
 
 		return map;
 	}
+	/**
+	 * class bean对象转换为map
+	 * @param map
+	 * @return
+	 */
+	public static <T> T turnMap2Obj(Map<String, Object> map, Class<T> clz) {
+		T res = null;
 
+		if(res instanceof Map){
+			return (T) map;
+		}
+		try {
+			res = clz.newInstance();
+
+			Field[] fields = clz.getDeclaredFields();
+			for (Field item : fields) {
+				String key = item.getName();
+				Object value = map.get(key);
+				item.setAccessible(true);
+				try {
+					item.set(res, value);
+				} catch (IllegalArgumentException | IllegalAccessException e) { // 私有不计算策略
+					log.error(map.toString() + " " + e.getMessage(), e);
+				}
+			}
+		} catch (Exception e) {
+			log.error(map.toString() + " " + e.getMessage(), e);
+		}
+		log.debug("turn map to " + res + " from " + map.keySet());
+
+		return res;
+	}
 
 	/**
 	 * 目标类型转换

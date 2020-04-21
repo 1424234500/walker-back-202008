@@ -160,7 +160,7 @@ public class Tools {
 
 	private static Logger log = LoggerFactory.getLogger("Tools");
 	public static String out(String str) {
-		if(log == null || log instanceof NOPLogger || System.getProperty("path_conf") == null) {
+		if(log == null || log.getClass().isInstance( NOPLogger.class) || System.getProperty("path_conf") == null) {
 			System.out.println(TimeUtil.getTimeHms() + "." + Thread.currentThread().getName()+ "-" + Thread.currentThread().getId() + "." + str);
 		}else {
 			log.info(str);

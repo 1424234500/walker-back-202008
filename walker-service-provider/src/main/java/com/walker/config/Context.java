@@ -84,8 +84,18 @@ public class Context {
 	 * 获取分页对象
 	 * @return 
 	 */
+
+	/**
+	 * 获取分页对象
+	 * @return
+	 */
 	public static Page getPage(){
-		return Page.getPage(Context.getRequest());
+		HttpServletRequest request = Context.getRequest();
+		Page res = new Page();
+		res.setNowpage(request.getParameter("nowpage"));
+		res.setShownum(request.getParameter("shownum"));
+		res.setOrder(request.getParameter("order"));
+		return res;
 	}
 	/**
 	 * 设置request

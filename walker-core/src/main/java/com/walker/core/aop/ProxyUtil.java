@@ -66,4 +66,20 @@ public class ProxyUtil  {
 		return (T) serviceInstance;
 	}
 
+	/**
+	 * 动态代理实现 aop
+	 * 接口代理
+	 * @param clz 接口
+	 * @return	接口实例
+	 */
+	public static <T> T getProxy(Class<T> clz, InvocationHandler invocationHandler) {
+		ClassLoader loader = clz.getClassLoader();   ///*类加载器*/
+		Class<?>[] interfaces = {clz}; //clz.getInterfaces();    ///*让代理对象和目标对象实现相同接口*/
+		Object serviceInstance = Proxy.newProxyInstance(loader, interfaces, invocationHandler);
+
+		return (T) serviceInstance;
+	}
+
+
+
 }

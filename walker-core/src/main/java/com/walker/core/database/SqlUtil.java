@@ -478,5 +478,19 @@ public class SqlUtil{
 		}
 		return key.toString();
 	}
-	
+
+	/**
+	 * 检测是否查询类型sql
+	 * @param sql
+	 * @return
+	 */
+	public static boolean isSelect(String sql) {
+		boolean res = false;
+
+		sql = StringUtils.strip(sql).toUpperCase();
+		int i = sql.indexOf("SELECT");
+		res = i > sql.indexOf("UPDATE") && i > sql.indexOf("DELETE");
+
+		return res;
+	}
 }

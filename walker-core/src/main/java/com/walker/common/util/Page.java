@@ -2,7 +2,6 @@ package com.walker.common.util;
 
 import com.walker.core.aop.FunArgsS;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.List;
 
@@ -45,16 +44,16 @@ public class Page implements Serializable{
 		return new Bean().put("num", num).put("shownum", shownum).put("nowpage", nowpage).put("order", order);
 	}
 	
-	/**
-	 * 通过request获取 查询第几页 每页多少条
-	 */
-	public static Page getPage(HttpServletRequest request){
-		Page res = new Page();
-		res.setNowpage(request.getParameter("nowpage"));
-		res.setShownum(request.getParameter("shownum"));
-		res.setOrder(request.getParameter("order"));
-		return res;
-	}
+//	/**
+//	 * 通过request获取 查询第几页 每页多少条
+//	 */
+//	public static Page getPage(HttpServletRequest request){
+//		Page res = new Page();
+//		res.setNowpage(request.getParameter("nowpage"));
+//		res.setShownum(request.getParameter("shownum"));
+//		res.setOrder(request.getParameter("order"));
+//		return res;
+//	}
 	/**
 	 * 通过request获取 查询第几页 每页多少条
 	 */

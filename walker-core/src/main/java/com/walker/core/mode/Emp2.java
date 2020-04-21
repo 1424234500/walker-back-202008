@@ -20,23 +20,23 @@ public class Emp2 extends Emp{
 		
 	}
 
+	public String getId() {
+		return id;
+	}
+	public Emp2 setId(String id) {
+		this.id = id;
+		super.id = id + "-super";
+		return this;
+	}
+	
+	public void fun(){
+		System.out.println("emp2 fun this.id:" + this.id + " super.id:" + super.id);
+	}
+
 	@Override
 	public String toString() {
 		return "Emp2{" +
 				"id='" + id + '\'' +
 				'}';
 	}
-
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-		super.id = id + "-super";
-	}
-	
-	public void fun(){
-		System.out.println("emp2 fun this.id:" + this.id + " super.id:" + super.id);
-	}
-	
 }
