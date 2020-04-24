@@ -96,20 +96,6 @@ spring:
 
 
 
-#logging:
-#  file: classpath:log4j2.yml
-logging:
-  file: /home/walker/logs/walker-web.log
-  #  pattern:
-  #    console: "%date{HH:mm:ss.SSS} %-5level %-30.30logger{29} : %msg%n"
-  Root:
-    level: debug
-    AppenderRef:
-      - ref: CONSOLE
-      - ref: ROLLING_FILE
-  level:
-    com.demo: DEBUG
-    org.springframework.jdbc.core.JdbcTemplate: DEBUG
 
 session:
   redis:

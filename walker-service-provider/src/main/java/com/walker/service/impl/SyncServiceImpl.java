@@ -73,7 +73,7 @@ public class SyncServiceImpl implements SyncService {
     public Bean doBaseData(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
         String key = Key.getLockRedis(getClass().getName() + ".doBaseData");
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisMakeUser);
+        String value = redisDao.tryLock(key, makeConfig.expireLockRedisMakeUser, makeConfig.expireLockRedisWait);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
@@ -145,8 +145,8 @@ public class SyncServiceImpl implements SyncService {
     public Bean doAction(Bean args) {
 
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = Key.getLockRedis(getClass().getName() + ".doSql");
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea);
+        String key = getClass().getName() + ".doSql";
+        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea, makeConfig.expireLockRedisWait);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
@@ -232,8 +232,8 @@ public class SyncServiceImpl implements SyncService {
     @Override
     public Bean syncArea(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = Key.getLockRedis(getClass().getName() + ".syncArea");
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea);
+        String key = getClass().getName() + ".syncArea";
+        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea, makeConfig.expireLockRedisWait);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
@@ -278,8 +278,8 @@ public class SyncServiceImpl implements SyncService {
     @Override
     public Bean makeUser(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = Key.getLockRedis(getClass().getName() + ".makeUser");
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisMakeUser);
+        String key = getClass().getName() + ".makeUser";
+        String value = redisDao.tryLock(key, makeConfig.expireLockRedisMakeUser, makeConfig.expireLockRedisWait);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){

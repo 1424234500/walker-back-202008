@@ -43,6 +43,12 @@ public class ThreadUtil {
 		 * 定时任务线程池
 		 */
 		ScheduledThread,
+
+		/**
+		 * 延迟队列 线程池
+		 */
+		DelayThread,
+
 	}
 
 	//存储三种池 统一
@@ -117,6 +123,7 @@ public class ThreadUtil {
 	 */
 	public static void execute(Type type, Runnable runnable) {
 		ExecutorService exec = getExecutorServiceInstance(type);
+
 		exec.execute(runnable);
 	}
 	public static void execute(Runnable runnable) {

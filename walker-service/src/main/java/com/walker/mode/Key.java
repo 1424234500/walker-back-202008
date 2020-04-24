@@ -85,13 +85,23 @@ public class Key {
 		return "offline:msg:" + key;
 	}
 
+
+	/**
+	 * cache锁
+	 * @param key
+	 * @return
+	 */
+	public static String getLockRedisCache(String key){
+		return "lock:redis:cache:" + key;
+	}
+
 	/**
 	 * 锁
 	 * @param key
 	 * @return
 	 */
 	public static String getLockRedis(String key){
-		return "lock:redis:" + key;
+		return "lock:redis:make:" + key;
 	}
 	/**
 	 * url访问记录 zset

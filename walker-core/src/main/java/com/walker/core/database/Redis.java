@@ -56,6 +56,9 @@ public class Redis  extends TestAdapter{
 			Jedis jedis = Redis.getInstance().getJedis();
 			try {
 				res = fun.make(jedis);
+			}catch (Exception e){
+				log.debug(e.getMessage(), e);
+				throw e;
 			}finally {
 				Redis.getInstance().close(jedis);
 			}

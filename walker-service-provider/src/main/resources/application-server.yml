@@ -78,18 +78,18 @@ spring:
 
 
 
-logging:
-  file: /home/walker/logs/walker-service-provider.log
-  #  pattern:
-  #    console: "%date{HH:mm:ss.SSS} %-5level %-30.30logger{29} : %msg%n"
-  Root:
-    level: debug
-    AppenderRef:
-      - ref: CONSOLE
-      - ref: ROLLING_FILE
-  level:
-    com.demo: DEBUG
-    org.springframework.jdbc.core.JdbcTemplate: INFO
+#logging:
+#  file: /home/walker/logs/walker-service-provider.log
+#  #  pattern:
+#  #    console: "%date{HH:mm:ss.SSS} %-5level %-30.30logger{29} : %msg%n"
+#  Root:
+#    level: debug
+#    AppenderRef:
+#      - ref: CONSOLE
+#      - ref: ROLLING_FILE
+#  level:
+#    com.demo: DEBUG
+#    org.springframework.jdbc.core.JdbcTemplate: INFO
 
 #
 #logging:

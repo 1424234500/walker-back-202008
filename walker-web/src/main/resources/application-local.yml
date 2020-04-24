@@ -46,11 +46,4 @@ session:
     #session登录过期时间token
     expiration: 180100
 
-mybatis
-  mapper-locations: classpath:mapper/*.xml
-#  config-location: classpath:mybatis-config.xml
 
-
-#
-logging:
-  file: classpath:log4j2.yml

@@ -95,5 +95,14 @@ ${project.xxx} 当前pom文件的任意节点的内容
 			<version>3.8</version>
 
 		</dependency>
-    </dependencies>
+
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>29.0-jre</version>
+		</dependency>
+
+
+	</dependencies>
 </project>

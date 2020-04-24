@@ -42,6 +42,8 @@ public class MakeConfig {
 
     @Value("${expire.lock.redis.make.user:3600}")
     public Long expireLockRedisMakeUser;
+    @Value("${expire.lock.redis.wait:500}")
+    public Long expireLockRedisWait;
 
 
 

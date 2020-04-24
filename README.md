@@ -40,6 +40,9 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 
 表名 字段名一定大写 查询要取别名 兼容oracle mysql sqlite的sql语法
 
+框架选型：
+专业的软件干专业的事情：nginx做反向代理，db做固化，cache做缓存，mq做通道
+
 ```
 
 ###日志级别
@@ -74,6 +77,7 @@ android[Object->db->] -json- socket-server[mysql-redis-Object->] -json- android[
 # 模块划分
 ## walker-core
 	核心模块 简单java项目 公用工具 和数据结构发布订阅简单实现
+
 #### common 通用工具 待修改划分
 #### core 核心组件
 * annotation 自定义注解实现Test db

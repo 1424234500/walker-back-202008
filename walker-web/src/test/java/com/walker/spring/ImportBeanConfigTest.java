@@ -1,4 +1,4 @@
-package com.walker.config;
+package com.walker.spring;
 
 import com.walker.ApplicationTests;
 import com.walker.common.util.Page;
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 public class ImportBeanConfigTest extends ApplicationTests {
 
-    @Autowired
+    @Autowired //("studentWalkerJdbc")
     StudentWalkerJdbc studentWalkerJdbc;
 
     @Test

@@ -104,6 +104,11 @@ public class TrackerUtil {
 		int i = 0, type = 0;
 		for (String item : classs) { // 按照 包名 类 深度(class->field->method)优先 处理
 //			Tools.out(item);
+//			com.walker.Test
+//			pace.walker.walker-web.target.test-classes.com.walker.Test
+			if( ! item.startsWith("com") && item.indexOf("com") > 0){
+				item = item.substring(item.indexOf("com"), item.length());
+			}
 			Class<?> cls = ClassUtil.loadClass(item);
 			if (cls == null)
 				continue;
