@@ -22,7 +22,7 @@ public class SerializeUtil {
 				oos.writeObject(obj);
 				res = baos.toByteArray();
 			} catch (IOException e) {
-				out("序列化异常", obj.toString());
+				out("序列化异常 obj是否未实现serialize接口 ", obj.toString());
 			} finally {
 				try {
 					if(oos != null)

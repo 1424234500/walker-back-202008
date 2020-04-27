@@ -48,18 +48,19 @@ public  class RedisUtil   {
 	 * @param expire
 	 */
 	public static <V> void put(Jedis jedis, String key, V value, long expire) {
-		if(value instanceof List ){
-			List list = (List)value;
-			for(Object item : list){
-				jedis.rpush(key.getBytes(), SerializeUtil.serialize(item));
-			}
-		}else{
+//		if(value instanceof List ){
+//			List list = (List)value;
+//			for(Object item : list){
+//				jedis.rpush(key.getBytes(), SerializeUtil.serialize(item));
+//			}
+//		}else{
 //			jedis.set(key, value.toString());
 			jedis.set(key.getBytes(), SerializeUtil.serialize(value));
+//		}
+		if(expire > 0) {
+			//后置设定过期时间
+			jedis.expire(key, (int) Math.ceil(expire / 1000));
 		}
-		//后置设定过期时间
-		jedis.expire(key, (int)Math.ceil(expire / 1000));
-
 	}
 	/**
 	 * 处理list采用rpush结构 否则 全使用序列化 string byte[]
@@ -88,18 +89,18 @@ public  class RedisUtil   {
 	 * @param getFromDb
 	 * @return
 	 */
-	public static String getCacheOrDb(String key, long millisecondsToExpire, long millisecondsToWait, FunArgsReturn<String, String> getFromDb){
-		return Redis.doJedis(new Redis.Fun<String>(){
+	public static <T> T getCacheOrDb(String key, long millisecondsToExpire, long millisecondsToWait, FunArgsReturn<String, T> getFromDb){
+		return Redis.doJedis(new Redis.Fun<T>(){
 			@Override
-			public String make(Jedis jedis) {
-				String res = RedisUtil.get(jedis, key, null);
+			public T make(Jedis jedis) {
+				T res = RedisUtil.get(jedis, key, null);
 				if(res == null){
 //					加锁 避免缓存击穿 锁粒度最小程度 key
 					String lockName = RedisUtil.KEY_LOCK_GET_CACHE_OR_DB + key;
 					String lock = RedisUtil.tryLock(jedis, lockName, millisecondsToExpire, millisecondsToWait);
 					if (lock.length() > 0) {
 						try {
-							res = RedisUtil.get(jedis, key, null);    //再次获取缓存
+							res = RedisUtil.get(jedis, key, null);   //再次获取缓存
 							if (res == null) {
 								res = getFromDb.make(key);
 								if(res == null){	//避免缓存穿透  null是否缓存 快速过期来保护数据库  本来计划10分钟过期 则 null1分钟过期 最小5秒过期
@@ -280,21 +281,25 @@ public  class RedisUtil   {
 	 */
 	public static <V> V get(Jedis jedis, String key, V defaultValue){
 		Object res = defaultValue;
-		if(jedis.exists(key)){
-			String type = jedis.type(key);
-			if(type.equals("string")){
-				res = jedis.get(key);
-			}else if(type.equals("list")){
-				res = jedis.lrange(key, 0, -1);
-			}else if(type.equals("hash")){
-				res = (jedis.hgetAll(key));
-			}else if(type.equals("set")){
-				res = (jedis.smembers(key));
-			}else if(type.equals("zset")){
-				res = (jedis.zrange(key, 0, -1)); 
-			}else{
-				res = jedis.get(key); 
-			}
+//		if(jedis.exists(key)){
+//			String type = jedis.type(key);
+//			if(type.equals("string")){
+//				res = jedis.get(key);
+//			}else if(type.equals("list")){
+//				res = jedis.lrange(key, 0, -1);
+//			}else if(type.equals("hash")){
+//				res = (jedis.hgetAll(key));
+//			}else if(type.equals("set")){
+//				res = (jedis.smembers(key));
+//			}else if(type.equals("zset")){
+//				res = (jedis.zrange(key, 0, -1));
+//			}else{
+//				res = jedis.get(key);
+//			}
+//		}
+		byte[]  str = jedis.get(key.getBytes());
+		if(str != null && str.length > 0){
+			res = SerializeUtil.deserialize(str);
 		}
 		return (V) res;
 	}
@@ -394,7 +399,7 @@ public  class RedisUtil   {
 				log.error(Tools.objects2string("tryLock exception", cc, lockKey, lockName,value, result, millisecondsToExpire, millisecondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), e);
 			}
 			if(System.currentTimeMillis() > startTime + millisecondsToWait){
-				log.warn(Tools.objects2string("tryLock error wait timeout", cc, lockKey, lockName,value, result, millisecondsToExpire, millisecondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)) );
+				log.warn(Tools.objects2string("tryLock error wait timeout", cc, lockKey, lockName,value, result, millisecondsToExpire, millisecondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), "now lock on:" + jedis.get(lockKey) );
 				break;
 			}
 			try {//1000ms等待锁，共轮询10次
@@ -427,11 +432,11 @@ public  class RedisUtil   {
 			String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 			Object result = jedis.eval(script, Collections.singletonList(lockKey), Collections.singletonList(identifier));
 
-			if (String.valueOf(result).toUpperCase().contains("OK")) {
+			if (! String.valueOf(result).equalsIgnoreCase("0") ) {
 				log.debug(Tools.objects2string("release lock ok", lockKey, lockName, identifier));
 				return true;
 			}else{
-				log.warn(Tools.objects2string("release lock error", lockKey, lockName, identifier, result));
+				log.warn(Tools.objects2string("release lock error", lockKey, lockName, identifier, "lockRes:" + result, "but identifier should be " + jedis.get(lockKey)));
 			}
 		}catch (Exception e){
 			log.error(Tools.objects2string("release lock exception", lockKey, lockName, identifier, e.getMessage()), e);

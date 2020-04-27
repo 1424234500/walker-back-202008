@@ -1,12 +1,14 @@
 package com.walker.core.mode;
 
 
+import java.io.Serializable;
+
 /**
  * 基本对象 员工 并测试继承多态static执行顺序
  * @author Walker
  * 2017年10月30日09:50:08
  */
-public class Emp {
+public class Emp implements Serializable {
 	
 	public String id = "test";
 	String name;

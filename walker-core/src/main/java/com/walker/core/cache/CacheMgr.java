@@ -69,26 +69,31 @@ public class CacheMgr extends TestAdapter{
 	 */
 	public static void reload(Cache<String> cache){
 		log.warn("初始化缓存");
-		File dir = new File(Context.getPathConf());
 		cache.put("cache:dir:project", Context.getPathRoot());
 		cache.put("cache:dir:conf", Context.getPathConf());
-		String[] dirlist = dir.list();
-		if(dirlist != null && dirlist.length > 0) {
-			cache.put("files", Arrays.asList(dirlist));
-			for (String item : dir.list()) {
-				String path = dir.getAbsolutePath() + File.separator + item;
+		String[] dd  = {new File("").getAbsolutePath(), Context.class.getResource("/").getPath(), new File("").getAbsolutePath() + File.separator + Context.getConfName()};
+		List<String> fff = new ArrayList<>();
+		int k = 0;
+		for(int i = 0; i < dd.length ; i++) {
+			File dir = new File(dd[i]);
+			if(!dir.isDirectory()){
+				log.warn(i + "\t配置加载路径不存在 跳过 " + dd[i]);
+				continue;
+			}
+			log.warn(i + "\t配置加载路径 " + dd[i]);
+			for (File item : dir.listFiles()) {
+				String path = item.getAbsolutePath();
 				if (FileUtil.check(path) == 0 && path.endsWith(".properties")) {
-					log.warn("解析文件存入cache " + path);
+					log.warn(k++ + "\t解析文件存入cache " + path);
 					cache.putAll(SettingUtil.getSetting(path));
+					fff.add(path);
+				}else{
+					log.warn(k++ + "\t解析文件存入cache 不匹配 跳过 " + path);
 				}
 			}
 		}
-		else{
-			cache.put("files", "null");
-		}
-		log.warn("配置加载路径 " + dir.getAbsolutePath());
+		cache.put("files", fff);
 
-		
 		//initOracle(cache);
 		log.warn("初始化完毕------------------ ");
 
