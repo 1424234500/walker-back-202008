@@ -30,8 +30,8 @@ public class Consumer {
 	    
 	    List<Object> list = new ArrayList<>();
 //	    Map map = new HashMap<>();
-//	    map.put("id", "idddd");
-//	    map.put("key", "kkkkk");
+//	    map.set("id", "idddd");
+//	    map.set("key", "kkkkk");
 //	    list.add(map);
 //	    list.add("{\"id\":\"000\", \"key\":\"222\" } ");
 	    list.add("asdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdfasdkfjaskldfjalsdfjaksldfjaslkdf");

@@ -32,7 +32,7 @@ public class Action implements Cloneable,Serializable {
 
     @Column(name = "NAME", columnDefinition = "varchar(512) default 'name' comment '名字' ")    //255
     private String NAME;
-    @Column(name = "ABOUT", columnDefinition = "varchar(1998) default '' comment '说明' ")
+    @Column(name = "ABOUT", columnDefinition = "varchar(998) default '' comment '说明' ")
     private String ABOUT;
 
     @Column(name = "TYPE", columnDefinition = "varchar(64) default '' comment '类型sql-class-url' ")
@@ -40,7 +40,7 @@ public class Action implements Cloneable,Serializable {
 
 
 
-    @Column(name = "VALUE", columnDefinition = "varchar(1998) default '' comment '值' ")
+    @Column(name = "VALUE", columnDefinition = "varchar(998) default '' comment '值' ")
     private String VALUE;
 
 

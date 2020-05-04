@@ -101,7 +101,7 @@ public class Key {
 	 * @return
 	 */
 	public static String getLockRedis(String key){
-		return "lock:redis:make:" + key;
+		return "lock:" + key;//:	redis:make
 	}
 	/**
 	 * url访问记录 zset

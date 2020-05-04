@@ -47,7 +47,7 @@ public class TeacherController {
     }
 
     //    public Integer update(Teacher test);
-    @ApiOperation(value = "put 更新", notes = "put参数 RequestParam ")
+    @ApiOperation(value = "set 更新", notes = "put参数 RequestParam ")
     @ResponseBody
     @RequestMapping(value = "/action.do", method = RequestMethod.PUT, produces = "application/json")
     public Response update(

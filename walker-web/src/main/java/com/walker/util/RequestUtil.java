@@ -356,6 +356,15 @@ public class RequestUtil {
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, json);
 	}
 
+	/**
+	 * RequestUtil.echoErr(response,  HttpServletResponse.SC_UNAUTHORIZED, token);
+	 * @param code HttpServletResponse.SC_UNAUTHORIZED
+	 * @param json
+	 * @throws IOException
+	 */
+	public static void echoErr(HttpServletResponse response, int code, String json) throws IOException {
+		response.sendError(code, json);
+	}
 
 	public static void echo(HttpServletResponse response, String json) throws Exception {
 		PrintWriter writer = null;

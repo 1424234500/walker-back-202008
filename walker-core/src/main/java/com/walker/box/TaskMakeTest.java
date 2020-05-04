@@ -122,7 +122,7 @@ public class TaskMakeTest {
 //					if(index.containsKey(method.getName())){
 //						Tools.out("repeat method " + method.toString());
 //					} else  {	//
-//						index.put(method.getName(), method);
+//						index.set(method.getName(), method);
 //					}
 //				}
 //				methods.clear();

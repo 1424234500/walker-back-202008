@@ -62,7 +62,7 @@ public class LogInterceptors implements HandlerInterceptor{
         // 得到线程绑定的局部变量（开始时间）
         long beginTime = (long) startTimeThreadLocal.get();
         long time = endTime - beginTime;
-        String info = Context.getInfo() + "[cost " + time + "]" + (e == null ? "" : Tools.toString(e));
+//        String info = Context.getInfo() + "[cost " + time + "]" + (e == null ? "" : Tools.toString(e));
 
         User user = Context.getUser();
         //登录用户操作日志 记录 用户id,操作url权限?,用户操作ip/mac/端口
@@ -157,7 +157,7 @@ public class LogInterceptors implements HandlerInterceptor{
         String userid = user == null ? "null" : user.getID();
         String info = "do url:" + url + " class:" + cla + "." + name + " args:" + params + " ipport:" + request.getRemoteAddr() + ":" + request.getRemotePort() + " token:" + Context.getToken() + " user:" + userid + " ";
 
-        Context.setInfo(info);
+//        Context.setInfo(info);
         //日志 记录 输出
 //        log.info("++++++++ ");
 	    log.info(info); //输出入口日志

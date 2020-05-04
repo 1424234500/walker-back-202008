@@ -46,7 +46,7 @@ public class ShiroConfig {
      *  redis缓存的有效时间单位是秒 默认过期时间：1 hours
      */
     @Value("${session.redis.expiration:1800}")
-    private long sessionRedisExpiration;
+    private int sessionRedisExpiration;
 
 
 
@@ -61,7 +61,7 @@ public class ShiroConfig {
 //        Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
         //如果map里面key值为authc,表示所有名为authc的过滤条件使用这个自定义的filter
         //map里面key值为myFilter,表示所有名为myFilter的过滤条件使用这个自定义的filter，具体见下方
-//        filters.put("myFilter", new MyFilter());
+//        filters.set("myFilter", new MyFilter());
 //        shiroFilterFactoryBean.setFilters(filters);
         /*---------------------------------------------------*/
 
@@ -80,9 +80,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login*", "anon");
         ///////////////////////////////////////////////////////
         //对于指定的url，使用自定义filter进行验证
-//        filterChainDefinitionMap.put("/my/**", "myFilter");
+//        filterChainDefinitionMap.set("/my/**", "myFilter");
         //可以配置多个filter，用逗号分隔，按顺序过滤，下方表示先通过自定义filter的验证，再通过shiro默认过滤器的验证
-        //filterChainDefinitionMap.put("/targetUrl", "myFilter,authc");
+        //filterChainDefinitionMap.set("/targetUrl", "myFilter,authc");
         ///////////////////////////////////////////////////////
         //过滤链定义，从上向下顺序执行，一般将 /**放在最为下边
         //url从上向下匹配，当条件匹配成功时，就会进入指定filter并return(不会判断后续的条件)，因此这句需要在最下边

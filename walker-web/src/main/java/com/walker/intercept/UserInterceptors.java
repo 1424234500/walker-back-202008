@@ -34,12 +34,7 @@ public class UserInterceptors implements HandlerInterceptor{
 	LogService logService = SpringContextUtil.getBean("logService");
 	ShiroConfig shiroConfig = SpringContextUtil.getBean("shiroConfig");
 
-	/**
-	 *  redis缓存的有效时间单位是秒 默认过期时间：1 hours
-	 */
-	@Value("${session.redis.expiration:1800}")
-	private long sessionRedisExpiration;
-    /** 
+    /**
      * 在渲染视图之后被调用； 
      * 可以用来释放资源 
      */   
@@ -78,7 +73,7 @@ public class UserInterceptors implements HandlerInterceptor{
 		User user = token.length() > 0 ? shiroConfig.getOnlineUser(token) : null;
 
 		if( user != null ){
-//			log.info(info + " token:" + tokenObj + " go ");
+			log.debug(user + " token:" + tokenObj + " go ");
 			shiroConfig.keeponUser(token);
 			Context.setToken(token);
 			Context.setUser(user);
@@ -87,7 +82,8 @@ public class UserInterceptors implements HandlerInterceptor{
 			String contextPath = request.getContextPath();
 			String url = requestUri.substring(contextPath.length());  //[/student/listm]
 			log.info("ipport:" + request.getRemoteAddr() + ":" + request.getRemotePort() + " " + url + " token:" + tokenObj + " go login 401");
-			RequestUtil.echo401(response, token);
+			RequestUtil.echoErr(response,  HttpServletResponse.SC_UNAUTHORIZED, token);
+//			RequestUtil.echo401(response, token);
 //			RequestUtil.sendRedirect(response, "/");
 	    	return false;
 	    }

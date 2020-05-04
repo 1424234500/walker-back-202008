@@ -83,7 +83,7 @@ class CacheRedisImpl extends CacheAdapter<String>{//implements Cache<String> {
 						if(jedis.exists(key)){ //策略 存在 则先删除再存 因为不确定 key对应的值类型是否改变
 							jedis.del(key);
 						}
-						RedisUtil.put(jedis, key, map.get(keyo), TIME_DEFAULT_EXPIRE);
+						RedisUtil.set(jedis, key, map.get(keyo), TIME_DEFAULT_EXPIRE);
 					}
 				}
 				return null;
@@ -164,7 +164,7 @@ class CacheRedisImpl extends CacheAdapter<String>{//implements Cache<String> {
 
 	
 	@Override
-	public <V> Cache<String> put(final String key, final V value, final long expire) {
+	public <V> Cache<String> put(final String key, final V value, final int secondsExpire) {
 		// NX是不存在时才set， XX是存在时才set， EX是秒，PX是毫秒 SET if Not eXists
 		 Redis.doJedis(new Fun<Object>(){
 			@Override
@@ -172,7 +172,7 @@ class CacheRedisImpl extends CacheAdapter<String>{//implements Cache<String> {
 				if(jedis.exists(key)){ //策略 存在 则先删除再存 因为不确定 key对应的值类型是否改变
 					jedis.del(key);
 				}
-				RedisUtil.put(jedis, key, value, expire);
+				RedisUtil.set(jedis, key, value, secondsExpire);
 				return null;
 			}
 		});
@@ -182,9 +182,9 @@ class CacheRedisImpl extends CacheAdapter<String>{//implements Cache<String> {
 		return put(url, key, value, TIME_DEFAULT_EXPIRE);
 	}
 	@Override
-	public <V> String put(String url, String key, V value, long expire) {
+	public <V> String put(String url, String key, V value, int secondsExpire) {
 		String newKey = url + SPLIT + key;
-		put(newKey, value, expire);
+		put(newKey, value, secondsExpire);
 		return newKey;
 	}
 	/**

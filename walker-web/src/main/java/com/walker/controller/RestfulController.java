@@ -91,7 +91,7 @@ public class RestfulController {
         log.info(res);
         return Response.makeTrue(res, "");
     }
-    @ApiOperation(value="put 更新", notes="put参数 RequestParam")
+    @ApiOperation(value="set 更新", notes="put参数 RequestParam")
     @ResponseBody
     @RequestMapping(value="/make.do",method=RequestMethod.PUT)
     public Response put(
@@ -99,7 +99,7 @@ public class RestfulController {
             @RequestParam(value = "name", required = false, defaultValue = "default-name") String name,
             @RequestParam(value = "time", required = false, defaultValue = "000") String time
     ){
-        String res = "put id:" + id + " name:" + name+ " time:" + time;
+        String res = "set id:" + id + " name:" + name+ " time:" + time;
         log.info(res);
 
         return Response.makeTrue(res, "");

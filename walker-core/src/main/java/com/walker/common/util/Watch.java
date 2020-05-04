@@ -10,8 +10,8 @@ import java.util.Map;
 
 /**
  * 耗时监控 提示信息工具
- * new Watch("sql").put(sql).put("size", size).exception(e).toString()
- * new Watch("sql").put(sql).put("size", size).res(count).toString()
+ * new Watch("sql").set(sql).set("size", size).exception(e).toString()
+ * new Watch("sql").set(sql).set("size", size).res(count).toString()
  * 
  * 
  * 

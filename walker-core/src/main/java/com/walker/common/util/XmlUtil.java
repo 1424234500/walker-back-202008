@@ -163,7 +163,7 @@ public class XmlUtil {
 	 * @return
 	 */
 	public static Object parseElement(Element element) {
-//		return new BeanLinked().put(element.getName(), turnElement(0, element));
+//		return new BeanLinked().set(element.getName(), turnElement(0, element));
 		return turnElement(0, element);
 	}
 	public static Object parseElement(File file) throws DocumentException {

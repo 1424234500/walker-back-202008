@@ -10,6 +10,9 @@ public class SerializeUtil {
 	private static void out(Object... objects) {
 		Tools.out(objects);
 	}
+
+
+
 	public static byte[] serialize(Object obj) {
 		byte[] res = null;
 
@@ -52,9 +55,9 @@ public class SerializeUtil {
 				res = is.readObject(); 
 			}
 		} catch (IOException e) {
-			out("反序列化异常", in.toString());
+			out("反序列化异常", in.toString(), new String(in));
 		} catch (ClassNotFoundException e) {
-			out("反序列化 ClassNotFoundException", in.toString());
+			out("反序列化 ClassNotFoundException", in.toString(), new String(in));
 		} finally {
 			try {
 				if (is != null)
@@ -62,7 +65,7 @@ public class SerializeUtil {
 				if (bis != null)
 					bis.close();
 			} catch (IOException e) {
-				out("反序列化流关闭异常", in.toString());
+				out("反序列化流关闭异常", in.toString(), new String(in));
 			}
 		}
 		return res;

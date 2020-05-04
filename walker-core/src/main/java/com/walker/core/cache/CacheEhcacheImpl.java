@@ -126,10 +126,10 @@ class CacheEhcacheImpl  extends CacheAdapter<String>{//implements Cache<String> 
 
 	
 	@Override
-	public <V> Cache<String> put(final String key, final V value, final long expire) {
+	public <V> Cache<String> put(final String key, final V value, final int secondsExpire) {
 		Element ele = new Element(key, value);
-		if(expire > 0){
-			ele.setTimeToLive((int) Math.ceil(expire / 1000));
+		if(secondsExpire > 0){
+			ele.setTimeToLive(secondsExpire);
 		}
 		cache.put(ele);
 		return this;
@@ -138,7 +138,7 @@ class CacheEhcacheImpl  extends CacheAdapter<String>{//implements Cache<String> 
 		return put(url, key, value, TIME_DEFAULT_EXPIRE);
 	}
 	@Override
-	public <V> String put(String url, String key, V value, long expire) {
+	public <V> String put(String url, String key, V value, int expire) {
 		put(url + SPLIT + key, value, expire);
 		return url + SPLIT + key;
 	}

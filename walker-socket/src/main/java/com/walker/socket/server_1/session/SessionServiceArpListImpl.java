@@ -139,7 +139,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 			}
 
 			msg.setWaitSize(pipe.size());
-//			pipe.put(msg);
+//			pipe.set(msg);
 			CountModel.getInstance().onNet(msg);
 			pipe.put(msg.toString());
 			

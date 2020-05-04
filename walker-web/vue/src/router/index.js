@@ -219,7 +219,13 @@ export const constantRoutes = [
               path: 'lock',
               name: 'Lock',
               component: () => import('@/views/system/lock'),
-              meta: { title: 'redis       锁', icon: 'tree' }
+              meta: { title: 'redis 锁', icon: 'tree' }
+      },
+      {
+              path: 'config',
+              name: 'Config',
+              component: () => import('@/views/system/config'),
+              meta: { title: '配置中心', icon: 'tree' }
       },
       {
         path: 'action',

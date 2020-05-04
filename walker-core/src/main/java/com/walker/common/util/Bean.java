@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HashMap子类 new Bean().put("key","value").put("key2","value2);
+ * HashMap子类 new Bean().set("key","value").set("key2","value2);
  * @author Walker
  * 2018年7月13日
  */

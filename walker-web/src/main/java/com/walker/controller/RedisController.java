@@ -165,7 +165,7 @@ public class RedisController  {
     @ResponseBody
     @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)
     public Response locks(
-            @RequestParam(value = "keys", required = true, defaultValue = "") String keys,
+            @RequestParam(value = "KEY", required = true, defaultValue = "") String keys,
 
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,

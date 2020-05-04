@@ -75,7 +75,7 @@ public class Redis  extends TestAdapter{
 //		Jedis res = mapJedisLong.get(key);
 //		if(res == null) {
 //			res = getJedis();
-//			mapJedisLong.put(key, res);
+//			mapJedisLong.set(key, res);
 //		}
 //		return res;
 		return getJedis();

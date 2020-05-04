@@ -282,7 +282,7 @@
             ids += this.rowSelect[i][this.colKey] + ","
           }
           ids = ids.substring(0, ids.length - 1)
-          const params = {ids: ids}
+          const params = {'ids': ids}
           this.get('/teacher/delet.do', params).then((res) => {
             this.loadingList = false
             for(let i = 0; i < this.rowSelect.length; i++){

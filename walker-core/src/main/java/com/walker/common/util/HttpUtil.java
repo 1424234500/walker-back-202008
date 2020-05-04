@@ -37,7 +37,7 @@ import java.util.Map.Entry;
  * 超时
  * 
  * 
- * 支持restful接口访问 get post put delete
+ * 支持restful接口访问 get post set delete
  * 
  * 文件下载url
  * 

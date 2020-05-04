@@ -37,13 +37,13 @@ import java.io.Serializable;
  CREATE TABLE `W_LOG_TIME` (
  `ID` varchar(32) NOT NULL DEFAULT '' COMMENT '主键',
  `AVE_COST_NO` varchar(128) DEFAULT '' COMMENT '失败平均耗时',
- `AVE_COST_OK` varchar(1998) DEFAULT '' COMMENT '成功平均耗时',
+ `AVE_COST_OK` varchar(998) DEFAULT '' COMMENT '成功平均耗时',
  `CATE` varchar(256) DEFAULT '1970-01-01 00:00:00' COMMENT '类别',
  `COUNT_NO` varchar(128) DEFAULT '' COMMENT '失败次数',
  `COUNT_OK` varchar(128) DEFAULT '' COMMENT '成功次数',
  `IP_PORT` varchar(128) DEFAULT '' COMMENT '统计服务器ip:port',
  `S_MTIME` varchar(32) DEFAULT '' COMMENT '修改时间',
- `URL` varchar(1998) DEFAULT '' COMMENT '受理接口',
+ `URL` varchar(998) DEFAULT '' COMMENT '受理接口',
  PRIMARY KEY (`ID`)
  ) ENGINE=MyISAM DEFAULT CHARSET=utf8
 
@@ -63,11 +63,11 @@ public class LogTime implements Cloneable, Serializable {
 	private String S_MTIME;
 	@Column(name = "IP_PORT", columnDefinition = "varchar(128) default '' comment '统计服务器ip:port' ")
 	private String IP_PORT;
-	@Column(name = "URL", columnDefinition = "varchar(1998) default '' comment '受理接口' ")    // xxx.xxx.do
+	@Column(name = "URL", columnDefinition = "varchar(998) default '' comment '受理接口' ")    // xxx.xxx.do
 	private String URL;
 	@Column(name = "COUNT_OK", columnDefinition = "varchar(128) default '' comment '成功次数' ")    //
 	private String COUNT_OK;
-	@Column(name = "AVE_COST_OK", columnDefinition = "varchar(1998) default '' comment '成功平均耗时' ")	//
+	@Column(name = "AVE_COST_OK", columnDefinition = "varchar(998) default '' comment '成功平均耗时' ")	//
 	private String AVE_COST_OK;
 
 	@Column(name = "COUNT_NO", columnDefinition = "varchar(128) default '' comment '失败次数' ")    //

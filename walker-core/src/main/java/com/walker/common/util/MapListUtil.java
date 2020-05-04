@@ -62,8 +62,8 @@ public class MapListUtil {
 		Tools.out("hash map 键值可null HashMap去掉了HashTable的contains方法，但是加上了containsValue()和containsKey()方法", hmap);
 
 		Hashtable<String, Object> htable = new Hashtable<>();
-//		htable.put(null, "valueNull");
-//		htable.put("keynull", null);
+//		htable.set(null, "valueNull");
+//		htable.set("keynull", null);
 		htable.put("key1", "value1");
 
 		Tools.out("hash table 键值不能null 。HashTable sync 锁", htable);
@@ -589,7 +589,7 @@ public class MapListUtil {
 
 	/**
 	 * 按照url添加
-	 * put map1.map11.cc test
+	 * set map1.map11.cc test
 	 * @return 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })

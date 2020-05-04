@@ -35,19 +35,19 @@ public class LockService {
     public List<Map<String, Object>> getLocks(String keys){
         String key = "*";
 
-        if(keys != null && keys.length() == 0){
+        if(keys != null && keys.length() > 0){
             key = key + keys + key;
+        }else {
+            key = Key.getLockRedis(key);
         }
-        key = Key.getLockRedis(key);
-
         Set<String> resk = redisTemplate.keys(key);
-        ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
         List<Map<String, Object>> res = new ArrayList<>();
         for(String str : resk){
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("KEY", str);
             try {
 //            锁序列化导致存取问题
+                ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
                 map.put("VALUE", operations.get(str));
             }catch (Exception e){
                 map.put("VALUE", "****");

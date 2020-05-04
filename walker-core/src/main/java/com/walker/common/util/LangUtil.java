@@ -214,7 +214,7 @@ public class LangUtil {
 			} else if (defaultValue instanceof Boolean) {
 				res = (T) (to(obj, (Boolean) defaultValue));
 			} else if (defaultValue instanceof String) {
-				res = (T) (obj.toString());
+				res = (T) (String.valueOf(obj));
 			} else {
 				res = (T) obj;
 			}

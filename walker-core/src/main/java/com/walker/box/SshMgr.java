@@ -305,7 +305,7 @@ public class SshMgr {
 	static BeanLinked serverTree = new BeanLinked();
 	static void addServer(String group, String info, String name, String ip, String id, String pwd, String encode){
 //		List<Server> list = serverTree.get(group, new ArrayList<>());
-//		serverTree.put(group, list);
+//		serverTree.set(group, list);
 //		Server server = new Server(group, info, name, ip, id, pwd, encode);
 //		list.add(server);
 		BeanLinked list = serverTree.get(group, new BeanLinked());

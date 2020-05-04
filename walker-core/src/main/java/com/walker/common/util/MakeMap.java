@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Map工厂类 new MakeMap().put("key","value").build();
+ * Map工厂类 new MakeMap().set("key","value").build();
  * @author Walker
  * 2017年9月14日15:08:12
  */

@@ -1,7 +1,8 @@
 package com.walker.dao;
-import com.walker.common.util.LangUtil;
-import com.walker.common.util.TimeUtil;
-import com.walker.common.util.Tools;
+import com.walker.common.util.*;
+import com.walker.core.aop.FunArgsReturn;
+import com.walker.core.database.Redis;
+import com.walker.core.exception.ErrorException;
 import com.walker.mode.Key;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.ScriptOutputType;
@@ -16,10 +17,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Repository;
+import redis.clients.jedis.Jedis;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +34,20 @@ import java.util.concurrent.TimeUnit;
  */
 @Repository
 public class RedisDao {
+    /**
+     * 默认 锁住查询db单key的不释放时间
+     */
+    private static final int DEFAULT_LOCK_DB_KEY_TIME = 60;
     private Logger log = LoggerFactory.getLogger(getClass());
+    private static final String KEY_LOCK = "lock:make:";
+
+
+    private static final String KEY_LOCK_GET_CACHE_OR_DB = "getCacheOrDb:";
+    private static final String KEY_GET_CACHE_OR_DB = "cache:getCacheOrDb:";
+
+    private static final String KEY_LOCK_INIT_CACHE_OR_DB =  "initCacheOrDb:";
+    private static final String KEY_INIT_CACHE_OR_DB_OK =  "cache:initCacheOrDb:isok:";
+
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -54,14 +71,14 @@ public class RedisDao {
      * 3/使用ThreadLocal保存锁的值，在锁超时时，防止删除其他线程的锁，使用lua 脚本保证原子性；
      *
      * @param lockName
-     * @param millisecondsToExpire
+     * @param secondsToExpire
      * @return
      */
-    public String tryLock(String lockName, long millisecondsToExpire, long millisecondsToWait) {
+    public String tryLock(String lockName, int secondsToExpire, int secondsToWait) {
 
         String lockKey = Key.getLockRedis(lockName);
         String value = Thread.currentThread().getName() + ":" + LangUtil.getTimeSeqId(); // Thread
-        byte[] keyByte = lockName.getBytes(StandardCharsets.UTF_8);
+        byte[] keyByte = lockKey.getBytes(StandardCharsets.UTF_8);
         byte[] valueByte = value.getBytes(StandardCharsets.UTF_8);
 
         long startTime = System.currentTimeMillis();
@@ -77,19 +94,19 @@ public class RedisDao {
                             Object nativeConnection = connection.getNativeConnection();
                             String resultString = "";
 //                            JedisCommands commands = (JedisCommands) connection.getNativeConnection();
-//                            resultString = commands.set(lockKey, value, "NX", "PX", millisecondsToExpire);
+//                            resultString = commands.set(lockKey, value, "NX", "PX", secondsToExpire);
                             if(nativeConnection instanceof RedisAsyncCommands){
                                 RedisAsyncCommands command = (RedisAsyncCommands) nativeConnection;
                                 resultString = command
                                         .getStatefulConnection()
                                         .sync()
-                                        .set(keyByte, valueByte, SetArgs.Builder.nx().ex((long) Math.ceil(millisecondsToExpire/1000)));
+                                        .set(keyByte, valueByte, SetArgs.Builder.nx().ex(secondsToExpire));
                             }else if(nativeConnection instanceof RedisAdvancedClusterAsyncCommands){
                                 RedisAdvancedClusterAsyncCommands clusterAsyncCommands = (RedisAdvancedClusterAsyncCommands) nativeConnection;
                                 resultString = clusterAsyncCommands
                                         .getStatefulConnection()
                                         .sync()
-                                        .set(keyByte, valueByte, SetArgs.Builder.nx().ex((long) Math.ceil(millisecondsToExpire/1000)));
+                                        .set(keyByte, valueByte, SetArgs.Builder.nx().ex(secondsToExpire));
                             }
                             return resultString;
                         }finally {
@@ -98,18 +115,18 @@ public class RedisDao {
                     }
                 });
                 if (String.valueOf(result).toUpperCase().contains("OK")) {
-                    log.debug(Tools.objects2string("tryLock ok", cc, lockKey, lockName, value, result, millisecondsToExpire, millisecondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)));
+                    log.debug(Tools.objects2string("tryLock ok", cc, lockKey, lockName, value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)));
                     return value;
                 }
             } catch (Exception e) {
-                log.error(Tools.objects2string("tryLock exception", cc, lockKey, lockName, value, result, millisecondsToExpire, millisecondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), e);
+                log.error(Tools.objects2string("tryLock exception", cc, lockKey, lockName, value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), e);
             }
-            if(System.currentTimeMillis() > startTime + millisecondsToWait){
-                log.warn(Tools.objects2string("tryLock error wait timeout", cc, lockKey, lockName, value, result, millisecondsToExpire, millisecondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)) );
+            if(System.currentTimeMillis() > startTime + secondsToWait){
+                log.warn(Tools.objects2string("tryLock error wait timeout", cc, lockKey, lockName, value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)) );
                 break;
             }
             try {//1000ms等待锁，共轮询10次
-                Thread.sleep(Math.max(millisecondsToWait/4, 10));
+                TimeUnit.SECONDS.sleep(Math.max(secondsToWait/4, 10));
             } catch (InterruptedException e) {
                 log.error(e.getMessage(), e);
             }
@@ -175,10 +192,12 @@ public class RedisDao {
         if (res) {
             log.debug(Tools.objects2string("release lock ok", lockKey, lockName, identifier, result));
         }else{
-            log.error(Tools.objects2string("release lock error", lockKey, lockName, identifier, result));
+            String v = get(lockKey, "not exists?");
+            log.error(Tools.objects2string("release lock error", lockKey, lockName, identifier, result, "value should be", v));
         }
         return res;
     }
+
 
     /**
      * 查看是否加锁
@@ -213,7 +232,7 @@ public class RedisDao {
      * @param value
      * @return
      */
-    public boolean set(final String key, Object value, Long expireTime) {
+    public boolean set(final String key, Object value, Integer expireTime) {
         boolean result = false;
         try {
             ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
@@ -230,7 +249,7 @@ public class RedisDao {
      * @param key
      * @return
      */
-    public boolean expire(final String key, Long expireSeconds) {
+    public boolean expire(final String key, int expireSeconds) {
         boolean result = false;
         try {
             redisTemplate.expire(key, expireSeconds, TimeUnit.SECONDS);
@@ -422,4 +441,217 @@ public class RedisDao {
         ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
         return zset.rangeByScore(key, scoure, scoure1);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * 键值序列化 获取对象 自动解析键值类型
+     */
+    public <V> V getMap(String key, String item, V defaultValue){
+        HashOperations<String, String, String> hash = redisTemplate.opsForHash();
+        String res = hash.get(key, item);
+        return LangUtil.turn(res, defaultValue);
+    }
+    /**
+     * 键值序列化 设置对象 自动解析键值类型
+     */
+    public   <V> Long setMap(String key, String item, V value, int secondesExpire){
+        HashOperations<String,String, String> hash = redisTemplate.opsForHash();
+        Long res = 0L;
+        if(value == null){
+            hash.delete(key, item);
+        }else {
+            hash.put(key, item, String.valueOf(value) );
+            res = 1L;
+        }
+        if(secondesExpire > 0) {
+            //后置设定过期时间
+            redisTemplate.expire(key, secondesExpire, TimeUnit.SECONDS);
+        }
+        return res;
+    }
+
+    /**
+     * 键值序列化 批量设置
+     * @param key
+     * @param map
+     * @param secondesExpire
+     */
+    public void setMap(String key, Map<String, Object> map, int secondesExpire){
+        HashOperations<String,String, String> hash = redisTemplate.opsForHash();
+
+        log.debug("setMap " + key + " " + map + " " + secondesExpire);
+        for(String item : map.keySet().toArray(new String[0])) {
+            Object value = map.get(item);
+            hash.put(key, item, String.valueOf(value));
+        }
+        if (secondesExpire > 0) {
+            //后置设定过期时间
+            redisTemplate.expire(key, secondesExpire, TimeUnit.SECONDS);
+        }
+    }
+
+
+    /*
+	首先，先说一下。老外提出了一个缓存更新套路，名为《Cache-Aside pattern》。其中就指出
+　　失效：应用程序先从cache取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。
+　　命中：应用程序从cache中取数据，取到后返回。
+　　更新：先把数据存到数据库中，成功后，再让缓存失效。
+	*/
+    /**
+     * 缓存获取，穿透实现
+     * 分布式锁 粒度小 避免大量同key数据库访问
+     * 如何解决缓存一致性问题？
+     * @param key0	获取缓存分区 config
+     * @param key1	缓存map键  CC_CONFIG_1
+     * @param secondsToExpire	当查询db成功时 设置缓存过期时间
+     * @param secondsToWait	当查询db时锁等待时间 避免穿透
+     * @param getFromDb	穿透查询数据库实现
+     * @return
+     */
+    public <T> T getCacheOrDb(String key0, String key1, int secondsToExpire, int secondsToWait, FunArgsReturn<String, T> getFromDb){
+        final String key = KEY_GET_CACHE_OR_DB + key0;
+        final String lockName = KEY_LOCK_GET_CACHE_OR_DB + key0 + "::" + key1;
+
+        T res = getMap(key, key1, null);
+        if(res == null){
+//					加锁 避免缓存击穿 锁粒度最小程度 key
+            String lock = tryLock(lockName, DEFAULT_LOCK_DB_KEY_TIME, secondsToWait);
+            if (lock.length() > 0) {
+                try {
+                    res = getMap(key, key1, null);  //再次获取缓存
+                    if (res == null) {
+                        res = getFromDb.make(key1);
+                        if(res == null){	//避免缓存穿透  null是否缓存 快速过期来保护数据库  本来计划10分钟过期 则 null1分钟过期 最小5秒过期
+//									布隆过滤器预热 性能实现 全局map 精确映射数据库有没有
+                            setMap(key, key1, res, Math.max(secondsToExpire/10, 5000));
+                        }else{
+                            setMap(key, key1, res, secondsToExpire);
+                        }
+                        log.debug("get from db " + key + " res is null ? " + (res == null) );
+                    }
+                }finally {
+                    releaseLock(lockName, lock);
+                }
+            }else{
+                log.debug("cache funArgsReturn lock no: " + key + " " + key1);
+                throw new ErrorException(" no get lock and wait timeout for db date");
+            }
+        }else{
+            log.debug("get from cache " + key + " " + key1);
+        }
+        return res;
+    }
+
+    /**
+     * 初始化 项目启动 读取配置表预热到缓存
+     * 多台服务器同时启动
+     * 一台初始化，其他等待初始化
+     * 如何标识初始化成功 一段时间禁止再初始化 过期的成功标志
+     * @param key0					分区配置
+     * @param secondsToExpire	配置map key过期时间
+     * @param secondsToWait	锁竞争等待时间
+     * @param secondsInitDeta				初始化该分区间隔时间
+     * @param getFromDbList			具体获取数据
+     * @return
+     */
+    public Long initCacheFromDb(String key0, int secondsToExpire, int secondsToWait, int secondsInitDeta, FunArgsReturn<String, Map<String, Object>> getFromDbList){
+        HashOperations<String,String, String> hash = redisTemplate.opsForHash();
+        final String key = KEY_GET_CACHE_OR_DB + key0;
+        final String keyIsOk = KEY_INIT_CACHE_OR_DB_OK + key0;
+        final String lockName = KEY_LOCK_INIT_CACHE_OR_DB + key0;
+
+        Long res = 0L;
+
+        if(exists(keyIsOk)){	//加载过的标记还在 表示已经加载完成了
+            res = hash.size(key);
+        }else{	//未成功 加锁等待 执行
+//					加锁 避免缓存击穿 锁粒度最小程度 key
+            String lock = tryLock(lockName, secondsToExpire, secondsToWait);
+            if (lock.length() > 0) {
+                try {
+                    if(exists(keyIsOk)){	//加载过的标记是否还在 若有则标识等待锁期间已经加载完成了 不论成功失败
+                        res = hash.size(key);
+                    }else{
+                        Map<String, Object> keyValues = getFromDbList.make(key0);
+                        if(keyValues == null || keyValues.size() == 0){	//避免缓存穿透  null是否缓存 快速过期来保护数据库  本来计划10分钟过期 则 null1分钟过期 最小5秒过期
+//									布隆过滤器预热 性能实现 全局map 精确映射数据库有没有
+                            log.debug("get from db " + key + " res is null ? " + (keyValues == null || keyValues.size() == 0) );
+//									setMap(key, key1, res, Math.max(secondsToExpire/10, 5000));
+                        }else{
+                            setMap(key, keyValues, secondsToExpire);
+                        }
+                        set(keyIsOk, lock, secondsInitDeta);	//加载过的标记
+                    }
+                }finally {
+                    releaseLock(lockName, lock);
+                }
+            }else{
+                throw new ErrorException(" no get lock and wait timeout for db date init");
+            }
+        }
+        return res;
+    }
+
+
+    /**
+     * 先更新数据库，再删除缓存
+     * 	　　先删除缓存，再更新数据库
+     * 			功能问题：请求A和请求B进行操作 A删缓存 B查出又设置了旧缓存 导致脏旧
+     * 				解决方案：延迟双删， 更新数据库之后，删除缓存，延迟一段时间再次删除缓存（若失败? 重试几次报警记录日志=人工介入？）
+     * 					mysql主从读写分离：未主从同步时 依然有问题 延时间隔
+     *
+     * @param key0	缓存分区
+     * @param key1	缓存map的键
+     * @param secondsToWait	延时等待 数据库主从同步时间 或 并发时间
+     * @param setToDb	穿透持久化实现
+     * @return
+     */
+    public Integer setDbAndClearCache(String key0, String key1, long secondsToWait, FunArgsReturn<String, Integer> setToDb){
+        final String key = KEY_GET_CACHE_OR_DB + key0;
+        Integer res = 0;
+        if(setToDb != null){
+            res = setToDb.make(key1);	//存入数据库后，等待主从同步到从查询后再次删除，等待避免多线程查询了旧的存入了缓存 脏旧
+            if(res > 0) {
+                log.debug("setToDb ok size " + res);
+                try {
+                    log.debug(" 1 del cache key:" + key + " " + key1 + "size:" + setMap(key, key1,null, 0));
+                } catch (Exception e) {
+                    log.error(key + " " + key1 + " " + e.getMessage(), e);
+                }
+//				延迟执行 延迟队列？
+                ThreadUtil.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            log.debug(" 2 del cache key:" + key + " " + key1 + "size:" + setMap(key, key1,null, 0));
+                        } catch (Exception e) {
+                            log.error(key + " " + key1 + " " + e.getMessage(), e);
+                        }
+                    }
+                }, secondsToWait, TimeUnit.MILLISECONDS);
+            }else{
+                log.warn("setToDb error res num " + res);
+            }
+
+        }else{
+            log.warn("no set to db ? " + key + " " + key1);
+        }
+        return res;
+    }
+
+
+
+
 }

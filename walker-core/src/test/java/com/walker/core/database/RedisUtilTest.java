@@ -10,11 +10,15 @@ import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import static org.junit.Assert.*;
+import java.util.Map;
 
 public class RedisUtilTest {
+
+
+
+
     @Test
     public void tryLock() {
         List<String> ok = new ArrayList<>();
@@ -54,13 +58,14 @@ public class RedisUtilTest {
 
     @Test
     public void setDbAndClearCache() {
+        String key0 = "test";
         String key = "i";
         List<String> fromdb = new ArrayList<>();
         new TaskThreadPie(1000){
 
             @Override
             public void onStartThread(int threadNo) throws IOException, Exception {
-                Object res = RedisUtil.getCacheOrDb(key, 5000, 20, new FunArgsReturn<String, String>() {
+                Object res = RedisUtil.getCacheOrDb(key0, key, 5000, 20, new FunArgsReturn<String, String>() {
                     @Override
                     public String make(String obj) {
                         ThreadUtil.sleep(1000); //查询耗时1s
@@ -87,7 +92,7 @@ public class RedisUtilTest {
         Redis.doJedis(new Redis.Fun<Object>() {
             @Override
             public Object make(Jedis jedis) {
-                RedisUtil.put(jedis, key, emp, 0L);
+                RedisUtil.set(jedis, key, emp, 0);
                 return emp;
             }
         });

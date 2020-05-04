@@ -157,7 +157,7 @@ public class SomethingTest {
 //		　　offer       添加一个元素并返回true       如果队列已满，则返回false
 //		　　poll         移除并返问队列头部的元素    如果队列为空，则返回null
 //		　　peek       返回队列头部的元素             如果队列为空，则返回null
-//		　　put         添加一个元素                      如果队列满，则阻塞
+//		　　set         添加一个元素                      如果队列满，则阻塞
 //		　　take        移除并返回队列头部的元素     如果队列为空，则阻塞
 		ThreadUtil.scheduleWithFixedDelay(new Runnable() {
 			@Override

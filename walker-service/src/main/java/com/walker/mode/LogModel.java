@@ -50,24 +50,24 @@ public class LogModel implements Cloneable, Serializable {
 	private String IP_PORT_FROM;
 	@Column(name = "IP_PORT_TO", columnDefinition = "varchar(128) default '' comment '受理服务器的ip:port' ")
 	private String IP_PORT_TO;
-	@Column(name = "URL", columnDefinition = "varchar(1998) default '' comment 'URL' ")    //www.baidu.com	类名
+	@Column(name = "URL", columnDefinition = "varchar(998) default '' comment 'URL' ")    //www.baidu.com	类名
 	private String URL;
 	@Column(name = "WAY", columnDefinition = "varchar(998) default '' comment '方式' ")    //post	任务id
 	private String WAY;
-	@Column(name = "ARGS", columnDefinition = "varchar(1998) default '' comment '参数' ")	//wd=123	触发器规则
+	@Column(name = "ARGS", columnDefinition = "varchar(998) default '' comment '参数' ")	//wd=123	触发器规则
 	private String ARGS;
 	@Column(name = "IS_EXCEPTION", columnDefinition = "varchar(2) default '' comment '1是0否异常' ")
 	private String IS_EXCEPTION;
-	@Column(name = "EXCEPTION", columnDefinition = "varchar(1998) default '' comment '异常详情' ")
+	@Column(name = "EXCEPTION", columnDefinition = "varchar(998) default '' comment '异常详情' ")
 	private String EXCEPTION;
 	@Column(name = "IS_OK", columnDefinition = "varchar(2) default '' comment '1是0否成功' ")
 	private String IS_OK;
-	@Column(name = "RES", columnDefinition = "varchar(1998) default '' comment '访问结果' ")
+	@Column(name = "RES", columnDefinition = "varchar(998) default '' comment '访问结果' ")
 	private String RES;
 	@Column(name = "COST", columnDefinition = "varchar(128) default '' comment '耗时' ")
 	private String COST;
 
-	@Column(name = "ABOUT", columnDefinition = "varchar(1998) default '' comment '说明' ")
+	@Column(name = "ABOUT", columnDefinition = "varchar(998) default '' comment '说明' ")
 	private String ABOUT;
 
 
@@ -129,7 +129,7 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setWAY(String WAY) {
-		WAY = Config.cutString(1998, WAY);
+		WAY = Config.cutString(998, WAY);
 
 		this.WAY = WAY;
 		return this;
@@ -176,7 +176,7 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setURL(String URL) {
-		URL = Config.cutString(1998, URL);
+		URL = Config.cutString(998, URL);
 
 		this.URL = URL;
 		return this;
@@ -208,7 +208,7 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setARGS(String ARGS) {
-		ARGS = Config.cutString(1998, ARGS);
+		ARGS = Config.cutString(998, ARGS);
 
 		this.ARGS = ARGS;
 		return this;
@@ -228,7 +228,7 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setEXCEPTION(String EXCEPTION) {
-		EXCEPTION = Config.cutString(1998, EXCEPTION);
+		EXCEPTION = Config.cutString(998, EXCEPTION);
 		this.EXCEPTION = EXCEPTION;
 		return this;
 	}
@@ -247,7 +247,7 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setRES(String RES) {
-		RES = Config.cutString(1998, RES);
+		RES = Config.cutString(998, RES);
 		this.RES = RES;
 		return this;
 	}
@@ -269,7 +269,7 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setABOUT(String ABOUT) {
-		ABOUT = Config.cutString(1998, ABOUT);
+		ABOUT = Config.cutString(998, ABOUT);
 
 		this.ABOUT = ABOUT;
 		return this;

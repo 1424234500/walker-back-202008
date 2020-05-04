@@ -31,11 +31,11 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 	 */
 	class Index{
 		int count;	//命中次数
-		long expire;	//过期时间
+		int secondsExpire;	//过期时间
 		long mtime;	//修改时间
 		public boolean isExpire(){ //是否过期
-			if(expire <= 0) return false;
-			return System.currentTimeMillis() > mtime + expire;
+			if(secondsExpire <= 0) return false;
+			return System.currentTimeMillis() > mtime + secondsExpire * 1000;
 		}
 	}
 	
@@ -72,7 +72,7 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 		if(map.containsKey(key) && mapIndex.containsKey(key)){
 			Index index = mapIndex.get(key);
 			if(index.isExpire()){
-				log.info("expire." + key + SPLIT + map.get(key) + SPLIT + index.expire);
+				log.info("expire." + key + SPLIT + map.get(key) + SPLIT + index.secondsExpire);
 				remove(key);
 				return false;
 			}
@@ -142,7 +142,7 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 	}
 
 	@Override
-	public <V> Cache<String> put(String key, V value, long expire) {
+	public <V> Cache<String> put(String key, V value, int secondsExpire) {
 		map.put(key, value);
 		Index index;
 		if(mapIndex.containsKey(key)){
@@ -152,7 +152,7 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 			mapIndex.put(key, index);
 		}
 		index.mtime = System.currentTimeMillis();
-		index.expire = expire;
+		index.secondsExpire = secondsExpire;
 //		index.count += 1;
 		return this;
 	}
@@ -161,9 +161,9 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 	}
 	@SuppressWarnings("unchecked")
 	@Override
-	public <V> String put(String url, String key, V value, long expire) {
+	public <V> String put(String url, String key, V value, int secondsExpire) {
 		if(Tools.isNull(url)) {
-			put(key, value, expire);
+			put(key, value, secondsExpire);
 			return "true";
 		}
 		String res = "false";
@@ -174,7 +174,7 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 			key = MapListUtil.putMapUrl(map, key, value);
 			Index index = new Index();
 			index.mtime = System.currentTimeMillis();
-			index.expire = expire;
+			index.secondsExpire = secondsExpire;
 			mapIndex.put(key, index);
 			res = "true";
 //			log.info(res);
@@ -199,7 +199,7 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 				mapIndex.put(key, index);
 			}
 			index.mtime = System.currentTimeMillis();
-			index.expire = expire;
+			index.secondsExpire = secondsExpire;
 //			index.count = 0;
 		}
 		
@@ -388,7 +388,7 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 			temp.set("MTIME", index.mtime);
 			if(expire == 1 && ffExpire) continue;
 			if(expire == 2 && !ffExpire) continue;
-			temp.set("EXPIRE", index.expire);
+			temp.set("EXPIRE", index.secondsExpire);
 			temp.set("COUNT", index.count);
 //			temp.set("TOURL", toUrl);
 			if(count >= start){
@@ -433,7 +433,7 @@ class CacheMapImpl extends CacheAdapter<String>{//implements Cache<String> {
 			temp.set("MTIME", index.mtime);
 			if(expire == 1 && ffExpire) continue;
 			if(expire == 2 && !ffExpire) continue;
-			temp.set("EXPIRE", index.expire);
+			temp.set("EXPIRE", index.secondsExpire);
 			temp.set("COUNT", index.count);
 //			temp.set("TOURL", toUrl);
 

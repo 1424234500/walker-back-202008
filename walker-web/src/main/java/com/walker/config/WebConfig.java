@@ -2,6 +2,7 @@ package com.walker.config;
 
 
 import com.walker.intercept.LogInterceptors;
+import com.walker.intercept.RateLimitInterceptor;
 import com.walker.intercept.UserInterceptors;
 import com.walker.service.Config;
 import org.slf4j.Logger;
@@ -112,11 +113,14 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         log.info(Config.getPre() + "WebConfig addInterceptors");
 
+
+
+
 //        token检测 设置用户 环境上下文    未登录则跳转登录 拦截?
         registry.addInterceptor(new UserInterceptors() )
                 .addPathPatterns("/**")
                 .excludePathPatterns(Arrays.asList(
-                        "/shiro/**",
+                        "/shiro/**",    //登录
                         "/webjars/**",
                         "/static/**",
                         "/html/*",
@@ -125,8 +129,17 @@ public class WebConfig implements WebMvcConfigurer {
                         "/v2/**"
 
                 ));
-//        url ip  参数 耗时统计监控
 
+
+        //        限速 所有限速? 用户限速？ ip限速？
+        registry.addInterceptor(new RateLimitInterceptor() )
+                .addPathPatterns("/**")
+        ;
+
+
+
+
+//        url ip  参数 耗时统计监控
         //配置 拦截 /list结尾的请求
         //    /*表示只拦截 /这一层目录下的/list   比如 拦截/dept/list  不会拦截/api/dept/list
         //    /** 表示拦截  /这一层目录下的包含子目录的/list 比如拦截 /api/dept/list
@@ -141,14 +154,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/v2/**"
 
                 ));
-//        registry.addInterceptor(new UserInterceptors())
-//            .excludePathPatterns(
-//                Arrays.asList(new String[]{
-//                        "/*/*onlogin.do",
-//                        "/*/*loginin.do"
-//                })
-//            )
-//        ;
 
 
 //        <!-- 拦截器已采用url过滤.do模式只拦截controller，此处无效？ -->

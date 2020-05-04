@@ -57,6 +57,11 @@
     <!--    登录服务-->
     <bean id="loginService" class="com.walker.service.impl.LoginServiceImpl" />
     <dubbo:service ref="loginService" interface="com.walker.service.LoginService" timeout="30000" version="1.0" delay="-1" />
+    <!--    配置服务-->
+    <bean id="sysConfigService" class="com.walker.service.impl.SysConfigServiceImpl" />
+    <dubbo:service ref="sysConfigService" interface="com.walker.service.SysConfigService" timeout="30000" version="1.0" delay="-1" />
+
+
 
     <!--    jdbc teacher增删查改 同服务不同实现 须分组-->
     <bean id="teacherJdbcService" class="com.walker.service.impl.TeacherJdbcServiceImpl" />
