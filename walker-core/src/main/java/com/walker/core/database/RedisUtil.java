@@ -34,6 +34,54 @@ public  class RedisUtil   {
 	private static Logger log = LoggerFactory.getLogger(RedisUtil.class);
 
 
+	/**
+	 * 获取key的值 map
+	 *
+	 * KEY, TYPE, TTL, LEN, VALUE, EXISTS
+	 *
+	 * @param jedis
+	 * @param key
+	 * @return
+	 */
+	public static Bean getKeyInfo(Jedis jedis, String key){
+		Bean res = new Bean();
+		res.put("KEY", key);
+		if(jedis.exists(key)) {
+			res.put("EXISTS", true);
+
+			String type = jedis.type(key);
+			res.put("TYPE", type);
+			res.put("TTL", jedis.ttl(key));
+			Long len = -1L;
+			Object value = null;
+			if (type.equals("string")) {
+				value = jedis.get(key);
+				len = jedis.strlen(key);
+			} else if (type.equals("list")) {
+				len = jedis.llen(key);
+				value = jedis.lrange(key, 0, len < 50 ? -1 : 50);
+			} else if (type.equals("hash")) {
+				value = jedis.hgetAll(key);
+				len = jedis.hlen(key);
+			} else if (type.equals("set")) {
+				value = jedis.smembers(key);
+				len = jedis.scard(key);
+			} else if (type.equals("zset")) {
+				value = jedis.zrange(key, 0, len < 50 ? -1 : 50);
+				len = jedis.zcard(key);
+			} else {
+				value = "none";
+				res.put("VALUE", "none type");
+			}
+			res.put("VALUE", value);
+			res.put("LEN", len);
+
+		}else {
+			res.put("EXISTS", false);
+		}
+		return res;
+	}
+
 
 	/**
 	 * Redis数据结构 ---- 数据库结构[ id:01, name: walker, age: 18 ]

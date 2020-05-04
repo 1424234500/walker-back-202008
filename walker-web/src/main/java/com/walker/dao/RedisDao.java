@@ -652,6 +652,94 @@ public class RedisDao {
     }
 
 
+    /**
+     * 获取key的值 map
+     *
+     * KEY, TYPE, TTL, LEN, VALUE, EXISTS
+     *
+     * @param key
+     * @return
+     */
+    public Bean getKeyInfo(String key){
+        Bean res = new Bean();
+        res.put("KEY", key);
+        if(redisTemplate.hasKey(key)) {
+            res.put("EXISTS", true);
+//            NONE("none"),
+//            STRING("string"),
+//            LIST("list"),
+//            SET("set"),
+//            ZSET("zset"),
+//            HASH("hash");
+            String type = redisTemplate.type(key).name().toLowerCase();
+            res.put("TYPE", type);
+            res.put("TTL", redisTemplate.getExpire(key));
+            Long len = -1L;
+            Object value = null;
+            if (type.equals("string")) {
+                value = redisTemplate.opsForValue().get(key);
+                len = redisTemplate.opsForValue().size(key);
+            } else if (type.equals("list")) {
+                len = redisTemplate.opsForList().size(key);
+                value = redisTemplate.opsForList().range(key, 0, len < 50 ? -1 : 50);
+            } else if (type.equals("hash")) {
+                value = redisTemplate.opsForHash().entries(key);
+                len = redisTemplate.opsForHash().size(key);
+            } else if (type.equals("set")) {
+                value = redisTemplate.opsForSet().members(key);
+                len = redisTemplate.opsForSet().size(key);
+            } else if (type.equals("zset")) {
+                len = redisTemplate.opsForZSet().size(key);
+                value = redisTemplate.opsForZSet().range(key, 0, len < 50 ? -1 : 50);
+            } else {
+                value = "none";
+                res.put("VALUE", "none type");
+            }
+            res.put("VALUE", value);
+            res.put("LEN", len);
+
+        }else {
+            res.put("EXISTS", false);
+        }
+        return res;
+    }
+    /**
+     * 设置key的值 map
+     * KEY, TYPE, TTL, VALUE
+     */
+    public Bean setKeyInfo(Bean bean){
+        String key = bean.get("KEY", "");
+        if(key.length() == 0){
+            throw new RuntimeException("key is null  " + bean);
+        }
+        String type = bean.get("TYPE", "").toLowerCase();
+        int ttl = bean.get("TTL", 0);
+        String value = bean.get("VALUE", "");
+
+        if(type.equals("string") && redisTemplate.hasKey(key) && ! redisTemplate.type(key).name().toLowerCase().equalsIgnoreCase(type)) {
+            redisTemplate.delete(key);
+            log.warn("Try overwriete exiss key " + key + " value[" + getKeyInfo(key));
+        }
+        if (type.equals("string")) {
+            redisTemplate.opsForValue().set(key, value);
+        } else if (type.equals("list")) {
+            redisTemplate.opsForList().leftPush(key, value);
+        } else if (type.equals("hash")) {
+            Map<String, String> map = JsonUtil.get(value);
+            redisTemplate.opsForHash().putAll(key, map);
+        } else if (type.equals("set")) {
+            redisTemplate.opsForSet().add(key, value);
+        } else if (type.equals("zset")) {
+            redisTemplate.opsForZSet().add(key, value, TimeUtil.getCurrentTime());
+        } else {
+            throw new RuntimeException("Type is no of string,list,hash,set,zset  " + bean);
+        }
+        if(ttl > 0){
+            redisTemplate.expire(key, ttl, TimeUnit.SECONDS);
+        }
+
+        return getKeyInfo(key);
+    }
 
 
 }

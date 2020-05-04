@@ -8,12 +8,9 @@ import com.walker.core.database.Redis;
 import com.walker.core.database.Redis.Fun;
 
 import java.util.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.walker.mode.PushBindModel;
-import com.walker.service.Config;
-import com.walker.service.LockService;
+import com.walker.dao.RedisDao;
+import com.walker.service.RedisService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +29,9 @@ public class RedisController  {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    LockService lockService;
+    RedisService redisService;
+    @Autowired
+    RedisDao redisDao;
 
     @ApiOperation(value = "统计socket", notes = "")
     @ResponseBody
@@ -165,7 +164,7 @@ public class RedisController  {
     @ResponseBody
     @RequestMapping(value = "/findPage.do", method = RequestMethod.GET)
     public Response locks(
-            @RequestParam(value = "KEY", required = true, defaultValue = "") String keys,
+            @RequestParam(value = "KEY", required = false, defaultValue = "") String keys,
 
             @RequestParam(value = "nowPage", required = false, defaultValue = "1") Integer nowPage,
             @RequestParam(value = "showNum", required = false, defaultValue = "20") Integer showNum,
@@ -173,7 +172,7 @@ public class RedisController  {
     ) {
         Page page = new Page().setNowpage(nowPage).setShownum(showNum).setOrder(order);
 
-        List<?> res = lockService.getLocks(keys);
+        List<?> res = redisService.getKeyValues(keys);
         page.setNum(res.size());
         return Response.makePage("get redis key value", page, res);
     }
@@ -185,7 +184,7 @@ public class RedisController  {
             @RequestParam(value = "ids", required = true, defaultValue = "") String ids
     ) {
 
-        long res = lockService.delLocks(Arrays.asList(ids.split(",")));
+        long res = redisService.delKeys(Arrays.asList(ids.split(",")));
 
         return Response.makeTrue("rm locks " + ids, res);
     }
@@ -194,11 +193,14 @@ public class RedisController  {
     @RequestMapping(value = "/save.do", method = RequestMethod.GET)
     public Response addLocks(
             @RequestParam(value = "KEY", required = true, defaultValue = "") String KEY,
-            @RequestParam(value = "VALUE", required = true, defaultValue = "") String VALUE
+            @RequestParam(value = "TYPE", required = false, defaultValue = "string") String TYPE,
+            @RequestParam(value = "TTL", required = false, defaultValue = "0") String TTL,
+            @RequestParam(value = "VALUE", required = false, defaultValue = "") String VALUE
     ) {
 
-        long res = lockService.addLocks(KEY, VALUE);
-
+        Bean args = new Bean().put("KEY", KEY).put("TYPE", TYPE).put("TTL", TTL).put("VALUE", VALUE);
+//        long res = redisService.addLocks(KEY, VALUE);
+        Bean res = redisDao.setKeyInfo(args);
         return Response.makeTrue("add locks " + KEY + " " + VALUE, res);
     }
 
@@ -208,7 +210,7 @@ public class RedisController  {
     @RequestMapping(value = "/getColsMap.do", method = RequestMethod.GET)
     public Response getColsMap(
     ) {
-        Map<String, String> colMap = lockService.getColsMapCache();
+        Map<String, String> colMap = redisService.getColsMapCache();
         Map<String, Object> res = new HashMap<>();
         res.put("colMap", colMap);
         res.put("colKey", colMap.keySet().toArray()[0]);
