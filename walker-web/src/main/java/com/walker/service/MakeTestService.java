@@ -62,14 +62,14 @@ public class MakeTestService {
             timeD = 10;
         }
         final long timeDeta = timeD;
-        final long timeAll = timeA;
         LogModel logModel = LogModel.getDefaultModel()
                 .setCATE(Config.getCateTest())
                 .setUSER("test")
                 .setWAY("")
                 .setURL("makeUrlTestRandom")
-                .setARGS(new Bean().put("timeAll", timeAll).put("timeDeta", timeDeta).put("threadSize", threadSize).toString())
+                .setARGS(new Bean().put("timeAll", timeA).put("timeDeta", timeDeta).put("threadSize", threadSize).toString())
                 ;
+        final long timeAll = timeA;
         log.info("start makeUrlTestRandom " + logModel);
         logModel = logService.saveLogModelNoTime(logModel);
         AtomicLong count = new AtomicLong(0);

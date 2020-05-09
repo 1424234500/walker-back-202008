@@ -183,7 +183,7 @@ function afterReject(url, params, type, err){
     });
   }else{
     Message({
-      message: 'Error other ' + JSON.stringify(err) ,
+      message: 'Error timeout ? ' + JSON.stringify(err) ,
       type: 'error'
     });
   }

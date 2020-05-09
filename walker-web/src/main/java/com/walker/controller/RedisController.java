@@ -177,7 +177,7 @@ public class RedisController  {
         return Response.makePage("get redis key value", page, res);
     }
 
-    @ApiOperation(value = "删除redis锁集合", notes = "")
+    @ApiOperation(value = "删除redis", notes = "")
     @ResponseBody
     @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
     public Response delet(
@@ -188,10 +188,10 @@ public class RedisController  {
 
         return Response.makeTrue("rm locks " + ids, res);
     }
-    @ApiOperation(value = "添加redis锁集合", notes = "")
+    @ApiOperation(value = "添加redis数据", notes = "")
     @ResponseBody
     @RequestMapping(value = "/save.do", method = RequestMethod.GET)
-    public Response addLocks(
+    public Response save(
             @RequestParam(value = "KEY", required = true, defaultValue = "") String KEY,
             @RequestParam(value = "TYPE", required = false, defaultValue = "string") String TYPE,
             @RequestParam(value = "TTL", required = false, defaultValue = "0") String TTL,

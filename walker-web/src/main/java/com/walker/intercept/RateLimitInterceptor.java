@@ -1,31 +1,49 @@
 package com.walker.intercept;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.walker.common.util.Bean;
 import com.walker.config.Context;
 import com.walker.config.ControllerConfig;
 import com.walker.core.cache.CacheMgr;
+import com.walker.dao.ConfigDao;
+import com.walker.dao.RateLimiterDao;
 import com.walker.mode.User;
 import com.walker.service.Config;
 import com.walker.util.RequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 
 /**
+ * 单例
+ *
+ *
  * 限流
+ *
+ * 默认配置限流
+ * 在线动态配置限流
+ *
+ *
+ *
  *
  */
 public class RateLimitInterceptor implements HandlerInterceptor{
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    RateLimiter rateLimiterAll = RateLimiter.create(1);
 
 
+    @Autowired
+    ConfigDao configDao;
+    @Autowired
+    RateLimiterDao rateLimiterDao;
 
     /** 
      * 在渲染视图之后被调用； 
@@ -70,36 +88,14 @@ public class RateLimitInterceptor implements HandlerInterceptor{
 //        同时只允许最多y个请求执行 线程池 连接数
 //        配置中心 集群 redis？
 
-//        修饰符和类型	方法和描述
-//        double	acquire()
-//        从RateLimiter获取一个许可，该方法会被阻塞直到获取到请求
-//        double	acquire(int permits)
-//        从RateLimiter获取指定许可数，该方法会被阻塞直到获取到请求
-//        static RateLimiter	create(double permitsPerSecond)
-//        根据指定的稳定吞吐率创建RateLimiter，这里的吞吐率是指每秒多少许可数（通常是指QPS，每秒多少查询）
-//        static RateLimiter	create(double permitsPerSecond, long warmupPeriod, TimeUnit unit)
-//        根据指定的稳定吞吐率和预热期来创建RateLimiter，这里的吞吐率是指每秒多少许可数（通常是指QPS，每秒多少个请求量），在这段预热时间内，RateLimiter每秒分配的许可数会平稳地增长直到预热期结束时达到其最大速率。（只要存在足够请求数来使其饱和）
-//        double	getRate()
-//        返回RateLimiter 配置中的稳定速率，该速率单位是每秒多少许可数
-//        void	setRate(double permitsPerSecond)
-//        更新RateLimite的稳定速率，参数permitsPerSecond 由构造RateLimiter的工厂方法提供。
-//        String	toString()
-//        返回对象的字符表现形式
-//        boolean	tryAcquire()
-//        从RateLimiter 获取许可，如果该许可可以在无延迟下的情况下立即获取得到的话
-//        boolean	tryAcquire(int permits)
-//        从RateLimiter 获取许可数，如果该许可数可以在无延迟下的情况下立即获取得到的话
-//        boolean	tryAcquire(int permits, long timeout, TimeUnit unit)
-//        从RateLimiter 获取指定许可数如果该许可数可以在不超过timeout的时间内获取得到的话，或者如果无法在timeout 过期之前获取得到许可数的话，那么立即返回false （无需等待）
-//        boolean	tryAcquire(long timeout, TimeUnit unit)
-//        从RateLimiter 获取许可如果该许可可以在不超过timeout的时间内获取得到的话，或者如果无法在timeout 过期之前获取得到许可的话，那么立即返回false（无需等待）
+        String info =  rateLimiterDao.tryAcquire(url, id);
+        if(info.length() > 0){
+            RequestUtil.echoErr(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, new Bean().put("info", info).toString());
+            return false;
+        }else{
+            return true;
+        }
 
-
-//        if() {
-//            RequestUtil.echoErr(response, HttpServletResponse.SC_, token);
-//            return false;
-//        }
-        return true;  
-    }  
+    }
   
-}  
+}

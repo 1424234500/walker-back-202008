@@ -7,6 +7,7 @@ import com.walker.intercept.UserInterceptors;
 import com.walker.service.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -109,6 +110,22 @@ public class WebConfig implements WebMvcConfigurer {
 
     });
 
+    /**
+     * 不使用直接使用new 创建 LoginInterceptor对象，将getloginInterceptor()加上@Bean注解交给spring容器管理就可以注入对象了
+     * 解决new里面无法自动注入问题
+     */
+    @Bean
+    UserInterceptors getUserInterceptors(){
+        return new UserInterceptors();
+    }
+    @Bean
+    RateLimitInterceptor getRateLimitInterceptor(){
+        return new RateLimitInterceptor();
+    }
+    @Bean
+    LogInterceptors getLogInterceptors(){
+        return new LogInterceptors();
+    }
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         log.info(Config.getPre() + "WebConfig addInterceptors");
@@ -117,7 +134,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 
 //        token检测 设置用户 环境上下文    未登录则跳转登录 拦截?
-        registry.addInterceptor(new UserInterceptors() )
+        registry.addInterceptor( getUserInterceptors() )
                 .addPathPatterns("/**")
                 .excludePathPatterns(Arrays.asList(
                         "/shiro/**",    //登录
@@ -132,10 +149,17 @@ public class WebConfig implements WebMvcConfigurer {
 
 
         //        限速 所有限速? 用户限速？ ip限速？
-        registry.addInterceptor(new RateLimitInterceptor() )
+        registry.addInterceptor( getRateLimitInterceptor() )
                 .addPathPatterns("/**")
-        ;
-
+                .excludePathPatterns(Arrays.asList(
+                        "/shiro/**",    //登录
+                        "/webjars/**",
+                        "/static/**",
+                        "/html/*",
+                        "/*",
+                        "/swagger-resources/**",
+                        "/v2/**"
+                ));
 
 
 
@@ -143,7 +167,7 @@ public class WebConfig implements WebMvcConfigurer {
         //配置 拦截 /list结尾的请求
         //    /*表示只拦截 /这一层目录下的/list   比如 拦截/dept/list  不会拦截/api/dept/list
         //    /** 表示拦截  /这一层目录下的包含子目录的/list 比如拦截 /api/dept/list
-        registry.addInterceptor(new LogInterceptors() )
+        registry.addInterceptor(getLogInterceptors() )
                 .addPathPatterns("/**")
                 .excludePathPatterns(Arrays.asList(
                         "/webjars/**",

@@ -12,6 +12,8 @@ import com.walker.util.SpringContextUtil;
 import com.walker.service.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -34,17 +36,16 @@ import javax.servlet.http.HttpServletResponse;
  * 拦截器是实现成单例的，因此不管用户请求多少次都只访问同一个拦截器实现，即线程不安全。
  * 解决方案是：使用ThreadLocal，它是线程绑定的变量，提供线程局部变量（一个线程一个ThreadLocal，
  * A线程的ThreadLocal只能看到A线程的ThreadLocal，不能看到B线程的ThreadLocal）。
- * @author Walker
  *
  */
 public class LogInterceptors implements HandlerInterceptor{
     private Logger log = LoggerFactory.getLogger(getClass());
 
-//    @Autowired
-//	  @Qualifier("logService")
-//    LogService logService;
+    @Autowired
+    @Qualifier("logService")
+    LogService logService;
     //此处不能自动注入? 扫描注入包配置问题
-    LogService logService = SpringContextUtil.getBean("logService");
+//    LogService logService = SpringContextUtil.getBean("logService");
 
 
     // 统计应用性能

@@ -355,7 +355,6 @@ public class RequestUtil {
 	public static void echo401(HttpServletResponse response, String json) throws IOException {
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, json);
 	}
-
 	/**
 	 * RequestUtil.echoErr(response,  HttpServletResponse.SC_UNAUTHORIZED, token);
 	 * @param code HttpServletResponse.SC_UNAUTHORIZED

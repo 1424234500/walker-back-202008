@@ -36,10 +36,6 @@ public class ConfigDao {
 
     private static final AtomicInteger count = new AtomicInteger(0);
 
-    ConfigDao(){
-
-    }
-
     /**
      * 从数据库初始化 预热
      * 避免集体失效 分布过期时间

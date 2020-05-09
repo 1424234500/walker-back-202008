@@ -11,6 +11,7 @@ import com.walker.service.LogService;
 import com.walker.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,18 +22,25 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 拦截器 日志 登录/访问权限 事务   监控所有用户操作和登录并记录日志数据库
  * 拦截器是在上下文容器 Spring Context 初始化之前执行，所以没有办法直接在拦截器中注入Service对象
+ *
+ * 解决方案1：
+ *  ShiroConfig shiroConfig = SpringContextUtil.getBean("shiroConfig")
+ * 解决方案2：
+ * 	springboot 代码注入interceptor @Bean依赖自动装配
+ *
  * @author Walker
  *
  */
 public class UserInterceptors implements HandlerInterceptor{
 	private Logger log = LoggerFactory.getLogger(getClass());
 
-	Cache<String> cache = CacheMgr.getInstance();
-
-	LoginService loginService = SpringContextUtil.getBean("loginService");
-
-	LogService logService = SpringContextUtil.getBean("logService");
-	ShiroConfig shiroConfig = SpringContextUtil.getBean("shiroConfig");
+	private Cache<String> cache = CacheMgr.getInstance();
+	@Autowired
+	private LoginService loginService;
+	@Autowired
+	private LogService logService;
+	@Autowired
+	private ShiroConfig shiroConfig;
 
     /**
      * 在渲染视图之后被调用； 
