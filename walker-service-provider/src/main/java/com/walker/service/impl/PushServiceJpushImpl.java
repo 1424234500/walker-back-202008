@@ -15,6 +15,7 @@ import com.walker.config.Context;
 import com.walker.config.MakeConfig;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
+import com.walker.dao.ConfigDao;
 import com.walker.dao.JdbcDao;
 import com.walker.mode.PushBindModel;
 import com.walker.mode.PushModel;
@@ -50,6 +51,8 @@ public class PushServiceJpushImpl implements PushService {
 
 	private Cache<String> cache = CacheMgr.getInstance();
 
+	@Autowired
+	ConfigDao configDao;
 	@Autowired
 	private PushAgentService pushAgentService;
 
@@ -105,8 +108,10 @@ public class PushServiceJpushImpl implements PushService {
 	}
 
 	public JPushClient getJPushClient(){
-		log.info("getJPushClient " + makeConfig.pushJpushMasterSecret + " " + makeConfig.pushJpushAppKey);
-		return new JPushClient(makeConfig.pushJpushMasterSecret, makeConfig.pushJpushAppKey, null, ClientConfig.getInstance());
+//		push.jpush.APP_KEY=557bf3f8c230ec7cdefb0e06
+//		push.jpush.MASTER_SECRET=a5dba9ffe772656db0e7149d
+//		log.debug("getJPushClient " + configDao.get("com.walker.service.impl.PushServiceJpushImpl.secret", "") + " " + configDao.get("com.walker.service.impl.PushServiceJpushImpl.appkey", ""));
+		return new JPushClient(configDao.get("com.walker.service.impl.PushServiceJpushImpl.secret", "a5dba9ffe772656db0e7149d") , configDao.get("com.walker.service.impl.PushServiceJpushImpl.appkey", "a5dba9ffe772656db0e7149d"), null, ClientConfig.getInstance());
 	}
 
 

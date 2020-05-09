@@ -4,6 +4,7 @@ package com.walker.service.impl;
 import com.walker.common.util.*;
 import com.walker.config.MakeConfig;
 import com.walker.core.encode.Pinyin;
+import com.walker.dao.ConfigDao;
 import com.walker.system.Pc;
 import com.walker.dao.BaseDateRepository;
 import com.walker.dao.JdbcDao;
@@ -29,7 +30,8 @@ import java.util.concurrent.ExecutorService;
  *
  * 初始化数据
  *
- * 造数
+ * 定期造数
+ *      没
  *
  * 同步数据
  *
@@ -65,6 +67,8 @@ public class SyncServiceImpl implements SyncService {
     RedisDao redisDao;
     @Autowired
     MakeConfig makeConfig;
+    @Autowired
+    ConfigDao configDao;
 
     ExecutorService executorService = ThreadUtil.getExecutorServiceInstance(10);
 
@@ -72,8 +76,8 @@ public class SyncServiceImpl implements SyncService {
     @Override
     public Bean doBaseData(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = Key.getLockRedis(getClass().getName() + ".doBaseData");
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisMakeUser, makeConfig.expireLockRedisWait);
+        String key = "com.walker.service.impl.doBaseData";
+        String value = redisDao.tryLock(key, configDao.get(key, 3600), 1);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
@@ -145,8 +149,8 @@ public class SyncServiceImpl implements SyncService {
     public Bean doAction(Bean args) {
 
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = getClass().getName() + ".doSql";
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea, makeConfig.expireLockRedisWait);
+        String key = "com.walker.service.impl.doAction";
+        String value = redisDao.tryLock(key, configDao.get(key, 36000), 1);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
@@ -232,8 +236,8 @@ public class SyncServiceImpl implements SyncService {
     @Override
     public Bean syncArea(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = getClass().getName() + ".syncArea";
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisSyncArea, makeConfig.expireLockRedisWait);
+        String key = "com.walker.service.impl.syncArea";
+        String value = redisDao.tryLock(key, configDao.get(key, 20 * 3600), 1);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
@@ -278,8 +282,8 @@ public class SyncServiceImpl implements SyncService {
     @Override
     public Bean makeUser(Bean args) {
         Bean res = new Bean().set("TIME", TimeUtil.getTimeYmdHmss());
-        String key = getClass().getName() + ".makeUser";
-        String value = redisDao.tryLock(key, makeConfig.expireLockRedisMakeUser, makeConfig.expireLockRedisWait);
+        String key = "com.walker.service.impl.makeUser";
+        String value = redisDao.tryLock(key, configDao.get(key, 10 * 60), 1);
         res.set("KEY", key);
         res.set("VALUE", value);
         if(value != null && value.length() > 0){
@@ -296,7 +300,7 @@ public class SyncServiceImpl implements SyncService {
                          * 5线程 共计造1000用户
                          */
 
-                        int countMakeUser = makeConfig.countMakeUser;
+                        int countMakeUser = configDao.get("com.walker.service.impl.makeUser.count", 10);
                         List<User> list = new ArrayList<>();
                         long day = Integer.valueOf(TimeUtil.getTime(TimeUtil.ymd1)) * countMakeUser;//20200215
                         String time = TimeUtil.getTimeYmdHms();

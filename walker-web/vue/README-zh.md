@@ -47,7 +47,7 @@ npm run dev
 
 #可能有问题 则 
 npm install --save-dev node-sass
-
+npm audit fix
 ```
 
 浏览器访问 [http://localhost:9528](http://localhost:9528)

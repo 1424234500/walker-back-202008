@@ -1,7 +1,6 @@
 package com.walker.dao;
 import com.walker.common.util.*;
 import com.walker.core.aop.FunArgsReturn;
-import com.walker.core.database.Redis;
 import com.walker.core.exception.ErrorException;
 import com.walker.mode.Key;
 import io.lettuce.core.RedisFuture;
@@ -17,11 +16,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Repository;
-import redis.clients.jedis.Jedis;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -126,7 +123,7 @@ public class RedisDao {
                 break;
             }
             try {//1000ms等待锁，共轮询10次
-                TimeUnit.SECONDS.sleep(Math.max(secondsToWait/4, 10));
+                TimeUnit.MILLISECONDS.sleep(Math.max(secondsToWait * 1000 / 4, 10));
             } catch (InterruptedException e) {
                 log.error(e.getMessage(), e);
             }
@@ -533,13 +530,14 @@ public class RedisDao {
                     res = getMap(key, key1, null);  //再次获取缓存
                     if (res == null) {
                         res = getFromDb.make(key1);
-                        if(res == null){	//避免缓存穿透  null是否缓存 快速过期来保护数据库  本来计划10分钟过期 则 null1分钟过期 最小5秒过期
+                        if(res == null){	//避免缓存穿透  null是否缓存 快速过期来保护数据库  本来计划10分钟过期 则 null 1分钟过期 最小5秒过期
 //									布隆过滤器预热 性能实现 全局map 精确映射数据库有没有
-                            setMap(key, key1, res, Math.max(secondsToExpire/10, 5000));
+                            log.warn("get from db " + key + " res is null ? " + (res == null) );
+                            setMap(key, key1, res, Math.max(secondsToExpire/100, 5));
                         }else{
+                            log.debug("get from db " + key + " res is null ? " + (res == null) + " " + res);
                             setMap(key, key1, res, secondsToExpire);
                         }
-                        log.debug("get from db " + key + " res is null ? " + (res == null) );
                     }
                 }finally {
                     releaseLock(lockName, lock);
@@ -549,7 +547,7 @@ public class RedisDao {
                 throw new ErrorException(" no get lock and wait timeout for db date");
             }
         }else{
-            log.debug("get from cache " + key + " " + key1);
+            log.debug("get from cache " + key + " " + key1 + " res " + res);
         }
         return res;
     }

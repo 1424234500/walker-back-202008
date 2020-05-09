@@ -2,6 +2,11 @@
 quartz:
   enabled: true
 spring:
+  #默认主数据源
+  datasource: #连接超时问题 MYSQL八小时 reconnect?
+    sql-script-encoding: utf-8
+    schema: classpath:ddl.sql  # 初始化schema文件位置
+    data: classpath:dml.sql  # 初始化data位置
 #指定别名数据源
 #spring.datasource.walker.url=jdbc:mysqlxxxx
 #默认主数据源 改到sharding里统一路由

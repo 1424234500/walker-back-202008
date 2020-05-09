@@ -3,6 +3,7 @@ package com.walker.service.impl;
 
 import com.walker.common.util.*;
 import com.walker.config.MakeConfig;
+import com.walker.dao.ConfigDao;
 import com.walker.dao.RedisDao;
 import com.walker.mode.Key;
 import com.walker.service.Config;
@@ -35,6 +36,8 @@ public class SyncAreaServiceImpl implements SyncAreaService {
     RedisDao redisDao;
 
 
+    @Autowired
+    ConfigDao configDao;
 
     @Autowired
     AreaService areaService;
@@ -274,7 +277,7 @@ public class SyncAreaServiceImpl implements SyncAreaService {
 
         String key = Key.getUrlDone();
         redisDao.zAdd(key, area.getUrl(), System.currentTimeMillis());
-        redisDao.expire(key, makeConfig.expireUrlDone);
+        redisDao.expire(key, configDao.get("com.walker.service.impl.SyncAreaServiceImpl.setDone", 86400));
 
         return res;
     }

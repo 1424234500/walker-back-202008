@@ -1,16 +1,19 @@
-package com.walker.core.config;
+package com.walker.dao;
 
-import com.walker.common.util.Bean;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.core.aop.FunArgsReturn;
-import com.walker.core.database.Dao;
-import com.walker.core.database.RedisUtil;
 import com.walker.core.database.SqlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -19,46 +22,43 @@ import java.util.*;
  *  ID VALUE   ABOUT   S_FLAG  S_MTIME
  *
  */
-public class ConfigMgr {
-    private static Logger log = LoggerFactory.getLogger(ConfigMgr.class);
+@Repository
+public class ConfigDao {
+    private static Logger log = LoggerFactory.getLogger(ConfigDao.class);
 
-    private ConfigMgr() {
-    }
-    private static class SingletonFactory{
-        private static ConfigMgr instanse;
-        static {
-            log.warn("singleton instance construct " + SingletonFactory.class);
-            instanse = new ConfigMgr();
-            instanse.reload();
-        }
-    }
-
-    public static ConfigMgr getInstance() {
-        return SingletonFactory.instanse;
-    }
-
+    @Autowired
+    RedisDao redisDao;
+    @Autowired
+    JdbcDao jdbcDao;
 
     String CONF_ID = "config";
 
 
+    private static final AtomicInteger count = new AtomicInteger(0);
+
+    ConfigDao(){
+
+    }
+
     /**
      * 从数据库初始化 预热
-     * 避免集体失效 分布过期时间    配置量不大  简单实用map结构 不做预热 不做集体失效问题
+     * 避免集体失效 分布过期时间
      * @return
      */
     public int reload(){
         int res = -1;
-        res = RedisUtil.initCacheFromDb(CONF_ID, 24 * 3600, 30, 10 * 60, new FunArgsReturn<String, Map<String, Object>>() {
+//        String key0, long millisecondsToExpire, long millisecondsToWait, long initDeta, FunArgsReturn<String, Map<String, Object
+        res = redisDao.initCacheFromDb(CONF_ID, 24 * 3600, 30, 10 * 60, new FunArgsReturn<String, Map<String, Object>>() {
             @Override
             public Map<String, Object> make(String obj) {
                 Map<String, Object> res = new LinkedHashMap<>();
 
-                List<Map<String, Object>> line = new Dao().find("select ID, VALUE from W_SYS_CONFIG where S_FLAG='1' order by S_MTIME ");
+                List<Map<String, Object>> line = jdbcDao.find("select ID, VALUE from W_SYS_CONFIG where S_FLAG='1' order by S_MTIME ");
                 for(Map<String, Object> item : line){
                     log.debug(item.toString());
                     res.put(String.valueOf(item.get("ID")), item.get("VALUE"));
                 }
-                log.info("load cache " + CONF_ID + " " + res );
+                log.info(" load cache " + count.addAndGet(1) + " " + CONF_ID + " " + res );    //注意确保单例问题
 
                 return res;
             }
@@ -85,32 +85,37 @@ public class ConfigMgr {
      */
     public <T> T get(String key, T defaultValue){
 
-        T res = RedisUtil.getCacheOrDb(CONF_ID, key, 3600, 8, new FunArgsReturn<String, T>() {
+        String res = redisDao.getCacheOrDb(CONF_ID, key, 3600, 8, new FunArgsReturn<String, String>() {
             @Override
-            public T make(String obj) {
-                T v = defaultValue;
-                Map<String, Object> line = new Dao().findOne("select VALUE from W_SYS_CONFIG where ID=? and S_FLAG='1' ", key);
+            public String make(String obj) {
+                String v = "";
+                Map<String, Object> line = jdbcDao.findOne("select VALUE from W_SYS_CONFIG where ID=? and S_FLAG='1' ", obj);
                 if(line != null){
-                    Object vv = line.get(key);
-                    v = LangUtil.turn(vv, defaultValue);
+                    Object vv = line.get("VALUE");
+                    v = String.valueOf(vv);
                 }
                 return v;
             }
         });
 
-        return res;
+        return LangUtil.turn(res, defaultValue);
     }
 
+    public Integer set(String ID, String VALUE, String ABOUT){
+        return set(ID, VALUE, ABOUT, "1", "");
+    }
 
-
+    public Integer set(String ID, FunArgsReturn<String, Integer> call){
+        return redisDao.setDbAndClearCache(CONF_ID, ID, 5, call);
+    }
     public Integer set(String ID, String VALUE, String ABOUT, String S_FLAG, String S_MTIME){
 
-        Integer res = RedisUtil.setDbAndClearCache(CONF_ID, ID, 3600,  new FunArgsReturn<String, Integer>() {
+        Integer res = redisDao.setDbAndClearCache(CONF_ID, ID, 5,  new FunArgsReturn<String, Integer>() {
             @Override
             public Integer make(String obj) {
                 Integer rr = 0;
                 boolean isexist = false;
-                Map<String, Object> line = new Dao().findOne("select * from W_SYS_CONFIG where ID=?  ", ID);
+                Map<String, Object> line = jdbcDao.findOne("select * from W_SYS_CONFIG where ID=?  ", ID);
                 if(line != null) {
                     isexist = true;
                 }
@@ -133,9 +138,9 @@ public class ConfigMgr {
                     line.put("S_MTIME", TimeUtil.getTimeYmdHmss());
                 }
                 if(isexist){
-                    rr = new Dao().executeSql("update W_SYS_CONFIG set ID=?,VALUE=?,ABOUT=?,S_FLAG=?,S_MTIME=? where ID=? ", line.get("ID"), line.get("VALUE"), line.get("ABOUT"), line.get("S_FLAG"), line.get("S_MTIME"), line.get("ID"));
+                    rr = jdbcDao.executeSql("update W_SYS_CONFIG set ID=?,VALUE=?,ABOUT=?,S_FLAG=?,S_MTIME=? where ID=? ", line.get("ID"), line.get("VALUE"), line.get("ABOUT"), line.get("S_FLAG"), line.get("S_MTIME"), line.get("ID"));
                 }else{
-                    rr = new Dao().executeSql("insert into W_SYS_CONFIG values(" + SqlUtil.makePosition("?", line.size()) + ")", line.get("ID"), line.get("VALUE"), line.get("ABOUT"), line.get("S_FLAG"), line.get("S_MTIME") );
+                    rr = jdbcDao.executeSql("insert into W_SYS_CONFIG values(" + SqlUtil.makePosition("?", line.size()) + ")", line.get("ID"), line.get("VALUE"), line.get("ABOUT"), line.get("S_FLAG"), line.get("S_MTIME") );
                 }
                 return  (rr);
             }
