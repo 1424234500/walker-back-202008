@@ -3,6 +3,7 @@ package com.walker.dao;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.core.aop.FunArgsReturn;
+import com.walker.core.aop.FunCacheDb;
 import com.walker.core.database.SqlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,7 @@ public class ConfigDao {
 
     /**
      *
-     * 穿透？  等待锁超时怎么办
+     * 穿透？  等待锁超时怎么办   熔断怎么办 宕机
      *
      * 并发访问 等待获取数据库 加锁 等待多一些时间
      *
@@ -80,6 +81,47 @@ public class ConfigDao {
      * @return
      */
     public <T> T get(String key, T defaultValue){
+
+//        String res = redisDao.getCacheOrDb(CONF_ID, key, 3600, 8, new FunCacheDb<String, String>() {
+//            @Override
+//            public boolean setCache(String key, String valueFromDb, int expireSec) {
+//                long res = redisDao.setMap(CONF_ID, key, valueFromDb, expireSec);
+//                return res > 0;
+//            }
+//
+//            @Override
+//            public String getCache(String key) {
+//                return (String) redisDao.getMap(CONF_ID, key, defaultValue);
+//            }
+//
+//            @Override
+//            public String getDb(String key) {
+//                String v = "";
+//                Map<String, Object> line = jdbcDao.findOne("select VALUE from W_SYS_CONFIG where ID=? and S_FLAG='1' ", key);
+//                if(line != null){
+//                    Object vv = line.get("VALUE");
+//                    v = String.valueOf(vv);
+//                }
+//                return v;            }
+//
+//            @Override
+//            public boolean setDb(String key) {
+//                return false;
+//            }
+//
+//            @Override
+//            public String tryLock(String lockName, int secondsToExpire, int secondsToWait) {
+//                return redisDao.tryLock(lockName, secondsToExpire, secondsToWait);
+//            }
+//
+//            @Override
+//            public boolean releaseLock(String lockName, String identifier) {
+//                return redisDao.releaseLock(lockName, identifier);
+//            }
+//        });
+
+
+
 
         String res = redisDao.getCacheOrDb(CONF_ID, key, 3600, 8, new FunArgsReturn<String, String>() {
             @Override

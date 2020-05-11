@@ -1,6 +1,7 @@
 package com.walker.dao;
 import com.walker.common.util.*;
 import com.walker.core.aop.FunArgsReturn;
+import com.walker.core.aop.FunCacheDb;
 import com.walker.core.exception.ErrorException;
 import com.walker.mode.Key;
 import io.lettuce.core.RedisFuture;
@@ -521,6 +522,12 @@ public class RedisDao {
         final String key = KEY_GET_CACHE_OR_DB + key0;
         final String lockName = KEY_LOCK_GET_CACHE_OR_DB + key0 + "::" + key1;
 
+
+//        熔断
+//        如果redis不可用    考虑一段时间熔断    恢复机制
+//        如果redis失败率超过50%   考虑一段时间限流    恢复机制
+//        这里应该跳过redis并且直接查询数据库  并且通知限流  降级服务
+
         T res = getMap(key, key1, null);
         if(res == null){
 //					加锁 避免缓存击穿 锁粒度最小程度 key
@@ -551,7 +558,47 @@ public class RedisDao {
         }
         return res;
     }
+    public <T> T getCacheOrDb(String key0, String key1, int secondsToExpire, int secondsToWait, FunCacheDb<String, T> funCacheDb){
+        final String key = KEY_GET_CACHE_OR_DB + key0;
+        final String lockName = KEY_LOCK_GET_CACHE_OR_DB + key0 + "::" + key1;
 
+
+//        熔断
+//        如果redis不可用    考虑一段时间熔断    恢复机制
+//        如果redis失败率超过50%   考虑一段时间限流    恢复机制
+//        这里应该跳过redis并且直接查询数据库  并且通知限流  降级服务
+
+        T res = funCacheDb.CACHE_IS_OK.get() ? funCacheDb.getCache(key1) : null;//getMap(key, key1, null);
+        if(res == null){
+//					加锁 避免缓存击穿 锁粒度最小程度 key
+            String lock = funCacheDb.tryLock(lockName, DEFAULT_LOCK_DB_KEY_TIME, secondsToWait);
+            if (lock.length() > 0) {
+                try {
+                    res = getMap(key, key1, null);  //再次获取缓存
+                    if (res == null) {
+                        res = funCacheDb.getDb(key1);
+                        if(res == null){	//避免缓存穿透  null是否缓存 快速过期来保护数据库  本来计划10分钟过期 则 null 1分钟过期 最小5秒过期
+//									布隆过滤器预热 性能实现 全局map 精确映射数据库有没有
+                            log.warn("get from db " + key + " res is null ? " + (res == null) );
+                            funCacheDb.setCache(key1, res, Math.max(secondsToExpire/100, 5));
+
+                        }else{
+                            log.debug("get from db " + key + " res is null ? " + (res == null) + " " + res);
+                            funCacheDb.setCache(key1, res, secondsToExpire);
+                        }
+                    }
+                }finally {
+                    funCacheDb.releaseLock(lockName, lock);
+                }
+            }else{
+                log.debug("cache funArgsReturn lock no: " + key + " " + key1);
+                throw new ErrorException(" no get lock and wait timeout for db date");
+            }
+        }else{
+            log.debug("get from cache " + key + " " + key1 + " res " + res);
+        }
+        return res;
+    }
     /**
      * 初始化 项目启动 读取配置表预热到缓存
      * 多台服务器同时启动
