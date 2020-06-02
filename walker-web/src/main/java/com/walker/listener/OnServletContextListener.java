@@ -113,12 +113,14 @@ public class OnServletContextListener implements ServletContextListener {
         ThreadUtil.schedule(new Runnable() {
             @Override
             public void run() {
+                String timeStart = TimeUtil.getTimeYmdHmss();
+                int count = 0;
                 log.info("######################开启延时测试初始化springMvc#######################");
                 try {
                     log.info(HttpUtil.doPost("http://localhost:8080/walker-web/tomcat/listCacheMap.do", new Page().toBean(), null, null));
-                    log.info("######################测试地址完毕#######################");
+                    log.info("######################测试地址完毕#######################" + timeStart + " " + count);
                 } catch (Exception e) {
-                    log.info("地址测试异常 等会儿重新测试");
+                    log.info("地址测试异常 等会儿重新测试" + e.getMessage() + " "  + timeStart + " " + count++);
                     startTestSelf();
                 }
             }

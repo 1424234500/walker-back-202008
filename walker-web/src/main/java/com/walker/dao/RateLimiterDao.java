@@ -110,6 +110,7 @@ public class RateLimiterDao {
 
     /**
      *
+     * ratelimiter限流 配置见dml
      * @param url   /redis/getColsMap.do
      * @param userId
      * @return

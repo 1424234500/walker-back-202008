@@ -340,6 +340,20 @@
             <scope>compile</scope>
         </dependency>
 
+<!--        sentinel限流 熔断-->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-core</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+<!--        sentinel控制台-->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-transport-simple-http</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+
 
     </dependencies>
 

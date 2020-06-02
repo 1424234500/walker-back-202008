@@ -50,7 +50,10 @@ public class Emp implements Serializable {
 		this.id = id;
 		return this;
 	}
-
+	public Emp setId(Object id) {
+		this.id = String.valueOf(id);
+		return this;
+	}
 	public String getName() {
 		return name;
 	}

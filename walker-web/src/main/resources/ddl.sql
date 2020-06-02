@@ -9,7 +9,7 @@
 ---ID       VARCHAR2(32)     主键
 ---S_MTIME  VARCHAR2(32)	 long/字符串ymdhms 修改时间 自动设置	YYYY-MM-DD HH24:MM-SS:SSS
 ---S_ATIME  VARCHAR2(32)	 long/字符串ymdhms 添加时间 自动设置	YYYY-MM-DD HH24:MM-SS:SSS
----S_FLAG   VARCHAR2(2)      0/1     假删除 配合S_MTIME增量查询
+---S_FLAG   VARCHAR2(2)      0否/1是     假删除 配合S_MTIME增量查询
 ---
 
 
