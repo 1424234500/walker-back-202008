@@ -6,7 +6,9 @@ import com.walker.config.Context;
 import com.walker.config.ControllerConfig;
 import com.walker.core.cache.CacheMgr;
 import com.walker.dao.ConfigDao;
+import com.walker.dao.Limiter;
 import com.walker.dao.RateLimiterDao;
+import com.walker.dao.SentinelLimitDao;
 import com.walker.mode.User;
 import com.walker.service.Config;
 import com.walker.util.RequestUtil;
@@ -18,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -44,7 +48,8 @@ public class RateLimitInterceptor implements HandlerInterceptor{
     ConfigDao configDao;
     @Autowired
     RateLimiterDao rateLimiterDao;
-
+    @Autowired
+    SentinelLimitDao sentinelLimitDao;
     /** 
      * 在渲染视图之后被调用； 
      * 可以用来释放资源 
@@ -87,15 +92,16 @@ public class RateLimitInterceptor implements HandlerInterceptor{
 //        每秒只允许 x个请求通过 令牌桶
 //        同时只允许最多y个请求执行 线程池 连接数
 //        配置中心 集群 redis？
+        List<Limiter> limiters = Arrays.asList(rateLimiterDao, sentinelLimitDao);
 
-        String info =  rateLimiterDao.tryAcquire(url, id);
-        if(info.length() > 0){
-            RequestUtil.echoErr(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, new Bean().put("info", info).toString());
-            return false;
-        }else{
-            return true;
+        for(Limiter limiter : limiters) {
+            String info = limiter.tryAcquire(url, id);
+            if (info.length() > 0) {
+                RequestUtil.echoErr(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, new Bean().put("info", info).toString());
+                return false;
+            }
         }
-
+        return true;
     }
   
 }

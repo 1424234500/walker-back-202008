@@ -17,7 +17,7 @@ echo "项目名 name_proj ${name_proj}"
 ##-----------------------------------------
 jarf="${name_proj}-0.0.1.jar"
 echo "jar文件 $jarf"
-cmd="java -jar ${jarf}"
+cmd="java -jar ${jarf} -Dcsp.sentinel.dashboard.server=consoleIp:port  "
 logfile="/home/walker/logs/${name_proj}.log"
 
 #shutdown the process by the grep pids by the cmd name  Warning ! the space
@@ -54,7 +54,7 @@ function start(){
     then
         pid
     else
-        tcmd="nohup $cmd >/dev/null &"	# > $logfile 启动日志不存储 交由log4j自动存入文件
+        tcmd="nohup $cmd >/dev/null 2>&1 &"	# > $logfile 启动日志不存储 交由log4j自动存入文件
         line
         echo ${tcmd}
         eval ${tcmd}

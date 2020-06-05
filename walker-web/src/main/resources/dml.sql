@@ -7,9 +7,10 @@ select 1 from dual;
 INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.service.impl.doBaseData', '造数间隔s', '1', '1970-01-01 00:00:00', '3600');
 INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.service.impl.doAction', '地域同步间隔s', '1', '1970-01-01 00:00:00', '36000');
 --造数配置
-INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.job.make.dura.millsec', '模拟访问url持续时间', '1', '1970-01-01 00:00:00', '120000');
-INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.job.make.eachthread.sleep.millsec', '模拟访问url线程间隔', '1', '1970-01-01 00:00:00', '100');
-INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.job.make.threadsize', '模拟访问url线程数', '1', '1970-01-01 00:00:00', '2');
+--delete from `walker`.`W_SYS_CONFIG`  where ID in ('com.walker.job.make.dura.millsec', 'com.walker.job.make.eachthread.sleep.millsec', 'com.walker.job.make.threadsize');
+INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.job.make.dura.millsec', '模拟访问url持续时间', '1', '1970-01-01 00:00:00', '3000');
+INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.job.make.eachthread.sleep.millsec', '模拟访问url线程间隔', '1', '1970-01-01 00:00:00', '1000');
+INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.job.make.threadsize', '模拟访问url线程数', '1', '1970-01-01 00:00:00', '0');
 
 
 --推送提醒
@@ -18,10 +19,11 @@ INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`
 
 
 --限流配置 默认
-INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.intercept.RateLimitInterceptor.default.count', '限流次数每秒默认,url粒度', '1', '1970-01-01 00:00:00', '2');
+INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('ratelimit', '限流次数all', '1', '1970-01-01 00:00:00', '9999');
+INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.intercept.RateLimitInterceptor.default.count', '限流次数每秒默认,url粒度', '1', '1970-01-01 00:00:00', '200');
 INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('com.walker.intercept.RateLimitInterceptor.default.warmupPeriod', '限流次数预热默认s', '1', '1970-01-01 00:00:00', '3');
 --限流配置 指定url
-INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('/comm/getColsMap.do', '限流次数s', '1', '1970-01-01 00:00:00', '4');
+INSERT INTO `walker`.`W_SYS_CONFIG` (`ID`, `ABOUT`, `S_FLAG`, `S_MTIME`, `VALUE`) VALUES ('/comm/getColsMap.do', '限流次数接口1 s', '1', '1970-01-01 00:00:00', '4');
 
 
 

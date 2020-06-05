@@ -7,6 +7,7 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.walker.common.util.*;
 import com.walker.config.MakeConfig;
 import com.walker.dao.ConfigDao;
+import com.walker.dao.SentinelLimitDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class InitService {
     MakeConfig makeConfig;
     @Autowired
     ConfigDao configDao;
+    @Autowired
+    SentinelLimitDao sentinelLimitDao;
 
     /**
      * 启动后挂载初始化
@@ -38,7 +41,7 @@ public class InitService {
         ThreadUtil.execute(new Runnable() {
            @Override
            public void run() {
-               initSentinel();
+               sentinelLimitDao.reload();
             }
         });
         //异步初始化
@@ -66,31 +69,6 @@ public class InitService {
         }
     }
 
-    /**
-     * sentinel限流熔断框架初始话
-     * 配置见dml.sql
-     */
-    public void initSentinel() {
-        log.info(Config.getPre() + "initSentinel!!! ");
-//        FlowRuleManager.loadRules(List<FlowRule> rules); // 修改流控规则
-//        DegradeRuleManager.loadRules(List<DegradeRule> rules); // 修改降级规则
-//        SystemRuleManager.loadRules(List<SystemRule> rules); // 修改系统规则
-//        AuthorityRuleManager.loadRules(List<AuthorityRule> rules); // 修改授权规则
-        List<FlowRule> rules = new ArrayList<>();
 
-        String url = "/comm/getColsMap.do";
-        double qps = configDao.get(url, 1D);
-        if(qps >= 0) {
-            FlowRule rule = new FlowRule();
-            rule.setResource(url);
-            rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
-            rule.setCount(1);// Set limit QPS to 20.
-            rules.add(rule);
-        }
-
-        FlowRuleManager.loadRules(rules);
-
-
-    }
 
 }

@@ -54,7 +54,7 @@ function start(){
     then
         pid
     else
-        tcmd="nohup $cmd >/dev/null &"	# > $logfile 启动日志不存储 交由log4j自动存入文件
+        tcmd="nohup $cmd >/dev/null 2>&1  &"	# > $logfile 启动日志不存储 交由log4j自动存入文件
         line
         echo ${tcmd}
         eval ${tcmd}

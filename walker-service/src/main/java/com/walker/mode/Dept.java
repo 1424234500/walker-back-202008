@@ -3,17 +3,17 @@ package com.walker.mode;
 
 import com.walker.service.Config;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
  * jpa实体类 部门
  */
 @Entity
-@Table(name = "W_DEPT")
+@Table(name = "W_DEPT",indexes = {
+        @Index(name = "INDEX_W_DEPT_P_ID", columnList = "P_ID")
+        , @Index(name = "INDEX_W_DEPT_PATH", columnList = "PATH")
+})
 public class Dept implements Cloneable,Serializable {
 
     @Id     //主键

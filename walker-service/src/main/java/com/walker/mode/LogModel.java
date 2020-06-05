@@ -5,10 +5,7 @@ import com.walker.common.util.TimeUtil;
 import com.walker.service.Config;
 import com.walker.system.Pc;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -35,7 +32,16 @@ import java.io.Serializable;
  */
 
 @Entity
-@Table(name = "W_LOG_MODEL")
+@Table(name = "W_LOG_MODEL"
+		, indexes = {
+//                @Index(name = "INDEX_W_AREA_PATH", columnList = "PATH"),      //索引不能超过1000
+//                @Index(name = "INDEX_W_AREA_PATH_NAME", columnList = "PATH_NAME"),
+		@Index(name = "INDEX_W_LOG_MODEL_URL", columnList = "URL")
+		, @Index(name = "INDEX_W_LOG_MODEL_WAY", columnList = "WAY")
+		, @Index(name = "INDEX_W_LOG_MODEL_CATE", columnList = "CATE")
+}
+)
+
 public class LogModel implements Cloneable, Serializable {
 	@Id     //主键
 	@Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")

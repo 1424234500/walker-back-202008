@@ -74,7 +74,7 @@ public class MakeTestService {
         logModel = logService.saveLogModelNoTime(logModel);
         AtomicLong count = new AtomicLong(0);
         try{
-            ExecutorService service = Executors.newFixedThreadPool(threadSize + 1);
+            ExecutorService service = Executors.newFixedThreadPool(threadSize);
             for(int i = 0; i < threadSize; i++) {
                 final int tno = i;
                 service.execute(new Runnable() {

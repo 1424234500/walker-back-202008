@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 @Repository
-public class RateLimiterDao {
+public class RateLimiterDao implements Limiter{
     private static Logger log = LoggerFactory.getLogger(RateLimiterDao.class);
 
     @Autowired
@@ -72,35 +72,25 @@ public class RateLimiterDao {
      * 并发访问配置时 多等待充足时间 等待其他进程线程查询 10s
      *
      */
-    public RateLimiter get(String url, String userId, double defaultCount){
+    private RateLimiter get(String url, String userId, double defaultCount){
         RateLimiter rateLimiter = indexRateLimiters.get(url);
         if(rateLimiter == null){
 //            初始化限流 默认限流 默认预热
-            double eachSecondCount = 0;
-            eachSecondCount = configDao.get(url, 0D);
-            if(eachSecondCount <= 0 ) {
-                if(defaultCount <= 0) {
-                    eachSecondCount = configDao.get("com.walker.intercept.RateLimitInterceptor.default.count", 10D);
-                }else{
-                    eachSecondCount = defaultCount;
-                }
+            double eachSecondCount = getCountConfig(url, defaultCount);
+            if(eachSecondCount > 0) {
+                int warm = configDao.get("com.walker.intercept.RateLimitInterceptor.default.warmupPeriod", 3);
+                log.info("init ratelimiter " + url + " to " + eachSecondCount);
+                rateLimiter = RateLimiter.create(eachSecondCount, warm, TimeUnit.SECONDS);
+                indexRateLimiters.put(url, rateLimiter);
             }
-            int warm = configDao.get("com.walker.intercept.RateLimitInterceptor.default.warmupPeriod", 3);
-            rateLimiter = RateLimiter.create(eachSecondCount, warm, TimeUnit.SECONDS);
-            indexRateLimiters.put(url, rateLimiter);
         }else{
 //        集群模式下 缓存和内存同步问题
 //        比对
-            double eachSecondCount = 0;
-            eachSecondCount = configDao.get(url, 0D);
-            if(eachSecondCount <= 0 ) {
-                if(defaultCount <= 0) {
-                    eachSecondCount = configDao.get("com.walker.intercept.RateLimitInterceptor.default.count", 10D);
-                }else{
-                    eachSecondCount = defaultCount;
-                }
-            }
-            if(Math.abs(eachSecondCount  - rateLimiter.getRate()) > 0.5){ //差值小于  则不做重置
+            double eachSecondCount = getCountConfig(url, defaultCount);
+            if(eachSecondCount == 0){
+                indexRateLimiters.remove(url);
+                rateLimiter = null;
+            } else if (Math.abs(eachSecondCount - rateLimiter.getRate()) > 0.5) { //差值小于  则不做重置
                 log.info("reset ratelimiter " + rateLimiter + " to " + eachSecondCount);
                 rateLimiter.setRate(eachSecondCount);
             }
@@ -109,51 +99,53 @@ public class RateLimiterDao {
     }
 
     /**
+     * //
+     * @param url
+     * @param defaultCount
+     * @return 0则不限制 正数则限制   返回default or 配置值 or 全局默认值
+     */
+    private double getCountConfig(String url, double defaultCount) {
+        double eachSecondCount = configDao.get(url, -1D);   //0不限制 负数取全局默认值
+        if(eachSecondCount < 0 ) {  //负数 不配置 则 默认限制
+            eachSecondCount = configDao.get("com.walker.intercept.RateLimitInterceptor.default.count", defaultCount);
+        }else if(eachSecondCount == 0){
+
+        }else{
+
+        }
+        return eachSecondCount;
+    }
+
+    /**
      *
      * ratelimiter限流 配置见dml
      * @param url   /redis/getColsMap.do
      * @param userId
-     * @return
+     * @return 返回空则ok 否则提示信息
      */
     public String tryAcquire(String url, String userId){
         String res = "";
 
-        RateLimiter all = get(CONF_ID, userId, configDao.get(CONF_ID, 999D) );
+        RateLimiter all = get(CONF_ID, userId, configDao.get(CONF_ID, 999999D) );
 
         if(all.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
             RateLimiter rateLimiter = get(url, userId, 0D);
-            if(rateLimiter.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
+            if(rateLimiter == null){
+
+            } else if(rateLimiter.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
                 log.debug("ratelimiter ok " + url + " " + userId);
             }else{
-                res = "ratelimiter out of " + url + " " + userId + " " + configDao.get(url, configDao.get("com.walker.intercept.RateLimitInterceptor.default.count", 10D));
+                res = "ratelimiter out of " + url + " " + userId + " " + rateLimiter.getRate();
                 log.warn(res );
             }
 
         }else{
-            res = "ratelimiter out of " + url + " " + userId + " " + CONF_ID + " " + configDao.get(CONF_ID, 999D);
+            res = "ratelimiter out of " + url + " " + userId + " " + CONF_ID + " " + all.getRate();
             log.error(res);
         }
 
         return res;
     }
-
-    public Integer set(String url, double newRate, FunArgsReturn<String, Integer> call){
-        RateLimiter rateLimiter = indexRateLimiters.get(url);
-        if(rateLimiter == null){
-            log.warn("reset rateLimiter not exists to " + url );
-        }else{
-            rateLimiter.setRate(newRate);
-            log.info("reset rateLimiter of " + url + " " + rateLimiter.toString() + " rate to " + newRate);
-        }
-
-        return redisDao.setDbAndClearCache(CONF_ID, url, 5, call);
-    }
-
-
-
-
-
-
 
 
 }
