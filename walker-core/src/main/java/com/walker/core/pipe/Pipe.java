@@ -21,6 +21,10 @@ import com.walker.core.aop.Fun;
  */
 public interface Pipe<T>{
 	/**
+	 * lock pre
+	 */
+	String LOCK_PRE = "lock:pipe:";
+	/**
 	 * 多线程消费 空闲间隔
 	 */
 	long SLEEP_THREAD = 50;

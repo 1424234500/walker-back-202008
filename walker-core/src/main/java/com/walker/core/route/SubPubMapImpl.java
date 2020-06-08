@@ -10,6 +10,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ *  常用于单java程序单进程  阻塞发布订阅
+ *  一对多 一人发布 订阅者们都处理
+ * @param <T>
+ * @param <V>
+ */
 public class SubPubMapImpl<T, V> implements SubPub<T, V>{
 //	private ExecutorService pool;
 	private Map<String, Set<OnSubscribe<T, V>>> subscribeTable;
@@ -26,7 +32,7 @@ public class SubPubMapImpl<T, V> implements SubPub<T, V>{
 			for(final OnSubscribe<T, V> onSub : list) {
 				Res<V> v = onSub.onSubscribe(object);
 				res.add(v.res);
-				//上下级先后处理对于流程的控制
+				//上下级先后处理对于流程的控制 进程内多任务抢占
 				if(v.res == SubPub.OnSubscribe.Type.STOP) {
 					break;
 				}

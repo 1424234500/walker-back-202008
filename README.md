@@ -17,6 +17,7 @@ mvn clean install -Dmaven.test.skip=true
 8094    service provider    swagger
 8095    dubbo-port
 8096    zookeeper-port
+8097    kafka-port
 
 
 8098    mysql 

@@ -28,7 +28,7 @@ public abstract class TestAdapter implements Test{
 			res = doTest();
 		}catch(Exception e) {
 			res = false;
-			log.error(e.getMessage(), e);
+			log.error(this.toString() + " " + e.getMessage(), e);
 			throw new ErrorException(e);
 		}
 		if(res) {

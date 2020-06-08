@@ -264,9 +264,6 @@ export default {
       colMapTrigger: {},
       colKeyTrigger: {},
       listTrigger: [],
-      colMapHis: {},
-      colKeyHis: '',
-      listHis: [],
       listTriggerOld: [],
       rowSelectTrigger: [],
       rowSelectHis: [],
@@ -312,14 +309,6 @@ export default {
         this. getListPage()
       }).catch(() => {
         this.loadingCols = false
-      })
-
-      this.get('/common/getColsMap.do', {tableName: 'W_JOB_HIS'}).then((res) => {
-        this.colMapHis = res.data.colMap
-        // delete this.colMap.REQUESTS_RECOVERY
-        this.colKeyHis = res.data.colKey
-      }).catch(() => {
-
       })
 
 

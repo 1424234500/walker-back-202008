@@ -253,8 +253,8 @@ public class LogModel implements Cloneable, Serializable {
 	}
 
 	public LogModel setRES(String RES) {
-		RES = Config.cutString(998, RES);
 		this.RES = RES;
+		RES = Config.cutString(998, RES);
 		return this;
 	}
 

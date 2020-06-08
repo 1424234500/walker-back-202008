@@ -152,7 +152,7 @@ public class PipeRedisImpl implements Pipe<String>{
 					String keyJedis = key + "-" + now;
 					log.warn("Start thread " + now);
 					while(! Thread.interrupted()) {
-						//！！！！！！消费 加锁 互斥问题
+						//！！！！！！消费 加锁 互斥问题 lpop
 						//:Todo
 						String obj = Redis.getInstance().getJedis(keyJedis).lpop(key);//get();
 						if(obj != null) {

@@ -10,7 +10,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-
+/**
+ *  异步发布订阅
+ *  常用于多进程
+ *  一对多 一人发布 订阅者们都处理
+ * @param <T>
+ * @param <V>
+ */
 public class SubPubRedisImpl<T, V> implements SubPub<T, V>{
 //	private ExecutorService pool;
 	private Map<String, Set<OnSubscribe<T, V>>> subscribeTable;

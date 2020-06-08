@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * LinkedBlockingQueue实现 
  * 
  * 常用于单java程序单进程 多线程生产 多线程消费 上下文隔离场景
- * 只被消费一次 抢占处理
+ * 一对一 只被消费一次 抢占处理
  * 
  * 避免上下级影响
  * 并提供缓冲功能

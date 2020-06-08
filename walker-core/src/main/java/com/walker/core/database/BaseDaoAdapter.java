@@ -81,7 +81,7 @@ public abstract class BaseDaoAdapter implements BaseDao {
 				res.put(String.valueOf(item.get("COLUMN_NAME")), String.valueOf(item.get("COLUMN_COMMENT")));
 			}
 		} else {
-			throw new RuntimeException("The Table have no column???? or The able noT exisTs ? s" + dbOrUser + "." + tableName);
+			throw new RuntimeException("The Table have no column???? or The able noT exisTs ?  " + (dbOrUser.length() > 0 ? dbOrUser + "." : "") + tableName);
 		}
 		return res;
 	}
