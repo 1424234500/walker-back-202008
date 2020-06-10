@@ -4,23 +4,26 @@ package com.walker.core.database;
 import com.walker.core.aop.TestAdapter;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.CreateTopicsOptions;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.security.JaasUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * kafka队列
@@ -31,9 +34,12 @@ import java.util.concurrent.Future;
  *
  */
 public class Kafka extends TestAdapter{
-	protected static Logger log = LoggerFactory.getLogger(Kafka.class);
+	private static Logger log = LoggerFactory.getLogger(Kafka.class);
 
-	Properties properties = new Properties();
+	private Properties properties = new Properties();
+	private Producer<String, String> producer;
+	private Consumer<String, String> consumer;
+	private AdminClient adminClient;
 	public Kafka setProperties(String key, String value){
 		this.properties.setProperty(key, value);
 		return this;
@@ -42,8 +48,37 @@ public class Kafka extends TestAdapter{
 		return (Properties) this.properties.clone();
 	}
 
-	public <K, V> KafkaProducer<K, V> getProducer() {
-		return new KafkaProducer<K, V>(properties);
+
+
+	public AdminClient getAdminClient() {
+		if(this.adminClient == null) {
+			synchronized (this) {
+				if(this.adminClient == null) {
+					this.adminClient  = KafkaAdminClient.create(properties);
+				}
+			}
+		}
+		return this.adminClient;
+	}
+	public Producer<String, String> getProducer() {
+		if(this.producer == null) {
+			synchronized (this) {
+				if(this.producer == null) {
+					this.producer = new KafkaProducer<String, String>(properties);
+				}
+			}
+		}
+		return this.producer;
+	}
+	public Consumer getConsumer() {
+		if(this.consumer == null) {
+			synchronized (this.consumer) {
+				if(this.consumer == null) {
+					this.consumer = new KafkaConsumer<String, String>(properties);
+				}
+			}
+		}
+		return this.consumer;
 	}
 	/**
 	 * 连接数计数器
@@ -53,45 +88,63 @@ public class Kafka extends TestAdapter{
 	 * 查询次数计数器
 	 */
 	int get = 0;
-	/**
-	 * 关闭计数器
-	 */
-	int close = 0;
 
 	/**
 	 * 回调环绕执行 kafka 操作
 	 */
-	public static <K, V> Future<RecordMetadata> doProducer(Fun<K, V> fun){
+	public static Future<RecordMetadata> doProducer(Fun fun){
 		Future<RecordMetadata> res = null;
 		if(fun != null) {
-			Producer<K, V> kafka = Kafka.getInstance().getProducer();
+			Producer<String, String> producer = Kafka.getInstance().getProducer();
 			try {
-				res = fun.make(kafka);
+				res = fun.make(producer);
 			}catch (Exception e){
 				log.debug(e.getMessage(), e);
 				throw e;
 			}finally {
-				Kafka.getInstance().close(kafka);
+				Kafka.getInstance().close(producer);
 			}
 		} else {
 			log.error("fun is null");
 		}
 		return res;
 	}
+	private AtomicInteger sendCount = new AtomicInteger(0);
+	private long lastCommitTime = 0L;
+	private int BATCH_SIZE = 2000;
+	private int BATCH_TIME = 5000;
 	/**
 	 * 回调环绕执行 kafka 操作
 	 */
-	public static <K, V> Future<RecordMetadata> doSendMessage(String topic, K key, V value){
-		return doProducer(new Fun<K, V>() {
+	public static Future<RecordMetadata> doSendMessage(String topic, String key, String value){
+		return doProducer(new Fun() {
 			@Override
-			public Future<RecordMetadata> make(Producer<K, V> producer) {
-				return producer.send(new ProducerRecord<K, V>(topic, key, value));
+			public Future<RecordMetadata> make(Producer<String, String> producer) {
+				Future<RecordMetadata> res =  producer.send(new ProducerRecord<String, String>(topic, key, value));
+
+//				是否手动控制(还需要线程轮询状态超时) 批量次数 批量时间 kafka自己配置
+//				producerCommit(producer, 1);
+
+				return res;
 			}
 		});
 	}
-	public <K, V> void close(Producer<K, V> kafka){
+	private  void producerCommit(Producer<String, String> producer, int c){
+		sendCount.addAndGet(c);
+		int cacheSize = sendCount.get();
+		if(cacheSize > BATCH_SIZE || System.currentTimeMillis() - this.lastCommitTime > BATCH_TIME){
+			synchronized (producer){
+				log.debug("flush producer:" + cacheSize + ", lastTime:" + this.lastCommitTime);
+				producer.flush();
+				this.lastCommitTime = System.currentTimeMillis();
+				this.sendCount.set(0);
+			}
+		}
+	}
+
+	public void close(Producer<String, String> kafka){
 		if(kafka != null){
-			kafka.close();
+//			kafka.close();
 			get--;
 		}
 	}
@@ -132,7 +185,6 @@ public class Kafka extends TestAdapter{
 		return getProducer() != null;
 	}
 	private Kafka() {
-		init();
 	}
 	
 	public static Kafka getInstance() {
@@ -144,6 +196,7 @@ public class Kafka extends TestAdapter{
 		static {
 			log.warn("singleton instance construct " + SingletonFactory.class);
 			instance = new Kafka();
+			instance.init();
 		}
 	}
 	public String toString() {
@@ -153,8 +206,8 @@ public class Kafka extends TestAdapter{
 	/**
 	 * jedis获取 执行后 自动关闭
 	 */
-	public interface Fun<K, V>{
-	 	Future<RecordMetadata> make(Producer<K, V> producer) ;
+	public interface Fun{
+	 	Future<RecordMetadata> make(Producer<String, String> producer) ;
 	}
 
 
@@ -242,6 +295,48 @@ public class Kafka extends TestAdapter{
 			consumer.commitSync();
 		}
 
+	}
+
+
+
+//	创建adminClient
+//	创建topic
+//	注意kafka topic的名字不可以包含中文字符，不然是无法创建的。分区数，通常建议为12，其初期最好评估好消费节点数和能力来设置此值；副本数，建议值是2-3，可根据业务需求和发送延迟需要进行设置，影响数据可靠性。
+//	重复创建已有的topic会抛出异常。
+	public void topicCreate(String topicName) throws ExecutionException {
+		try {
+//			String name, int numPartitions, short replicationFactor 单节点只能单备份
+			NewTopic newTopic = new NewTopic(topicName,  12 , (short)1 );
+			getAdminClient().createTopics(Collections.singleton(newTopic), new CreateTopicsOptions().timeoutMs(10000))
+					.all()
+					.get();
+		} catch (ExecutionException e) {
+			if (e.getMessage().startsWith("org.apache.kafka.common.errors.TopicExistsException")) {
+				log.warn(topicName + " topic is exist !! " + e.getMessage());
+			} else {
+				throw e;
+			}
+		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+//	查询topic列表
+	public List<String> topicGet(int secondsTimeout) throws InterruptedException, ExecutionException, TimeoutException {
+		List<String> list = new ArrayList<>();
+		getAdminClient().listTopics()
+				.listings()
+				.get(secondsTimeout, TimeUnit.SECONDS)
+				.forEach(topicListing -> {
+					log.warn("currentTopic is: " + topicListing.name());
+					list.add(topicListing.name());
+				});
+		return list;
+	}
+//	删除topic
+	public void topicDelete(String...topicName) throws ExecutionException, InterruptedException {
+		getAdminClient().deleteTopics(Arrays.asList(topicName) )
+				.all()
+				.get();
 	}
 
 

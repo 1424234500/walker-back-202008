@@ -46,7 +46,7 @@ public abstract class PipeAdapter<T> implements Pipe<T>{
 //								Thread.sleep(Pipe.SLEEP_THREAD);
 								wait();	// 等待唤醒机制 主要是sleep方法没有释放锁，而wait方法释放了锁，使得其他线程可以使用同步控制块或者方法。
 							} catch (InterruptedException e) {
-								e.printStackTrace();
+								log.error(e.getMessage(), e);
 							}
 						}
 					}
@@ -69,7 +69,7 @@ public abstract class PipeAdapter<T> implements Pipe<T>{
 			try {
 				threadPool.awaitTermination(timeout, unit);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 			}
 		}
 	}

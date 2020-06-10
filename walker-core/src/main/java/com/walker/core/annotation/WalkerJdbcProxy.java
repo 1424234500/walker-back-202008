@@ -45,18 +45,17 @@ public class WalkerJdbcProxy implements InvocationHandler {
 		} catch (Throwable var5) {
 			throw var5;
 		}
-
 		WalkerJdbcQuery walkerJdbcQuery = method.getAnnotation(WalkerJdbcQuery.class);
 		if(walkerJdbcQuery == null){
 			throw new AnnotationFormatError("no the annotation WalkerJdbcQuery ");
 		}
 		String name = walkerJdbcQuery.name();
-		String value = walkerJdbcQuery.value();
-		if(value.length() == 0){
-			throw new AnnotationFormatError("err value name null " + method.toString());
+		String sqlValue = walkerJdbcQuery.value();
+		if(sqlValue.length() == 0){
+			throw new AnnotationFormatError("err sqlValue name null " + method.toString());
 		}
-		Tools.out("proxy " + method.toString() + " sql:" + value + " args:" + args);
-		return executeSql(value, method, args);
+		Tools.out("proxy " + method.toString() + " sql:" + sqlValue + " args:" + args);
+		return executeSql(sqlValue, method, args);
 	}
 //		/**
 //		 * sql执行
