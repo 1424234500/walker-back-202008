@@ -117,32 +117,47 @@ public class PipeRedisBroadcastImpl implements Pipe<String>{
 		if(threadSize <= 0)return;
 
 		threadPool = Executors.newFixedThreadPool(threadSize);
-		Jedis jedis = Redis.getInstance().getJedis(this.key);
-		jedis.subscribe(new JedisPubSub() {
-			public void onMessage(String channel, final String message) {
-				log.debug("Consumer subcribe [" + channel + "] " + message);
-				threadPool.execute(new Runnable() {
-					public void run() {
-						executer.make(message);
-					}
-				});
-			}
-			
-			public void onSubscribe(String channel, int subscribedChannels) {
-				log.debug("onSubscribe channel:" + channel + " subscribedChannels:" + subscribedChannels);
-			}
-			
-			public void onUnsubscribe(String channel, int subscribedChannels) {
-				log.debug("onUnsubscribe channel:" + channel + " subscribedChannels:" + subscribedChannels);
-			}
-		}, this.key);
-		
+		Redis.doJedis(new Fun<Object>() {
+            @Override
+            public Object make(Jedis jedis) {
+                jedis.subscribe(new JedisPubSub() {
+                    public void onMessage(String channel, final String message) {
+                        log.debug("Consumer subcribe [" + channel + "] " + message);
+                        threadPool.execute(new Runnable() {
+                            public void run() {
+                                executer.make(message);
+                            }
+                        });
+                    }
+
+                    public void onSubscribe(String channel, int subscribedChannels) {
+                        log.debug("onSubscribe channel:" + channel + " subscribedChannels:" + subscribedChannels);
+                    }
+
+                    public void onUnsubscribe(String channel, int subscribedChannels) {
+                        log.debug("onUnsubscribe channel:" + channel + " subscribedChannels:" + subscribedChannels);
+                    }
+                }, key);
+                return null;
+            }
+        });
+
 	}
 	@Override
 	public void stopConsumer() {
-		Redis.getInstance().close(this.key);
 		if(threadPool != null && !threadPool.isShutdown()) {
 			threadPool.shutdown();
+
+
+            Redis.doJedis(new Fun<Object>() {
+                @Override
+                public Object make(Jedis jedis) {
+
+
+                    return null;
+                }
+            });
+
 		}
 	}
 	

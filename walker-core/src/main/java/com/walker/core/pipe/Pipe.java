@@ -20,6 +20,8 @@ import com.walker.core.aop.Fun;
  * 数据库实现
  */
 public interface Pipe<T>{
+	long TIMEOUT_MS = 10 * 1000;
+	int PIPE_SIZE = 1000;
 	/**
 	 * lock pre
 	 */

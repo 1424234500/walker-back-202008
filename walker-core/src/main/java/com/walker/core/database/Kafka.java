@@ -15,6 +15,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.security.JaasUtils;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +73,7 @@ public class Kafka extends TestAdapter{
 	}
 	public Consumer getConsumer() {
 		if(this.consumer == null) {
-			synchronized (this.consumer) {
+			synchronized (this) {
 				if(this.consumer == null) {
 					this.consumer = new KafkaConsumer<String, String>(properties);
 				}
@@ -154,14 +155,17 @@ public class Kafka extends TestAdapter{
 	 */
 	public boolean doInit(){
 		Cache<String> cache = CacheMgr.getInstance();
+//		ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG	//静态配置常量key
 		properties.put("bootstrap.servers", cache.get("kafka_bootstrap.servers", "127.0.0.1:8097"));//xxx服务器ip ,1xxx:9092,xxx:9092
 		properties.put("acks", "all");//所有follower都响应了才认为消息提交成功，即"committed"
 		properties.put("retries", 0);//retries = MAX 无限重试，直到你意识到出现了问题:)
 		properties.put("batch.size", 16384);//producer将试图批处理消息记录，以减少请求次数.默认的批量处理消息字节数 batch.size当批量的数据大小达到设定值后，就会立即发送，不顾下面的linger.ms
 		properties.put("linger.ms", 1);//延迟1ms发送，这项设置将通过增加小的延迟来完成--即，不是立即发送一条记录，producer将会等待给定的延迟时间以允许其他消息记录发送，这些消息记录可以批量处理
 		properties.put("buffer.memory", 33554432);//producer可以用来缓存数据的内存大小。
-		properties.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
+		properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
 
 		log.info("kafka init ----------------------- " + cc++);

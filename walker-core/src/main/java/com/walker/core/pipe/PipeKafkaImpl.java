@@ -2,20 +2,23 @@ package com.walker.core.pipe;
 
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.MD5;
+import com.walker.common.util.Tools;
 import com.walker.core.database.Kafka;
 import com.walker.core.database.Redis;
 import com.walker.core.database.Redis.Fun;
 import com.walker.core.database.RedisUtil;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.Collections;
+import java.util.concurrent.*;
 
 /**
  *
@@ -40,7 +43,7 @@ public class PipeKafkaImpl implements Pipe<String>{
 	/**
 	 * 线程池消费 每个线程都去消费
 	 */
-	private ExecutorService threadPool;
+	private ThreadPoolExecutor threadPool;
 
 	@Override
 	public void start(String key){
@@ -51,7 +54,7 @@ public class PipeKafkaImpl implements Pipe<String>{
 			log.info("Start res ok"  );
 		} catch (ExecutionException e) {
 			log.error("Start res exception " + e.getMessage(), e );
-			throw new PipeException("start error");
+			throw new PipeException("start error " + e.getMessage());
 		}
 	}
 	@Override
@@ -110,27 +113,48 @@ public class PipeKafkaImpl implements Pipe<String>{
 	public void startConsumer(int threadSize, final com.walker.core.aop.Fun<String> executer) {
 		log.warn("StartConsumer");
 		if(threadSize <= 0)return;
+        threadSize += 1;
+        threadPool = new ThreadPoolExecutor(threadSize, threadSize,0L, TimeUnit.MILLISECONDS
+                , new LinkedBlockingQueue<Runnable>(PIPE_SIZE), new ThreadPoolExecutor.AbortPolicy());
+		Consumer<String, String> consumer = Kafka.getInstance().getConsumer();
+		consumer.subscribe(Collections.singletonList(key));
+		threadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                while(!threadPool.isShutdown() ){
+                    boolean ifWait = true;
+                    if(threadPool.getQueue().size() < PIPE_SIZE){
+                        try {
+                            log.debug("kafka consumer:%s start poll! " + consumer.toString());
+                            ConsumerRecords<String, String> records = consumer.poll(TIMEOUT_MS);
+                            if (records != null && records.count() > 0) {
+                                consumer.commitAsync();
+                                for (ConsumerRecord<String, String> record : records) {
+                                    log.debug("kafka consumer item topic:" + record.topic() + ", key:" + record.key() + ", value:" + record.value());
+                                    threadPool.execute(new Runnable() {
+                                        public void run() {
+                                            executer.make(record.value());
+                                        }
+                                    });
+                                }
+                                ifWait = false;
+                            }
+                        } catch (Exception e) {
+                            log.error("consumer error " + e.getMessage(), e);
+                        }
+                    }
+                    if(ifWait){
+                        try {
+                            Thread.sleep(SLEEP_THREAD);
+                        } catch (InterruptedException e) {
+                            log.error(e.getMessage(), e);
+                        }
+                    }
 
-		threadPool = Executors.newFixedThreadPool(threadSize);
-		Jedis jedis = Redis.getInstance().getJedis(this.key);
-		jedis.subscribe(new JedisPubSub() {
-			public void onMessage(String channel, final String message) {
-				log.debug("Consumer subcribe [" + channel + "] " + message);
-				threadPool.execute(new Runnable() {
-					public void run() {
-						executer.make(message);
-					}
-				});
-			}
+                }
 
-			public void onSubscribe(String channel, int subscribedChannels) {
-				log.debug("onSubscribe channel:" + channel + " subscribedChannels:" + subscribedChannels);
-			}
-
-			public void onUnsubscribe(String channel, int subscribedChannels) {
-				log.debug("onUnsubscribe channel:" + channel + " subscribedChannels:" + subscribedChannels);
-			}
-		}, this.key);
+            }
+        });
 
 	}
 	@Override
@@ -138,7 +162,10 @@ public class PipeKafkaImpl implements Pipe<String>{
 		if(threadPool != null && !threadPool.isShutdown()) {
 			threadPool.shutdown();
 		}
-	}
+//        Consumer<String, String> consumer = Kafka.getInstance().getConsumer();
+//        consumer.wakeup();
+
+    }
 
 	@Override
 	public void await(long timeout, TimeUnit unit) {
