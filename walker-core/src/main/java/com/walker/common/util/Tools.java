@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,31 @@ public class Tools {
 	{
 		return (num & (0x1 << index)) >> index;
 	}
+
+
+	/**
+	 * 从10进制转换到toN进制
+	 * list 0 最低位
+	 * @param toN
+	 * @param num
+	 */
+	public static List<Integer> binary(int toN, int num, int resSize, int defaultValue) {
+		int fromN = 10;
+		List<Integer> res = new ArrayList<>();
+		while(num > 0) {
+			int last = num % toN;
+			res.add(last);
+
+			num = num / toN;
+		}
+		while(res.size() < resSize){
+			res.add(defaultValue);
+		}
+		return res;
+	}
+
+
+
 
 	
 	public static void regex(String[] str, String regex){
@@ -108,7 +134,7 @@ public class Tools {
 			return "len." + str.length() + " size."
 					+ Tools.calcSize(str.length()) + str.substring(0, toolong);
 		return str;
-	}
+}
 
 	public static String cutString(String str, int len) {
 		if (str != null && str.length() > len) {

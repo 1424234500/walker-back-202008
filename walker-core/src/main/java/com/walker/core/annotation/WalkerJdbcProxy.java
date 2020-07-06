@@ -1,7 +1,4 @@
 package com.walker.core.annotation;
-import com.sun.deploy.net.proxy.ProxyUnavailableException;
-import com.sun.org.apache.xpath.internal.functions.WrongNumberArgsException;
-import com.walker.common.util.LangUtil;
 import com.walker.common.util.Page;
 import com.walker.common.util.Tools;
 import com.walker.core.database.BaseDao;

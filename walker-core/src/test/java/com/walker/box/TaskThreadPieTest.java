@@ -35,6 +35,7 @@ public class TaskThreadPieTest {
         }
         .setDetail(false)
         .setSleepTimeSch(2000)
+        .setTimemillesWait(30 * 1000)
         .setThreadSize(3)
         .start();
     }
@@ -42,7 +43,7 @@ public class TaskThreadPieTest {
     public void start2() {
 
         List<String> ll = new ArrayList<>();
-        for(int i = 0; i < 9999; i++){
+        for(int i = 0; i < 20; i++){
             ll.add("t" + i);
         }
         Iterator<String> it = ll.iterator();
@@ -60,12 +61,27 @@ public class TaskThreadPieTest {
 
                 Tools.out(threadNo, "run", task);
 
-                ThreadUtil.sleep(10);
+                ThreadUtil.sleep(2000);
+            }
+            @Override
+            public void onMoreAction(){
+                for(int i = 0; i < 10; i ++) {
+                    final int j = i;
+                    getPool().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Tools.out("more run", j);
+                            ThreadUtil.sleep(1000);
+                        }
+                    });
+                }
             }
         }
         .setDetail(false)
-        .setSleepTimeSch(2000)
-        .setThreadSize(3)
+        .setSleepTimeSch(1000)
+        .setTimemillesWait(10*1000)
+        .setThreadSize(2)
+        .setThreadSizeMax(6)
         .start();
     }
 

@@ -431,7 +431,7 @@ public class ThreadUtil {
 			TimeUnit.MILLISECONDS.sleep(time);
 		} catch (InterruptedException e) {
 			//e.printStackTrace();
-			System.out.println("Thread.sleep error " + time);
+			System.out.println("Thread.sleep Interrupted " + time);
 		}
 	}
 	

@@ -140,6 +140,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
+<!--        间接依赖netty部分版本依赖包-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -188,17 +190,7 @@
 <!--            <artifactId>spring-boot-starter-log4j2</artifactId>-->
 <!--        </dependency>-->
 
-        <!--引入日志依赖-->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.21</version>
-        </dependency>
+
 
 <!--        dubbo暴露服务消费转换异常-->
 <!--        <dependency>-->

@@ -54,22 +54,35 @@ ${project.xxx} 当前pom文件的任意节点的内容
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4-legacy</artifactId>
+			<version>1.4.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>1.4.10</version>
+			<scope>test</scope>
+		</dependency>
 
+		<!--引入日志依赖-->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
 		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-log4j12</artifactId>
-		    <version>1.7.2</version>
+			<version>1.7.21</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.2</version>
+			<version>1.7.21</version>
 		</dependency>
 
-
+<!--json-->
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
 			<groupId>org.json</groupId>
@@ -82,6 +95,7 @@ ${project.xxx} 当前pom文件的任意节点的内容
 			<artifactId>fastjson</artifactId>
 			<version>1.2.58</version>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.apache.directory.studio/org.apache.commons.io -->
 		<dependency>
 			<groupId>org.apache.directory.studio</groupId>

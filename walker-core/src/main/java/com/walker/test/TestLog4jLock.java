@@ -1,15 +1,9 @@
-package com.walker.box;
+package com.walker.test;
 
 import com.walker.common.util.ThreadUtil;
-import com.walker.common.util.ThreadUtil.Type;
 import com.walker.common.util.TimeUtil;
-import com.walker.common.util.Tools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
 
 /**
  * log4j死锁问题验证
