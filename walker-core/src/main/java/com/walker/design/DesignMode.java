@@ -1,7 +1,5 @@
-package com.walker.test;
+package com.walker.design;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -140,22 +138,6 @@ class Prototype implements Cloneable{
     }
 }
 /**
- * 装饰模式 实现相同接口 传递父类 环绕执行
- * new  Decorator ( new Student()).show();
- * new  Decorator ( new Teacher()).show();
- */
-class  Decorator implements User{
-	User user;
-	Decorator(User user){
-		this.user = user;
-	}
-	public void show() {
-		System.out.println("before show");
-		this.user.show();
-		System.out.println("after show");
-	}
-}
-/**
  * 享元模式 元素 初始化管理 动态管理 连接池
  * pool = new Flyweight()
  * pool.get("student");
@@ -185,22 +167,6 @@ class School{
 	}
 }
 
-/**
- * 观察者模式
- */
-class Observer{
-	List<User> users = new ArrayList<>();
-	void start() {
-		users.add(new Student()); //订阅
-		users.add(new Teacher()); //
-		notifyAll();	//发布唤醒
-	}
-	public void notifyUsers(){
-		for(User user : users) {
-			user.show();
-		}
-	}
-}
 /**
  * 处理链模式 下一步交由下一个人 链表linkedList
  */ 

@@ -9,9 +9,9 @@ import java.util.Observer;
 
 
 /**
- * 发布订阅 观察者模式
+ * 发布订阅 观察者模式       事件机制 反向引用
  *
- *
+ *  气象站观测数据问题
  *
  * 数据中心
  * 利用java.util.Observable替我们实现 数据结构管理（vector 安全list） 添加 删除 通知
@@ -30,8 +30,8 @@ import java.util.Observer;
  *
  *
  */
-public class DataUser implements Observer {
-    private static Logger log = LoggerFactory.getLogger(DataUser.class);
+public class DataUserObserver implements Observer {
+    private static Logger log = LoggerFactory.getLogger(DataUserObserver.class);
 
     private String name;
 
@@ -39,7 +39,7 @@ public class DataUser implements Observer {
         return name;
     }
 
-    public DataUser setName(String name) {
+    public DataUserObserver setName(String name) {
         this.name = name;
         return this;
     }
@@ -52,7 +52,7 @@ public class DataUser implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-        if(o instanceof DataCenter){
+        if(o instanceof DataCenterObservable){
             log.info("observer " + name + " get " + arg);
         }else{
             log.warn("no implement Observable ?? ");

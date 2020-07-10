@@ -6,8 +6,13 @@ import org.slf4j.LoggerFactory;
 import java.util.Observable;
 
 /**
- * 发布订阅 观察者模式
  *
+ *
+ *
+ * 发布订阅 观察者模式       事件机制 反向引用
+ *
+ *
+ *  气象站观测数据问题
  *
  *
  * 数据中心
@@ -27,8 +32,8 @@ import java.util.Observable;
  *
  *
  */
-public class DataCenter<DATA> extends Observable {
-    private static Logger log = LoggerFactory.getLogger(DataCenter.class);
+public class DataCenterObservable<DATA> extends Observable {
+    private static Logger log = LoggerFactory.getLogger(DataCenterObservable.class);
 
     /**
      * 具体消息
@@ -47,7 +52,7 @@ public class DataCenter<DATA> extends Observable {
 
 
 
-    public DataCenter(){
+    public DataCenterObservable(){
 
     }
 
@@ -65,7 +70,7 @@ public class DataCenter<DATA> extends Observable {
         return data;
     }
 
-    public DataCenter setData(DATA data) {
+    public DataCenterObservable setData(DATA data) {
         this.data = data;
         return this;
     }
@@ -74,7 +79,7 @@ public class DataCenter<DATA> extends Observable {
         return time;
     }
 
-    public DataCenter<DATA> setTime(long time) {
+    public DataCenterObservable<DATA> setTime(long time) {
         this.time = time;
         return this;
     }
