@@ -67,51 +67,6 @@ class FactoryMethod{
 }
 
 /**
- * 单例
- * Singleton.getInstance()
- */
-class Singleton {
-	
-    static Singleton instance;
-    
-    /**
-     * 锁静态模式
-     */
-    public static Singleton getInstanceSy() {  
-        if (instance == null) {  
-            synchronized (instance) {  
-                if (instance == null) {  
-                    instance = new Singleton();  //隐患 在Java指令中创建对象和赋值操作是分开进行的，也就是说instance = new Singleton();语句是分两步执行的。但是JVM并不保证这两个操作的先后顺序，也就是说有可能JVM会为新的Singleton实例分配空间，然后直接赋值给instance成员
-                }  
-            }  
-        }  
-        return instance;  
-    }  
-    
-    
-    /**
-	 * 私有构造器
-	 */
-    private Singleton(){}
-    /**
-     * 私有静态内部类
-     */
-    private static class SingletonFactory{           
-        private static Singleton instance;
-        static {
-        	System.out.println("静态内部类初始化" + SingletonFactory.class);
-        	instance = new Singleton();  
-        }
-    }
-    /**
-     * 内部类模式 可靠
-     */
-    public static Singleton getInstance(){           
-        return SingletonFactory.instance;           
-    }  
-    
-}
-/**
  * Builder 函数返回self 
  * new Builder().setName("name").setAge("19");
  */
