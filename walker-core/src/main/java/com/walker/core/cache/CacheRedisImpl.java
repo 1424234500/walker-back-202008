@@ -1,21 +1,16 @@
 package com.walker.core.cache;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.walker.common.util.Bean;
 import com.walker.common.util.Page;
 import com.walker.common.util.SortUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.database.Redis;
-import com.walker.core.database.RedisUtil;
 import com.walker.core.database.Redis.Fun;
-import java.util.Set;
+import com.walker.core.database.RedisUtil;
 import redis.clients.jedis.Jedis;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * 缓存服务实现类

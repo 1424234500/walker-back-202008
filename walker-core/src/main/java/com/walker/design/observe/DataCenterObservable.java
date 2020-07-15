@@ -11,9 +11,7 @@ import java.util.Observable;
  *
  * 发布订阅 观察者模式       事件机制 反向引用
  *
- *
- *  气象站观测数据问题
- *
+ *              气象站观测数据问题
  *
  * 数据中心
  * 利用java.util.Observable替我们实现 数据结构管理（vector 安全list） 添加 删除 通知

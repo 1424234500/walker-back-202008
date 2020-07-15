@@ -1,9 +1,9 @@
 package com.walker.core.pipe;
 
+import com.walker.core.aop.Fun;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
-
-import com.walker.core.aop.Fun;
 
 /**
  * 管道 跨 进程通信工具

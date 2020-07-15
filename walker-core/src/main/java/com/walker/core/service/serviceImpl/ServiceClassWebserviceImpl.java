@@ -1,10 +1,9 @@
 package com.walker.core.service.serviceImpl;
 
-import java.rmi.RemoteException;
+import com.walker.core.service.service.ServiceClass;
 
 import javax.jws.WebService;
-
-import com.walker.core.service.service.ServiceClass;
+import java.rmi.RemoteException;
 
 /**
  * @WebService 需要注解

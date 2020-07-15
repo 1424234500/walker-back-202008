@@ -4,13 +4,10 @@ import com.walker.common.util.LangUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
 import org.apache.zookeeper.*;
-import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.params.SetParams;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 

@@ -1,8 +1,7 @@
 package com.walker.core.mode;
 
-import java.util.*;
-
-import com.walker.common.util.Tools;
+import java.util.LinkedHashMap;
+import java.util.Objects;
 
 /**
  * 数据结构  节点

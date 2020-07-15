@@ -1,7 +1,5 @@
 package com.walker.core.mode;
 
-import java.util.LinkedHashMap;
-
 /**
  * 数据结构  线 权重
  *

@@ -1,10 +1,9 @@
 package com.walker.common.awt;
-import java.io.File;
-
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 
 import com.walker.common.util.Tools;
+
+import javax.swing.*;
+import java.io.File;
  
 /**
  * This class demonstrates the DirectoryDialog class

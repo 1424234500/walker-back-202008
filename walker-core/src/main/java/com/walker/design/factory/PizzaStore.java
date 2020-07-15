@@ -1,6 +1,9 @@
 package com.walker.design.factory;
 
 
+import com.walker.design.template.Pizza;
+import com.walker.design.template.PizzaCheese;
+import com.walker.design.template.PizzaClam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +37,6 @@ public abstract class PizzaStore {
 
         pizza.prepare();
         pizza.bake();
-        pizza.cut();
         pizza.box();
 
 

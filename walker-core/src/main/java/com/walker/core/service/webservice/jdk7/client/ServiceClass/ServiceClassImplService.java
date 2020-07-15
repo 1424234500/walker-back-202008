@@ -1,17 +1,12 @@
 
 package com.walker.core.service.webservice.jdk7.client.ServiceClass;
 
+import com.walker.core.service.webservice.WebServiceTool;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
-
-import com.walker.common.util.Tools;
-import com.walker.core.service.webservice.WebServiceTool;
 
 
 /**

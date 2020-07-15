@@ -1,5 +1,8 @@
 package com.walker.core.annotation;
 
+import com.walker.common.util.ClassUtil;
+import com.walker.common.util.Tools;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
@@ -10,9 +13,6 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.walker.common.util.ClassUtil;
-import com.walker.common.util.Tools;
 
 /**
  * 注解扫描处理器工具 抽离出目标注解(Class, Method, Field)的处理实现 支持处理链? 一次扫描 所有注解全部处理 只处理本项目下的注解

@@ -2,7 +2,6 @@ package com.walker.system;
 
 import com.jcraft.jsch.*;
 import com.walker.common.util.FileUtil;
-import com.walker.core.exception.InfoException;
 import com.walker.core.mode.Result;
 import com.walker.core.mode.Server;
 

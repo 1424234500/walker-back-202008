@@ -1,6 +1,7 @@
-package com.walker.design.factory;
+package com.walker.design.template;
 
 
+import com.walker.design.factory.IngredientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class PizzaCheese extends Pizza{
 
 
     @Override
-    void prepare() {
+    public void prepare() {
         this.setName(getClass().getSimpleName());
 //        this.setDough("Thin Crust Dough");
 //        this.setSauce("More Sauce");
@@ -33,6 +34,11 @@ public class PizzaCheese extends Pizza{
 
         super.prepare();
 
+    }
+
+    @Override
+    public boolean isCutable() {
+        return true;
     }
 }
 

@@ -1,15 +1,15 @@
 package com.walker.core.encode;
-import java.io.UnsupportedEncodingException;
-import java.util.Random;
 
 import com.walker.core.aop.Fun;
-
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Random;
 
 public class Pinyin {
 	/**

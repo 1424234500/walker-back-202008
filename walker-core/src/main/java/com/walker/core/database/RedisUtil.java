@@ -1,11 +1,6 @@
 package com.walker.core.database;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.walker.common.util.*;
-
 import com.walker.core.aop.FunArgsReturn;
 import com.walker.core.exception.ErrorException;
 import org.slf4j.Logger;
@@ -13,6 +8,10 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.params.SetParams;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * jedis设置存取 抽离

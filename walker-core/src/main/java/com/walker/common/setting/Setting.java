@@ -1,13 +1,13 @@
 package com.walker.common.setting;
 
+import com.walker.common.util.*;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Properties;
-
-import com.walker.common.util.*;
 
 /**
  * 配置文件 读写工具

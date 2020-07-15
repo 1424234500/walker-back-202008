@@ -44,27 +44,6 @@ class Teacher implements User{public void show() {System.out.println("show teach
 enum Type{
 	STUDENT, TEACHER
 }
-/**
- * 工厂模式 上转接口 抽象 构造器
- * FactoryMethod.getUser(Type.STUDENT)
- */
-class FactoryMethod{
-	public static User getStudent() {return new Student();}
-	/**
-	 * 修改参数化
-	 * @param type
-	 * @return mode
-	 */
-	public static User getUser(Type type) { 
-		switch (type) {
-		case STUDENT:
-			return new Student();
-		default:
-			break;
-		}
-		return null;
-	}
-}
 
 /**
  * Builder 函数返回self 
@@ -107,18 +86,6 @@ class Flyweight{
 			map.put(key, obj);
 			return obj;
 		}
-	}
-}
-
-/**
- * 外观模式 统一组合
- */
-class School{
-	Student student = new Student();
-	Teacher teacher = new Teacher();
-	public void show() {
-		student.show();
-		teacher.show();
 	}
 }
 

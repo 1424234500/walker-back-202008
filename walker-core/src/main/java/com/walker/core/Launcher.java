@@ -1,14 +1,11 @@
 package com.walker.core;
 
+import com.walker.common.util.Context;
+import com.walker.common.util.Tools;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-
-import com.walker.common.util.Context;
-import com.walker.common.util.FileUtil;
-import com.walker.common.util.Tools;
-import org.apache.log4j.PropertyConfigurator;
 
 public class Launcher {
 

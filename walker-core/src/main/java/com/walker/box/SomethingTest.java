@@ -1,18 +1,12 @@
 package com.walker.box;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.walker.common.util.ThreadUtil;
+import com.walker.common.util.ThreadUtil.Type;
+import com.walker.common.util.Tools;
+
+import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
-
-
-import com.walker.common.util.ThreadUtil;
-import com.walker.common.util.Tools;
-import com.walker.common.util.ThreadUtil.Type;
 
 /**
  * 如何写出无法维护的代码

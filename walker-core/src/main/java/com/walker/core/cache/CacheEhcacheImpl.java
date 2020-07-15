@@ -1,25 +1,12 @@
 package com.walker.core.cache;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.walker.common.util.Bean;
-import com.walker.common.util.Context;
-import com.walker.common.util.LangUtil;
-import com.walker.common.util.Page;
-import com.walker.common.util.SortUtil;
-import com.walker.common.util.Tools;
-
-import java.util.Set;
-
+import com.walker.common.util.*;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
+import java.io.File;
+import java.util.*;
+import java.util.Map.Entry;
 
 
 /**

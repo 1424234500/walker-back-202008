@@ -1,11 +1,11 @@
 package com.walker.box;
 
+import com.walker.common.util.ThreadUtil;
+import com.walker.common.util.ThreadUtil.Type;
+import com.walker.common.util.Tools;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.walker.common.util.ThreadUtil;
-import com.walker.common.util.Tools;
-import com.walker.common.util.ThreadUtil.Type;
 
 /**
  * 地铁站用车 消费者 生产者模型

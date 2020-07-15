@@ -1,11 +1,5 @@
 package com.walker.core.cache;
 
-import com.google.common.hash.BloomFilter;
-import com.google.common.hash.Funnels;
-import com.walker.core.database.RedisUtil;
-
-import java.nio.charset.Charset;
-
 public  abstract   class CacheAdapter<K> implements Cache<K>{
 //    // 预计元素个数
 //    private static long size = 10 * 10000;

@@ -16,7 +16,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  *
  */
-class Singleton {
+public class Singleton {
+    public static void main(String[] argvs){
+        Singleton.getInstance();
+        Singleton.getInstanceSy();
+        Singleton.getInstanceSynMethod();
+
+    }
+
+
 
     /**
      * volatile确保多线程可见性

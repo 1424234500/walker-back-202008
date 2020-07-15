@@ -1,7 +1,8 @@
-package com.walker.design.factory;
+package com.walker.design.template;
 
 
-import com.walker.design.observe.DataCenterObservable;
+import com.walker.design.factory.IngredientDough;
+import com.walker.design.factory.IngredientSauce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  工厂模式        抽象工厂模式 (工厂基础上再抽象?)
+ *
+ *  模板方法模式      抽象共同默认实现 抽象类
+ *      钩子 子类具体影响父类的模板逻辑
+ *      好莱坞原则   父类调用子类（抽象方法） 不要让子类中调用父类的方法？ 严格避免循环依赖!!
+ *      定义算法骨架 一些步骤延迟到子类实现
  *
  *  披萨店问题   类别扩展问题
  *  pizzaStore
@@ -54,22 +59,29 @@ public abstract class Pizza {
     }
 
     //    abstract void prepare();
-    void prepare(){
+    public void prepare(){
         log.info("prepare " + this.toString());
         for(String topp : toppings){
             log.info("\t" + topp);
         }
     }
-    void bake(){
+    public void bake(){
         log.info("bake " + name + "");
+        if(isCutable()){
+            cut();
+        }
     }
-    void cut(){
+    public void cut(){
         log.info("cut " + name + "");
     }
-    void box(){
+    public void box(){
         log.info("box " + name + "");
     }
 
+    /**
+     * 钩子决定模板逻辑分支改变
+     */
+    abstract boolean isCutable();
 
     public String getName() {
         return name;

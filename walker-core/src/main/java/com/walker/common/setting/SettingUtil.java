@@ -1,15 +1,14 @@
 package com.walker.common.setting;
 
+import com.walker.common.util.Bean;
+import com.walker.common.util.MapListUtil;
+import com.walker.common.util.TimeUtil;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Properties;
-
-import com.walker.common.util.Bean;
-import com.walker.common.util.MapListUtil;
-import com.walker.common.util.TimeUtil;
-import com.walker.common.util.Tools;
 
 /**
  * 配置文件properties读写工具

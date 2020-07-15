@@ -1,24 +1,19 @@
 package com.walker.core.pipe;
 
-import com.walker.common.util.LangUtil;
 import com.walker.common.util.MD5;
-import com.walker.common.util.Tools;
 import com.walker.core.database.Kafka;
-import com.walker.core.database.Redis;
-import com.walker.core.database.Redis.Fun;
-import com.walker.core.database.RedisUtil;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  *

@@ -1,9 +1,5 @@
 package com.walker.core.annotation;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-
-
 /**
  * 处理结果 决定该类的其他处理器是否执行
  */

@@ -1,6 +1,8 @@
 package com.walker.box;
 
-import java.util.*;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class HashAvg {
 

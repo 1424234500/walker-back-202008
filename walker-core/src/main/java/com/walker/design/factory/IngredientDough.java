@@ -1,9 +1,6 @@
 package com.walker.design.factory;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * 原料 面团 dough
  */
