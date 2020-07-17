@@ -12,13 +12,27 @@ public class Test {
 
     public static void main(String[] argv){
 
-//        UserMapper userMapper = UserMapperFactory.getUserMapper();
-//        log.info(userMapper.getName());
-//        log.info(userMapper.hello());
+        UserMapper joe = new UserMapperImpl();
+        joe.setName("joe");
+        log.info(joe.toString());
+        log.info(joe.hello());
 
-        UserMapper userMapper1 = UserMapperFactory.getMapper(UserMapper.class);
-        log.info(userMapper1.getName());
-        log.info(userMapper1.hello());
+        UserMapper joeOwnerProxy = UserMapperFactory.getOwnerUserMapper(joe);
+        try{
+            log.info(joeOwnerProxy.hello());
+            joeOwnerProxy.setName("joeProxy");
+            joeOwnerProxy.addScore();
+        }catch (Throwable e){
+            log.error(joeOwnerProxy + " " + e.getMessage());
+        }
+        UserMapper noOwnerProxy = UserMapperFactory.getNoOwnerUserMapper(joe);
+        try{
+            log.info(noOwnerProxy.hello());
+            noOwnerProxy.addScore();
+            noOwnerProxy.setName("nojoeProxy");
+        }catch (Throwable e){
+            log.error(noOwnerProxy + " " + e.getMessage());
+        }
 
 
 
