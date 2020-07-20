@@ -12,7 +12,7 @@ import com.walker.mode.Msg;
 import com.walker.socket.server_1.SocketException;
 import com.walker.socket.server_1.plugin.MsgBuilder;
 import com.walker.socket.server_1.plugin.PluginMgr;
-import com.walker.socket.server_1.plugin.aop.CountModel;
+import com.walker.socket.server_1.plugin.aop.ModelCount;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
@@ -73,7 +73,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
     	pipe.startConsumer(Setting.get("netty_thread_consumer", 1), new Fun<String>() {
 			public Object make(String msg1) {
 				Msg msg = new Msg(msg1);
-				CountModel.getInstance().onWait(msg);
+				ModelCount.getInstance().onWait(msg);
 //				if(1==1)
 //				return 0;
 				Session<T> session = index.get(msg.getFrom()); //根据socket key找到session
@@ -91,7 +91,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 					log.error("该用户已不存在 " + msg.toString());
 				}
 //				ThreadUtil.sleep(50);
-				CountModel.getInstance().onDone(msg);
+				ModelCount.getInstance().onDone(msg);
 
 				return true;
 			}
@@ -140,7 +140,7 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
 
 			msg.setWaitSize(pipe.size());
 //			pipe.set(msg);
-			CountModel.getInstance().onNet(msg);
+			ModelCount.getInstance().onNet(msg);
 			pipe.put(msg.toString());
 			
 		}else {//异常请求
@@ -181,13 +181,13 @@ public class SessionServiceArpListImpl<T> implements SessionService<T> {
     	Msg msg = new Msg(msg1);
 		Tools.out(msg);
 
-		CountModel.getInstance().onWait(msg);
+		ModelCount.getInstance().onWait(msg);
 		Tools.out(msg);
 
 		PluginMgr.getInstance().doMsg(msg);
 		Tools.out(msg);
 
-		CountModel.getInstance().onDone(msg);
+		ModelCount.getInstance().onDone(msg);
 
 		msg.setData(msg);
 		

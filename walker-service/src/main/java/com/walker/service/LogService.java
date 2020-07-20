@@ -1,6 +1,7 @@
 package com.walker.service;
 
 import com.walker.mode.LogModel;
+import com.walker.mode.LogSocketModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,16 @@ public interface LogService  {
 	 * 把缓冲的日志记录和 日志统计结果记录 持久化
 	 */
 	void saveStatis();
+
+
+
+
+	/**
+	 * 记录socket日志
+	 */
+	LogSocketModel saveLogSocketModel(LogSocketModel logModel);
+
+
 
 
 }

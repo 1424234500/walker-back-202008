@@ -5,6 +5,10 @@ import com.walker.core.database.Redis.Fun;
 import com.walker.mode.Msg;
 import redis.clients.jedis.Jedis;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * 监控 计数 频率qps 发送等待耗时等数据
  * 
@@ -37,63 +41,128 @@ import redis.clients.jedis.Jedis;
  * 					11			1000/30								900/6
  * 					100			1000/250							220/22
  */
-public class CountModel {
+public class ModelCount {
 	//time_client - 网络传输耗时 - time_receive - 队列等待耗时 - time_do - 业务处理耗时 - time_send
-	
+
+	/**
+	 * 使用内存存储 ${一段时间} 统计数据，定时任务存储到db
+	 */
+	Map<String, ModelGroup> map = new ConcurrentHashMap<>();
+
+	public Map<String, ModelGroup> getMap() {
+		return map;
+	}
+
+	/**
+	 * 计数器
+	 * 	plugin1
+	 * 			net
+	 * 					count	1
+	 * 					cost	998
+	 * 			wait
+	 * 					count
+	 * 					cost
+	 * 			done
+	 * 					count
+	 * 					cost
+	 *
+	 */
+	private void incr(String type, String plugin, long deta){
+		ModelGroup modelGroup = map.get(plugin);
+		if(modelGroup == null){
+			modelGroup = new ModelGroup();
+			map.put(plugin, modelGroup);
+		}
+		modelGroup.incr(type, 1, deta);
+
+	}
+
 	public void onNet(final Msg msg) {
 		msg.setTimeReceive(System.currentTimeMillis());
+		String plugin = msg.getType();
 
-//		onType(msg, "net");
-		Redis.doJedis(new Fun<Long>() {
-			@Override
-			public Long make(Jedis obj) {
-				String plugin = msg.getType();
-				
-				//网络传输耗时, 上行socket读取计数 qps
-				long detaNet = msg.getTimeReceive() - msg.getTimeClient();
-				obj.incrBy("stat:time:net:" + plugin, detaNet);
-				obj.incrBy("stat:count:net:" + plugin, 1L);
+		//网络传输耗时, 上行socket读取计数 qps
+		long detaNet = msg.getTimeReceive() - msg.getTimeClient();
 
-				return 0l;
-			}
-		});
+		incr("net", plugin, detaNet);
 	}
 	public void onWait(final Msg msg) {
 		msg.setTimeDo(System.currentTimeMillis());
 
 //		onType(msg, "wait");
-		Redis.doJedis(new Fun<Long>() {
-			@Override
-			public Long make(Jedis obj) {
-				String plugin = msg.getType();
+		String plugin = msg.getType();
 
-				//队列等待耗时, 队列消费计数 qps
-				long detaWait = msg.getTimeDo() - msg.getTimeReceive();
-				obj.incrBy("stat:count:wait:" + plugin, 1L);
-				obj.incrBy("stat:time:wait:" + plugin, detaWait);
-
-				return 0l;
-			}
-		});
+		//队列等待耗时, 队列消费计数 qps
+		long detaWait = msg.getTimeDo() - msg.getTimeReceive();
+		incr("wait", plugin, detaWait);
 	}
 	public void onDone(final Msg msg) {
 		msg.setTimeSend(System.currentTimeMillis());
 
-		//		onType(msg, "done");
-		Redis.doJedis(new Fun<Long>() {
-			@Override
-			public Long make(Jedis obj) {
-				String plugin = msg.getType();
+//		onType(msg, "done");
+		String plugin = msg.getType();
 
-				//业务处理存入socket耗时, 下行计数 qps
-				long detaDone = msg.getTimeSend() - msg.getTimeDo();
-				obj.incrBy("stat:count:done:" + plugin, 1L);
-				obj.incrBy("stat:time:done:" + plugin, detaDone);
-
-				return 0l;
-			}
-		});
+		//业务处理存入socket耗时, 下行计数 qps
+		long detaDone = msg.getTimeSend() - msg.getTimeDo();
+		incr("done", plugin, detaDone);
 	}
+
+//
+//	public void onNet(final Msg msg) {
+//		msg.setTimeReceive(System.currentTimeMillis());
+//
+////		onType(msg, "net");
+//		Redis.doJedis(new Fun<Long>() {
+//			@Override
+//			public Long make(Jedis obj) {
+//				String plugin = msg.getType();
+//
+//				//网络传输耗时, 上行socket读取计数 qps
+//				long detaNet = msg.getTimeReceive() - msg.getTimeClient();
+//				obj.incrBy("stat:time:net:" + plugin, detaNet);
+//				obj.incrBy("stat:count:net:" + plugin, 1L);
+//
+//				return 0l;
+//			}
+//		});
+//	}
+
+	//	public void onWait(final Msg msg) {
+//		msg.setTimeDo(System.currentTimeMillis());
+//
+////		onType(msg, "wait");
+//		Redis.doJedis(new Fun<Long>() {
+//			@Override
+//			public Long make(Jedis obj) {
+//				String plugin = msg.getType();
+//
+//				//队列等待耗时, 队列消费计数 qps
+//				long detaWait = msg.getTimeDo() - msg.getTimeReceive();
+//				obj.incrBy("stat:count:wait:" + plugin, 1L);
+//				obj.incrBy("stat:time:wait:" + plugin, detaWait);
+//
+//				return 0l;
+//			}
+//		});
+//	}
+//	public void onDone(final Msg msg) {
+//		msg.setTimeSend(System.currentTimeMillis());
+//
+//		//		onType(msg, "done");
+//		Redis.doJedis(new Fun<Long>() {
+//			@Override
+//			public Long make(Jedis obj) {
+//				String plugin = msg.getType();
+//
+//				//业务处理存入socket耗时, 下行计数 qps
+//				long detaDone = msg.getTimeSend() - msg.getTimeDo();
+//				obj.incrBy("stat:count:done:" + plugin, 1L);
+//				obj.incrBy("stat:time:done:" + plugin, detaDone);
+//
+//				return 0l;
+//			}
+//		});
+//	}
 	
 	@SuppressWarnings("unused")
 	private void onType(final Msg msg) {
@@ -126,13 +195,15 @@ public class CountModel {
 	}
 
 	
-	private CountModel() {
+	private ModelCount() {
 	}
-	public static  CountModel getInstance() {
+	public static ModelCount getInstance() {
 		return SingletonFactory.instance;
 	}
 	private static class SingletonFactory{
-		static CountModel instance = new CountModel();
+		static ModelCount instance = new ModelCount();
 	}
 	
 }
+
+

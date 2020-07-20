@@ -48,17 +48,17 @@ public class LogModel implements Cloneable, Serializable {
 	private String ID;
 	@Column(name = "USER", columnDefinition = "varchar(256) default '1970-01-01 00:00:00' comment '用户' ")
     private String USER;
-	@Column(name = "CATE", columnDefinition = "varchar(256) default '1970-01-01 00:00:00' comment '类别' ")
+	@Column(name = "CATE", columnDefinition = "varchar(64) default '1970-01-01 00:00:00' comment '类别' ")
 	private String CATE;
 	@Column(name = "S_MTIME", columnDefinition = "varchar(32) default '' comment '修改时间' ")    //255
 	private String S_MTIME = TimeUtil.getTimeYmdHmss();
-	@Column(name = "IP_PORT_FROM", columnDefinition = "varchar(128) default '' comment '用户的ip:port' ")
+	@Column(name = "IP_PORT_FROM", columnDefinition = "varchar(64) default '' comment '用户的ip:port' ")
 	private String IP_PORT_FROM;
-	@Column(name = "IP_PORT_TO", columnDefinition = "varchar(128) default '' comment '受理服务器的ip:port' ")
+	@Column(name = "IP_PORT_TO", columnDefinition = "varchar(64) default '' comment '受理服务器的ip:port' ")
 	private String IP_PORT_TO;
-	@Column(name = "URL", columnDefinition = "varchar(998) default '' comment 'URL' ")    //www.baidu.com	类名
+	@Column(name = "URL", columnDefinition = "varchar(512) default '' comment 'URL' ")    //www.baidu.com	类名
 	private String URL;
-	@Column(name = "WAY", columnDefinition = "varchar(998) default '' comment '方式' ")    //post	任务id
+	@Column(name = "WAY", columnDefinition = "varchar(64) default '' comment '方式' ")    //post	任务id
 	private String WAY;
 	@Column(name = "ARGS", columnDefinition = "varchar(998) default '' comment '参数' ")	//wd=123	触发器规则
 	private String ARGS;

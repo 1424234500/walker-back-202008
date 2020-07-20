@@ -56,7 +56,7 @@ public class Bean extends HashMap<Object, Object>{
      * 获取对象值，如果不存在则返回缺省对象
      * 
      * @param key 键值
-     * @param def 缺省对象
+     * @param defaultValue 缺省对象
      * @return 对象值
      */ 
 	public <T> T get(Object key, T defaultValue){

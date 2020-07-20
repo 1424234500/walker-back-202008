@@ -7,9 +7,6 @@ import com.walker.service.MessageService;
 
 public  class MessagePlugin<T> extends Plugin<T>{
 
-//	MessageService messageService = new MessageServiceImpl();
-	MessageService messageService = DubboMgr.getService("messageServiceSharding");
-
 
 	MessagePlugin(Bean params) {
 		super(params);
@@ -29,6 +26,9 @@ public  class MessagePlugin<T> extends Plugin<T>{
 		//发送方设置去向 接收方只看到发送给自己
 
 		//离线消息记录
+
+//	MessageService messageService = new MessageServiceImpl();
+		MessageService messageService = DubboMgr.getService("messageServiceSharding");
 		messageService.save(msg.getUserTo(), msg);
 
 		//广播

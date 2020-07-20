@@ -153,8 +153,12 @@ public class PipeRedisImpl implements Pipe<String>{
 					log.warn("Start thread " + now);
 					while(! Thread.interrupted()) {
 						//！！！！！！消费 加锁 互斥问题 lpop
-						//:Todo
-						String obj = Redis.getInstance().getJedis(keyJedis).lpop(key);//get();
+						String obj = Redis.doJedis(new Redis.Fun<String>(){
+							@Override
+							public String make(Jedis jedis) {
+								return jedis.lpop(key);//get();;
+							}
+						});
 						if(obj != null) {
 							log.debug("Comsumer get " + obj.toString());
 							executer.make(obj);
@@ -167,7 +171,6 @@ public class PipeRedisImpl implements Pipe<String>{
 						}
 					}
 
-					Redis.getInstance().close(keyJedis);
 				}
 			});
 		}

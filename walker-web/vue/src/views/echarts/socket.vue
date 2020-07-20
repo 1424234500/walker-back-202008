@@ -2,12 +2,14 @@
   <div class="app-container" >
 
 
-    <div>socket统计</div>
+    <div>图表</div>
 
 <!--搜索-->
+
     <div class="div-box-down"
          v-loading="loadingList"
     >
+
         <form class="form-inline" >
           <div class="form-group">
             <label>url</label>
@@ -47,12 +49,8 @@
           </el-button-group>
         </form>
     </div>
-
     <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
     <div :id="chartId" class="echart-big-small" style="width: 100%;height: 26em;"></div>
-
-    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-    <div :id="chartId2" class="echart-big-small" style="width: 100%;height: 26em;"></div>
 
 
   </div>
@@ -68,29 +66,25 @@ export default {
       list: [],
       colsSearch: {},      //列名:别名
       queryUrl: [],
-      queryUrlCount: [],
       urlCount: "",
       loadingList: true,
       loadingCols: true,
       chart: null,        //chart对象
       chartId: 'chartsId', //对象对应dom id
       option: {},  //对应数据
-      chart2: null,        //chart对象
-      chartId2: 'chartsId2', //对象对应dom id
-      option2: {},  //对应数据
       optionTest:{
-           xAxis: {
-               type: 'category',
-               data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-           },
-           yAxis: {
-               type: 'value'
-           },
-           series: [{
-               data: [820, 932, 901, 934, 1290, 1330, 1320],
-               type: 'line'
-           }]
-       },
+         xAxis: {
+             type: 'category',
+             data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+         },
+         yAxis: {
+             type: 'value'
+         },
+         series: [{
+             data: [820, 932, 901, 934, 1290, 1330, 1320],
+             type: 'line'
+         }]
+      },
       other: {
         tooltip: {
           trigger: 'axis',
@@ -139,9 +133,11 @@ export default {
     },
     //清空搜索条件
     clearColsSearch(){
-      for (var key in this.colsSearch) {
-        this.colsSearch[key] = '';
-      }
+      //for (var key in this.colsSearch) {
+      //  this.colsSearch[key] = '';
+      //}
+      this.colsSearch = {} //clear map
+
     },
      //分页查询
      getListPage() {
@@ -150,27 +146,23 @@ export default {
       this.get('/redis/statics.do', params).then((data) => {
         data = data.data
         this.queryUrl =  data.items
-        this.colsSearch = data.arg
-        this.option = this.assign(data.option, this.other)
+        this.colsSearch = data.args
+        this.option = Object.assign(data.option, this.other)
         this.chart.setOption(this.option, true)
 
-
-        this.option2 = this.assign(data.option2, this.other)
-        this.chart2.setOption(this.option2, true)
-
         this.loadingList = false
-      }).catch(() => {
+      }).catch((e) => {
+        debugger
         this.loadingList = false
-        this.option = this.optionTest
+        console.log(e)
+        this.option =  this.assign(this.optionTest, this.other)
         this.chart.setOption(this.option, true)
-
       })
 
     },
 
     initChart() {
       this.chart = echarts.init(document.getElementById(this.chartId))
-      this.chart2 = echarts.init(document.getElementById(this.chartId2))
     },
 
 

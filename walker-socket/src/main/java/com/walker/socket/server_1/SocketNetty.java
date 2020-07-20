@@ -35,7 +35,7 @@ public class SocketNetty {
 	static int cpus = Runtime.getRuntime().availableProcessors();
 	
 	public SocketNetty() {
-		serverPort = Setting.get("socket_port_netty", 8083);
+		serverPort = Setting.get("socket_port_netty", 8093);
 	}
 
 

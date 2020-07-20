@@ -41,6 +41,16 @@ public interface StatisticsMapper {
     List<Map<String, Object>> findUserData(@Param("from") String from, @Param("to") String to);
 
 
+    /**
+     * 多指标  按   接口展开
+     * X      Y1        Y2              Y3          Y4              Y5  y6
+     * 接口名  net次数  net耗时      wait次数      wait耗时
+     */
+    List<Map<String, Object>> findSocketDetail(@Param("from") String from, @Param("to") String to, @Param("plugin") String plugin);
+    /**
+     * 查找url类别集合
+     */
+    List<Map<String, Object>> findSocketDetailUrl(@Param("from") String from, @Param("to") String to);
 
 
 }

@@ -5,6 +5,8 @@ import com.walker.config.Config;
 import com.walker.core.aop.FunArgsS;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
+import com.walker.dao.LogSocketModelRepository;
+import com.walker.mode.LogSocketModel;
 import com.walker.system.Pc;
 import com.walker.dao.JdbcDao;
 import com.walker.dao.LogModelRepository;
@@ -35,6 +37,8 @@ public class LogServiceImpl implements LogService {
 
 	@Autowired
 	LogModelRepository logModelRepository;
+	@Autowired
+	LogSocketModelRepository logSocketModelRepository;
 
 	@Override
 	public LogModel saveLogModelNoTime(LogModel logModel) {
@@ -127,6 +131,20 @@ public class LogServiceImpl implements LogService {
 			log.error("saveStatis error " + CACHE_KEY_CONTROL, e);
 		}
 
+	}
+
+	/**
+	 * 记录socket日志
+	 */
+	@Override
+	public LogSocketModel saveLogSocketModel(LogSocketModel logModel) {
+		if(logModel.getID() == null || logModel.getID().length() == 0){
+			logModel.setID(LangUtil.getTimeSeqId());
+		}
+		if(logModel.getS_MTIME() == null || logModel.getS_MTIME().length() == 0) {
+			logModel.setS_MTIME(TimeUtil.getTimeYmdHmss());
+		}
+		return logSocketModelRepository.save(logModel);
 	}
 
 }

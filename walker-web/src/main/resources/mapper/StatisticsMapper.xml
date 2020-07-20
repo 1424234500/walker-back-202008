@@ -154,4 +154,68 @@ CREATE TABLE `W_LOG_TIME` (
 
     </select>
 
+
+
+
+
+    <select id="findSocketDetail" resultType="java.util.Map" >
+<!--        select w.minu X-->
+<!--        , w.NET_COUNT Y1, ifnull(w.NET_COST / w.NET_COUNT, 0) Y2-->
+<!--        , w.WAIT_COUNT Y3, ifnull(w.WAIT_COST / w.WAIT_COUNT, 0) Y4-->
+<!--        , w.DONE_COUNT Y5, ifnull(w.DONE_COST / w.DONE_COUNT, 0) Y6-->
+<!--        from-->
+<!--        (-->
+<!--        select SUBSTRING_INDEX(S_MTIME, ':', 2) minu-->
+<!--        , ifnull(sum(NET_COUNT), 0) NET_COUNT, ifnull(sum(NET_COST), 0) NET_COST-->
+<!--        , ifnull(sum(WAIT_COUNT), 0) WAIT_COUNT, ifnull(sum(WAIT_COST), 0) WAIT_COST-->
+<!--        , ifnull(sum(DONE_COUNT), 0) DONE_COUNT, ifnull(sum(DONE_COST), 0) DONE_COST-->
+<!--        from W_LOG_SOCKET_MODEL-->
+<!--        group by SUBSTRING_INDEX(S_MTIME, ':', 2)-->
+<!--        ) w-->
+<!--        order by w.minu asc-->
+
+
+        select w.minu X
+        , w.NET_COUNT Y1, ifnull(w.NET_COST / w.NET_COUNT, 0) Y2
+        , w.WAIT_COUNT Y3, ifnull(w.WAIT_COST / w.WAIT_COUNT, 0) Y4
+        , w.DONE_COUNT Y5, ifnull(w.DONE_COST / w.DONE_COUNT, 0) Y6
+        from
+        (
+        select SUBSTRING_INDEX(S_MTIME, ':', 2) minu
+        , ifnull(sum(NET_COUNT), 0) NET_COUNT, ifnull(sum(NET_COST), 0) NET_COST
+        , ifnull(sum(WAIT_COUNT), 0) WAIT_COUNT, ifnull(sum(WAIT_COST), 0) WAIT_COST
+        , ifnull(sum(DONE_COUNT), 0) DONE_COUNT, ifnull(sum(DONE_COST), 0) DONE_COST
+        from W_LOG_SOCKET_MODEL
+        <where>
+            <if test="plugin != null and plugin != '' ">
+                and  PLUGIN = #{plugin}
+            </if>
+            <if test="from != null and from != '' ">
+                and  S_MTIME &gt;= #{from}
+            </if>
+            <if test="to != null and to != '' ">
+                and  S_MTIME &lt;= #{to}
+            </if>
+        </where>
+        group by SUBSTRING_INDEX(S_MTIME, ':', 2)
+        ) w
+        order by w.minu asc
+
+    </select>
+
+
+
+    <select id="findSocketDetailUrl" resultType="java.util.Map" >
+        select distinct PLUGIN from W_LOG_SOCKET_MODEL
+        <where>
+            <if test="from != null and from != '' ">
+                and  S_MTIME &gt;= #{from}
+            </if>
+            <if test="to != null and to != '' ">
+                and  S_MTIME &lt;= #{to}
+            </if>
+        </where>
+        order by PLUGIN
+    </select>
+
 </mapper>

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -70,23 +71,21 @@ public class CacheMgr extends TestAdapter{
 		log.warn("初始化缓存");
 		cache.put("cache:dir:project", Context.getPathRoot());
 		cache.put("cache:dir:conf", Context.getPathConf());
-		String[] dd  = {new File("").getAbsolutePath(), Context.class.getResource("/").getPath(), new File("").getAbsolutePath() + File.separator + Context.getConfName()};
+
 		List<String> fff = new ArrayList<>();
 		int k = 0;
-		for(int i = 0; i < dd.length ; i++) {
-			File dir = new File(dd[i]);
-			if(!dir.isDirectory()){
-				log.warn(i + "\t配置加载路径不存在 跳过 " + dd[i]);
-				continue;
-			}
-			log.warn(i + "\t配置加载路径 " + dd[i]);
+		File dir = new File(Context.getPathConf());
+		if(!dir.isDirectory()){
+			log.warn("\t配置加载路径不存在 跳过 " + dir.getAbsolutePath());
+		}else {
+			log.warn("\t配置加载路径 " +dir.getAbsolutePath());
 			for (File item : dir.listFiles()) {
 				String path = item.getAbsolutePath();
 				if (FileUtil.check(path) == 0 && path.endsWith(".properties")) {
 					log.warn(k++ + "\t解析文件存入cache " + path);
 					cache.putAll(SettingUtil.getSetting(path));
 					fff.add(path);
-				}else{
+				} else {
 					log.warn(k++ + "\t解析文件存入cache 不匹配 跳过 " + path);
 				}
 			}

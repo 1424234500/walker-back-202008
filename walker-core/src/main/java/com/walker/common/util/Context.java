@@ -5,6 +5,7 @@ import com.walker.core.exception.ErrorException;
 
 import java.io.File;
 import java.net.URL;
+import java.util.*;
 
 /**
  * 运行上下文
@@ -119,29 +120,39 @@ springboot jar
 	public static String getPathConf() {
 //		web项目需要配置于WEB-INF/classes 	spring.xml	 web.xml寻址classpath:   ? 
 //		System.setProperty("path_conf", "conf");
-		String res = "";
-		URL url = Context.class.getResource("/");
-		if(url != null) {
-			String root = url.getPath();
-			if(root.contains("WEB-INF")) {
-				res = root;
+
+
+		String p1 = Context.class.getResource("/").getPath();
+		List<String> dd  = new ArrayList<>(Arrays.asList(
+				new File("").getAbsolutePath()
+				, p1
+				, new File("").getAbsolutePath() + File.separator + Context.getConfName()
+		));
+		int pin = p1.indexOf("/target/classes");
+		if(pin > 0){
+			p1 = p1.substring(0, pin);
+			dd.add(p1);
+			dd.add(p1 + File.separator + Context.getConfName());
+		}
+		pin = p1.indexOf("/WEB-INF/classes");
+		if(pin > 0){
+			p1 = p1.substring(0, pin);
+			dd.add(p1);
+			dd.add(p1 + File.separator + Context.getConfName());
+		}
+		Collections.sort(dd, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.length() > o2.length() ? 1 : 0;
 			}
-			if(root.contains("target")){
-				res = root;
+		});
+		for(String dir : dd){
+			if(new File(dir).isDirectory() && new File(dir + File.separator + "log4j.properties").isFile()){
+				return dir;
 			}
 		}
 
-
-		if(res.length() == 0) {
-			res = getPathRoot(getConfName());
-			if(! new File(res).isDirectory()){
-//				Context.class.getResource("") 	file:/D:/workspace/walker/walker-core/target/classes/com/walker/common/util/
-				res = getPathRoot();
-			}
-		}
-//		/walker/walker-socket/target/classes/
-//		/home/walker/e/workspace_my/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/walker-web/WEB-INF/classes/
-		return res;
+		return dd.get(0);
 	}
 	public static void setConfName(String name){
 		System.setProperty("path_conf", name);

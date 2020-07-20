@@ -32,16 +32,16 @@ public class ClientLauncher {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		try {
-			new ClientUI(new ClientNIO("127.0.0.1", 8082), "nio-nio-client-127");
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		try {
-			new ClientUI(new ClientAIO("127.0.0.1", 8083), "aio-aio-client-127");
-		}catch (Exception e){
-			e.printStackTrace();
-		}
+//		try {
+//			new ClientUI(new ClientNIO("127.0.0.1", 8082), "nio-nio-client-127");
+//		}catch (Exception e){
+//			e.printStackTrace();
+//		}
+//		try {
+//			new ClientUI(new ClientAIO("127.0.0.1", 8083), "aio-aio-client-127");
+//		}catch (Exception e){
+//			e.printStackTrace();
+//		}
 		while(true) {}
 	}
 
