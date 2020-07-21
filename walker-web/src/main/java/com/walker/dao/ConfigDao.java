@@ -126,7 +126,7 @@ public class ConfigDao {
         String res = redisDao.getCacheOrDb(CONF_ID, key, 3600, 8, new FunArgsReturn<String, String>() {
             @Override
             public String make(String obj) {
-                String v = "";
+                String v = null;
                 Map<String, Object> line = jdbcDao.findOne("select VALUE from W_SYS_CONFIG where ID=? and S_FLAG='1' ", obj);
                 if(line != null){
                     Object vv = line.get("VALUE");

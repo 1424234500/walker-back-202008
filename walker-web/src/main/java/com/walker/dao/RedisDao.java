@@ -13,6 +13,7 @@ import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
@@ -40,10 +41,10 @@ public class RedisDao {
     private static final String KEY_LOCK = "lock:make:";
 
 
-    private static final String KEY_LOCK_GET_CACHE_OR_DB = "getCacheOrDb:";
+    private static final String KEY_LOCK_GET_CACHE_OR_DB = "lock:getCacheOrDb:";
     private static final String KEY_GET_CACHE_OR_DB = "cache:getCacheOrDb:";
 
-    private static final String KEY_LOCK_INIT_CACHE_OR_DB =  "initCacheOrDb:";
+    private static final String KEY_LOCK_INIT_CACHE_OR_DB =  "lock:initCacheOrDb:";
     private static final String KEY_INIT_CACHE_OR_DB_OK =  "cache:initCacheOrDb:isok:";
 
 
@@ -520,7 +521,7 @@ public class RedisDao {
      */
     public <T> T getCacheOrDb(String key0, String key1, int secondsToExpire, int secondsToWait, FunArgsReturn<String, T> getFromDb){
         final String key = KEY_GET_CACHE_OR_DB + key0;
-        final String lockName = KEY_LOCK_GET_CACHE_OR_DB + key0 + "::" + key1;
+        final String lockName = KEY_LOCK_GET_CACHE_OR_DB + key0 + ":" + key1;
 
 
 //        熔断
@@ -539,8 +540,9 @@ public class RedisDao {
                         res = getFromDb.make(key1);
                         if(res == null){	//避免缓存穿透  null是否缓存 快速过期来保护数据库  本来计划10分钟过期 则 null 1分钟过期 最小5秒过期
 //									布隆过滤器预热 性能实现 全局map 精确映射数据库有没有
+//                            缓存空值
                             log.warn("get from db " + key + " res is null ? " + (res == null) );
-                            setMap(key, key1, res, Math.max(secondsToExpire/100, 5));
+                            setMap(key, key1, "", Math.max(secondsToExpire/100, 5));
                         }else{
                             log.debug("get from db " + key + " res is null ? " + (res == null) + " " + res);
                             setMap(key, key1, res, secondsToExpire);
@@ -721,7 +723,14 @@ public class RedisDao {
             res.put("TTL", redisTemplate.getExpire(key));
             Long len = -1L;
             Object value = null;
-            if (type.equals("string")) {
+
+//            @Cacheable(keyGenerator="keyGenerator",value="cache-getColsMapCache")
+//          redis spring缓存问题 读取string报错 org.springframework.data.redis.serializer.SerializationException: Could not read JSON: Unexpected character ('¬' (code 172)): expected a valid value (number, String, array, object, 'true', 'false' or 'null')
+//          例外处理
+            if(key.startsWith("cache-")){
+                value = "@Cacheable(keyGenerator=\"keyGenerator\",value=\"" + key + "\")";
+                len = 998L;
+            }else if (type.equals("string")) {
                 value = redisTemplate.opsForValue().get(key);
                 len = redisTemplate.opsForValue().size(key);
             } else if (type.equals("list")) {

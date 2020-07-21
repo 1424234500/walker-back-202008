@@ -67,7 +67,6 @@ public class JobQpsMinute extends TaskJob{
 			String plugin = entry.getKey();
 			LogSocketModel logSocketModel = new LogSocketModel()
 					.setPLUGIN(plugin)
-					.setS_MTIME(TimeUtil.getTimeYmdHmss())
 					.setIP_PORT(Pc.getIp())
 					;
 
@@ -81,6 +80,9 @@ public class JobQpsMinute extends TaskJob{
 
 				long count = model.getCount();
 				long cost = model.getCost();
+//				Long qps = (long) Math.ceil( 1.0 * count / detaTime);	//message	*net:qps:232
+				Long ave = (long) Math.ceil(1.0 * cost / Math.max(count, 1));	//*net:ave:322ms
+				cost = ave;
 
 				if(types[0].equalsIgnoreCase(type)){
 					logSocketModel
@@ -98,11 +100,6 @@ public class JobQpsMinute extends TaskJob{
 							.setDONE_COST(cost+"")
 					;
 				}
-				LogService logService = DubboMgr.getService("logService");
-				logService.saveLogSocketModel(logSocketModel);
-
-//				Long qps = (long) Math.ceil( 1.0 * count / detaTime);	//message	*net:qps:232
-//				Long ave = (long) Math.ceil(1.0 * cost / count);	//*net:ave:322ms
 
 //				plugin:message
 //				net:
@@ -117,6 +114,11 @@ public class JobQpsMinute extends TaskJob{
 
 
 			}
+
+			LogService logService = DubboMgr.getService("logService");
+			logService.saveLogSocketModel(logSocketModel);
+
+			log.info(logSocketModel.toString());
 
 		}
 //		清空 是否 事务问题 回滚问题

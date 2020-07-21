@@ -52,12 +52,14 @@
       </form>
     </div>
 
-    <!--搜索-->
+    <!--搜索栏目-->
     <div class="div-box-down"
          v-show="!loadingTables || !showChoseDb"
          v-loading="loadingCols"
     >
+
       <form class="form-inline" >
+        <label>{{table }}</label> &nbsp;&nbsp;
         <div class="form-group" v-for="(value, key) in colMap">
           <label>{{value=='' ? key : value}}</label>
           <input

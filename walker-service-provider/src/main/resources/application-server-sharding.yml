@@ -25,9 +25,9 @@ sharding:
         password: qwer
         driver-class-name: com.mysql.cj.jdbc.Driver
         maxWait: 3000
-        maxActive: 64
-        maxIdle: 16
-        minIdle: 4
+        maxActive: 8
+        maxIdle: 2
+        minIdle: 1
         validationQuery: select 1 from dual
         validation-query-time: 10000
 
@@ -58,9 +58,9 @@ sharding:
         username: walker0
         password: qwer
         maxWait: 3000
-        maxActive: 64
-        maxIdle: 16
-        minIdle: 4
+        maxActive: 8
+        maxIdle: 2
+        minIdle: 1
         validationQuery: select 1 from dual
         validation-query-time: 10000
       walker1:
@@ -70,9 +70,9 @@ sharding:
         username: walker1
         password: qwer
         maxWait: 3000
-        maxActive: 64
-        maxIdle: 16
-        minIdle: 4
+        maxActive: 8
+        maxIdle: 2
+        minIdle: 1
         validationQuery: select 1 from dual
         validation-query-time: 10000
 

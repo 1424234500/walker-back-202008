@@ -46,8 +46,15 @@ public class LogSocketModel implements Cloneable, Serializable {
 	@Id     //主键
 	@Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
 	private String ID;
+
+	@Column(name = "IP_PORT", columnDefinition = "varchar(64) default '' comment '节点ip:port' ")
+	private String IP_PORT;
+	@Column(name = "S_MTIME", columnDefinition = "varchar(32) default '' comment '修改时间' ")    //255
+	private String S_MTIME = TimeUtil.getTimeYmdHmss();
+
 	@Column(name = "PLUGIN", columnDefinition = "varchar(256) default 'plugin' comment '插件' ")
     private String PLUGIN;
+
 	@Column(name = "NET_COUNT", columnDefinition = "varchar(32) default '0' comment '网络次数' ")
 	private String NET_COUNT;
 	@Column(name = "NET_COST", columnDefinition = "varchar(32) default '0' comment '网络耗时' ")
@@ -61,11 +68,6 @@ public class LogSocketModel implements Cloneable, Serializable {
 	@Column(name = "DONE_COST", columnDefinition = "varchar(32) default '0' comment '处理耗时' ")
 	private String DONE_COST;
 
-	@Column(name = "IP_PORT", columnDefinition = "varchar(64) default '' comment '节点ip:port' ")
-	private String IP_PORT;
-
-	@Column(name = "S_MTIME", columnDefinition = "varchar(32) default '' comment '修改时间' ")    //255
-	private String S_MTIME = TimeUtil.getTimeYmdHmss();
 
 
 	public String getID() {
@@ -153,8 +155,25 @@ public class LogSocketModel implements Cloneable, Serializable {
 		return S_MTIME;
 	}
 
+	@Override
+	public String toString() {
+		return "LogSocketModel{" +
+				"ID='" + ID + '\'' +
+				", PLUGIN='" + PLUGIN + '\'' +
+				", NET_COUNT='" + NET_COUNT + '\'' +
+				", NET_COST='" + NET_COST + '\'' +
+				", WAIT_COUNT='" + WAIT_COUNT + '\'' +
+				", WAIT_COST='" + WAIT_COST + '\'' +
+				", DONE_COUNT='" + DONE_COUNT + '\'' +
+				", DONE_COST='" + DONE_COST + '\'' +
+				", IP_PORT='" + IP_PORT + '\'' +
+				", S_MTIME='" + S_MTIME + '\'' +
+				'}';
+	}
+
 	public LogSocketModel setS_MTIME(String s_MTIME) {
 		S_MTIME = s_MTIME;
 		return this;
 	}
+
 }

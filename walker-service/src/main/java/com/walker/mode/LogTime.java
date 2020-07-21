@@ -155,7 +155,7 @@ public class LogTime implements Cloneable, Serializable {
 	}
 
 	public LogTime setAVE_COST_OK(Float AVE_COST_OK) {
-		this.AVE_COST_OK = "" + AVE_COST_OK;
+		this.AVE_COST_OK = "" + AVE_COST_OK.intValue();
 		return this;
 	}
 
@@ -179,7 +179,7 @@ public class LogTime implements Cloneable, Serializable {
 	}
 
 	public LogTime setAVE_COST_NO(Float AVE_COST_NO) {
-		this.AVE_COST_NO = "" + AVE_COST_NO;
+		this.AVE_COST_NO = "" + AVE_COST_NO.intValue();
 		return this;
 	}
 }

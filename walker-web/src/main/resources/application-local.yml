@@ -5,8 +5,20 @@ spring:
     url: jdbc:mysql://127.0.0.1:8098/walker?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true
     username: walker
     password: qwer
-    driver-class-name: com.mysql.jdbc.Driver
+    #    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    tomcat:
+      max-idle: 1
+      max-wait: 1
+      max-active: 8
+      validation-query: select 1 from dual
+      validation-query-timeout: 1000
 
+    sql-script-encoding: utf-8
+    schema: classpath:ddl.sql  # 初始化schema文件位置
+    data: classpath:dml.sql  # 初始化data位置
+    initialization-mode: always #初始化模式（springboot2.0），其中有三个值，always为始终执行初始化，embedded只初始化内存数据库（默认值）,如h2等，never为不执行初始化。
+    continue-on-error: true
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect

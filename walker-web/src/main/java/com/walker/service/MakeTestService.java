@@ -3,6 +3,8 @@ package com.walker.service;
 
 import com.walker.common.util.*;
 import com.walker.config.ShiroConfig;
+import com.walker.dubbo.DubboMgr;
+import com.walker.mode.LogSocketModel;
 import com.walker.system.Pc;
 import com.walker.dao.JdbcDao;
 import com.walker.mode.LogModel;
@@ -96,8 +98,8 @@ public class MakeTestService {
                         while( ! Thread.interrupted()){
                             int i = (int) (Math.random() * list.size());
                             Map<String, Object> map = list.get(i);
-                            String url = String.valueOf(map.get("URL"));    ///common/findPage.do
-                            String argsStr = String.valueOf(map.get("ARGS"));//{"showNum":"8","_DATABASE_":"walker","_TABLE_NAME_":"W_LOG_MODEL","nowPage":"1","order":""}
+                            String url = String.valueOf(map.get("URL"));    // /common/findPage.do
+                            String argsStr = String.valueOf(map.get("ARGS"));// {"showNum":"8","_DATABASE_":"walker","_TABLE_NAME_":"W_LOG_MODEL","nowPage":"1","order":""}
                             try {
                                 url = "http://127.0.0.1:8090" + url;
                                 Bean args = JsonUtil.get(argsStr);
@@ -127,7 +129,21 @@ public class MakeTestService {
                     }
                 });
             }
-            service.awaitTermination(timeAll + 3000, TimeUnit.MILLISECONDS);
+            //        等待任务队列消费完毕
+            service.shutdown();
+            try{
+//            超时控制 并打印剩下的队列
+                service.awaitTermination(timeAll + 3000, TimeUnit.MILLISECONDS);
+                log.info("===============================================");
+                log.info("WARN await time out now shutdown now !! " +  (timeAll + 3000) );
+                List<Runnable> last = service.shutdownNow();
+                log.info("WARN shutdown now last queue:" + last.size());
+                Tools.formatOut(last);
+                log.info("===============================================");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             logModel.setRES(count.toString());
         }catch (Exception e){
             logModel.setEXCEPTION(Tools.toString(e)).setIS_OK(Config.FALSE);
@@ -141,4 +157,59 @@ public class MakeTestService {
     }
 
 
+    /**
+     *  模拟socket插入监控数据行 W_LOG_SOCKET_MODEL
+     *  按照函数 时间戳 曲线x6   调度触发采样点
+     *
+     * @param plugin    插件模拟名
+     * @param pCount    count系数   0,2 -> 0,200
+     * @param pCost     cost系数    0,2 -> 0,200
+     * @param t         曲线周期T 3600s
+     * @return
+     */
+    public Object makeLogOneLine(String plugin, int pCount, int pCost, Long t) {
+        Bean res = new Bean();
+
+//        时序投影到周期 映射到0~2pi
+        Long time = System.currentTimeMillis() / 1000;  //s为单位
+//        time % t : t = x : 2 * pi
+//        x = 2 * pi * (time % t) / t
+//        y [-1, 1] -> y [0, 2]
+//        y = sin(x) + 2
+        double x = 2 * Math.PI * (time % t * 1f / t);
+        double dx = 2 * Math.PI / 6;    //6线 周期分离
+        double y = 0;
+        res.put("pCount", pCount).put("pCost", pCost).put("t", t).put("time", time).put("plugin", plugin).put("dx", dx).put("x", x);
+
+        LogSocketModel logSocketModel = new LogSocketModel()
+                .setPLUGIN(plugin)
+                .setIP_PORT(Pc.getIp())
+                ;
+        y = Math.sin( x ) + 2;
+        logSocketModel.setNET_COUNT( (int)(y * pCount) + "");
+        x += dx;
+        y = Math.sin( x ) + 2;
+        logSocketModel.setNET_COST( (int)(y * pCost) + "");
+
+        x += dx;
+        y = Math.sin( x ) + 2;
+        logSocketModel.setWAIT_COUNT( (int)(y * pCount) + "");
+        x += dx;
+        y = Math.sin( x ) + 2;
+        logSocketModel.setWAIT_COST( (int)(y * pCost) + "");
+
+
+        x += dx;
+        y = Math.sin( x ) + 2;
+        logSocketModel.setDONE_COUNT( (int)(y * pCount) + "");
+        x += dx;
+        y = Math.sin( x ) + 2;
+        logSocketModel.setDONE_COST( (int)(y * pCost) + "");
+
+        LogService logService = DubboMgr.getService("logService");
+        logService.saveLogSocketModel(logSocketModel);
+        log.info(logSocketModel.toString());
+
+        return res;
+    }
 }

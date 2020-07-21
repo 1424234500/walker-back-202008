@@ -176,9 +176,9 @@ CREATE TABLE `W_LOG_TIME` (
 
 
         select w.minu X
-        , w.NET_COUNT Y1, ifnull(w.NET_COST / w.NET_COUNT, 0) Y2
-        , w.WAIT_COUNT Y3, ifnull(w.WAIT_COST / w.WAIT_COUNT, 0) Y4
-        , w.DONE_COUNT Y5, ifnull(w.DONE_COST / w.DONE_COUNT, 0) Y6
+        , w.NET_COUNT Y1, w.NET_COST Y2
+        , w.WAIT_COUNT Y3, w.WAIT_COST Y4
+        , w.DONE_COUNT Y5, w.DONE_COST Y6
         from
         (
         select SUBSTRING_INDEX(S_MTIME, ':', 2) minu
