@@ -110,8 +110,8 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.vaadin.external.google:android-json:0.0.20131108.vaadin1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:5.1.8.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.xmlunit:xmlunit-core:2.6.2" level="project" />
-    <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz:2.3.0" level="project" />
-    <orderEntry type="library" name="Maven: com.mchange:mchange-commons-java:0.2.11" level="project" />
+    <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.mchange:mchange-commons-java:0.2.15" level="project" />
     <orderEntry type="library" name="Maven: io.springfox:springfox-swagger2:2.6.1" level="project" />
     <orderEntry type="library" name="Maven: io.swagger:swagger-annotations:1.5.10" level="project" />
     <orderEntry type="library" name="Maven: io.swagger:swagger-models:1.5.10" level="project" />

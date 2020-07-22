@@ -1,16 +1,14 @@
 package com.walker.dao;
 
-import com.walker.mode.Action;
+import com.walker.mode.DubboInvoke;
 import com.walker.mode.Dept;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +16,7 @@ import java.util.Set;
  * sharding 分库 & 分表
  */
 @Repository
-public interface ActionRepository extends JpaRepository<Action, String>, JpaSpecificationExecutor {//实体类 主键类型 自定义查询
+public interface DubboInvokeRepository extends JpaRepository<DubboInvoke, String>, JpaSpecificationExecutor {//实体类 主键类型 自定义查询
 //    List<T> findAll();
 //    List<T> findAll(Sort var1);
 //    List<T> findAllById(Iterable<ID> var1);
@@ -37,10 +35,10 @@ public interface ActionRepository extends JpaRepository<Action, String>, JpaSpec
      */
     @Transactional
     @Modifying
-    @Query("delete from Action t where t.ID in (?1) ")
+    @Query("delete from DubboInvoke t where t.ID in (?1) ")
     Integer selfDeleteAll(Set<String> ids);
 
-    @Query("select t from Action t where t.ID in (?1) ")
+    @Query("select t from DubboInvoke t where t.ID in (?1) ")
     List<Dept> findAllByID(Set<String> ids);
 
 

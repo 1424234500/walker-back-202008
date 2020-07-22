@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.mysql.jdbc.PingTarget;
 import com.walker.common.util.Tools;
 import com.walker.core.encode.Pinyin;
 

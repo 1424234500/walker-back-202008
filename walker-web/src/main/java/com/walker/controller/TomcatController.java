@@ -159,6 +159,101 @@ public class TomcatController {
     }
 
 
+
+
+    @ApiOperation(value = "统计socket", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/socket.do", method = RequestMethod.GET)
+    public Response socket(
+            @RequestParam(value = "from", required = false, defaultValue = "") String from,
+            @RequestParam(value = "to", required = false, defaultValue = "") String to,
+            @RequestParam(value = "url", required = false, defaultValue = "") String url
+    ) {
+        //        确保时间区间1天
+        int d = 1;
+        if(from.length() == 0 && to.length() == 0){
+            to = TimeUtil.getTime(TimeUtil.ymdhms, 0);
+            from = TimeUtil.getTime(TimeUtil.ymdhms, -d);
+        }else if(from.length() == 0){
+            from = TimeUtil.getTime(to, TimeUtil.ymdhms, -d);
+        }else if(to.length() == 0){
+            to = TimeUtil.getTime(from, TimeUtil.ymdhms, +d);
+        }
+
+        List<Map<String, Object>> list = statisticsMapper.findSocketDetailUrl(from, to);
+        List<Object> urls = MapListUtil.getListCol(list, 0);
+
+
+        //    每条线名称
+        List<String> lineNames = Arrays.asList("网络数", "网络平均耗时", "排队数", "排队平均耗时", "处理数", "处理平均耗时");
+        //    每条线类型
+        List<String> lineTypes = Arrays.asList("bar", "bar", "bar", "bar", "bar", "bar");
+        //    每条线堆叠类型
+        List<String> lineStacks = Arrays.asList("1", "1", "1", "1", "1", "1");
+
+//        指标按行查询出来 首行为x轴坐标
+        List<Map<String, Object>> listDb = statisticsMapper.findSocketDetail(from, to, url);
+        Map option = MapListUtil.makeEchartOption("Socket趋势", "W_LOG_SOCKET_MODEL", ""
+                , listDb, lineNames, lineTypes, lineStacks);
+        log.debug(JsonFastUtil.toString(option));
+        Map res = MapListUtil.getMap()
+                .put("res", "true")
+                .put("option", option)
+                .put("items", urls)
+                .put("args", new Bean().set("from", from).set("to", to).set("url", url))
+                .build();
+
+        return Response.makeTrue("", res);
+
+    }
+
+
+    @ApiOperation(value = "统计dubbo monitor", notes = "")
+    @ResponseBody
+    @RequestMapping(value = "/dubbo.do", method = RequestMethod.GET)
+    public Response dubbo(
+            @RequestParam(value = "from", required = false, defaultValue = "") String from,
+            @RequestParam(value = "to", required = false, defaultValue = "") String to,
+            @RequestParam(value = "url", required = false, defaultValue = "") String url
+    ) {
+        //        确保时间区间1天
+        int d = 1;
+        if(from.length() == 0 && to.length() == 0){
+            to = TimeUtil.getTime(TimeUtil.ymdhms, 0);
+            from = TimeUtil.getTime(TimeUtil.ymdhms, -d);
+        }else if(from.length() == 0){
+            from = TimeUtil.getTime(to, TimeUtil.ymdhms, -d);
+        }else if(to.length() == 0){
+            to = TimeUtil.getTime(from, TimeUtil.ymdhms, +d);
+        }
+
+        List<Map<String, Object>> list = statisticsMapper.findSocketDetailUrl(from, to);
+        List<Object> urls = MapListUtil.getListCol(list, 0);
+
+
+        //    每条线名称
+        List<String> lineNames = Arrays.asList("网络数", "网络平均耗时", "排队数", "排队平均耗时", "处理数", "处理平均耗时");
+        //    每条线类型
+        List<String> lineTypes = Arrays.asList("bar", "bar", "bar", "bar", "bar", "bar");
+        //    每条线堆叠类型
+        List<String> lineStacks = Arrays.asList("1", "1", "1", "1", "1", "1");
+
+//        指标按行查询出来 首行为x轴坐标
+        List<Map<String, Object>> listDb = statisticsMapper.findSocketDetail(from, to, url);
+        Map option = MapListUtil.makeEchartOption("Socket趋势", "W_LOG_SOCKET_MODEL", ""
+                , listDb, lineNames, lineTypes, lineStacks);
+        log.debug(JsonFastUtil.toString(option));
+        Map res = MapListUtil.getMap()
+                .put("res", "true")
+                .put("option", option)
+                .put("items", urls)
+                .put("args", new Bean().set("from", from).set("to", to).set("url", url))
+                .build();
+
+        return Response.makeTrue("", res);
+
+    }
+
 //option = {
 //        title: {
 //            text: '深圳月最低生活费组成（单位:元）',

@@ -44,6 +44,7 @@ public abstract class PipeAdapter<T> implements Pipe<T>{
 							try {
 //								log.debug("sleep");
 //								Thread.sleep(Pipe.SLEEP_THREAD);
+//								参考condition wait notify问题  共享对象可行，redis不行
 								wait();	// 等待唤醒机制 主要是sleep方法没有释放锁，而wait方法释放了锁，使得其他线程可以使用同步控制块或者方法。
 							} catch (InterruptedException e) {
 								log.error(e.getMessage(), e);

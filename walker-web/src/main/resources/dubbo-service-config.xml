@@ -17,12 +17,11 @@
 
     <!-- 注册中心 -->
 
-    <!-- zookeeper 版本可配？ 多ip问题汉注意！ enable="true" ,122.10.1.12:2182 register="false" 只订阅 -->
+<!-- zookeeper 版本可配？ 多ip问题汉注意！ enable="true" ,122.10.1.12:2182 register="false" 只订阅 -->
 <!--    <dubbo:registry protocol="redis" address="localhost:6379,localhost:6389,localhost:6399" />-->
-    <dubbo:registry address="127.0.0.1:8096" protocol="zookeeper"  timeout="30000" check="false" />
-
+    <dubbo:registry protocol="zookeeper" address="localhost:8096,localhost:8888" timeout="30000" check="false" />
     <!-- 监控中心 从注册中心获取监控地址 address version-->
-    <dubbo:monitor protocol="registry"  />
+    <dubbo:monitor protocol="registry"   />
 
     <!-- 指定了集群容错模式，此处为快速失败 -->
 <!--    <dubbo:provider cluster="failfast"/>-->
@@ -33,6 +32,9 @@
     <!--具体实现该接口的 bean-->
     <!-- 要暴露的服务接口 -->
     <dubbo:reference id="echoService" interface="com.walker.service.EchoService" timeout="30000" version="1.0"  />
+
+
+
 
     <!--    日志服务-->
     <dubbo:reference id="logService" interface="com.walker.service.LogService" timeout="30000" version="1.0"  />

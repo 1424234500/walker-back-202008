@@ -30,11 +30,11 @@ public class Dept implements Cloneable,Serializable {
     private String S_FLAG;
 
 
-    @Column(name = "NAME", columnDefinition = "varchar(512) default 'name' comment '名字' ")    //255
+    @Column(name = "NAME", columnDefinition = "varchar(256) default 'name' comment '名字' ")    //255
     private String NAME;
     @Column(name = "P_ID", columnDefinition = "varchar(32) default '' comment '上级部门' ")
     private String P_ID;
-    @Column(name = "PATH", columnDefinition = "varchar(512) default '' comment '机构树-编码' ")
+    @Column(name = "PATH", columnDefinition = "varchar(256) default '' comment '机构树-编码' ")
     private String PATH;
     @Column(name = "PATH_NAME", columnDefinition = "varchar(998) default '' comment '机构树-中文' ")
     private String PATH_NAME;

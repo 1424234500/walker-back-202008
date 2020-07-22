@@ -20,8 +20,10 @@
         redis   http://dubbo.apache.org/zh-cn/docs/user/references/registry/redis.html
 
     -->
-<!--        <dubbo:registry protocol="redis" address="localhost:6379,localhost:6389,localhost:6399" />-->
-    <dubbo:registry protocol="zookeeper" address="localhost:8096,localhost:8888" timeout="30000" />
+
+<!-- zookeeper 版本可配？ 多ip问题汉注意！ enable="true" ,122.10.1.12:2182 register="false" 只订阅 -->
+<!--    <dubbo:registry protocol="redis" address="localhost:6379,localhost:6389,localhost:6399" />-->
+    <dubbo:registry protocol="zookeeper" address="localhost:8096,localhost:8888" timeout="30000" check="false" />
     <!-- 监控中心 从注册中心获取监控地址 address version -->
     <dubbo:monitor protocol="registry"  />
 
@@ -37,11 +39,17 @@
         配置加载 迟加载 避免在spring上下文未初始化时 报错
         executes="10"
         这个接口下边全部的方法累积，全部并发不能超过10
-
     -->
     <dubbo:service ref="echoService" interface="com.walker.service.EchoService" timeout="30000" version="1.0" delay="-1" />
 
-<!--日志服务-->
+
+    <!-- Monitor服务 自实现 提供存储 查询监控 -->
+    <bean id="monitorService" class="com.walker.service.impl.DubboMonitorService" />
+    <dubbo:service ref="monitorService" interface="com.alibaba.dubbo.monitor.MonitorService" timeout="30000" version="1.0" delay="-1" />
+
+
+
+    <!--日志服务-->
     <bean id="logService" class="com.walker.service.impl.LogServiceImpl" />
     <dubbo:service ref="logService" interface="com.walker.service.LogService" timeout="30000" version="1.0" delay="-1" />
 

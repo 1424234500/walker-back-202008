@@ -9,24 +9,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * 监控模型 单次接口
- *
- * 分类	CATE
- *
- * 哪个用户	USER
- * 从哪个主机	IP_PORT_FROM
- * 什么时间	S_MTIME
- * 访问了什么东西	URL
- * 如何访问	WAY
- * 访问的目标服务器	IP_PORT_TO
- * 带了什么参数	ARGS
- * 是否抛出异常	IS_EXCEPTION
- * 抛出了什么异常	EXCEPTION
- * 是否访问成功	IS_OK
- * 访问的结果	RES
- * 消耗了多少时间	COST
- *
- * 其他说明	ABOUT
+ * 监控模型
+ * socket趋势图数据
  *
  *
  */

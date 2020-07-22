@@ -143,7 +143,7 @@ export default {
      getListPage() {
       this.loadingList = true
       var params = this.colsSearch
-      this.get('/tomcat/socket.do', params).then((data) => {
+      this.get('/tomcat/dubbo.do', params).then((data) => {
         data = data.data
         this.queryUrl =  data.items
         this.colsSearch = data.args

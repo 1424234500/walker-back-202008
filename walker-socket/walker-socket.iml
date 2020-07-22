@@ -34,11 +34,12 @@
     <orderEntry type="library" name="Maven: jline:jline:0.9.94" level="project" />
     <orderEntry type="library" name="Maven: org.apache.yetus:audience-annotations:0.5.0" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty:3.10.6.Final" level="project" />
-    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.38" level="project" />
+    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:8.0.16" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.6.1" level="project" />
     <orderEntry type="library" name="Maven: com.mchange:c3p0:0.9.5.4" level="project" />
     <orderEntry type="library" name="Maven: com.mchange:mchange-commons-java:0.2.15" level="project" />
-    <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz:2.3.0" level="project" />
-    <orderEntry type="library" name="Maven: com.zaxxer:HikariCP-java6:2.3.13" level="project" />
+    <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.zaxxer:HikariCP-java7:2.4.13" level="project" />
     <orderEntry type="library" name="Maven: com.belerweb:pinyin4j:2.5.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi:3.9" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.5" level="project" />

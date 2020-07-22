@@ -55,39 +55,49 @@ export const constantRoutes = [
     }]
   },
 
+
+
+
   {
+    path: '/charts',
+    component: Layout,
+    name: 'Charts',
+    meta: { title: '图表概览', icon: 'chart' },
+    children: [
+        {
+          path: 'controller',
+          name: 'Controller',
+          component: () => import('@/views/echarts/controller'),
+          meta: { title: '统计概览', icon: 'tree-table' }
+        },
+        {
+          path: 'controllert',
+          name: 'Controllert',
+          component: () => import('@/views/echarts/controllert'),
+          meta: { title: '统计详情', icon: 'tree-table' }
+        },
+        {
+          path: 'socket',
+          name: 'Socket',
+          component: () => import('@/views/echarts/socket'),
+          meta: { title: 'Socket', icon: 'tree' }
+        },
+        {
+          path: 'dubbo',
+          name: 'Dubbo',
+          component: () => import('@/views/echarts/dubbo'),
+          meta: { title: 'Dubbo', icon: 'tree-table' }
+        }
+    ]
+  }
+
+  ,{
     path: '/data',
     component: Layout,
     name: 'Data',
     meta: { title: '数据管理', icon: 'user' },
     children: [
-      {
-        path: 'echarts',
-        name: 'Echarts',
-        meta: { title: '图表', icon: 'chart' },
-        component: () => import('@/views/menu1'), // Parent router-view
-        children: [
-          {
-            path: 'controller',
-            name: 'Controller',
-            component: () => import('@/views/echarts/controller'),
-            meta: { title: '统计概览', icon: 'tree-table' }
-          },
-          {
-            path: 'controllert',
-            name: 'Controllert',
-            component: () => import('@/views/echarts/controllert'),
-            meta: { title: '统计详情', icon: 'tree-table' }
-          },
-          {
-            path: 'socket',
-            name: 'Socket',
-            component: () => import('@/views/echarts/socket'),
-            meta: { title: 'Socket', icon: 'tree' }
-          }
-        ]
-      },
-      {
+     {
         path: 'file',
         name: 'File',
         meta: { title: '文件数据', icon: 'documentation' },
