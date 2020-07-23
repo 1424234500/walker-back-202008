@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -82,4 +84,45 @@ public class LockerZookeeper implements Locker{
         return false;
 
     }
+
+    @Override
+    public LinkedHashMap<String, Object> getLocks() {
+        return getNodes("/");
+    }
+    public LinkedHashMap<String, Object> getNodes(String path){
+        LinkedHashMap<String, Object> res = new LinkedHashMap<>();
+        if(path == null ){
+            path = "/";
+        }
+        res.put("path", path);
+        try {
+            byte[] bs = this.zookeeper.getData(path, false, null);
+            String data = new String(bs == null ? new byte[]{} : bs);
+            res.put("data", data);
+            log.debug("getData " + path + " " + data);
+
+
+            LinkedHashMap<String, Object> childs = new LinkedHashMap<>();
+            List<String> childrens = this.zookeeper.getChildren(path, false);
+            log.debug("getChildren " + path + " " + childrens);
+
+            for(String key : childrens){
+                key = (path.endsWith("/") ? path : (path + "/") ) + key;
+                childs.put(key, getNodes(key));
+            }
+            if(childrens.size() > 0){
+                res.put("size", childrens.size());
+                res.put("childs", childs);
+            }
+
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
+
 }

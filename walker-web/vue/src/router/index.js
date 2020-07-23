@@ -226,16 +226,22 @@ export const constantRoutes = [
         meta: { title: '任务调度', icon: 'tree-table' }
       },
       {
-              path: 'lock',
-              name: 'Lock',
-              component: () => import('@/views/system/lock'),
-              meta: { title: 'redis 锁', icon: 'tree' }
+          path: 'lock',
+          name: 'Lock',
+          component: () => import('@/views/system/lock'),
+          meta: { title: 'redis', icon: 'tree' }
       },
       {
-              path: 'config',
-              name: 'Config',
-              component: () => import('@/views/system/config'),
-              meta: { title: '配置中心', icon: 'tree' }
+          path: 'zookeeper',
+          name: 'Zookeeper',
+          component: () => import('@/views/system/zookeeper'),
+          meta: { title: 'zookeeper', icon: 'tree' }
+      },
+      {
+          path: 'config',
+          name: 'Config',
+          component: () => import('@/views/system/config'),
+          meta: { title: '配置中心', icon: 'tree' }
       },
       {
         path: 'action',

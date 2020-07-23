@@ -43,11 +43,14 @@
     <dubbo:service ref="echoService" interface="com.walker.service.EchoService" timeout="30000" version="1.0" delay="-1" />
 
 
+<!--    自定义实现monitor功能-->
     <!-- Monitor服务 自实现 提供存储 查询监控 -->
     <bean id="monitorService" class="com.walker.service.impl.DubboMonitorService" />
     <dubbo:service ref="monitorService" interface="com.alibaba.dubbo.monitor.MonitorService" timeout="30000" version="1.0" delay="-1" />
+    <!--消费dubbo注册中心接口?-->
+<!--    <dubbo:reference id="registryService" interface="com.alibaba.dubbo.registry.RegistryService" timeout="30000" version="1.0"   />-->
 
-
+<!--    常规业务引用-->
 
     <!--日志服务-->
     <bean id="logService" class="com.walker.service.impl.LogServiceImpl" />
