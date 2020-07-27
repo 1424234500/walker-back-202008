@@ -1,5 +1,6 @@
 package com.walker.core.database;
 
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.Tools;
 import com.walker.core.aop.FunArgsReturn;
 import org.apache.zookeeper.*;
@@ -37,6 +38,23 @@ import java.util.concurrent.TimeUnit;
  *  维护了两个Watch列表，一个节点数据Watch列表，另一个是子节点Watch列表。getData()和exists()设置数据Watch，getChildren()设置子节点Watch。两者选其一，可以让我们根据不同的返回结果选择不同的Watch方式，getData()和exists()返回节点的内容，getChildren()返回子节点列表。因此，setData()触发内容Watch，create()触发当前节点的内容Watch或者是其父节点的子节点Watch。delete()同时触发父节点的子节点Watch和内容Watch，以及子节点的内容Watch。
  *      setData         触发  当前节点内容watch
  *      create/delete   触发  当前节点内容watch和父节点的子watch
+ *
+ *      Stat数据结构
+ *      [zk: 127.0.0.1:8096(CONNECTED) 3] get /test
+ * 2222                 data
+ * cZxid = 0x15aa2      选举leader服务问题?
+ * ctime = Mon Jul 27 09:45:39 CST 2020     节点创建create时间
+ * mZxid = 0x15aad      当前id
+ * mtime = Mon Jul 27 09:45:39 CST 2020     节点修改modify时间
+ * pZxid = 0x15ac5
+ * cversion = 5         创建版本？
+ * dataVersion = 1      数据版本
+ * aclVersion = 0       权限版本
+ * ephemeralOwner = 0x0
+ * dataLength = 4
+ * numChildren = 1      字节点数量
+ *
+ *
  *
  */
 public class ZookeeperModel implements Watcher{
@@ -90,7 +108,7 @@ public class ZookeeperModel implements Watcher{
         res.put("DATA", "值");
         res.put("STAT", "详情");
         res.put("CHILD_SIZE", "子节点数");
-        res.put("CHILD", "子节点");
+//        res.put("CHILD", "子节点");
 
         res.put("ACL", "权限");
 
@@ -143,19 +161,19 @@ public class ZookeeperModel implements Watcher{
                         for (String key : childrens) {
                             key = (url.endsWith("/") ? url : (url + "/")) + key;
                             LinkedHashMap<String, String> line = new LinkedHashMap<>();
-                            Stat stat1 = zookeeper.exists(url, watch);
-                            List<String> listChildren = zookeeper.getChildren(url, watch);
-                            int size = listChildren.size();
-                            byte[] bs = zookeeper.getData(url, watch, null);
+                            Stat stat1 = zookeeper.exists(key, watch);
+//                            List<String> listChildren = zookeeper.getChildren(key, watch);
+                            int size = stat1.getNumChildren(); //listChildren.size();
+                            byte[] bs = zookeeper.getData(key, watch, null);
                             String data = new String(bs == null ? new byte[]{} : bs);
-                            String info = stat1.toString();
-                            List<ACL> acls = zookeeper.getACL(url, stat);
+                            String info = String.valueOf(LangUtil.turnObj2Map(stat1));   //stat1.toString();
+                            List<ACL> acls = zookeeper.getACL(key, stat);
                             line.put("URL", key);
-                            line.put("DATE", data);
+                            line.put("DATA", data);
+                            line.put("CHILD_SIZE", "" + size);
                             line.put("STAT", info);
                             line.put("ACL", String.valueOf(acls));
-                            line.put("CHILD_SIZE", "" + size);
-                            line.put("CHILD", String.valueOf(listChildren));
+//                            line.put("CHILD", String.valueOf(listChildren));
 
                             res.add(line);
                         }
@@ -204,9 +222,9 @@ public class ZookeeperModel implements Watcher{
                         return true;
                     }else{
                         int newVersion = version;
-                        if(newVersion <= 0) {
-                            newVersion = stat.getVersion();
-                        }
+//                        if(newVersion <= 0) {
+//                            newVersion = stat.getVersion();
+//                        }
                         zooKeeper.setData(url, value.getBytes(), newVersion);
                         log.info("zooeeper createOrUpdate " + url + " " + value);
                         return true;

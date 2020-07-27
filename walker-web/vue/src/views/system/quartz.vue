@@ -360,7 +360,8 @@ export default {
       newObj["DESCRIPTION"] = ' 每天0点0分0秒 触发'
       newObj["S_FLAG"] = '1'  //需要保存
       this.listTrigger.push(newObj)
-      this.$nextTick(this.handlerOnShowTrigger())  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
+      this.$refs.multipleTableTrigger.toggleRowSelection(newObj, true)
+//      this.$nextTick(this.handlerOnShowTrigger())  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
     },
     //立即操作
     handlerRun(val) {
@@ -469,7 +470,10 @@ export default {
       var params = {nowPage: 1, showNum: 10}
       params[this.colKey] = val[this.colKey]
       this.get('/quartz/findPageTrigger.do', params).then((res) => {
-        this.listTrigger = res.data.data
+        this.listTrigger = []
+        for(var i = 0; i < res.data.data.length; i++){
+          this.listTrigger.push(res.data.data[i])
+        }
         // this.page = res.data.page
         this.info = res.info
         this.listTriggerOld = []
@@ -477,8 +481,16 @@ export default {
           this.listTrigger[i].S_FLAG = '1'
           this.listTriggerOld.push(this.listTrigger[i])
         }
+
+
+//        this.$nextTick(this.handlerOnShowTrigger())  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
+//        为何第一次初始化弹窗后依然不能自动勾选 延时器方案？
+        let self = this
+        setTimeout(function(){
+          self.handlerOnShowTrigger()
+        },1) //   function 里面的this指向的是windows
+
         this.loadingTrigger = false
-        this.$nextTick(this.handlerOnShowTrigger())  //下次 DOM 更新循环结束之后执行延迟回调，在修改数据之后使用 $nextTick，则可以在回调中获取更新后的 DOM
       }).catch(() => {
         this.loadingTrigger = false
       })
@@ -489,6 +501,8 @@ export default {
       for(var i = 0; i < this.listTrigger.length; i++){
         if(this.listTrigger[i].S_FLAG == '1'){
           this.$refs.multipleTableTrigger.toggleRowSelection(this.listTrigger[i], true)
+        }else{
+          this.$refs.multipleTableTrigger.toggleRowSelection(this.listTrigger[i], false)
         }
       }
 
@@ -555,9 +569,10 @@ export default {
       }
 
     },
-    //多选改变role
+    //多选改变  状态机
     handlerSelectionChangeTrigger(val) {
       console.info("handlerSelectionChangeTrigger" + JSON.stringify(val))
+      //debugger
       this.rowSelectTrigger = val
     },
 

@@ -62,7 +62,7 @@ public class ZookeeperController {
     }
     @ApiOperation(value = "添加字节点/更新 zk key value", notes = "")
     @ResponseBody
-    @RequestMapping(value = "/save.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/save.do", method = RequestMethod.POST)
     public Response save(
             @RequestParam(value = "URL", required = true, defaultValue = "/") String url
             , @RequestParam(value = "DATA", required = false, defaultValue = "") String data
@@ -70,7 +70,7 @@ public class ZookeeperController {
             , @RequestParam(value = "FROM_URL", required = false, defaultValue = "/") String fromUrl
             , @RequestParam(value = "SEARCH_URL", required = false, defaultValue = "/") String searchUrl
     ) {
-        url = searchUrl + url;
+        url = "/" + searchUrl + "/" + url;
         while(url.indexOf("//") >= 0){
             url = url.replace("//", "/");
         }

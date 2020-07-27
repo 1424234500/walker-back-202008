@@ -273,13 +273,16 @@ export default {
     //点击进入子目录或者下载
     handlerRowClick(row, event,column){
       console.info("handlerRowClick ", row, event, column)
+      this.loadingList = true   //不添加这玩意儿会导致 不能即时更新界面展示?
 //      判定是否可点击
+//debugger
+      this.rowSearch[this.colKey] = row[this.colKey]
       if(row['CHILD_SIZE'] > 0){
-        this.rowSearch[this.colKey] = row[this.colKey]
         this.getListPage()
       }else{
         // this.download(row)
       }
+      this.loadingList = false
     },
     //修改单行 展示弹框
     handlerChange(val) {
@@ -300,7 +303,7 @@ export default {
       console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
       this.loadingSave = true
 
-      this.params = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
+      var params = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
       params["FROM_" + this.colKey] = this.rowUpdate[this.colKey]
       params["SEARCH_" + this.colKey] = this.rowSearch[this.colKey]
 
