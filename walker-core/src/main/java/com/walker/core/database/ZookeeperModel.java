@@ -150,7 +150,6 @@ public class ZookeeperModel implements Watcher{
                             String data = new String(bs == null ? new byte[]{} : bs);
                             String info = stat1.toString();
                             List<ACL> acls = zookeeper.getACL(url, stat);
-
                             line.put("URL", key);
                             line.put("DATE", data);
                             line.put("STAT", info);
