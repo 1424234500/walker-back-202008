@@ -305,9 +305,8 @@ export default {
     handlerAddColumn(){
       var newObj = this.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
       newObj[this.colKey] = ''
-      newObj["S_FLAG"] = '1'
-      newObj["P_ID"] = this.nowRow == null ? "" : this.nowRow["ID"]
-      newObj["S_FLAG"] = '1'
+//      newObj["P_ID"] = this.nowRow == null ? "" : this.nowRow["ID"]
+//      newObj["S_FLAG"] = '1'
       this.list.push(newObj)
       this.handlerChange(newObj)
     },

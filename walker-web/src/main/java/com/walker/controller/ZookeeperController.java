@@ -1,9 +1,7 @@
 package com.walker.controller;
 
 import com.walker.Response;
-import com.walker.common.util.Bean;
 import com.walker.common.util.Page;
-import com.walker.core.database.LockerZookeeper;
 import com.walker.core.database.ZookeeperModel;
 import com.walker.dao.RedisDao;
 import com.walker.service.RedisService;
@@ -29,7 +27,7 @@ public class ZookeeperController {
     @Autowired
     RedisDao redisDao;
 
-    ZookeeperModel zookeeperModel = new ZookeeperModel().setHost("localhost:8096").setSecondsTimeout(10000);
+    ZookeeperModel zookeeperModel = new ZookeeperModel().setHost("localhost:8096").setMillsecondsTimeout(10000);
 
 
     @ApiOperation(value = "节点列表查询", notes = "")
@@ -62,14 +60,22 @@ public class ZookeeperController {
 
         return Response.makeTrue("rm zks " + ids, res);
     }
-    @ApiOperation(value = "添加zk key value", notes = "")
+    @ApiOperation(value = "添加字节点/更新 zk key value", notes = "")
     @ResponseBody
-    @RequestMapping(value = "/update.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/save.do", method = RequestMethod.GET)
     public Response save(
-            @RequestParam(value = "URL", required = true, defaultValue = "") String KEY,
-            @RequestParam(value = "DATE", required = false, defaultValue = "") String VALUE
+            @RequestParam(value = "URL", required = true, defaultValue = "/") String url
+            , @RequestParam(value = "DATA", required = false, defaultValue = "") String data
+            , @RequestParam(value = "CHILD_SIZE", required = false, defaultValue = "") String childSize
+            , @RequestParam(value = "FROM_URL", required = false, defaultValue = "/") String fromUrl
+            , @RequestParam(value = "SEARCH_URL", required = false, defaultValue = "/") String searchUrl
     ) {
-        return Response.makeTrue("add zk " + KEY + " " + VALUE, zookeeperModel.create(KEY, VALUE));
+        url = searchUrl + url;
+        while(url.indexOf("//") >= 0){
+            url = url.replace("//", "/");
+        }
+
+        return Response.makeTrue("save zk " + url + " " + data, zookeeperModel.createOrUpdateVersion(url, data));
     }
 
 

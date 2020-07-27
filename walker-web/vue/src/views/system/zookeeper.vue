@@ -1,3 +1,6 @@
+
+
+
 <template>
   <div class="app-container" >
 <!--搜索-->
@@ -5,20 +8,21 @@
          v-loading="loadingCols"
     >
       <form class="form-inline" >
-        <div class="form-group" v-for="(value, key) in colMap">
-          <label>{{value=='' ? key : value}}</label>
+        <div class="form-group" v-for="(ivalue, ikey) in colMap">
+          <label>{{ivalue=='' ? ikey : ivalue}}</label>
           <input
             type="text"
             class="form-control"
             style="width: 10em; margin-right: 1em;"
             v-on:keyup.13="getListPage()"
-            :placeholder="key"
-            v-model="rowSearch[key]"
+            :placeholder="ikey"
+            v-model="rowSearch[ikey]"
           />
         </div>
         <el-button-group>
           <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
           <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >home</el-button>
+          <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
           <el-button  class="btn btn-default" @click="goParent()" >上级目录</el-button>
         </el-button-group>
 
@@ -52,10 +56,10 @@
 
         <!--      设置表头数据源，并循环渲染出来，property对应列内容的字段名，详情见下面的数据源格式 -->
         <el-table-column
-          v-for="(value, key) in colMapShow"
-          :key="key"
-          :property="key"
-          :label="(value=='' ? key : value)"
+          v-for="(ivalue, ikey) in colMapShow"
+          :key="ikey"
+          :property="ikey"
+          :label="(ivalue=='' ? ikey : ivalue)"
           sortable
           show-overflow-tooltip
           min-width="60px"
@@ -72,7 +76,7 @@
         >
           <template slot-scope="scope">
             <el-button-group>
-              <el-button v-if=" scope.row.EXT!='dir' " size="mini" type="success" icon="el-icon-download" circle @click.stop="download(scope.row)"></el-button>
+      <!--        <el-button v-if=" scope.row.EXT!='dir' " size="mini" type="success" icon="el-icon-download" circle @click.stop="download(scope.row)"></el-button> -->
               <el-button size="mini" type="primary" icon="el-icon-edit" circle @click.stop="handlerChange(scope.row)"></el-button>
               <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(scope.row)"></el-button>
             </el-button-group>
@@ -116,12 +120,12 @@
             label-width="100px"
           >
             <el-form-item
-              v-for="(value, key) in colMap"
-              :key="key"
-              :property="key"
-              :label="(value=='' ? key : value)"
+              v-for="(ivalue, ikey) in colMap"
+              :key="ikey"
+              :property="ikey"
+              :label="(ivalue=='' ? ikey : ivalue)"
             >
-              <el-input v-model="rowUpdate[key]" type="text" />
+              <el-input v-model="rowUpdate[ikey]" type="text" />
             </el-form-item>
 
             <el-form-item>
@@ -202,8 +206,6 @@ export default {
     getColumns() {
       this.loadingCols = true
       this.get('/zookeeper/getColsMap.do', {}).then((res) => {
-              debugger
-
         this.colMap = res.data.colMap
         this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
         this.colMapShow = this.assign({}, this.colMap)
@@ -224,18 +226,17 @@ export default {
     clearRowSearch(){
       this.rowSearch = {} //clear map
       this.page.nowpage = 1
-      this.files = null
-      this.rowSearch[key] = ''
+      this.rowSearch[this.colKey] = ''
     },
      //分页查询
      getListPage() {
       this.loadingList = true
       // name/nowPage/showNum
       var params = this.assign({}, this.rowSearch)
-      debugger
       params[this.colKey] = this.rowSearch[this.colKey] ? this.rowSearch[this.colKey]  : ""
       this.get('/zookeeper/findPage.do', params).then((res) => {
-        this.list = res.data.list
+        this.list = res.data.data
+        this.page = res.data.page
         this.loadingList = false
       }).catch(() => {
         this.loadingList = false
@@ -251,19 +252,20 @@ export default {
     },
     //上一级目录
     goParent(){
-      console.info("goParent ", this.rowSearch[key])
-      if(this.rowSearch[key].endsWith('/'))
-        this.rowSearch[key] = this.rowSearch[key].substring(0, this.rowSearch[key].length - 1)
-      var dd = this.rowSearch[key].split('/')
+      console.info("goParent ", this.rowSearch[this.colKey])
+      if(this.rowSearch[this.colKey].endsWith('/')){
+        this.rowSearch[this.colKey] = this.rowSearch[this.colKey].substring(0, this.rowSearch[this.colKey].length - 1)
+      }
+      var dd = this.rowSearch[this.colKey].split('/')
       if(dd.length > 1 ){
         var last = dd[dd.length - 1]
         if(last.length > 0)
-          this.rowSearch[key] = this.rowSearch[key].substring(0, this.rowSearch[key].length - last.length - 1)
-        if(this.rowSearch[key].length <= 0){
-          this.rowSearch[key] = '/'
+          this.rowSearch[this.colKey] = this.rowSearch[this.colKey].substring(0, this.rowSearch[this.colKey].length - last.length - 1)
+        if(this.rowSearch[this.colKey].length <= 0){
+          this.rowSearch[this.colKey] = '/'
         }
       }else{
-        this.rowSearch[key] = '/'
+        this.rowSearch[this.colKey] = '/'
       }
       this.getListPage()
 
@@ -271,8 +273,9 @@ export default {
     //点击进入子目录或者下载
     handlerRowClick(row, event,column){
       console.info("handlerRowClick ", row, event, column)
-      if(row.EXT === 'dir'){
-        this.rowSearch[key] = row.PATH
+//      判定是否可点击
+      if(row['CHILD_SIZE'] > 0){
+        this.rowSearch[this.colKey] = row[this.colKey]
         this.getListPage()
       }else{
         // this.download(row)
@@ -297,15 +300,17 @@ export default {
       console.info("handlerSave "+ JSON.stringify(this.rowUpdate))
       this.loadingSave = true
 
-      var params = {oldPath: this.rowUpdateFrom.PATH, newPath: this.rowUpdate.PATH}
-      this.rowUpdateFrom = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
+      this.params = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
+      params["FROM_" + this.colKey] = this.rowUpdate[this.colKey]
+      params["SEARCH_" + this.colKey] = this.rowSearch[this.colKey]
 
-      this.get('/zookeeper/update.do', params).then((res) => {
+      this.post('/zookeeper/save.do', params).then((res) => {
         this.loadingSave = false
         this.loadingUpdate = ! this.loadingUpdate
       }).catch(() => {
         this.loadingSave = false
       })
+
     },
     //删除单行
     handlerDelete(val, index) {

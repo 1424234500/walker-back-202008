@@ -3,6 +3,7 @@ package com.walker.core.database;
 import com.walker.common.util.LangUtil;
 import com.walker.common.util.TimeUtil;
 import com.walker.common.util.Tools;
+import com.walker.core.aop.FunArgsReturn;
 import org.apache.zookeeper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,25 +16,32 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class LockerZookeeper implements Locker{
     private static Logger log = LoggerFactory.getLogger(LockerZookeeper.class);
-    private static final String KEY_LOCK = "lock:zk:";
+    public static final String KEY= "/lock-zk";
+    private static final String KEY_LOCK = KEY + "/";
     private static final AtomicLong lockNo = new AtomicLong(0);
 
-    ZooKeeper zookeeper;
-    public LockerZookeeper(String host, Integer secondsTimeout){
-        try {
-            this.zookeeper = new ZooKeeper(host, secondsTimeout, new Watcher() {
-                @Override
-                public void process(WatchedEvent watchedEvent) {
-                    log.info(watchedEvent.toString());
-                }
-            });
-        } catch (IOException e) {
-            log.error("zook:" + host + ",timeout:" + secondsTimeout + ",exception:" + e.getMessage(),  e);
-        }
+    private ZookeeperModel zookeeperModel;
+
+    public ZookeeperModel getZookeeperModel() {
+        return zookeeperModel;
+    }
+
+    public LockerZookeeper setZookeeperModel(ZookeeperModel zookeeperModel) {
+        this.zookeeperModel = zookeeperModel;
+        return this;
     }
 
     @Override
     public String tryLock(String lockName, Integer secondsToExpire, Integer secondsToWait) {
+        return zookeeperModel.doZookeeper(new FunArgsReturn<ZooKeeper, String>() {
+            @Override
+            public String make(ZooKeeper obj) {
+                return tryLock(obj, lockName, secondsToExpire, secondsToWait);
+            }
+        });
+    }
+
+    public String tryLock(ZooKeeper zookeeper, String lockName, Integer secondsToExpire, Integer secondsToWait) {
         String lockKey =  KEY_LOCK + lockName;
         String value = Thread.currentThread().getName() + ":" + LangUtil.getTimeSeqId() + ":" + lockNo; // Thread
         long startTime = System.currentTimeMillis();
@@ -41,17 +49,17 @@ public class LockerZookeeper implements Locker{
         int cc = 0;
         while(cc++ < 1000) {	//自循环等待 硬限制最多1000次
             try {
-                if(this.zookeeper.exists(lockKey, false) != null) {
-                    this.zookeeper.create(lockKey, value.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL.EPHEMERAL);
+                if(zookeeper.exists(lockKey, false) != null) {
+                    zookeeper.create(lockKey, value.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
                     lockNo.addAndGet(1);
-                    log.debug(Tools.objects2string("tryLock ok", cc, lockKey, lockName, value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), lockNo);
+                    log.debug(Tools.objects2string("tryLock ok", cc, lockKey, lockName, value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), lockNo.get());
                     return value;
                 }
             } catch (Exception e) {
-                log.error(Tools.objects2string("tryLock exception", cc, lockKey, lockName,value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime), lockNo, e.getMessage()), e);
+                log.error(Tools.objects2string("tryLock exception", cc, lockKey, lockName,value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime), lockNo.get(), e.getMessage()), e);
             }
             if(System.currentTimeMillis() > startTime + secondsToWait){
-                log.warn(Tools.objects2string("tryLock error wait timeout", cc, lockKey, lockName,value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime), "now locked" , lockNo));
+                log.warn(Tools.objects2string("tryLock error wait timeout", cc, lockKey, lockName,value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime), "now locked" , lockNo.get()));
                 break;
             }
             try {//1000ms等待锁，共轮询10次
@@ -63,15 +71,25 @@ public class LockerZookeeper implements Locker{
         return "";
     }
 
+
+
     @Override
     public Boolean releaseLock(String lockName, String identifier) {
+        return zookeeperModel.doZookeeper(new FunArgsReturn<ZooKeeper, Boolean>() {
+            @Override
+            public Boolean make(ZooKeeper obj) {
+                return releaseLock(obj, lockName, identifier);
+            }
+        });
+    }
+    public Boolean releaseLock(ZooKeeper zookeeper, String lockName, String identifier) {
         String lockKey = KEY_LOCK + lockName;
 
         try {
-            if(this.zookeeper.exists(lockKey, false) != null){
-                byte[] v = this.zookeeper.getData(lockKey, false, null);
+            if(zookeeper.exists(lockKey, false) != null){
+                byte[] v = zookeeper.getData(lockKey, false, null);
                 if (v.equals(identifier.getBytes())) {
-                    this.zookeeper.delete(lockKey, -1);
+                    zookeeper.delete(lockKey, -1);
                     log.debug(Tools.objects2string("release lock ok", lockKey, lockName, identifier));
                     return true;
                 }else{
@@ -84,45 +102,6 @@ public class LockerZookeeper implements Locker{
         return false;
 
     }
-
-    @Override
-    public LinkedHashMap<String, Object> getLocks() {
-        return getNodes("/");
-    }
-    public LinkedHashMap<String, Object> getNodes(String path){
-        LinkedHashMap<String, Object> res = new LinkedHashMap<>();
-        if(path == null ){
-            path = "/";
-        }
-        res.put("path", path);
-        try {
-            byte[] bs = this.zookeeper.getData(path, false, null);
-            String data = new String(bs == null ? new byte[]{} : bs);
-            res.put("data", data);
-            log.debug("getData " + path + " " + data);
-
-
-            LinkedHashMap<String, Object> childs = new LinkedHashMap<>();
-            List<String> childrens = this.zookeeper.getChildren(path, false);
-            log.debug("getChildren " + path + " " + childrens);
-
-            for(String key : childrens){
-                key = (path.endsWith("/") ? path : (path + "/") ) + key;
-                childs.put(key, getNodes(key));
-            }
-            if(childrens.size() > 0){
-                res.put("size", childrens.size());
-                res.put("childs", childs);
-            }
-
-        } catch (KeeperException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
 
 
 }

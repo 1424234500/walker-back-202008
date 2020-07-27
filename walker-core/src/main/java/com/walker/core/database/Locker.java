@@ -8,6 +8,5 @@ public interface Locker {
 
     Boolean releaseLock(String lockName, String identifier);
 
-    LinkedHashMap<String, Object> getLocks();
 
 }
