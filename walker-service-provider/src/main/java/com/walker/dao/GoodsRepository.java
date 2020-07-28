@@ -1,7 +1,7 @@
 package com.walker.dao;
 
-import com.walker.mode.Role;
-import com.walker.mode.User;
+import com.walker.mode.Dept;
+import com.walker.mode.store.Goods;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,12 +10,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * sharding 分库 & 分表
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor {//实体类 主键类型 自定义查询
+public interface GoodsRepository extends JpaRepository<Goods, String>, JpaSpecificationExecutor {//实体类 主键类型 自定义查询
 //    List<T> findAll();
 //    List<T> findAll(Sort var1);
 //    List<T> findAllById(Iterable<ID> var1);
@@ -34,9 +35,12 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
      */
     @Transactional
     @Modifying
-    @Query("delete from User t where t.ID in (?1) ")
-    Integer selfDeleteAll(List<String> ids);
+    @Query("delete from Goods t where t.ID in (?1) ")
+    Integer selfDeleteAll(Set<String> ids);
 
-    @Query(value = "select * from User t where (t.ID=?1 or t.EMAIL=?1 or t.MOBILE=?1) and (t.PWD=?2 or t.PWD=?3) ", nativeQuery = true)
-    User auth(String id, String pwd, String makeStr);
+    @Query("select t from Goods t where t.ID in (?1) ")
+    List<Dept> findAllByID(Set<String> ids);
+
+
+
 }

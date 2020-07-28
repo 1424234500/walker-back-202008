@@ -1,27 +1,22 @@
 ## walker's project
 	想到什么写点什么
 	
-使用Maven多模块项目结构分离
+####使用Maven多模块项目结构分离
+    mvn clean package -Dmaven.test.skip=true
+    mvn clean install -Dmaven.test.skip=true
 
-mvn clean package -Dmaven.test.skip=true
-mvn clean install -Dmaven.test.skip=true
-
-
-###端口分配
-
-环境火墙8090+
-8090    walker-web
-8091    webservice
-8092    tomcat  dubbo-monitor
-8093    socket netty
-8094    service provider    swagger
-8095    dubbo-port
-8096    zookeeper-port
-8097    kafka-port
-
-
-8098    mysql 
-8099    vue node proxy
+####端口分配
+    环境火墙8090+
+    8090    walker-web
+    8091    webservice
+    8092    tomcat  dubbo-monitor
+    8093    socket netty
+    8094    service provider    swagger
+    8095    dubbo-provider-port 
+    8096    zookeeper-port
+    8097    kafka-port
+    8098    mysql 
+    8099    vue node proxy
 
 ## 编程习惯
 ```

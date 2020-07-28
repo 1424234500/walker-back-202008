@@ -2,6 +2,7 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.*;
+import com.walker.dao.ConfigDao;
 import com.walker.dao.JdbcDao;
 import com.walker.mapper.StatisticsMapper;
 import io.swagger.annotations.ApiOperation;
@@ -31,10 +32,12 @@ public class TomcatController {
 //    每条线类型
     List<String> lineTypes = Arrays.asList("bar", "bar", "bar", "bar", "line");
 //    每条线堆叠类型
-    List<String> lineStacks = Arrays.asList("1", "1", "1", "1", "2");
+    List<String> lineStacks = Arrays.asList("1", "2", "1", "2", "3");
 
 
 
+    @Autowired
+    ConfigDao configDao;
     @Autowired
     JdbcDao baseService;
     @Autowired
@@ -63,7 +66,8 @@ public class TomcatController {
             @RequestParam(value = "to", required = false, defaultValue = "") String to
     ) {
 //        确保时间区间7天
-        int d = 7;
+        long d = 7 * 8 * configDao.get("com.walker.controller.TomcatController.socket.d", 3600 * 1000 * 3L);
+
         if(from.length() == 0 && to.length() == 0){
             to = TimeUtil.getTime(TimeUtil.ymdhms, 0);
             from = TimeUtil.getTime(TimeUtil.ymdhms, -d);
@@ -97,7 +101,7 @@ public class TomcatController {
             @RequestParam(value = "to", required = false, defaultValue = "") String to
     ) {
 //        确保时间区间1天
-        int d = 1;
+        long d = 8 * configDao.get("com.walker.controller.TomcatController.socket.d", 3600 * 1000 * 3L);
         if(from.length() == 0 && to.length() == 0){
             to = TimeUtil.getTime(TimeUtil.ymdhms, 0);
             from = TimeUtil.getTime(TimeUtil.ymdhms, -d);
@@ -134,7 +138,7 @@ public class TomcatController {
             @RequestParam(value = "to", required = false, defaultValue = "") String to
     ) {
 //        确保时间区间30天
-        int d = 30;
+        long d = 30 * configDao.get("com.walker.controller.TomcatController.socket.d", 3600 * 1000 * 3L);
         if(from.length() == 0 && to.length() == 0){
             to = TimeUtil.getTime(TimeUtil.ymdhms, 0);
             from = TimeUtil.getTime(TimeUtil.ymdhms, -d);
@@ -170,7 +174,7 @@ public class TomcatController {
             @RequestParam(value = "url", required = false, defaultValue = "") String url
     ) {
         //        确保时间区间1天
-        int d = 1;
+        long d = configDao.get("com.walker.controller.TomcatController.socket.d", 3600 * 1000 * 3L);
         if(from.length() == 0 && to.length() == 0){
             to = TimeUtil.getTime(TimeUtil.ymdhms, 0);
             from = TimeUtil.getTime(TimeUtil.ymdhms, -d);
@@ -189,7 +193,7 @@ public class TomcatController {
         //    每条线类型
         List<String> lineTypes = Arrays.asList("bar", "bar", "bar", "bar", "bar", "bar");
         //    每条线堆叠类型
-        List<String> lineStacks = Arrays.asList("1", "1", "1", "1", "1", "1");
+        List<String> lineStacks = Arrays.asList("1", "2", "1", "2", "1", "2");
 
 //        指标按行查询出来 首行为x轴坐标
         List<Map<String, Object>> listDb = statisticsMapper.findSocketDetail(from, to, url);
@@ -207,17 +211,31 @@ public class TomcatController {
 
     }
 
-
+//+----------------------------------+-------------+-------------------------------------+--------------------+----------------+------------+----------+---------------+---------+---------+---------+------------+-------------+----------------+
+//| id                               | invoke_date | service                             | method             | consumer       | provider   | type     | invoke_time   | success | failure | elapsed | concurrent | max_elapsed | max_concurrent |
+//+----------------------------------+-------------+-------------------------------------+--------------------+----------------+------------+----------+---------------+---------+---------+---------+------------+-------------+----------------+
+//| 36cd17a74b504665a50dfd7b8219b9ab | 2020-07-28  | com.walker.service.LogService       | saveLogModel       | 172.17.149.176 | 172.18.0.1 | provider | 1595901121739 |    2149 |       0 |    7842 |          1 |          31 |              3 |
+//| 4bc23d7265f84428beebc18b5b8b58b2 | 2020-07-28  | com.walker.service.LogService       | saveLogSocketModel | 172.17.149.176 | 172.18.0.1 | provider | 1595901121739 |     997 |       0 |   33369 |          1 |         133 |              1 |
+//| 9c76c0f73ddd430396d632e9dd214e9f | 2020-07-28  | com.walker.service.SyncService      | doAction           | 172.17.149.176 | 172.18.0.1 | provider | 1595901121739 |       1 |       0 |    3559 |          1 |        3559 |              1 |
+//| b8b1579c96f245a8b73e5a7a4ef9b6f5 | 2020-07-28  | com.walker.service.RoleService      | finds              | 172.18.0.1     | 172.18.0.1 | consumer | 1595901121888 |       3 |       0 |     290 |          1 |         157 |              1 |
+//| c020d00750494e70bef24bb2acf7de47 | 2020-07-28  | com.walker.service.SysConfigService | count              | 172.18.0.1     | 172.18.0.1 | consumer | 1595901121888 |     134 |       0 |    5159 |          1 |          91 |              1 |
+//| f175e9805292439a92d670c68ac8ae57 | 2020-07-28  | com.walker.service.LogService       | saveLogModelNoTime | 172.17.149.176 | 172.18.0.1 | provider | 1595901121739 |    1068 |       0 |   40346 |          1 |         289 |              2 |
+//+----------------------------------+-------------+-------------------------------------+--------------------+----------------+------------+----------+---------------+---------+---------+---------+------------+-------------+----------------+
     @ApiOperation(value = "统计dubbo monitor", notes = "")
     @ResponseBody
     @RequestMapping(value = "/dubbo.do", method = RequestMethod.GET)
     public Response dubbo(
             @RequestParam(value = "from", required = false, defaultValue = "") String from,
             @RequestParam(value = "to", required = false, defaultValue = "") String to,
-            @RequestParam(value = "url", required = false, defaultValue = "") String url
-    ) {
+            @RequestParam(value = "url", required = false, defaultValue = "") String url,   //service
+
+            @RequestParam(value = "consumer", required = false, defaultValue = "") String consumer,
+            @RequestParam(value = "provider", required = false, defaultValue = "") String provider,
+            @RequestParam(value = "type", required = false, defaultValue = "") String type
+
+            ) {
         //        确保时间区间1天
-        int d = 1;
+        long d = 4 * configDao.get("com.walker.controller.TomcatController.socket.d", 3600 * 1000 * 3L);
         if(from.length() == 0 && to.length() == 0){
             to = TimeUtil.getTime(TimeUtil.ymdhms, 0);
             from = TimeUtil.getTime(TimeUtil.ymdhms, -d);
@@ -227,27 +245,27 @@ public class TomcatController {
             to = TimeUtil.getTime(from, TimeUtil.ymdhms, +d);
         }
 
-        List<Map<String, Object>> list = statisticsMapper.findSocketDetailUrl(from, to);
+        List<Map<String, Object>> list = statisticsMapper.findDubboDetailUrl(from, to);
         List<Object> urls = MapListUtil.getListCol(list, 0);
 
-
+//  | success | failure | elapsed | concurrent | max_elapsed | max_concurrent |
         //    每条线名称
-        List<String> lineNames = Arrays.asList("网络数", "网络平均耗时", "排队数", "排队平均耗时", "处理数", "处理平均耗时");
+        List<String> lineNames = Arrays.asList("成功次数", "失败次数", "耗时", "并发数", "最大耗时", "最大并发数");
         //    每条线类型
-        List<String> lineTypes = Arrays.asList("bar", "bar", "bar", "bar", "bar", "bar");
+        List<String> lineTypes = Arrays.asList("bar", "bar", "bar", "line", "bar", "line");
         //    每条线堆叠类型
-        List<String> lineStacks = Arrays.asList("1", "1", "1", "1", "1", "1");
+        List<String> lineStacks = Arrays.asList("1", "1", "2", "3", "4", "3");
 
 //        指标按行查询出来 首行为x轴坐标
-        List<Map<String, Object>> listDb = statisticsMapper.findSocketDetail(from, to, url);
-        Map option = MapListUtil.makeEchartOption("Socket趋势", "W_LOG_SOCKET_MODEL", ""
+        List<Map<String, Object>> listDb = statisticsMapper.findDubboDetail(from, to, url, consumer, provider, type);
+        Map option = MapListUtil.makeEchartOption("Dubbo业务趋势", "dubbo_invoke", ""
                 , listDb, lineNames, lineTypes, lineStacks);
         log.debug(JsonFastUtil.toString(option));
         Map res = MapListUtil.getMap()
                 .put("res", "true")
                 .put("option", option)
                 .put("items", urls)
-                .put("args", new Bean().set("from", from).set("to", to).set("url", url))
+                .put("args", new Bean().set("from", from).set("to", to).set("url", url).set("consumer", consumer).set("provider", provider).set("type", type))
                 .build();
 
         return Response.makeTrue("", res);

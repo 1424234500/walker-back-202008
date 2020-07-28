@@ -221,7 +221,7 @@ public class RedisDao {
             operations.set(key, value);
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("set " + key + " " + value + " " + e.getMessage(), e);
         }
         return result;
     }
@@ -239,7 +239,7 @@ public class RedisDao {
             redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("set " + key + " " + value + " " + expireTime + " " + e.getMessage(), e);
         }
         return result;
     }
@@ -254,7 +254,7 @@ public class RedisDao {
             redisTemplate.expire(key, expireSeconds, TimeUnit.SECONDS);
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("expire " + key + " " + expireSeconds + " " + e.getMessage(), e);
         }
         return result;
     }

@@ -172,6 +172,26 @@ export const constantRoutes = [
           //   meta: {title: 'RoleUser', icon: 'theme'}
           // },
         ]
+      },
+      {
+        path: '/store',
+        name: 'Store',
+        meta: { title: '商品数据', icon: 'user' },
+        component: () => import('@/views/menu1'), // Parent router-view
+        children: [
+          {
+            path: 'goodstable',
+            name: 'GoodsTable',
+            component: () => import('@/views/store/goodstable'),
+            meta: { title: '商品表', icon: 'people' }
+          },
+          {
+            path: 'goods',
+            name: 'Goods',
+            component: () => import('@/views/store/goods'),
+            meta: {title: '商品', icon: 'list'}
+          },
+        ]
       }
     ]
   },

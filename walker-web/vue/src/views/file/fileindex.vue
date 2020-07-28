@@ -341,11 +341,7 @@ export default {
       return '';
     },
     download(row){
-      this.$message.success('下载文件' + row.NAME);
-      let a = document.createElement('a')
-      a.href ="/file/download.do?key=" + row.ID
-      a.click();
-      // window.open("/file/download.do?path=" + row.PATH,"height=100,width=100,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no")
+      this.down("/file/download.do?path=" + row.PATH, {}, row.NAME)
     },
   }
 }

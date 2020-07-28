@@ -3,7 +3,9 @@ package com.walker.controller;
 
 import com.walker.Response;
 import com.walker.common.util.Bean;
+import com.walker.common.util.LangUtil;
 import com.walker.common.util.Page;
+import com.walker.common.util.TimeUtil;
 import com.walker.core.cache.Cache;
 import com.walker.core.cache.CacheMgr;
 import com.walker.core.database.SqlUtil;
@@ -177,6 +179,13 @@ public class CommonController {
                 info.append(key + ",");
             }
             sb.append(key + ",");
+            if(key.equals("S_MTIME")){
+                bean.set(key, TimeUtil.getTimeYmdHmss());
+            }
+            if(key.equals(keyId) && bean.get(keyId, "").length() == 0){
+                bean.set(keyId, LangUtil.getTimeSeqId());
+                log.info("none id save then make id " + bean);
+            }
             args.add(bean.get(key));
         }
         if(args.size() <= 0){

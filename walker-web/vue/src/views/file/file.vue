@@ -119,6 +119,7 @@
         multiple
         drag
         action="/file/upload.do"
+        :headers="uploadHeaders"
         :before-upload="handlerBeforeUpload"
         :on-preview="handlerOnPreview"
         :on-remove="handlerOnRemove"
@@ -190,6 +191,8 @@
 
 <script>
 // import { getList } from '@/api/table'
+import { getToken,setToken,getUser,setUser } from '@/utils/cookie' // get token from cookie
+import axios from 'axios'
 
 export default {
   filters: {
@@ -204,6 +207,7 @@ export default {
   },
   data() {
     return {
+      uploadHeaders: {"TOKEN" : getToken()},
       list: [],
       colMap: {},      //列名:别名
       colMapShow: {},      //列名:别名
@@ -459,11 +463,14 @@ export default {
     },
     download(row){
       this.$message.success('下载文件' + row.NAME);
-      let a = document.createElement('a')
-      a.href ="/file/download.do?path=" + row.PATH
-      a.click();
-      // window.open("/file/download.do?path=" + row.PATH,"height=100,width=100,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no")
+      var fileName = row.NAME
+      var url = "/file/download.do?path=" + row.PATH
+
+      this.down(url, {}, fileName)
+
     },
+
+
 
   }
 }

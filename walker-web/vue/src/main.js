@@ -52,11 +52,12 @@ import '@/permission' // permission control
 
 
 //将方法挂载到Vue原型上 vue上下文 全局 this.get
-import { get, post, put, delet } from '@/utils/http'
+import { get, post, put, delet, down } from '@/utils/http'
 Vue.prototype.get = get
 Vue.prototype.post = post
 Vue.prototype.delet = delet
 Vue.prototype.put = put
+Vue.prototype.down = down //??不行？?
 
 import { assign, clone} from '@/utils/index'
 Vue.prototype.assign = assign

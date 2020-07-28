@@ -53,7 +53,7 @@ public class SyncServiceImpl implements SyncService {
     @Autowired
     AreaService areaService;
     @Autowired
-    RoleService roleService;
+    LogService logService;
 
     @Autowired
     ActionService actionService;
@@ -164,12 +164,15 @@ public class SyncServiceImpl implements SyncService {
                             .setID(LangUtil.getGenerateId())
                             .setCATE(Config.getCateJob())
                             .setUSER(Config.getSystemUser())
+                            .setURL(getClass().getName())
                             .setIP_PORT_FROM(Pc.getIp())
                             .setIP_PORT_TO(Pc.getIp())
                             .setARGS(String.valueOf(args))
                             .setIS_EXCEPTION(Config.FALSE)
-                            .setABOUT("任务队列执行清空框")
+                            .setABOUT("任务队列执行开始")
                             .setRES(null);
+                    logModel = logService.saveLogModelNoTime(logModel);
+
                     try {
 
                         List<Action> list = actionService.finds(
@@ -214,6 +217,8 @@ public class SyncServiceImpl implements SyncService {
                     } finally {
                         watch.res();
                         logModel.setRES(watch.toPrettyString());
+                        logModel.setABOUT("任务执行完毕");
+                        logService.saveLogModelNoTime(logModel);
                         log.info(watch.toPrettyString());
                         log.info("sync end key:" + key + " value:" + value + " args:" + args);
 

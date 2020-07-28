@@ -86,12 +86,10 @@ public class ShiroController {
         User user = new User().setNAME(username).setID(username).setPWD(password).setSIGN("sign");
 
         String token = shiroConfig.onlineUser(user);
-
         Map<String, Object> res = new HashMap<>();
         res.put("USER", user);
         res.put("TOKEN", token);
-
-        return Response.makeTrue("登录成功", res);
+        return Response.make(token.length() > 0 , token.length() > 0 ? "登录成功" : "登录失败 " + username , res);
     }
 
 

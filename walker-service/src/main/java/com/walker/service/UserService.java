@@ -18,4 +18,6 @@ public interface UserService {
     List<User> finds(User obj, Page page);
     Integer count(User obj);
 
+    User auth(User obj);
+
 }

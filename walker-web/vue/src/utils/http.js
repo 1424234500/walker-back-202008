@@ -126,6 +126,44 @@ export function delet(url, params) {
   })
 }
 
+export function down(url, params, fileName) {
+  const type = 'down'
+  return new Promise((resolve, reject) => {
+    this.$message.success('下载文件' + fileName);
+
+    before(url, params, type)
+//      axios.defaults.headers['TOKEN'] = getToken()
+    axios({
+      method: 'post',
+      url: url, // 请求地址
+      data: params, // 参数
+      responseType: 'blob' // 表明返回服务器返回的数据类型
+    }).then(res => {
+      let blob = new Blob([res.data], {
+        type: 'application/vnd.ms-excel'
+      })
+      if (window.navigator.msSaveOrOpenBlob) {
+        navigator.msSaveBlob(blob, fileName)
+      } else {
+        var link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = fileName
+        link.click()
+        //释放内存
+        window.URL.revokeObjectURL(link.href)
+//        doRes(url, params, type, res, resolve, reject)
+
+      }
+    }, err => {
+      debugger
+      this.$message.success('下载文件失败' + fileName);
+      console.log(err)
+      afterReject(url, params, type, err)
+      reject(err)
+    })
+  })
+}
+
 
 function doRes(url, params, type, res, resolve, reject){
 

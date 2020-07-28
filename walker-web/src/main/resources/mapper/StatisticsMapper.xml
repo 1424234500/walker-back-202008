@@ -96,7 +96,6 @@ CREATE TABLE `W_LOG_TIME` (
 
     </select>
 
-
     <select id="findUserData" resultType="java.util.Map" >
 
         select * from
@@ -157,8 +156,6 @@ CREATE TABLE `W_LOG_TIME` (
 
 
 
-
-    <select id="findSocketDetail" resultType="java.util.Map" >
 <!--        select w.minu X-->
 <!--        , w.NET_COUNT Y1, ifnull(w.NET_COST / w.NET_COUNT, 0) Y2-->
 <!--        , w.WAIT_COUNT Y3, ifnull(w.WAIT_COST / w.WAIT_COUNT, 0) Y4-->
@@ -173,8 +170,7 @@ CREATE TABLE `W_LOG_TIME` (
 <!--        group by SUBSTRING_INDEX(S_MTIME, ':', 2)-->
 <!--        ) w-->
 <!--        order by w.minu asc-->
-
-
+    <select id="findSocketDetail" resultType="java.util.Map" >
         select w.minu X
         , w.NET_COUNT Y1, w.NET_COST Y2
         , w.WAIT_COUNT Y3, w.WAIT_COST Y4
@@ -202,9 +198,6 @@ CREATE TABLE `W_LOG_TIME` (
         order by w.minu asc
 
     </select>
-
-
-
     <select id="findSocketDetailUrl" resultType="java.util.Map" >
         select distinct PLUGIN from W_LOG_SOCKET_MODEL
         <where>
@@ -217,5 +210,69 @@ CREATE TABLE `W_LOG_TIME` (
         </where>
         order by PLUGIN
     </select>
+
+
+
+<!--//| id                               | invoke_date | service                             | method             | consumer       | provider   | type     | invoke_time   | success | failure | elapsed | concurrent | max_elapsed | max_concurrent |-->
+<!--//| 36cd17a74b504665a50dfd7b8219b9ab | 2020-07-28  | com.walker.service.LogService       | saveLogModel       | 172.17.149.176 | 172.18.0.1 | provider | 1595901121739 |    2149 |       0 |    7842 |          1 |          31 |              3 |-->
+<!--//| 4bc23d7265f84428beebc18b5b8b58b2 | 2020-07-28  | com.walker.service.LogService       | saveLogSocketModel | 172.17.149.176 | 172.18.0.1 | provider | 1595901121739 |     997 |       0 |   33369 |          1 |         133 |              1 |-->
+<!--//| 9c76c0f73ddd430396d632e9dd214e9f | 2020-07-28  | com.walker.service.SyncService      | doAction           | 172.17.149.176 | 172.18.0.1 | provider | 1595901121739 |       1 |       0 |    3559 |          1 |        3559 |              1 |-->
+<!--//| b8b1579c96f245a8b73e5a7a4ef9b6f5 | 2020-07-28  | com.walker.service.RoleService      | finds              | 172.18.0.1     | 172.18.0.1 | consumer | 1595901121888 |       3 |       0 |     290 |          1 |         157 |              1 |-->
+<!--//| c020d00750494e70bef24bb2acf7de47 | 2020-07-28  | com.walker.service.SysConfigService | count              | 172.18.0.1     | 172.18.0.1 | consumer | 1595901121888 |     134 |       0 |    5159 |          1 |          91 |              1 |-->
+<!--//| f175e9805292439a92d670c68ac8ae57 | 2020-07-28  | com.walker.service.LogService       | saveLogModelNoTime | 172.17.149.176 | 172.18.0.1 | provider | 1595901121739 |    1068 |       0 |   40346 |          1 |         289 |              2 |-->
+    <!--    定义对象匹配规则 模糊查询  findPage  and  count  -->
+    <select id="findDubboDetail" resultType="java.util.Map" >
+        select w.minu X
+        , w.success Y1, w.failure Y2
+        , w.elapsed Y3, w.concurrent Y4
+        , w.max_elapsed Y5, w.max_concurrent Y6
+        from
+        (
+        select SUBSTRING_INDEX(date_format(FROM_UNIXTIME(invoke_time / 1000),'%Y-%m-%d %H:%i:%S'), ':', 2) minu
+        , ifnull(sum(success), 0) success
+        , ifnull(sum(failure), 0) failure
+        , ifnull(sum(elapsed), 0) elapsed
+        , ifnull(sum(concurrent), 0) concurrent
+        , ifnull(sum(max_elapsed), 0) max_elapsed
+        , ifnull(sum(max_concurrent), 0) max_concurrent
+        from dubbo_invoke
+        <where>
+            <if test="url != null and url != '' ">
+                and  service like #{url}"%"
+            </if>
+            <if test="from != null and from != '' ">
+                and  date_format(FROM_UNIXTIME(invoke_time / 1000),'%Y-%m-%d %H:%i:%S') &gt;= #{from}
+            </if>
+            <if test="to != null and to != '' ">
+                and  date_format(FROM_UNIXTIME(invoke_time / 1000),'%Y-%m-%d %H:%i:%S') &lt;= #{to}
+            </if>
+            <if test="consumer != null and consumer != '' ">
+                and  consumer like #{consumer}"%"
+            </if>
+            <if test="provider != null and provider != '' ">
+                and  provider like #{provider}"%"
+            </if>
+            <if test="type != null and type != '' ">
+                and  type like #{type}"%"
+            </if>
+        </where>
+        group by SUBSTRING_INDEX(date_format(FROM_UNIXTIME(invoke_time / 1000),'%Y-%m-%d %H:%i:%S'), ':', 2)
+        ) w
+        order by w.minu asc
+
+    </select>
+    <select id="findDubboDetailUrl" resultType="java.util.Map" >
+        select distinct service from dubbo_invoke
+        <where>
+            <if test="from != null and from != '' ">
+                and  date_format(FROM_UNIXTIME(invoke_time / 1000),'%Y-%m-%d %H:%i:%S') &gt;= #{from}
+            </if>
+            <if test="to != null and to != '' ">
+                and  date_format(FROM_UNIXTIME(invoke_time / 1000),'%Y-%m-%d %H:%i:%S') &lt;= #{to}
+            </if>
+        </where>
+        order by service
+    </select>
+
 
 </mapper>

@@ -12,18 +12,16 @@
 
         <form class="form-inline" >
           <div class="form-group">
-            <label>url</label>
-            <el-select v-model="colsSearch.url"
-                       clearable filterable allow-create
-                       placeholder="请选择" no-match-text="新建">
-              <el-option
-                v-for="item in queryUrl"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
+            <label>类名</label>
+            <el-select v-model="colsSearch.url" clearable filterable allow-create placeholder="请选择" no-match-text="新建">
+              <el-option v-for="item in queryUrl" :key="item" :label="item" :value="item" > </el-option>
             </el-select>
+
+            <label>类型</label>
+            <el-select v-model="colsSearch.type" clearable filterable placeholder="请选择" no-match-text="新建">
+              <el-option v-for="item in queryType" :key="item" :label="item" :value="item" > </el-option>
+            </el-select>
+
             <label>from</label>
             <input
               type="text"
@@ -42,6 +40,27 @@
               placeholder="yyyy-MM-dd HH:mm"
               v-model="colsSearch.to"
             />
+            <label>消费者ip</label>
+           <input
+            type="text"
+            class="form-control"
+            style="width: 10em; margin-right: 1em;"
+            v-on:keyup.13="getListPage()"
+            placeholder="172.17.149.176"
+            v-model="colsSearch.consumer"
+            />
+
+            <label>提供者ip</label>
+            <input
+              type="text"
+              class="form-control"
+              style="width: 10em; margin-right: 1em;"
+              v-on:keyup.13="getListPage()"
+              placeholder="172.18.0.1"
+              v-model="colsSearch.provider"
+            />
+
+
           </div>
           <el-button-group>
             <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
@@ -66,6 +85,7 @@ export default {
       list: [],
       colsSearch: {},      //列名:别名
       queryUrl: [],
+      queryType:['provider', 'consumer'],
       urlCount: "",
       loadingList: true,
       loadingCols: true,

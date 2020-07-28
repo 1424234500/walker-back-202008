@@ -1,5 +1,6 @@
 package com.walker.service.impl;
 
+import com.walker.common.util.MD5;
 import com.walker.common.util.Page;
 import com.walker.config.Config;
 import com.walker.dao.RoleUserRepository;
@@ -57,6 +58,11 @@ public class UserServiceImpl implements UserService {
     public Integer count(User obj) {
         long res = userRepository.count(this.getSpecification(obj));
         return new Long(res).intValue();
+    }
+
+    @Override
+    public User auth(User obj) {
+        return userRepository.auth(obj.getID(), obj.getPWD(), MD5.makeStr(obj.getPWD()));
     }
 
 

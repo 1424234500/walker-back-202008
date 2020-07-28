@@ -53,4 +53,12 @@ public interface StatisticsMapper {
     List<Map<String, Object>> findSocketDetailUrl(@Param("from") String from, @Param("to") String to);
 
 
+    /**
+     * 时间区间内 多条件筛选构图
+     */
+    List<Map<String, Object>> findDubboDetail(@Param("from") String from, @Param("to") String to, @Param("url") String url, @Param("consumer") String consumer, @Param("provider") String provider, @Param("type") String type);
+    List<Map<String, Object>> findDubboDetailUrl(@Param("from") String from, @Param("to") String to);
+
+
+
 }
