@@ -343,7 +343,7 @@ export default {
       console.info("handlerDelete " + " " + JSON.stringify(val))
       this.loadingList = true
       const params = {ids: val[this.colKey]}
-      this.get('/redis/delet.do', params).then((res) => {
+      this.post('/redis/delet.do', params).then((res) => {
         for(let j = 0; j < this.list.length; j++) {
           if(this.list[j] == val){
             this.list.splice(j, 1);
@@ -359,26 +359,24 @@ export default {
       // const val = this.$refs.multipleTable.data
       console.info("handlerDeleteAll " + " " + JSON.stringify(this.rowSelect))
       if(this.rowSelect.length > 0){
-        this.loadingList = true
-        let ids = ""
         for(let i = 0; i < this.rowSelect.length; i++){
-          ids += this.rowSelect[i][this.colKey] + ","
-        }
-        ids = ids.substring(0, ids.length - 1)
-        const params = {ids: ids}
-        this.get('/redis/delet.do', params).then((res) => {
-          this.loadingList = false
-          for(let i = 0; i < this.rowSelect.length; i++){
-            for(let j = 0; j < this.list.length; j++) {
-              if(this.list[j] == this.rowSelect[i]){
-                this.list.splice(j, 1);
+          this.loadingList = true
+          var params = {ids:  this.rowSelect[i][this.colKey]}
+          this.post('/redis/delet.do', params).then((res) => {
+            this.loadingList = false
+            for(let i = 0; i < this.rowSelect.length; i++){
+              for(let j = 0; j < this.list.length; j++) {
+                if(this.list[j] == this.rowSelect[i]){
+                  this.list.splice(j, 1);
+                }
               }
             }
-          }
-          this.rowSelect = []
-        }).catch(() => {
-          this.loadingList = false
-        })
+          }).catch(() => {
+            this.loadingList = false
+          })
+        }
+        this.rowSelect = []
+
       }
     },
     //多选改变

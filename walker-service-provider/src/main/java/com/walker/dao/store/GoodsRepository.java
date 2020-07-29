@@ -1,4 +1,4 @@
-package com.walker.dao;
+package com.walker.dao.store;
 
 import com.walker.mode.Dept;
 import com.walker.mode.store.Goods;

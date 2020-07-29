@@ -68,7 +68,7 @@ public class LogModel implements Cloneable, Serializable {
 	private String EXCEPTION;
 	@Column(name = "IS_OK", columnDefinition = "varchar(2) default '' comment '1是0否成功' ")
 	private String IS_OK;
-	@Column(name = "RES", columnDefinition = "varchar(998) default '' comment '访问结果' ")
+	@Column(name = "RES", columnDefinition = "varchar(1998) default '' comment '访问结果' ")
 	private String RES;
 	@Column(name = "COST", columnDefinition = "varchar(128) default '' comment '耗时' ")
 	private String COST;
@@ -254,7 +254,7 @@ public class LogModel implements Cloneable, Serializable {
 
 	public LogModel setRES(String RES) {
 		this.RES = RES;
-		RES = Config.cutString(998, RES);
+		RES = Config.cutString(Config.MAX_VARCHAR_LEN, RES);
 		return this;
 	}
 

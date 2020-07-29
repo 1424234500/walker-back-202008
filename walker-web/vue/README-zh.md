@@ -54,13 +54,32 @@ npm audit fix
 
 ## 发布
 
-```bash
+```
 # 构建测试环境
 npm run build:stage
 
 # 构建生产环境
 npm run build:prod
 ```
+
+## 新模块v-xxx导入步骤
+```
+#导入模块迟加载 并自动向package.json写入（maven？）依赖 后续npm install时自动下载依赖
+npm i vue-lazyload -S
+#main.js 全局引用引入的模块
+import VueLazyload from 'vue-lazyload'
+Vue.use(VueLazyload)
+// or with options
+Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  error: 'dist/error.png',
+  loading: 'dist/loading.gif',
+  attempt: 1
+})
+
+
+```
+
 
 ## 其它
 

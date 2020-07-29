@@ -92,6 +92,44 @@
     </el-row>
 
 
+
+
+    <div>
+      <span>图片相关 lazy插件</span>
+      <p>
+key	description	default	options
+preLoad	proportion of pre-loading height	1.3	Number
+error	src of the image upon load fail	'data-src'	String
+loading	src of the image while loading	'data-src'	String
+attempt	attempts count	3	Number
+listenEvents	events that you want vue listen for	['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']	Desired Listen Events
+adapter	dynamically modify the attribute of element	{ }	Element Adapter
+filter	the image's listener filter	{ }	Image listener filter
+lazyComponent	lazyload component	false	Lazy Component
+dispatchEvent	trigger the dom event	false	Boolean
+throttleWait	throttle wait	200	Number
+observer	use IntersectionObserver	false	Boolean
+observerOptions	IntersectionObserver options	{ rootMargin: '0px', threshold: 0.1 }	IntersectionObserver
+silent	do not print debug info	true	Boolean
+</p>
+      <el-row>
+        <span>vlazy-url</span>
+        <span  v-for="item in urls">
+          <div>{{item}}</div>
+          <div><img style="width:200px;" v-lazy="item" ></div>
+        </span>
+        <span>
+          <div>src-404: @/assets/404_images/404.png</div>
+          <div><img style="width:200px;" src="@/assets/404_images/404.png" ></div>
+        </span>
+
+      </el-row>
+
+
+
+    </div>
+
+
   </div>
 </template>
 
@@ -99,7 +137,16 @@
   export default {
     data() {
       return {
-        form: {
+       fits: ['fill', 'contain', 'cover', 'none', 'scale-down']
+       ,url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+       ,src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+       ,urls: [
+         'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+       , 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+       , "@/assets/404_images/404.png"
+       , 'err']
+
+        ,form: {
           name: '',
           region: '',
           date1: '',

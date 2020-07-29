@@ -52,6 +52,7 @@ div:focus {
   outline: none;
 }
 
+.clear{clear:both;}
 .clearfix {
   &:after {
     visibility: hidden;

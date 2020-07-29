@@ -218,13 +218,13 @@ public class SyncServiceImpl implements SyncService {
                         watch.res();
                         logModel.setRES(watch.toPrettyString());
                         logModel.setABOUT("任务执行完毕");
-                        logService.saveLogModelNoTime(logModel);
                         log.info(watch.toPrettyString());
                         log.info("sync end key:" + key + " value:" + value + " args:" + args);
 
                         if(! redisDao.releaseLock(key, value)){
                             log.error("unlock error expire ? key:" + key + ", value:" + redisDao.get(key) + " should be value:" + value);
                         }
+                        logService.saveLogModelNoTime(logModel);
                     }
                 }
             });

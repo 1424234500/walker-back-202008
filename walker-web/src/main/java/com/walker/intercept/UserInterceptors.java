@@ -76,6 +76,11 @@ public class UserInterceptors implements HandlerInterceptor{
 			token = token == null ? "" : token;
 			log.debug("session is null, then userAgent token " + token);
 		}
+		if(token.length() == 0){
+			token = request.getParameter("TOKEN");
+			token = token == null ? "" : token;
+			log.debug("header userAgent is null, then parameter token " + token);
+		}
 //	    Map<String, Object> map =  cache.get(LoginService.CACHE_KEY, new HashMap<String, Object>());
 //		Map<String, String> user = redisDao.hmGet(token);
 		User user = token.length() > 0 ? shiroConfig.getOnlineUser(token) : null;

@@ -32,9 +32,9 @@ public class Goods implements Cloneable,Serializable {
     private String NAME;
     @Column(name = "ABOUT", columnDefinition = "varchar(998) default '' comment '说明' ")
     private String ABOUT;
-    @Column(name = "IMGS", columnDefinition = "varchar(64) default '' comment '图片urls或ids' ")
+    @Column(name = "IMGS", columnDefinition = "varchar(512) default '' comment '图片urls或ids' ")
     private String IMGS;
-    @Column(name = "TYPE", columnDefinition = "varchar(64) default '' comment '类型sql-class-url' ")
+    @Column(name = "TYPE", columnDefinition = "varchar(64) default '' comment '类型' ")
     private String TYPE;
 
 

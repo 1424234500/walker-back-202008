@@ -52,12 +52,14 @@ public class RedisController  {
 
     @ApiOperation(value = "删除redis", notes = "")
     @ResponseBody
-    @RequestMapping(value = "/delet.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/delet.do")
     public Response delet(
             @RequestParam(value = "ids", required = true, defaultValue = "") String ids
     ) {
 
-        long res = redisService.delKeys(Arrays.asList(ids.split(",")));
+//        特殊key导致分割问题
+//        cache-getColumnsByTableName::[, S_GOODS]
+        long res = redisService.delKeys(Arrays.asList(ids));
 
         return Response.makeTrue("rm locks " + ids, res);
     }

@@ -5,6 +5,7 @@ import com.walker.common.util.Tools;
 
 public class Config {
 
+    public static final int MAX_VARCHAR_LEN = 1998;
     private static int count = 0;
     public static String PRE = "init--------";
     public static String getPre(){
@@ -39,7 +40,8 @@ public class Config {
     public static String cutString(int len, String str) {
         len--;
         if(str != null && str.length() > len ){
-            str = str.substring(0, len/2) + "..." + str.substring(str.length() - len/2);
+            int dl = (len - "...".length() ) / 2;
+            str = str.substring(0, dl) + "..." + str.substring(str.length() - dl);
         }
         return str;
     }

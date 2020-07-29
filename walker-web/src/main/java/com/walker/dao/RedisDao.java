@@ -731,8 +731,13 @@ public class RedisDao {
                 value = "@Cacheable(keyGenerator=\"keyGenerator\",value=\"" + key + "\")";
                 len = 998L;
             }else if (type.equals("string")) {
-                value = redisTemplate.opsForValue().get(key);
-                len = redisTemplate.opsForValue().size(key);
+                try {
+                    value = redisTemplate.opsForValue().get(key);
+                    len = redisTemplate.opsForValue().size(key);
+                }catch (Throwable e){
+                    value = "Error " + e.getMessage();
+                    log.error("Error redis " + type + " " + key + " " + e.getMessage(), e);
+                }
             } else if (type.equals("list")) {
                 len = redisTemplate.opsForList().size(key);
                 value = redisTemplate.opsForList().range(key, 0, len < 50 ? -1 : 50);

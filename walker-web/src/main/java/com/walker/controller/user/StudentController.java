@@ -1,4 +1,4 @@
-package com.walker.controller;
+package com.walker.controller.user;
 
 
 import com.walker.Response;

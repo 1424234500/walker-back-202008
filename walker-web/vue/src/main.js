@@ -18,6 +18,32 @@ import store from './store'
 import router from './router'
 
 // 注册为全局组件 供直接使用
+import VueLazyload from 'vue-lazyload'
+//Vue.use(VueLazyload)
+// or with options
+Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  error: '/static/img/404.a57b6f31.png',
+  loading: 'dist/loading.gif',
+  attempt: 1
+})
+
+
+
+////  参数1：过滤器名称 参数2：过滤器的逻辑
+//import * as fi  Vue.filter(key, filters[key])
+//lters from './filters/index' // global filters
+//// register global utility filters
+//Object.keys(filters).forEach(key => {
+//console.log({key,value:filters[key]})
+//
+//})
+
+  Vue.filter('timeAgo',()=>{
+  return 1;
+  })
+
+
 
 import mtable from './views/db/mtable'
 Vue.component('mtable', mtable)
@@ -46,7 +72,6 @@ Vue.component('socket', socket)
 
 
 
-
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -65,8 +90,6 @@ Vue.prototype.clone = clone
 
 
 
-
-
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -82,9 +105,6 @@ Vue.prototype.clone = clone
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
-
-
-
 
 Vue.config.productionTip = false
 

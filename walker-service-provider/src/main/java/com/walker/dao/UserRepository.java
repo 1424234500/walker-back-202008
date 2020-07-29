@@ -37,6 +37,6 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
     @Query("delete from User t where t.ID in (?1) ")
     Integer selfDeleteAll(List<String> ids);
 
-    @Query(value = "select * from User t where (t.ID=?1 or t.EMAIL=?1 or t.MOBILE=?1) and (t.PWD=?2 or t.PWD=?3) ", nativeQuery = true)
+    @Query(value = "select t from User t where (t.ID=?1 or t.EMAIL=?1 or t.MOBILE=?1) and (t.PWD=?2 or t.PWD=?3) " )
     User auth(String id, String pwd, String makeStr);
 }
