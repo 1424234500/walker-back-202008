@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui';
 import { getToken,setToken,getUser,setUser,clear } from '@/utils/cookie' // get token from cookie
+import {filterImg}  from '@/filters/index' // global filters
 
 import router from '@/router'
 import qs from 'qs'
@@ -126,6 +127,12 @@ export function delet(url, params) {
   })
 }
 
+export function downPath(id, params, fileName) {
+  this.$message.success('开始下载文件' + fileName);
+
+  var url = filterImg(id, 0)
+  return this.down(url, {}, fileName)
+}
 export function down(url, params, fileName) {
   const type = 'down'
   return new Promise((resolve, reject) => {

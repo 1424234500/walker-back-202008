@@ -109,15 +109,15 @@ public class SentinelLimitDao implements Limiter {
         degradeRule.setGrade(RuleConstant.DEGRADE_GRADE_EXCEPTION_RATIO);
         degradeRule.setTimeWindow(configDao.get("com.walker.dao.SentinelLimitDao.reload.DegradeRule.TimeWindow", 5));
         degradeRules.add(degradeRule);
-//        限流配置
-        double qps = configDao.get(url, 1D);
-        if(qps >= 0) {
-            FlowRule rule = new FlowRule();
-            rule.setResource(url);
-            rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
-            rule.setCount(1);// Set limit QPS to 20.
-            flowRules.add(rule);
-        }
+//        sentinel限流配置
+//        double qps = configDao.get(url, 1D);
+//        if(qps >= 0) {
+//            FlowRule rule = new FlowRule();
+//            rule.setResource(url);
+//            rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
+//            rule.setCount(1);// Set limit QPS to 20.
+//            flowRules.add(rule);
+//        }
 
 
         FlowRuleManager.loadRules(flowRules);

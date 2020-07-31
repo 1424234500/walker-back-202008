@@ -102,3 +102,73 @@ div:focus {
 .my-input-small{
   width: 40em;
 }
+
+.margin2px{
+  margin: 2px;
+}
+.floatleft{
+  float: left;
+}
+
+// 自定义主题央视
+.image-large{
+  max-height:8em;
+  min-height:4em;
+}
+.image-middle{
+  height:4em;
+  min-height:4em;
+}
+.image-icon{
+  width:2em;
+  height:2em;
+}
+.div-all{
+  width:100%;
+  padding: 1em;
+  float:left;
+}
+.div-item{
+  background: #f2f2f2;
+  max-width:20em;
+  max-height:12em;
+  margin-bottom: 1em;
+  margin-left:1em;
+  padding:1em;
+  overflow: hidden;
+  float:left;
+}
+.div-item-sub{
+  margin-top:0.2em;
+  max-height:8em;
+  min-height:3em;
+  overflow: hidden;
+}
+
+.sub-left {
+    line-height: 2em;
+
+    float:left;
+}
+.sub-middle {
+    margin-left: 1em;
+    margin-right: 1em;
+    line-height: 2em;
+    float:left;
+}
+.sub-right {
+    margin-left: 1em;
+    line-height: 2em;
+
+    float:right;
+}
+.div-item-img-button{
+  max-width: 10em;
+  min-height: 6em;
+  background: #f2f2f2;
+  padding: 0.5em;
+  overflow: hidden;
+}
+.margin-right-05em{
+  margin-right: 0.5em;
+}

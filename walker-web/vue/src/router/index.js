@@ -189,8 +189,16 @@ export const constantRoutes = [
             path: 'goods',
             name: 'Goods',
             component: () => import('@/views/store/goods'),
-            meta: {title: '商品', icon: 'list'}
+            meta: {title: '商品概览', icon: 'list'}
           },
+          {
+            path: 'goodsdetail',
+            name: 'GoodsDetail',
+            component: () => import('@/views/store/goodsdetail'),
+            meta: {title: '商品详情', icon: 'list'}
+          },
+
+
         ]
       }
     ]
@@ -304,6 +312,12 @@ export const constantRoutes = [
         name: 'Form',
         component: () => import('@/views/other/form'),
         meta: { title: 'Form', icon: 'tree' }
+      },
+      {
+        path: 'ablum',
+        name: 'Ablum',
+        component: () => import('@/views/template/ablum'),
+        meta: { title: 'Ablum', icon: 'tree' }
       },
     ]
   },

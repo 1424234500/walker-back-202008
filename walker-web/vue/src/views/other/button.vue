@@ -1,6 +1,7 @@
 <template>
   <div class="app-container" >
-
+<a href='https://cloud.tencent.com/developer/section/1489867'> https://cloud.tencent.com/developer/section/1489867</a></a>
+<br>
     <el-row>
       <el-button>默认按钮</el-button>
       <el-button type="primary">primary按钮</el-button>
@@ -122,12 +123,36 @@ silent	do not print debug info	true	Boolean
           <div>src-404: @/assets/404_images/404.png</div>
           <div><img style="width:200px;" src="@/assets/404_images/404.png" ></div>
         </span>
-
+      </el-row>
+<p> url过滤器 本地图片文件加载 img src </p>
+      <el-row>
+      <template >
+        <label>filter:</label> {{ name | orderNoFilter }}
+      </template>
+      <template >
+        <div>
+          <label>{{imgs | filterImg(0) }}</label>
+          <img class="image-icon" :src="imgs | filterImg(0)  " >
+        </div>
+        <div>
+           <label>imgsfilter-v-lazy: {{imgs | filterImg(2) }}</label>
+            img class="image-icon" v-lazy="imgs | filterImg(2)  "
+        </div>
+      </template>
       </el-row>
 
+<p> url过滤器 本地图片文件 lazy 加载 img v-lazy </p>
 
 
     </div>
+    <div>
+      <p> 文件上传组件</p>
+      <p>res: {{imgs}} </p>
+    <ablum :props='ablum' @transfer="onGetImgs"></ablum>
+
+    </div>
+
+
 
 
   </div>
@@ -137,6 +162,7 @@ silent	do not print debug info	true	Boolean
   export default {
     data() {
       return {
+
        fits: ['fill', 'contain', 'cover', 'none', 'scale-down']
        ,url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
        ,src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
@@ -145,17 +171,20 @@ silent	do not print debug info	true	Boolean
        , 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
        , "@/assets/404_images/404.png"
        , 'err']
+       , imgs: 'ef3c802bcdcee2b0af1cb1b4c1078257'
 
-        ,form: {
-          name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        }
+        ,name: 'name',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+
+        , ablum: {
+          imgs: "https://img.alicdn.com/imgextra/https://img.alicdn.com/imgextra/i2/2355352178/O1CN01OyQ1EM1RxZD2wKyYC_!!2355352178.jpg_430x430q90.jpg,7f31c886301044ed2021f54043a6a0c7"
+        },
       }
     },
     methods: {
@@ -167,6 +196,10 @@ silent	do not print debug info	true	Boolean
           message: 'cancel!',
           type: 'warning'
         })
+      }
+      , onGetImgs(imgs){
+        this.imgs = imgs
+        console.log("i get the ablum res " + this.imgs)
       }
     }
   }

@@ -211,10 +211,17 @@ public class RequestUtil {
 //        //设置文件ContentType类型，这样设置，会自动判断下载文件类型    
 //        response.setHeader("content-type", "application/octet-stream");
 //        response.setContentType("application/octet-stream");
-        response.setContentType("multipart/form-data");   
-		String userbrowser = request.getHeader("User-Agent");
-		response.addHeader("content-disposition", RequestUtil.getDispo(userbrowser, fileName));
 
+//		text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+		String accept = request.getHeader("accept");
+		if(accept != null && accept.contains("image")){
+			response.setContentType("image/png; charset=UTF-8");
+		}else {
+			response.setContentType("multipart/form-data");
+		}
+		String userbrowser = request.getHeader("User-Agent");
+		//2.设置文件头：最后一个参数是设置下载文件名(假如我们叫a.pdf)
+		response.addHeader("Content-Disposition", RequestUtil.getDispo(userbrowser, fileName));
 		if (userbrowser == null) {
 			userbrowser = "Chrome";
 		}

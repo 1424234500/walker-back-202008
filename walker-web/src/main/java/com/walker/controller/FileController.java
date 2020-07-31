@@ -1,5 +1,6 @@
 package com.walker.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.walker.Response;
 import com.walker.common.util.FileUtil;
 import com.walker.common.util.Page;
@@ -223,13 +224,17 @@ public class FileController {
         return Response.make(info.length() == 0, info, count);
     }
 
+    /**
+     * 支撑请求头 特定 图片预览问题 img src
+     */
     @ApiOperation(value = "下载文件 ", notes = "")
     @ResponseBody
     @RequestMapping(value = "/download.do")
-    public Response downloadFile(HttpServletRequest request,
+    public void downloadFile(HttpServletRequest request,
                                HttpServletResponse response,
-                               @RequestParam(value = "key", required = false, defaultValue = "") String key,
-                               @RequestParam(value = "path", required = false, defaultValue = "") String path
+                                @RequestParam(value = "key", required = false, defaultValue = "") String key,
+                                 @RequestParam(value = "path", required = false, defaultValue = "") String path
+
     ) throws IOException {
         Watch w = new Watch(new Object[]{"download"});
         w.put(key);
@@ -268,7 +273,9 @@ public class FileController {
         w.put("info", info);
         if (!res) {
             w.res();
-            return Response.makeFalse(w.toPrettyString());
+            String s = JSON.toJSONString( Response.makeFalse(w.toPrettyString()).toString() );
+            response.getWriter().println(s);
+//            response.flushBuffer();
         } else {
             String name = fileIndex == null ? FileUtil.getFileName(path) : fileIndex.getNAME();
 
@@ -285,7 +292,8 @@ public class FileController {
                 if(outputStream != null) outputStream.close();
             }
             w.cost("copyStream");
-            return Response.makeTrue(w.toPrettyString());
+            log.info(w.toPrettyString());
+//            return Response.makeTrue(w.toPrettyString());
         }
     }
 

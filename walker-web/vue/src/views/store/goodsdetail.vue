@@ -1,89 +1,52 @@
 <template>
-<div class="app-container" >
+  <div class="app-container" >
 
-  <!--搜索-->
-  <div class="div-box-down" v-loading="loadingCols" >
-    <form class="form-inline" >
-      <div class="form-group" v-for="(value, key) in colMap">
-        <label>{{value=='' ? key : value}}</label>
-        <input
-          type="text"
-          class="form-control"
-          style="width: 10em; margin-right: 1em;"
-          v-on:keyup.13="getListPage()"
-          :placeholder="key"
-          v-model="rowSearch[key]"
-        />
-      </div>
-      <el-button-group>
-        <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
-        <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
-        <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
-      </el-button-group>
-    </form>
-  </div>
-
-  <!--  定制模拟展示 带附件图片 文件  -->
-  <div v-show="!loadingCols" class="div-all">
-    <div class="div-all">
-        <div class="div-item" v-for="(item, i) in list"   @click.stop="handlerChange(item) " >
-            <img class="image-large" :src="item.IMGS | filterImg(1) " />
-            <div class="div-item-sub">
-                <div class="sub-left">
-                  <div>
-                    <img class="image-icon" :src="item.IMGS | filterImg(0) " />
-                  </div>
-                </div>
-                <div class="sub-middle">
-                    <div>{{item.PRICE | money }} </div>
-                </div>
-                <div class="sub-right">
-                    <div>{{item.ABOUT | substr(10) }}</div>
-                </div>
-            </div>
+    <!--搜索-->
+    <div class="div-box-down" v-loading="loadingCols" >
+      <form class="form-inline" >
+        <div class="form-group" v-for="(value, key) in colMap">
+          <label>{{value=='' ? key : value}}</label>
+          <input
+            type="text"
+            class="form-control"
+            style="width: 10em; margin-right: 1em;"
+            v-on:keyup.13="getListPage()"
+            :placeholder="key"
+            v-model="rowSearch[key]"
+          />
         </div>
+        <el-button-group>
+          <el-button  class="btn btn-primary" @click="getListPage()" >查询</el-button>
+          <el-button  class="btn btn-success" @click="handlerAddColumn()" >添加</el-button>
+          <el-button  class="btn btn-danger" @click="clearRowSearch();getListPage();" >清除</el-button>
+        </el-button-group>
+      </form>
     </div>
+
+    <div v-show="!loadingCols" class="div-all">
+<!--  定制模拟展示 带附件图片 文件  -->
+      <div class="div-all">
+          <div class="div-item" v-for="(item, i) in list">
+              <img class="image-large" :src="item.IMGS | filterImg(1) " >
+
+              <div class="div-item-sub">
+                  <div class="sub-left">
+                    <div>
+                      <img class="image-icon" :src="item.IMGS | filterImg(0) " >
+                    </div>
+                  </div>
+                  <div class="sub-middle">
+                      <div>{{item.PRICE | money }} </div>
+                  </div>
+                  <div class="sub-right">
+                      <div>{{item.ABOUT | substr(10) }}</div>
+                  </div>
+              </div>
+            <!--  <div class="clear" ></div> -->
+          </div>
+      </div>
   </div>
-
-
-<el-dialog
-  title="修改"
-  :visible.sync="loadingUpdate"
-  v-if="loadingUpdate"
-  width="86%"
-  :before-close="handlerCancel"
->
-  <template>
-    <el-form
-      v-loading="loadingSave"
-      ref="form"
-      :model="rowUpdate"
-      label-width="100px"
-    >
-      <el-form-item
-        v-for="(value, key) in colMap"
-        :key="key"
-        :property="key"
-        :label="(value=='' ? key : value)"
-      >
-        <el-input v-model="rowUpdate[key]" type="textarea" />
-      </el-form-item>
-
-      <el-form-item
-      label="图片管理"
-      >
-        <ablum :props='ablum' @transfer="onGetImgs"></ablum>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" @click="handlerSave()">确定</el-button>
-        <el-button type="danger" @click="handlerCancel()">取消</el-button>
-      </el-form-item>
-    </el-form>
-  </template>
-</el-dialog>
-
-</div>
+  </div>
 </template>
 
 
@@ -125,7 +88,6 @@
         loadingCols: true,
         loadingSave: true,
         loadingUpdate: false,
-        ablum : null,
       }
     },
     created() {
@@ -147,10 +109,6 @@
           this.loadingCols = false
         })
 
-      },
-      onGetImgs(imgs){
-        this.rowUpdate.IMGS = imgs
-        console.log("i get the ablum res " + imgs)
       },
       //清空搜索条件
       clearRowSearch(){
@@ -177,20 +135,14 @@
         var newObj = this.assign(this.nowRow?this.nowRow:{}, this.rowSearch)
         newObj[this.colKey] = ''
         newObj["S_FLAG"] = '1'
-        newObj["IMGS"] = ''
         this.list.push(newObj)
         this.handlerChange(this.list[this.list.length - 1])
       },
       //修改单行 展示弹框
       handlerChange(val) {
         this.loadingUpdate = ! this.loadingUpdate
-        this.loadingSave = true
+        this.loadingSave = false
         console.info("handlerChange " + JSON.stringify(val))
-//        传参给弹框组件
-        this.ablum = {
-          imgs: val.IMGS
-        }
-
         this.rowUpdateFrom = val;
         this.rowUpdate = JSON.parse(JSON.stringify(val))
         this.loadingSave = false
@@ -206,11 +158,10 @@
         this.loadingSave = true
 
         this.rowUpdateFrom = Object.assign(this.rowUpdateFrom, this.rowUpdate) //update assign
-        var params = this.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, this.rowUpdateFrom)
-        this.post('/common/save.do', params).then((res) => {
+        var params = this.rowUpdateFrom
+        this.post('/teacher/save.do', params).then((res) => {
           this.loadingSave = false
           this.loadingUpdate = ! this.loadingUpdate
-          this.info = res.info
         }).catch(() => {
           this.loadingSave = false
         })

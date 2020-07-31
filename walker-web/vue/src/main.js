@@ -30,18 +30,7 @@ Vue.use(VueLazyload, {
 
 
 
-////  参数1：过滤器名称 参数2：过滤器的逻辑
-//import * as fi  Vue.filter(key, filters[key])
-//lters from './filters/index' // global filters
-//// register global utility filters
-//Object.keys(filters).forEach(key => {
-//console.log({key,value:filters[key]})
-//
-//})
 
-  Vue.filter('timeAgo',()=>{
-  return 1;
-  })
 
 
 
@@ -69,6 +58,8 @@ Vue.component('controller', controller)
 import socket from './views/echarts/socket'
 Vue.component('socket', socket)
 
+import ablum from './views/template/ablum'
+Vue.component('ablum', ablum)
 
 
 
@@ -77,16 +68,22 @@ import '@/permission' // permission control
 
 
 //将方法挂载到Vue原型上 vue上下文 全局 this.get
-import { get, post, put, delet, down } from '@/utils/http'
+import { get, post, put, delet, down, downPath } from '@/utils/http'
 Vue.prototype.get = get
 Vue.prototype.post = post
 Vue.prototype.delet = delet
 Vue.prototype.put = put
 Vue.prototype.down = down //??不行？?
+Vue.prototype.downPath = downPath //??不行？?
 
-import { assign, clone} from '@/utils/index'
-Vue.prototype.assign = assign
-Vue.prototype.clone = clone
+//批量挂载 工具类方法
+//import { assign, clone} from '@/utils/index'
+//Vue.prototype.assign = assign
+//Vue.prototype.clone = clone
+import * as utils from '@/utils/index'
+Object.keys(utils).forEach(key => {
+  Vue.prototype[key] = utils[key];
+})
 
 
 
@@ -106,10 +103,22 @@ Vue.prototype.clone = clone
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 
+
+
+//  参数1：过滤器名称 参数2：过滤器的逻辑
+import * as filters from './filters' // global filters
+console.log(filters)
+// register global utility filters
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
+
+
 Vue.config.productionTip = false
 
 
-new Vue({
+var v = new Vue({
   el: '#app',
   router,
   store,
@@ -117,3 +126,4 @@ new Vue({
   render: h => h(App)
 })
 
+//debugger

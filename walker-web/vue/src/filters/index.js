@@ -71,20 +71,46 @@ export function uppercaseFirst(string) {
 
 
 
+export function orderNoFilter(str) {
+//  debugger
+  return str + " -------filter------ "
+}
 
+export function substr(str, no) {
+//  debugger
+  if(str && no > 0 && str.length > no){
+    return str.substr(0, no) + "..."
+  }
+  return str
+}
+
+export function money(str) {
+//  debugger
+  return "￥" + str
+}
 
 export function filterImg(imgs, no){
-  if(!imgs || (!no || no < 0) ){
-    return ""
-  }
-  var ss = value.split(",")
-  var res = "/file/download.do?TOKEN=" + getToken() + "&path="
-  if(ss.length > no){
-    res += ss[no]
-    return res
-  }else{
+//  debugger
+  if(!imgs ){
+    console.log("filterImg err " + imgs + " " + no)
     return ""
   }
 
+  var ss = imgs.split(",")
+  var res = ""
+  if(!no){
+    no = 0
+  }
+  if(ss.length <= no){
+    no = ss.length - 1
+  }
+  var item = ss[no]
+  if(item.startsWith('http')){
+    res = item
+  }else{
+    res = "/file/download.do?TOKEN=" + getToken() + "&key=" + item
+  }
+  return res
 }
+
 

@@ -43,27 +43,35 @@
     </template>
 
 
-
-
-
-
   </div>
 </template>
 
 <script>
 export default {
+
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        success: 'success',
+        pending: 'danger'
+      }
+      return statusMap[status]
+    },
+
+  },
   data() {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      }
+      src: 's1,s2,s3',
+      visible: true,
+      name: 'name',
+      value: 'value',
+      region: 'region',
+      date1: 'date1',
+      date2: 'date2',
+      delivery: false,
+      type: ['type1', 'type2', 'type3'],
+      resource: '',
+      desc: ''
     }
   },
   methods: {
