@@ -18,6 +18,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StopWatch;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -522,22 +523,30 @@ public class RedisDao {
     public <T> T getCacheOrDb(String key0, String key1, int secondsToExpire, int secondsToWait, FunArgsReturn<String, T> getFromDb){
         final String key = KEY_GET_CACHE_OR_DB + key0;
         final String lockName = KEY_LOCK_GET_CACHE_OR_DB + key0 + ":" + key1;
-
+        StopWatch stopWatch = new StopWatch();
 
 //        熔断
 //        如果redis不可用    考虑一段时间熔断    恢复机制
 //        如果redis失败率超过50%   考虑一段时间限流    恢复机制
 //        这里应该跳过redis并且直接查询数据库  并且通知限流  降级服务
-
+        stopWatch.start("getMap");
         T res = getMap(key, key1, null);
+        stopWatch.stop();
         if(res == null){
 //					加锁 避免缓存击穿 锁粒度最小程度 key
+            stopWatch.start("tryLock");
             String lock = tryLock(lockName, DEFAULT_LOCK_DB_KEY_TIME, secondsToWait);
+            stopWatch.stop();
             if (lock.length() > 0) {
                 try {
+                    stopWatch.start("getMap2");
                     res = getMap(key, key1, null);  //再次获取缓存
+                    stopWatch.stop();
                     if (res == null) {
+                        stopWatch.start("getDb");
                         res = getFromDb.make(key1);
+                        stopWatch.stop();
+                        stopWatch.start("setMap");
                         if(res == null){	//避免缓存穿透  null是否缓存 快速过期来保护数据库  本来计划10分钟过期 则 null 1分钟过期 最小5秒过期
 //									布隆过滤器预热 性能实现 全局map 精确映射数据库有没有
 //                            缓存空值
@@ -547,9 +556,12 @@ public class RedisDao {
                             log.debug("get from db " + key + " res is null ? " + (res == null) + " " + res);
                             setMap(key, key1, res, secondsToExpire);
                         }
+                        stopWatch.stop();
                     }
                 }finally {
+                    stopWatch.start("releaseLock");
                     releaseLock(lockName, lock);
+                    stopWatch.stop();
                 }
             }else{
                 log.debug("cache funArgsReturn lock no: " + key + " " + key1);
@@ -558,6 +570,7 @@ public class RedisDao {
         }else{
             log.debug("get from cache " + key + " " + key1 + " res " + res);
         }
+        log.debug(stopWatch.prettyPrint());
         return res;
     }
     public <T> T getCacheOrDb(String key0, String key1, int secondsToExpire, int secondsToWait, FunCacheDb<String, T> funCacheDb){

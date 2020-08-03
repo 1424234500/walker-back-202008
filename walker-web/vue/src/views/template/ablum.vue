@@ -5,15 +5,18 @@
   入参： imgid1, imgid2, imgid3
   渲染一个div 包含每个图片
 :title="item | filterImg
+ img class="image-middle margin2px  el-icon-document" :src="item | filterImg " :alt="item"
 
 -->
   <div  v-loading="data.loading">
     <template  v-for="item in data.list">
       <div class="floatleft margin-right-05em">
         <div class="div-item-img-button">
-          <div>  <img class="image-middle margin2px  el-icon-document" :src="item | filterImg " :alt="item"/> </div>
+          <div>
+              <img class="image-middle margin2px  el-icon-document" :alt="item" :key="item" v-lazy="item" >
+          </div>
           <div v-if="data.vifDel"    >
-                <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(item)"></el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(item)"></el-button>
           </div>
         </div>
       </div>

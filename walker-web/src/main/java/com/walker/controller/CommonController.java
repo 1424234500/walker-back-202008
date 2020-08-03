@@ -177,16 +177,17 @@ public class CommonController {
         for(Object key : bean.keySet()){
             if(!cols.contains(key)){
                 info.append(key + ",");
+            }else {
+                sb.append(key + ",");
+                if (key.equals("S_MTIME")) {
+                    bean.set(key, TimeUtil.getTimeYmdHmss());
+                }
+                if (key.equals(keyId) && bean.get(keyId, "").length() == 0) {
+                    bean.set(keyId, LangUtil.getTimeSeqId());
+                    log.info("none id save then make id " + bean);
+                }
+                args.add(bean.get(key));
             }
-            sb.append(key + ",");
-            if(key.equals("S_MTIME")){
-                bean.set(key, TimeUtil.getTimeYmdHmss());
-            }
-            if(key.equals(keyId) && bean.get(keyId, "").length() == 0){
-                bean.set(keyId, LangUtil.getTimeSeqId());
-                log.info("none id save then make id " + bean);
-            }
-            args.add(bean.get(key));
         }
         if(args.size() <= 0){
             return Response.makeFalse("没有参数");

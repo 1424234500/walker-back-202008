@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StopWatch;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -29,10 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RateLimiterDao implements Limiter{
     private static Logger log = LoggerFactory.getLogger(RateLimiterDao.class);
 
-    @Autowired
-    RedisDao redisDao;
-    @Autowired
-    JdbcDao jdbcDao;
     @Autowired
     ConfigDao configDao;
 
@@ -73,20 +70,30 @@ public class RateLimiterDao implements Limiter{
      *
      */
     private RateLimiter get(String url, String userId, double defaultCount){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start("mapget");
         RateLimiter rateLimiter = indexRateLimiters.get(url);
+        stopWatch.stop();
         if(rateLimiter == null){
 //            初始化限流 默认限流 默认预热
+            stopWatch.start("getCountConfig");
             double eachSecondCount = getCountConfig(url, defaultCount);
+            stopWatch.stop();
             if(eachSecondCount > 0) {
-                int warm = configDao.get("com.walker.intercept.RateLimitInterceptor.default.warmupPeriod", 3);
-                log.info("init ratelimiter " + url + " to " + eachSecondCount);
-                rateLimiter = RateLimiter.create(eachSecondCount, warm, TimeUnit.SECONDS);
+                stopWatch.start("init");
+                int warmup = configDao.get("com.walker.intercept.RateLimitInterceptor.default.warmupPeriod", 3);
+                log.info("init ratelimiter " + url + " to " + eachSecondCount + " warmup " + warmup);
+                rateLimiter = RateLimiter.create(eachSecondCount, warmup, TimeUnit.SECONDS);
                 indexRateLimiters.put(url, rateLimiter);
+                stopWatch.stop();
             }
         }else{
 //        集群模式下 缓存和内存同步问题
 //        比对
+            stopWatch.start("getCountConfig");
             double eachSecondCount = getCountConfig(url, defaultCount);
+            stopWatch.stop();
+            stopWatch.start("update");
             if(eachSecondCount == 0){
                 indexRateLimiters.remove(url);
                 rateLimiter = null;
@@ -94,13 +101,15 @@ public class RateLimiterDao implements Limiter{
                 log.info("reset ratelimiter " + rateLimiter + " to " + eachSecondCount);
                 rateLimiter.setRate(eachSecondCount);
             }
+            stopWatch.stop();
         }
+        log.debug(stopWatch.prettyPrint());
         return rateLimiter;
     }
 
     /**
      * //
-     * @param url
+     * @param url   /comm/getColsMap.do
      * @param defaultCount
      * @return 0则不限制 正数则限制   返回default or 配置值 or 全局默认值
      */
@@ -125,24 +134,29 @@ public class RateLimiterDao implements Limiter{
      */
     public String tryAcquire(String url, String userId){
         String res = "";
-
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start("get-all");
         RateLimiter all = get(CONF_ID, userId, configDao.get(CONF_ID, 999999D) );
-
-        if(all.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
+        stopWatch.stop();
+        stopWatch.start("acquire-all");
+        if(all != null && all.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
+            stopWatch.stop();
+            stopWatch.start("get-self");
             RateLimiter rateLimiter = get(url, userId, 0D);
-            if(rateLimiter == null){
-
-            } else if(rateLimiter.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
+            stopWatch.stop();
+            stopWatch.start("acquire-self");
+            if(rateLimiter != null && rateLimiter.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
                 log.debug("ratelimiter ok " + url + " " + userId);
-            }else{
-                res = "ratelimiter out of " + url + " " + userId + " " + rateLimiter.getRate();
+            }else{ //0 或者其他 标示禁用url
+                res = "ratelimiter out of " + url + " " + userId + " self limit " + (rateLimiter != null ? rateLimiter.getRate() : 0) ;
                 log.warn(res );
             }
-
         }else{
-            res = "ratelimiter out of " + url + " " + userId + " " + CONF_ID + " " + all.getRate();
+            res = "ratelimiter out of " + url + " " + userId + " " + CONF_ID + " all limit " + (all != null ? all.getRate() : 0);
             log.error(res);
         }
+        stopWatch.stop();
+        log.debug(stopWatch.prettyPrint());
 
         return res;
     }

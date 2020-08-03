@@ -45,8 +45,6 @@ public class RateLimitInterceptor implements HandlerInterceptor{
 
 
     @Autowired
-    ConfigDao configDao;
-    @Autowired
     RateLimiterDao rateLimiterDao;
     @Autowired
     SentinelLimitDao sentinelLimitDao;

@@ -23,15 +23,20 @@
     </form>
   </div>
 
-  <!--  定制模拟展示 带附件图片 文件  -->
+  <!--  定制模拟展示 带附件图片 文件
+    img class="image-icon" :src="item.IMGS | filterImg(0) "
+    img class="image-large" :src="item.IMGS | filterImg(1) "
+
+   -->
   <div v-show="!loadingCols" class="div-all">
     <div class="div-all">
         <div class="div-item" v-for="(item, i) in list"   @click.stop="handlerChange(item) " >
-            <img class="image-large" :src="item.IMGS | filterImg(1) " />
+            <img class="image-large " :alt="item.IMGS0" :key="item.IMGS0" v-lazy="item.IMGS0" >
+
             <div class="div-item-sub">
                 <div class="sub-left">
                   <div>
-                    <img class="image-icon" :src="item.IMGS | filterImg(0) " />
+                    <img class="image-icon margin2px " :alt="item.IMGS1" :key="item.IMGS1" v-lazy="item.IMGS1 " >
                   </div>
                 </div>
                 <div class="sub-middle">
@@ -89,6 +94,7 @@
 
 <script>
   // import { getList } from '@/api/table'
+import Vue from 'vue'
 
   export default {
 //    filters: {
@@ -138,7 +144,7 @@
         this.loadingCols = true
         this.get('/common/getColsMap.do', {tableName: this.table}).then((res) => {
           this.colMap = res.data.colMap
-         this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
+          this.page.order = res.data.colMap['S_MTIME'] ? 'S_MTIME DESC' : ''
           this.colKey = res.data.colKey
           this.clearRowSearch()
           this.loadingCols = false
@@ -162,13 +168,20 @@
         this.loadingList = true
         var obj = this.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
         var params = this.assign({"_TABLE_NAME_": this.table, "_DATABASE_": this.database}, obj)
+        var _self = this
         this.get('/common/findPage.do', params).then((res) => {
-          this.list = res.data.data
-          this.page = res.data.page
-          this.info = res.info
-          this.loadingList = false
+          _self.list = res.data.data
+//          debugger
+          for(let j = 0; j < _self.list.length; j++) {
+              var imgs = _self.list[j]['IMGS']
+              _self.list[j]['IMGS0'] = Vue.filter('filterImg')(imgs, 0)
+              _self.list[j]['IMGS1'] = Vue.filter('filterImg')(imgs, 1)
+          }
+          _self.page = res.data.page
+          _self.info = res.info
+          _self.loadingList = false
         }).catch(() => {
-          this.loadingList = false
+          _self.loadingList = false
         })
 
       },

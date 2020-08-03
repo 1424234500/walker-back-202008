@@ -107,6 +107,8 @@ export function filterImg(imgs, no){
   var item = ss[no]
   if(item.startsWith('http')){
     res = item
+  }else if(item.startsWith('/file/download')){
+    res = item
   }else{
     res = "/file/download.do?TOKEN=" + getToken() + "&key=" + item
   }

@@ -17,18 +17,48 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+
+// 全局过滤器问题 register global utility filters
+//  参数1：过滤器名称 参数2：过滤器的逻辑
+//2、如果想在methods中使用filters的方法,相应的就有两种方法
+//使用全局的filter： Vue.filters['filterName'] (val)
+//使用局部的filter: this.$options.filters['filterName'] (val)
+import * as filters from './filters' // global filters
+console.log(filters)
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
 // 注册为全局组件 供直接使用
 import VueLazyload from 'vue-lazyload'
 //Vue.use(VueLazyload)
-// or with options
-Vue.use(VueLazyload, {
-  preLoad: 1.3,
+//or with options
+//lazy对于filter找不到问题 必须要在此配置所有src的过滤拦截器加工
+var lazyconf = {
+   preLoad: 1.3, // 预加载高度比例
   error: '/static/img/404.a57b6f31.png',
+// '/static/img/404.a57b6f31.png',
+// assets/404_images/404.png   http://127.0.0.1:8099/assets/404_images/404.png
   loading: 'dist/loading.gif',
-  attempt: 1
-})
+  attempt: 3,
+  observer: true,
+  lazyComponent: true,
+  listenEvents: [ 'scroll' ],  // the default is ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend']
+  observerOptions: {
+   rootMargin: '0px',
+   threshold: 0.1
+  },
+  filter: {
+     srcFilter (el) {
+        el.src = filters['filterImg'](el.src, 0)
+     },
+   },
+}
+//Object.keys(filters).forEach(key => {
+//  lazyconf.filter[key] = filters[key]
+//})
 
-
+Vue.use(VueLazyload, lazyconf)
 
 
 
@@ -105,20 +135,13 @@ Vue.use(ElementUI, { locale })
 
 
 
-//  参数1：过滤器名称 参数2：过滤器的逻辑
-import * as filters from './filters' // global filters
-console.log(filters)
-// register global utility filters
-Object.keys(filters).forEach(key => {
-  Vue.filter(key, filters[key])
-})
 
 
 
 Vue.config.productionTip = false
 
 
-var v = new Vue({
+new Vue({
   el: '#app',
   router,
   store,
