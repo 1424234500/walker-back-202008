@@ -560,7 +560,7 @@ public  class RedisUtil   {
 			} catch (Exception e) {
 				log.error(Tools.objects2string("tryLock exception", cc, lockKey, lockName,value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), lockNo, e);
 			}
-			if(System.currentTimeMillis() > startTime + secondsToWait){
+			if(System.currentTimeMillis() > startTime + secondsToWait * 1000){
 				log.warn(Tools.objects2string("tryLock error wait timeout", cc, lockKey, lockName,value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), "now lock on:" + jedis.get(lockKey) , lockNo);
 				break;
 			}

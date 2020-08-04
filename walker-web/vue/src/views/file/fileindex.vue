@@ -60,7 +60,7 @@
           min-width="100px"
         >
           <template slot-scope="scope">
-            {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
+              {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
           </template>
         </el-table-column>
         <el-table-column
@@ -341,7 +341,7 @@ export default {
       return '';
     },
     download(row){
-      this.down("/file/download.do?path=" + row.PATH, {}, row.NAME)
+        this.downPath(row.PATH, {}, row.NAME)
     },
   }
 }

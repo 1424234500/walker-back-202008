@@ -121,12 +121,12 @@ public class RedisDao {
             } catch (Exception e) {
                 log.error(Tools.objects2string("tryLock exception", cc, lockKey, lockName, value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)), e);
             }
-            if(System.currentTimeMillis() > startTime + secondsToWait){
+            if(System.currentTimeMillis() > startTime + secondsToWait * 1000){
                 log.warn(Tools.objects2string("tryLock error wait timeout", cc, lockKey, lockName, value, result, secondsToExpire, secondsToWait, "startTimeAt", TimeUtil.getTimeYmdHmss(startTime)) );
                 break;
             }
-            try {//1000ms等待锁，共轮询10次
-                TimeUnit.MILLISECONDS.sleep(Math.max(secondsToWait * 1000 / 4, 10));
+            try {//1000ms等待锁，共轮询10次     cas自旋次数问题控制？
+                TimeUnit.MILLISECONDS.sleep(Math.max(secondsToWait * 1000 / 100, (long)(Math.random() * 40 + 10)));
             } catch (InterruptedException e) {
                 log.error(e.getMessage(), e);
             }

@@ -22,6 +22,10 @@ public interface FileIndexService  {
 	FileIndex get(FileIndex obj);
 	Integer delete(FileIndex obj);
 
+	FileIndex get(String checksums);
+	Integer delete(String checksums);
+
+
 	List<FileIndex> findsAllByStartPath(String startPath);
 	Integer deleteAllByStartPath(String startPath);
 

@@ -20,6 +20,10 @@ public class FileIndex implements Cloneable,Serializable{
 //    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @Column(name="ID", columnDefinition = "varchar(32) default '' comment '主键' ")
     private String ID;
+    @Column(name="CHECKSUM", columnDefinition = "varchar(32) default '' comment '校验和' ")
+    private String CHECKSUM;
+
+
     @Column(name = "S_MTIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '修改时间' ")
     private String S_MTIME;
     @Column(name = "S_ATIME", columnDefinition = "varchar(32) default '1970-01-01 00:00:00' comment '添加时间' ")
@@ -46,6 +50,33 @@ public class FileIndex implements Cloneable,Serializable{
     @Column(name = "LEVEL", columnDefinition = "varchar(128) default '' comment '权限级别' ")
     private String LEVEL;
 
+
+    @Override
+    public String toString() {
+        return "FileIndex{" +
+                "ID='" + ID + '\'' +
+                ", CHECKSUM='" + CHECKSUM + '\'' +
+                ", S_MTIME='" + S_MTIME + '\'' +
+                ", S_ATIME='" + S_ATIME + '\'' +
+                ", S_FLAG='" + S_FLAG + '\'' +
+                ", NAME='" + NAME + '\'' +
+                ", PATH='" + PATH + '\'' +
+                ", EXT='" + EXT + '\'' +
+                ", LENGTH='" + LENGTH + '\'' +
+                ", INFO='" + INFO + '\'' +
+                ", OWNER='" + OWNER + '\'' +
+                ", LEVEL='" + LEVEL + '\'' +
+                '}';
+    }
+
+    public String getCHECKSUM() {
+        return CHECKSUM;
+    }
+
+    public FileIndex setCHECKSUM(String CHECKSUM) {
+        this.CHECKSUM = CHECKSUM;
+        return this;
+    }
     public String getID() {
         return ID;
     }
@@ -145,20 +176,4 @@ public class FileIndex implements Cloneable,Serializable{
         return this;
     }
 
-    @Override
-    public String toString() {
-        return "FileIndex{" +
-                "ID='" + ID + '\'' +
-                ", S_MTIME='" + S_MTIME + '\'' +
-                ", S_ATIME='" + S_ATIME + '\'' +
-                ", S_FLAG='" + S_FLAG + '\'' +
-                ", NAME='" + NAME + '\'' +
-                ", PATH='" + PATH + '\'' +
-                ", EXT='" + EXT + '\'' +
-                ", LENGTH='" + LENGTH + '\'' +
-                ", INFO='" + INFO + '\'' +
-                ", OWNER='" + OWNER + '\'' +
-                ", LEVEL='" + LEVEL + '\'' +
-                '}';
-    }
 }

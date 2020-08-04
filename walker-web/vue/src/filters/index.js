@@ -110,7 +110,7 @@ export function filterImg(imgs, no){
   }else if(item.startsWith('/file/download')){
     res = item
   }else{
-    res = "/file/download.do?TOKEN=" + getToken() + "&key=" + item
+    res = "/file/download.do?TOKEN=" + getToken() + "&ID=" + item
   }
   return res
 }

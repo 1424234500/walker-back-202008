@@ -127,47 +127,67 @@ export function delet(url, params) {
   })
 }
 
-export function downPath(id, params, fileName) {
-  this.$message.success('开始下载文件' + fileName);
-
-  var url = filterImg(id, 0)
-  return this.down(url, {}, fileName)
+export function downPath(path, params, fileName) {
+  var url = "/file/download.do?PATH=" + path + "&TOKEN=" + getToken()
+  return this.down(url, params, fileName)
+}
+export function downId(id, params, fileName) {
+  var url = "/file/download.do?ID=" + id + "&TOKEN=" + getToken()
+  return this.down(url, params, fileName)
 }
 export function down(url, params, fileName) {
   const type = 'down'
+  var _self = this
   return new Promise((resolve, reject) => {
-    this.$message.success('下载文件' + fileName);
-
+    Message({
+      message: '下载文件' + fileName,
+      duration:1000,
+      type: 'success'
+    });
     before(url, params, type)
-//      axios.defaults.headers['TOKEN'] = getToken()
-    axios({
-      method: 'post',
-      url: url, // 请求地址
-      data: params, // 参数
-      responseType: 'blob' // 表明返回服务器返回的数据类型
-    }).then(res => {
-      let blob = new Blob([res.data], {
-        type: 'application/vnd.ms-excel'
-      })
-      if (window.navigator.msSaveOrOpenBlob) {
-        navigator.msSaveBlob(blob, fileName)
-      } else {
-        var link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = fileName
-        link.click()
-        //释放内存
-        window.URL.revokeObjectURL(link.href)
-//        doRes(url, params, type, res, resolve, reject)
 
-      }
-    }, err => {
-      debugger
-      this.$message.success('下载文件失败' + fileName);
-      console.log(err)
-      afterReject(url, params, type, err)
-      reject(err)
-    })
+//
+
+    var a = document.createElement("a") //创建a标签
+    var e = document.createEvent("MouseEvents"); //创建鼠标事件对象
+    e.initEvent("click", false, false); //初始化事件对象
+    a.href = url; //设置下载地址
+    a.download = fileName; //设置下载文件名
+    a.dispatchEvent(e); //给指定的元素，执行事件click事件
+
+//    blob方式另存为文件
+////      axios.defaults.headers['TOKEN'] = getToken()
+//    axios({
+//      method: 'post',
+//      url: url, // 请求地址
+//      data: params, // 参数
+//    }).then(res => {
+//      let blob = new Blob([res.data])
+//      if (window.navigator.msSaveOrOpenBlob) {
+//        navigator.msSaveBlob(blob, fileName)
+//      } else {
+//        var link = document.createElement('a')
+//        link.href = window.URL.createObjectURL(blob)
+//        link.download = fileName
+//        debugger
+//        link.click()
+//        //释放内存
+//        window.URL.revokeObjectURL(link.href)
+//      }
+//    }, err => {
+//      debugger
+//      Message({
+//        message: '下载文件失败' + fileName,
+//        duration:1000,
+//        type: 'error'
+//      });
+//      console.log(err)
+//      afterReject(url, params, type, err)
+//      reject(err)
+//    })
+//
+
+
   })
 }
 

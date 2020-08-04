@@ -132,6 +132,7 @@ public class ConfigDao {
                     Object vv = line.get("VALUE");
                     v = String.valueOf(vv);
                 }
+                log.info("load cache from db " + obj + " v:" + v);
                 return v;
             }
         });
@@ -143,6 +144,9 @@ public class ConfigDao {
         return set(ID, VALUE, ABOUT, "1", "");
     }
 
+    /**
+     * 删除缓存 删除db
+     */
     public Integer set(String ID, FunArgsReturn<String, Integer> call){
         return redisDao.setDbAndClearCache(CONF_ID, ID, 5, call);
     }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,20 @@ public class FileIndexServiceImpl implements FileIndexService {
 	public Integer delete(FileIndex obj) {
 		fileIndexrRepository.deleteById(obj.getID());
 		return 1;
+	}
+
+	@Override
+	public FileIndex get(String checksums) {
+		List<FileIndex> res = fileIndexrRepository.findsAllByChecksum(Arrays.asList(checksums.split(",")));
+		if(res != null && res.size() > 0){
+			return res.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer delete(String checksums) {
+		return fileIndexrRepository.deleteAllByChecksum(Arrays.asList(checksums.split(",")));
 	}
 
 	@Override

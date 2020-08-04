@@ -91,6 +91,8 @@ Vue.component('socket', socket)
 import ablum from './views/template/ablum'
 Vue.component('ablum', ablum)
 
+import fileupload from './views/template/fileupload'
+Vue.component('fileupload', fileupload)
 
 
 import '@/icons' // icon

@@ -113,27 +113,7 @@
       >
       </el-pagination>
 
-
-      <el-upload
-        class="upload-demo"
-        multiple
-        drag
-        action="/file/upload.do"
-        :headers="uploadHeaders"
-        :before-upload="handlerBeforeUpload"
-        :on-preview="handlerOnPreview"
-        :on-remove="handlerOnRemove"
-        :on-change="handlerOnChange"
-        :before-remove="handlerBeforeRemove"
-        :limit="998"
-        :on-exceed="handlerOnExceed"
-        :on-success="handlerOnSuccess"
-        :on-error="handlerOnError"
-        :data="{dir:dir}"
-        :file-list="fileList">
-        <el-button size="small" type="primary">点击/拖动上传</el-button>
-        <div slot="tip" class="el-upload__tip">最多上传998个文件 每个不超过100MB</div>
-      </el-upload>
+      <fileupload :props='fileupload' @transfer="onGetFileIds"></fileupload>
 
 
       <el-dialog
@@ -229,6 +209,10 @@ export default {
       loadingCols: true,
       loadingSave: true,
       loadingUpdate: false,
+      fileupload: {
+        dir:"",
+      },
+
     }
   },
   created() {
@@ -299,6 +283,7 @@ export default {
       }else{
         this.dir = '/'
       }
+      this.fileupload.dir = this.dir
       this.getListPage()
 
     },
@@ -419,55 +404,11 @@ export default {
       return 'row-table-' + row['EXT'];
     },
 
-    handlerOnRemove(file, fileList) {
-      console.log("handlerOnRemove", file, fileList);
-    },
-    handlerOnPreview(file) {
-      console.log("handlerOnPreview", file);
-    },
-    handlerOnExceed(files, fileList) {
-      this.$message.warning(`当前限制选择10个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-    },
-    handlerBeforeRemove(file, fileList) {
-      console.log("handlerBeforeRemove ", file, fileList )
-
-      return this.$confirm(`确定移除 ${ file.name }？`);
-    },
-    handlerOnSuccess(res, file, fileList) {
-      console.log("handlerOnSuccess ", res, file, fileList )
-
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-    handlerOnError(res, file, fileList) {
-      console.log("handlerOnError ", res, file, fileList )
-
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-    handlerBeforeUpload(file) {
-      console.log("handlerBeforeUpload ", file )
-      // const isJPG = file.type === 'image/jpeg';
-      // const isLt2M = file.size / 1024 / 1024 < 2;
-      //
-      // if (!isJPG) {
-      //   this.$message.error('上传头像图片只能是 JPG 格式!');
-      // }
-      // if (!isLt2M) {
-      //   this.$message.error('上传头像图片大小不能超过 2MB!');
-      // }
-      // return isJPG && isLt2M;
-      return true
-    },
-    handlerOnChange(file, fileList) {
-      console.log("handlerOnChange ", file, fileList)
-      // this.fileList3 = fileList.slice(-3);
-    },
+    onGetFileIds(ids){
+        console.log("i get the fileupload res " + ids)
+      },
     download(row){
-      this.$message.success('下载文件' + row.NAME);
-      var fileName = row.NAME
-      var url = "/file/download.do?path=" + row.PATH
-
-      this.down(url, {}, fileName)
-
+      this.downPath(row.PATH, {}, row.NAME)
     },
 
 

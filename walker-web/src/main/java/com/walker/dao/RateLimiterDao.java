@@ -69,7 +69,7 @@ public class RateLimiterDao implements Limiter{
      * 并发访问配置时 多等待充足时间 等待其他进程线程查询 10s
      *
      */
-    private RateLimiter get(String url, String userId, double defaultCount){
+    private RateLimiter get(String url, String userId){
         StopWatch stopWatch = new StopWatch();
         stopWatch.start("mapget");
         RateLimiter rateLimiter = indexRateLimiters.get(url);
@@ -77,7 +77,7 @@ public class RateLimiterDao implements Limiter{
         if(rateLimiter == null){
 //            初始化限流 默认限流 默认预热
             stopWatch.start("getCountConfig");
-            double eachSecondCount = getCountConfig(url, defaultCount);
+            double eachSecondCount = getCountConfig(url);
             stopWatch.stop();
             if(eachSecondCount > 0) {
                 stopWatch.start("init");
@@ -91,7 +91,7 @@ public class RateLimiterDao implements Limiter{
 //        集群模式下 缓存和内存同步问题
 //        比对
             stopWatch.start("getCountConfig");
-            double eachSecondCount = getCountConfig(url, defaultCount);
+            double eachSecondCount = getCountConfig(url);
             stopWatch.stop();
             stopWatch.start("update");
             if(eachSecondCount == 0){
@@ -100,6 +100,8 @@ public class RateLimiterDao implements Limiter{
             } else if (Math.abs(eachSecondCount - rateLimiter.getRate()) > 0.5) { //差值小于  则不做重置
                 log.info("reset ratelimiter " + rateLimiter + " to " + eachSecondCount);
                 rateLimiter.setRate(eachSecondCount);
+            }else{
+//                log.info("reset ratelimiter but too small " + rateLimiter + " to " + eachSecondCount);
             }
             stopWatch.stop();
         }
@@ -110,17 +112,18 @@ public class RateLimiterDao implements Limiter{
     /**
      * //
      * @param url   /comm/getColsMap.do
-     * @param defaultCount
      * @return 0则不限制 正数则限制   返回default or 配置值 or 全局默认值
      */
-    private double getCountConfig(String url, double defaultCount) {
-        double eachSecondCount = configDao.get(url, -1D);   //0不限制 负数取全局默认值
-        if(eachSecondCount < 0 ) {  //负数 不配置 则 默认限制
-            eachSecondCount = configDao.get("com.walker.intercept.RateLimitInterceptor.default.count", defaultCount);
-        }else if(eachSecondCount == 0){
+    private double getCountConfig(String url) {
+        int eachSecondCount = configDao.get(url, -1);
+        if(eachSecondCount == -1) {    //-1    继承全局限制
+            eachSecondCount = configDao.get("com.walker.intercept.RateLimitInterceptor.default.count", Integer.MAX_VALUE);
+        }else if(eachSecondCount == 0 ){     //0   禁用
 
+        }else if(eachSecondCount == -2){ //-2  不限制
+            eachSecondCount = Integer.MAX_VALUE;
         }else{
-
+            eachSecondCount = Integer.MAX_VALUE;
         }
         return eachSecondCount;
     }
@@ -135,14 +138,14 @@ public class RateLimiterDao implements Limiter{
     public String tryAcquire(String url, String userId){
         String res = "";
         StopWatch stopWatch = new StopWatch();
-        stopWatch.start("get-all");
-        RateLimiter all = get(CONF_ID, userId, configDao.get(CONF_ID, 999999D) );
-        stopWatch.stop();
-        stopWatch.start("acquire-all");
-        if(all != null && all.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
-            stopWatch.stop();
+//        stopWatch.start("get-all");
+//        RateLimiter all = get(CONF_ID, userId, configDao.get(CONF_ID, 999999D) );
+//        stopWatch.stop();
+//        stopWatch.start("acquire-all");
+//        if(all != null && all.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
+//            stopWatch.stop();
             stopWatch.start("get-self");
-            RateLimiter rateLimiter = get(url, userId, 0D);
+            RateLimiter rateLimiter = get(url, userId);
             stopWatch.stop();
             stopWatch.start("acquire-self");
             if(rateLimiter != null && rateLimiter.tryAcquire(1, 0L, TimeUnit.MICROSECONDS)){
@@ -151,10 +154,10 @@ public class RateLimiterDao implements Limiter{
                 res = "ratelimiter out of " + url + " " + userId + " self limit " + (rateLimiter != null ? rateLimiter.getRate() : 0) ;
                 log.warn(res );
             }
-        }else{
-            res = "ratelimiter out of " + url + " " + userId + " " + CONF_ID + " all limit " + (all != null ? all.getRate() : 0);
-            log.error(res);
-        }
+//        }else{
+//            res = "ratelimiter out of " + url + " " + userId + " " + CONF_ID + " all limit " + (all != null ? all.getRate() : 0);
+//            log.error(res);
+//        }
         stopWatch.stop();
         log.debug(stopWatch.prettyPrint());
 

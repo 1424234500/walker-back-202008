@@ -142,13 +142,6 @@ export default {
     },
     handleNodeClick(row) {
       console.log("handleNodeClick", row);
-      // if(row.EXT!='dir'){
-      //   this.$message.success('下载文件' + row.NAME);
-      //   let a = document.createElement('a')
-      //   a.href ="/file/download.do?path=" + row.PATH
-      //   a.click();
-      //   // window.open("/file/download.do?path=" + row.PATH,"height=100,width=100,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no")
-      // }
     },
 
     //分页查询

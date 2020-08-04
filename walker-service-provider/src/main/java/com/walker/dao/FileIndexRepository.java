@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,6 +39,12 @@ public interface FileIndexRepository extends JpaRepository<FileIndex, String>, J
 
     @Query("select t from FileIndex t where t.PATH in (?1) ")
     List<FileIndex> findsAllByPath(List<String> ids);
+
+    @Query("select t from FileIndex t where t.CHECKSUM in (?1) ")
+    List<FileIndex> findsAllByChecksum(Collection<String> checksum);
+    @Query("delete from FileIndex t where t.CHECKSUM in (?1) ")
+    Integer deleteAllByChecksum(Collection<String> checksum);
+
 
     @Query("select t from FileIndex t where t.PATH like CONCAT(?1, '%')  ")
     List<FileIndex> findsAllByStartPath(String startPath);

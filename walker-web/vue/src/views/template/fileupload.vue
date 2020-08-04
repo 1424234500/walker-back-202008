@@ -1,58 +1,34 @@
 <template>
 <!--
-  图片预览组件
-
-  入参： imgid1, imgid2, imgid3
-  渲染一个div 包含每个图片
-:title="item | filterImg
- img class="image-middle margin2px  el-icon-document" :src="item | filterImg " :alt="item"
+  文件上传
 
 -->
-  <div  v-loading="data.loading">
-    <template  v-for="item in data.list">
-      <div class="floatleft margin-right-05em">
-        <div class="div-item-img-button">
-          <div>
-              <img class="image-middle margin2px  el-icon-document" :alt="item" :key="item" v-lazy="item" >
-          </div>
-          <div v-if="data.vifDel"    >
-              <el-button size="mini" type="danger" icon="el-icon-delete" circle @click.stop="handlerDelete(item)"></el-button>
-          </div>
-        </div>
-      </div>
-    </template>
-    <div class="clear"></div>
-    <el-upload
-      v-if="data.vifUpload"
-      class="upload-demo"
-      ref="elupload"
-      multiple
-      drag
-      list-type=""
-      action="/file/upload.do"
-      :headers="data.uploadHeaders"
-      :before-upload="handlerUploadBeforeUpload"
-      :on-preview="handlerUploadOnPreview"
-      :on-remove="handlerUploadOnRemove"
-      :on-change="handlerUploadOnChange"
-      :before-remove="handlerUploadBeforeRemove"
-      :limit="998"
-      :on-exceed="handlerUploadOnExceed"
-      :on-success="handlerUploadOnSuccess"
-      :on-error="handlerUploadOnError"
-      :data="{dir:data.dir}"
-      :file-list="data.fileList">
-      <el-button size="small" type="primary">点击/拖动上传</el-button>
-      <div slot="tip" class="el-upload__tip">最多上传998个文件 每个不超过100MB</div>
-    </el-upload>
-      <!--
-      list-type="?"
-      picture-card照片墙预览
-      picture
-      -->
+<div  v-loading="data.loading">
+      <el-upload
+        class="upload-demo"
+        multiple
+        drag
+        action="/file/upload.do"
+        :headers="data.uploadHeaders"
+        :before-upload="handlerUploadBeforeUpload"
+        :on-preview="handlerUploadOnPreview"
+        :on-remove="handlerUploadOnRemove"
+        :on-change="handlerUploadOnChange"
+        :before-remove="handlerUploadBeforeRemove"
+        :limit="998"
+        :on-exceed="handlerUploadOnExceed"
+        :on-success="handlerUploadOnSuccess"
+        :on-error="handlerUploadOnError"
+        :data="{dir:data.dir}"
+        :file-list="data.fileList">
+        <el-button size="small" type="primary">点击/拖动上传</el-button>
+        <div slot="tip" class="el-upload__tip">最多上传998个文件 每个不超过100MB</div>
+      </el-upload>
 
 
-  </div>
+
+
+</div>
 
 
 
@@ -64,14 +40,14 @@
 
 <script>
   // import { getList } from '@/api/table'
-  import { getToken,setToken,getUser,setUser } from '@/utils/cookie' // get token from cookie
+  import { getToken,getUser } from '@/utils/cookie' // get token from cookie
 
   export default {
     data() {
       return {
         data: {
           loading: true
-          , imgs: "https://img.alicdn.com/imgextra/https://img.alicdn.com/imgextra/i2/2355352178/O1CN01OyQ1EM1RxZD2wKyYC_!!2355352178.jpg_430x430q90.jpg,7f31c886301044ed2021f54043a6a0c7"
+          , imgs: ""
           , list: []  //图片展示列表
           , vifDel: true
           , vifUpload: true
@@ -104,7 +80,7 @@
 //      debugger
 
         this.data.loading = true
-        console.log("ablum init " + this.data)
+        console.log("fileupload init " + this.data)
         var items = this.data.imgs.split(",")
 
         for(var i = 0; i < items.length; i++){
@@ -196,11 +172,13 @@
       handlerUploadOnError(res, file, fileList) {
         console.log("handlerOnError ", res, file, fileList )
 //        this.imageUrl = URL.createObjectURL(file.raw);
-        this.$message.error(`上传失败 ${file.NAME} `);
+        this.$message.error(`上传失败 ${file.name} `);``
       },
+
 //      上传前md5校验
       handlerUploadBeforeUpload(file) {
         console.log("handlerBeforeUpload ", file )
+
 //        debugger
         // const isJPG = file.type === 'image/jpeg';
         // const isLt2M = file.size / 1024 / 1024 < 2;

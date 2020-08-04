@@ -2,10 +2,8 @@ package com.walker.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.walker.Response;
-import com.walker.common.util.FileUtil;
-import com.walker.common.util.Page;
-import com.walker.common.util.TimeUtil;
-import com.walker.common.util.Watch;
+import com.walker.common.util.*;
+import com.walker.config.Context;
 import com.walker.service.Config;
 import com.walker.dao.JdbcDao;
 import com.walker.util.RequestUtil;
@@ -25,10 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/file")
@@ -232,12 +227,12 @@ public class FileController {
     @RequestMapping(value = "/download.do")
     public void downloadFile(HttpServletRequest request,
                                HttpServletResponse response,
-                                @RequestParam(value = "key", required = false, defaultValue = "") String key,
-                                 @RequestParam(value = "path", required = false, defaultValue = "") String path
+                                @RequestParam(value = "ID", required = false, defaultValue = "") String id,
+                                 @RequestParam(value = "PATH", required = false, defaultValue = "") String path
 
     ) throws IOException {
         Watch w = new Watch(new Object[]{"download"});
-        w.put(key);
+        w.put(id);
         w.put(path);
 
         Boolean res = false;
@@ -245,8 +240,8 @@ public class FileController {
         path = new String(path.getBytes("iso-8859-1"), "utf-8");
         String info = "";
         FileIndex fileIndex = null;
-        if (key.length() > 0) {
-            fileIndex = fileIndexService.get(new FileIndex().setID(key));
+        if (id.length() > 0) {
+            fileIndex = fileIndexService.get(new FileIndex().setID(id));
             path = fileIndex == null ? path : fileIndex.getPATH();
         }else if(path.length() > 0){
             List<FileIndex> list = fileIndexService.findsAllByPath(Arrays.asList(path));
@@ -258,12 +253,12 @@ public class FileController {
         if (path.length() > 0) {
             int type = FileUtil.check(path);
             if (type == 1) {
-                info = key + " " + path + " is dir";
+                info = id + " " + path + " is dir";
             } else if (type == 0) {
-                info = key + " " + path + " exists";
+                info = id + " " + path + " exists";
                 res = true;
             } else {
-                info = key + " " + path + " not exists";
+                info = id + " " + path + " not exists";
             }
         } else {
             info = "path is null ?";
@@ -303,7 +298,7 @@ public class FileController {
     @RequestMapping(value = "/upload.do", method = RequestMethod.POST)
     public Response     upload(
             @RequestParam(value = "file", required = true) MultipartFile file,
-            @RequestParam(value = "key", required = false, defaultValue = "") String key,
+            @RequestParam(value = "checksum", required = false, defaultValue = "") String checksum,
             @RequestParam(value = "dir", required = false, defaultValue = "") String dir
     ) {
         Watch w = new Watch(new Object[]{"upload"});
@@ -328,41 +323,43 @@ public class FileController {
         try {
             File tempFile = new File(pathTemp + File.separator + name);
             file.transferTo(tempFile);
-            if (key.length() == 0) {
-                key = "" + FileUtil.checksumMd5(tempFile);
+            if (checksum.length() == 0) {
+                checksum = "" + FileUtil.checksumMd5(tempFile);
             }
-            String path = pathTo + File.separator + key;
-            FileIndex fileIndex = fileIndexService.get(new FileIndex().setID(key));
-            if (fileIndex == null) {
+            String path = pathTo + File.separator + checksum;
+            FileIndex fileIndexOld = fileIndexService.get(checksum);
+            FileIndex fileIndexNew = new FileIndex();
+            fileIndexNew.setID(checksum)    //头次上传 以checksum为键
+                    .setCHECKSUM(checksum)
+                    .setPATH(path)
+                    .setNAME(name)
+                    .setEXT(type)
+                    .setINFO("upload")
+                    .setOWNER(Context.getUser().getID())
+                    .setS_FLAG("1")
+                    .setS_ATIME(TimeUtil.getTimeYmdHms())
+                    .setS_MTIME(TimeUtil.getTimeYmdHms())
+                    .setLENGTH(tempFile.length() + "")
+            ;
+            if (fileIndexOld == null) {
                 w.put("new file");
                 FileUtil.mv(tempFile.getAbsolutePath(), path);
-                fileIndex = new FileIndex();
-                fileIndex.setID(key)
-                        .setPATH(path)
-                        .setNAME(name)
-                        .setEXT(type)
-                        .setINFO("upload")
-                        .setOWNER("000")
-                        .setS_FLAG("1")
-                        .setS_ATIME(TimeUtil.getTimeYmdHms())
-                        .setS_MTIME(TimeUtil.getTimeYmdHms())
-                        .setLENGTH(tempFile.length() + "")
-                ;
-            } else {
-                w.put("update file");
-//                FileUtil.delete(tempFile.getAbsolutePath());
-                fileIndex
-                        .setINFO("update")
-                        .setS_MTIME(TimeUtil.getTimeYmdHms())
-                ;
+                fileIndexService.saveAll(Arrays.asList(fileIndexNew));  //保存记录 然后移动文件
+            }else {
+                w.put("reupload file");
+                FileUtil.mv(fileIndexOld.getPATH(), path);
+                fileIndexOld.setPATH(path);
+                fileIndexNew.setS_ATIME(fileIndexOld.getS_ATIME()); //集成创建时间
+                fileIndexNew.setID(LangUtil.getTimeSeqId());    //重复上传以时序id为键
+                fileIndexService.saveAll(Arrays.asList(fileIndexNew, fileIndexOld));  //保存记录 然后移动文件
             }
+            tempFile.delete();  //删除临时文件
 
-            fileIndexService.saveAll(Arrays.asList(fileIndex));
-
-            return Response.makeTrue(w.toPrettyString(), fileIndex);
-        } catch (Exception var14) {
-            w.exceptionWithThrow(var14);
-            return Response.makeFalse(var14.toString());
+            return Response.makeTrue(w.toPrettyString(), fileIndexNew);
+        } catch (Exception e) {
+            w.exception(e);
+            log.error(w.toPrettyString(), e);
+            return Response.makeFalse(w.toPrettyString());
         }
     }
 
