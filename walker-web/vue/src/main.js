@@ -34,25 +34,39 @@ import VueLazyload from 'vue-lazyload'
 //Vue.use(VueLazyload)
 //or with options
 //lazy对于filter找不到问题 必须要在此配置所有src的过滤拦截器加工
+//使用vue-cli脚手架快速生成的框架中，
+//src**同级目录**中有static文件夹
+//src**子文件夹**中有assets文件夹
+//在使用vue-lazyload，设置error或loading属性的图片路径时，
+//图片在assets文件夹，就需要使用require（）进行引入。
+//Vue.use(lazyLoad, {
+//  error: require('./assets/img/default-photo.png'),
+//  loading: require('./assets/img/default-photo.png')
+//})
+//图片在static文件夹，就可以直接写路径了
+//Vue.use(lazyLoad, {
+//  error: require('../static/img/default-photo.png'),
+//  loading: require('../static/img/default-photo.png')
+//
+//})
+//vue-lazyload是在main.js文件中引入，不会被webpack进行编译，src中的文件会被webpack编译，包括assets，assets文件夹中的图片地址，会在编译过程中改变。因此vue-lazyload无法正确获得图片地址，就不能显示图片了。
 var lazyconf = {
-   preLoad: 1.3, // 预加载高度比例
-  error: '/static/img/404.a57b6f31.png',
-// '/static/img/404.a57b6f31.png',
-// assets/404_images/404.png   http://127.0.0.1:8099/assets/404_images/404.png
-  loading: 'dist/loading.gif',
+  preLoad: 1.3, // 预加载高度比例
+  error: require('./assets/emoji.png'), // '/static/img/404.a57b6f31.png',
+  loading: require('./assets/emojiblue.png'),
   attempt: 3,
   observer: true,
   lazyComponent: true,
   listenEvents: [ 'scroll' ],  // the default is ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend']
   observerOptions: {
-   rootMargin: '0px',
-   threshold: 0.1
+    rootMargin: '0px',
+    threshold: 0.1
   },
   filter: {
-     srcFilter (el) {
-        el.src = filters['filterImg'](el.src, 0)
-     },
-   },
+    srcFilter (el) {
+      el.src = filters['filterImg'](el.src, 0)
+    },
+  },
 }
 //Object.keys(filters).forEach(key => {
 //  lazyconf.filter[key] = filters[key]
@@ -100,13 +114,16 @@ import '@/permission' // permission control
 
 
 //将方法挂载到Vue原型上 vue上下文 全局 this.get
-import { get, post, put, delet, down, downPath } from '@/utils/http'
+import { get, post, put, delet, down, downPath, downId, previewImg } from '@/utils/http'
 Vue.prototype.get = get
 Vue.prototype.post = post
 Vue.prototype.delet = delet
 Vue.prototype.put = put
-Vue.prototype.down = down //??不行？?
-Vue.prototype.downPath = downPath //??不行？?
+Vue.prototype.down = down
+Vue.prototype.downPath = downPath
+Vue.prototype.downId = downId
+Vue.prototype.previewImg = previewImg
+
 
 //批量挂载 工具类方法
 //import { assign, clone} from '@/utils/index'

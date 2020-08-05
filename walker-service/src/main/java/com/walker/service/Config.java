@@ -23,6 +23,9 @@ public class Config {
     public static String getDownloadDir() {
         return "/home";
     }
+    public static String getTempImageDir(){
+        return "/home/walker/files/tmp";
+    }
 
     public static int getDbsize(){
         return 500;

@@ -174,8 +174,8 @@ import Vue from 'vue'
 //          debugger
           for(let j = 0; j < _self.list.length; j++) {
               var imgs = _self.list[j]['IMGS']
-              _self.list[j]['IMGS0'] = Vue.filter('filterImg')(imgs, 0)
-              _self.list[j]['IMGS1'] = Vue.filter('filterImg')(imgs, 1)
+              _self.list[j]['IMGS0'] = Vue.filter('filterImg')(imgs, 0, '400x225')
+              _self.list[j]['IMGS1'] = Vue.filter('filterImg')(imgs, 1, '100x100')
           }
           _self.page = res.data.page
           _self.info = res.info

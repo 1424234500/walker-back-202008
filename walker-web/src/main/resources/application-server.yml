@@ -48,7 +48,6 @@ spring:
   #mybatis:
   #  mapper-locations: classpath:mybatis/mapper/*.xml
   #  type-aliases-package: com.sun.shard.bean
-
   redis:
     # Redis数据库索引（默认为0）
     database: 0
@@ -65,13 +64,13 @@ spring:
         # 连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 3000
         # 连接池中的最小空闲连接
-        min-idle: 0
+        min-idle: 1
     # 连接超时时间（毫秒）
     timeout: 8000
 
     default:
       #redis cache 过期时间
-      expiration:61
+      expiration: 61
   session:
     jdbc:
       initialize-schema:

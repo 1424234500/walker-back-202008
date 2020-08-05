@@ -127,6 +127,16 @@ export function delet(url, params) {
   })
 }
 
+
+//////////////////////////////////////
+//缩略图问题裁剪 放缩
+export function previewImg(id, params, fileName, size) {
+  if(!size){
+    size = "200x200"
+  }
+  var url = "/file/download.do?ID=" + id + "&TOKEN=" + getToken() + "&SIZE=" + size
+  return this.down(url, params, fileName)
+}
 export function downPath(path, params, fileName) {
   var url = "/file/download.do?PATH=" + path + "&TOKEN=" + getToken()
   return this.down(url, params, fileName)
@@ -206,7 +216,7 @@ function doRes(url, params, type, res, resolve, reject){
 }
 
 //环绕监控  缓存设计  aop
-var pre = "http.js "
+var pre = " "
 
 function before(url, params, type){
   // console.info(pre + " before " + type + " " + url + " " + JSON.stringify(params) )

@@ -89,10 +89,14 @@ export function money(str) {
   return "￥" + str
 }
 
-export function filterImg(imgs, no){
+export function filterImg(imgs, no, size){
+  if(!size){
+    size = '200x200'
+  }
+
 //  debugger
   if(!imgs ){
-    console.log("filterImg err " + imgs + " " + no)
+    console.log("filterImg err " + imgs + " " + no + " " + size)
     return ""
   }
 
@@ -110,7 +114,7 @@ export function filterImg(imgs, no){
   }else if(item.startsWith('/file/download')){
     res = item
   }else{
-    res = "/file/download.do?TOKEN=" + getToken() + "&ID=" + item
+    res = "/file/download.do?TOKEN=" + getToken() + "&ID=" + item + "&SIZE=" + size
   }
   return res
 }

@@ -82,6 +82,7 @@ public class FileController {
         Object res = fileIndexService.deleteAll(Arrays.asList(ids.split(",")));
         for(FileIndex fileIndex : fileIndexList){
             FileUtil.delete(fileIndex.getPATH());
+            FileUtil.delete(getUploadPathTempDir(fileIndex.getEXT(), fileIndex.getCHECKSUM()));   //删除该文件的缓存目录
         }
         return Response.makeTrue(info, res);
     }
@@ -177,6 +178,7 @@ public class FileController {
             if (path.length() > 0) {
                 if (path.startsWith(Config.getUploadDir())) {
                     count += FileUtil.delete(path) ? 1 : 0;
+//                    count += FileUtil.delete(getUploadPathTempDir());
                     //更新该文件及其子文件索引
                     fileIndexService.deleteAllByStartPath(path);
                 } else {
@@ -221,6 +223,13 @@ public class FileController {
 
     /**
      * 支撑请求头 特定 图片预览问题 img src
+     *
+     * id是否存在
+     * 若是图片 且有尺寸控制
+     *      缩略图是否存在
+     *          变换路径为缩略图路径
+     *      缩略图 并缓存redis
+     *
      */
     @ApiOperation(value = "下载文件 ", notes = "")
     @ResponseBody
@@ -228,7 +237,9 @@ public class FileController {
     public void downloadFile(HttpServletRequest request,
                                HttpServletResponse response,
                                 @RequestParam(value = "ID", required = false, defaultValue = "") String id,
-                                 @RequestParam(value = "PATH", required = false, defaultValue = "") String path
+                                 @RequestParam(value = "PATH", required = false, defaultValue = "") String path,
+//                                 图片文件即可 200x200放大缩小
+                                 @RequestParam(value = "SIZE", required = false, defaultValue = "") String size
 
     ) throws IOException {
         Watch w = new Watch(new Object[]{"download"});
@@ -236,20 +247,36 @@ public class FileController {
         w.put(path);
 
         Boolean res = false;
-        path = path.startsWith(Config.getDownloadDir()) ? path : Config.getUploadDir() + File.separator + path;
-        path = new String(path.getBytes("iso-8859-1"), "utf-8");
-        String info = "";
+
+//        获取文件索引
         FileIndex fileIndex = null;
         if (id.length() > 0) {
             fileIndex = fileIndexService.get(new FileIndex().setID(id));
             path = fileIndex == null ? path : fileIndex.getPATH();
         }else if(path.length() > 0){
+            path = path.startsWith(Config.getDownloadDir()) ? path : Config.getUploadDir() + File.separator + path;
+            path = new String(path.getBytes("iso-8859-1"), "utf-8");
             List<FileIndex> list = fileIndexService.findsAllByPath(Arrays.asList(path));
             if(list.size() > 0){
                 fileIndex = list.get(0);
             }
         }
+        w.cost("getIndex");
+        //若是图片 且需要放缩
+        if(FileUtil.isImage(fileIndex.getEXT()) && size != null && size.length() > 0){
+            size = size.toLowerCase().replace('*', 'x');
 
+            String toPath = getUploadPathTempFile(fileIndex.getEXT(), fileIndex.getCHECKSUM(), size);//如果是图片则 转换为临时文件放置位置 转换缓存文件
+            if(new File(toPath).isFile()){  //已存在
+                w.put("cache file");
+            }else{
+                size = FileUtil.makeIfImageThenSize(fileIndex.getPATH(), fileIndex.getEXT(), size, toPath);
+                w.cost("turn file");
+            }
+            path = toPath;
+        }
+
+        String info = "";
         if (path.length() > 0) {
             int type = FileUtil.check(path);
             if (type == 1) {
@@ -263,6 +290,7 @@ public class FileController {
         } else {
             info = "path is null ?";
         }
+        w.cost("check");
 
         w.put("path", path);
         w.put("info", info);
@@ -270,14 +298,13 @@ public class FileController {
             w.res();
             String s = JSON.toJSONString( Response.makeFalse(w.toPrettyString()).toString() );
             response.getWriter().println(s);
+            log.error(w.toString());
 //            response.flushBuffer();
         } else {
             String name = fileIndex == null ? FileUtil.getFileName(path) : fileIndex.getNAME();
 
             File file = new File(path);
-
             RequestUtil.setHeaderDownFile(request, response, name);
-
             InputStream inputStream = new FileInputStream(file);
             OutputStream outputStream = response.getOutputStream();
             try {
@@ -293,6 +320,54 @@ public class FileController {
     }
 
 
+    /**
+     * 获取文件缓存的具体路径
+     * @param ext   png
+     * @param checksum  asdflaksdfj
+     * @return   /home/walker/files/png/2020-20-10/alsjdfadf_temp/100x100
+     */
+    public String getUploadPathTempFile(String ext, String checksum, String size){
+        return getUploadPathTempDir(ext, checksum) + File.separator + size;
+    }
+    /**
+     * 获取文件的临时缓存目录
+     * @param ext   png
+     * @param checksum  asdflaksdfj
+     * @return   /home/walker/files/png/2020-20-10/alsjdfadf_temp
+     */
+    public String getUploadPathTempDir(String ext, String checksum){
+        String res = getTemp(getUploadPathByExtAndChecksum("", ext, checksum));
+        FileUtil.mkdir(res);
+        return res;
+    }
+    public String getTemp(String path){
+        return path + "_temp";
+    }
+    /**
+     * 构造文件上传的命名 路径
+     * @param dir   预期路径    ""
+     * @param ext   后缀  png
+     * @param checksum  校验码 alsjdfadf
+     * @return  /home/walker/files/png/2020-20-10/alsjdfadf
+     */
+    public String getUploadPathByExtAndChecksum(String dir, String ext, String checksum){
+        String uploadDir = Config.getUploadDir();
+        String res = dir.length() > 0 && dir.startsWith(uploadDir)?
+                dir
+                :
+                uploadDir + File.separator +  (
+                        ext.length() > 0 ?
+                                ext + File.separator + TimeUtil.getTimeYmd()
+                                :
+                                "unknow" + File.separator + TimeUtil.getTimeYmd()
+                );
+        FileUtil.mkdir(res);
+        res = res + File.separator + checksum;
+        return res;
+    }
+
+
+
     @ApiOperation(value = "上传文件", notes = "")
     @ResponseBody
     @RequestMapping(value = "/upload.do", method = RequestMethod.POST)
@@ -303,37 +378,23 @@ public class FileController {
     ) {
         Watch w = new Watch(new Object[]{"upload"});
         String name = file.getOriginalFilename();
-        String type = FileUtil.getFileType(name);
+        String ext = FileUtil.getFileType(name);
 
-        String uploadDir = Config.getUploadDir();
-        //按文件后缀名存储 日期存储
-        String pathTo = dir.length() > 0 && dir.startsWith(uploadDir)?
-                dir
-                :
-                uploadDir + File.separator +  (
-                        type.length() > 0 ?
-                        type + File.separator + TimeUtil.getTimeYmd()
-                        :
-                        TimeUtil.getTimeYmd()
-                );
-        String pathTemp = uploadDir + File.separator + "temp";
-        FileUtil.mkdir(pathTemp);
-        FileUtil.mkdir(pathTo);
 
         try {
-            File tempFile = new File(pathTemp + File.separator + name);
+            File tempFile = new File(Config.getUploadDir() + File.separator + name);
             file.transferTo(tempFile);
             if (checksum.length() == 0) {
                 checksum = "" + FileUtil.checksumMd5(tempFile);
             }
-            String path = pathTo + File.separator + checksum;
+            String path = getUploadPathByExtAndChecksum(dir, ext, checksum);
             FileIndex fileIndexOld = fileIndexService.get(checksum);
             FileIndex fileIndexNew = new FileIndex();
             fileIndexNew.setID(checksum)    //头次上传 以checksum为键
                     .setCHECKSUM(checksum)
                     .setPATH(path)
                     .setNAME(name)
-                    .setEXT(type)
+                    .setEXT(ext)
                     .setINFO("upload")
                     .setOWNER(Context.getUser().getID())
                     .setS_FLAG("1")

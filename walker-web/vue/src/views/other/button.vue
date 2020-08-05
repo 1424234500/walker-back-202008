@@ -97,22 +97,6 @@
 
     <div>
       <span>图片相关 lazy插件</span>
-      <p>
-key	description	default	options
-preLoad	proportion of pre-loading height	1.3	Number
-error	src of the image upon load fail	'data-src'	String
-loading	src of the image while loading	'data-src'	String
-attempt	attempts count	3	Number
-listenEvents	events that you want vue listen for	['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']	Desired Listen Events
-adapter	dynamically modify the attribute of element	{ }	Element Adapter
-filter	the image's listener filter	{ }	Image listener filter
-lazyComponent	lazyload component	false	Lazy Component
-dispatchEvent	trigger the dom event	false	Boolean
-throttleWait	throttle wait	200	Number
-observer	use IntersectionObserver	false	Boolean
-observerOptions	IntersectionObserver options	{ rootMargin: '0px', threshold: 0.1 }	IntersectionObserver
-silent	do not print debug info	true	Boolean
-</p>
       <el-row>
         <span>vlazy-url</span>
         <span  v-for="item in urls">
@@ -120,8 +104,16 @@ silent	do not print debug info	true	Boolean
           <div><img style="width:200px;" v-lazy="item" ></div>
         </span>
         <span>
-          <div>src-404: @/assets/404_images/404.png</div>
-          <div><img style="width:200px;" src="@/assets/404_images/404.png" ></div>
+          <div>src-404: @/assets/404_images/404.png, {{imgAssert}}, ../../assets/emoji.png </div>
+          <div>
+          <!-- 引入资源的方式static文件夹可以使用~/static/方式引入, assets文件夹可以使用 ~@/assets 方式引入 -->
+            <img style="width:200px;" src="@/assets/404_images/404.png" >
+            <img style="width:200px;" src="@/assets/emoji.png" >
+            <img style="width:200px;" src="@/assets/emojiblue.png" >
+            <img style="width:200px;" src="@/assets/icons.png" >
+            <img style="width:200px;" :src="imgAssert" >
+            <img style="width:200px;" :src="imgStatic" >
+          </div>
         </span>
       </el-row>
 <p> url过滤器 本地图片文件加载 img src </p>
@@ -181,10 +173,13 @@ silent	do not print debug info	true	Boolean
         type: [],
         resource: '',
         desc: ''
-
         , ablum: {
           imgs: "https://img.alicdn.com/imgextra/https://img.alicdn.com/imgextra/i2/2355352178/O1CN01OyQ1EM1RxZD2wKyYC_!!2355352178.jpg_430x430q90.jpg,7f31c886301044ed2021f54043a6a0c7"
         },
+        imgAssert:require('../../assets/emoji.png'),
+        imgStatic:"",
+//                  <!-- 引入资源的方式static文件夹可以使用~/static/方式引入, assets文件夹可以使用 ~@/assets 方式引入 -->
+
       }
     },
     methods: {

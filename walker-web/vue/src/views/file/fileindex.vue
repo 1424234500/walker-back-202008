@@ -60,7 +60,16 @@
           min-width="100px"
         >
           <template slot-scope="scope">
+            <template v-if="scope.column.key!='EXT' ">
               {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
+            </template>
+            <template v-if="scope.column.key=='EXT' ">
+              {{scope.row[scope.column.property]}}  <!-- 渲染对应表格里面的内容 -->
+              <template v-if="isImage(scope.column.property)=='image' ">
+                <img class="image-icon margin2px " :alt="scope.row.IMGS0" :key="scope.row.IMGS0" :src=" scope.row.IMGS0 " />
+              </template>
+            </template>
+
           </template>
         </el-table-column>
         <el-table-column
@@ -145,6 +154,7 @@
 
 <script>
 // import { getList } from '@/api/table'
+import Vue from 'vue'
 
 export default {
   filters: {
@@ -210,12 +220,19 @@ export default {
       this.loadingList = true
       // name/nowPage/showNum
       var params = this.assign({nowPage: this.page.nowpage, showNum: this.page.shownum, order: this.page.order}, this.rowSearch)
+      var _self = this
       this.get('/file/findPage.do', params).then((res) => {
-        this.list = res.data.data
-        this.page = res.data.page
-        this.loadingList = false
+//              debugger
+
+        _self.list = res.data.data
+        for(let j = 0; j < _self.list.length; j++) {
+          var imgs = _self.list[j]['ID']
+          _self.list[j]['IMGS0'] = Vue.filter('filterImg')(imgs, 0, '100x100')
+        }
+        _self.page = res.data.page
+        _self.loadingList = false
       }).catch(() => {
-        this.loadingList = false
+        _self.loadingList = false
       })
     },
     //添加行
@@ -341,7 +358,7 @@ export default {
       return '';
     },
     download(row){
-        this.downPath(row.PATH, {}, row.NAME)
+        this.downId(row.ID, {}, row.NAME)
     },
   }
 }

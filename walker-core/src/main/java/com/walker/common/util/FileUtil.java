@@ -2,9 +2,12 @@ package com.walker.common.util;
 
 import com.walker.core.aop.Fun;
 import com.walker.core.aop.FunArgsReturn;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
@@ -12,6 +15,74 @@ import java.util.*;
 public class FileUtil {
 	public final static int SIZE_BUFFER = 1024 * 4;
 	public final static int SIZE_FLUSH = 1024 * 1024;
+
+	/**
+	 * 放缩图片问题
+	 * @param path	文件路径	/home/walker/files/2020/aslkdjflaksdjflka
+	 * @param ext	文件后缀类型	png
+	 * @param size	放缩尺寸	200x200
+	 * @return	返回放缩后的尺寸200x200   或者不转换 则 “”
+	 */
+	public static String makeIfImageThenSize(String path, String ext, String size, String toPath) throws IOException {
+		String res = "";
+		if(isImage(ext)){
+			Watch watch = new Watch("image-turn");
+			int width = 200;
+			int height = 200;
+			if( size != null && size.length() > 0 ){
+				if(size.indexOf("x") >= 0){
+					String[] sizes = size.split("x");
+					width = Integer.valueOf(sizes[0]);
+					if(sizes.length > 1){
+						height = Integer.valueOf(sizes[1]);
+					}else {
+						height = width;
+					}
+				}
+				res = width + "x" + height;
+				watch.cost("size w:" + width + "x" + "h:" + height);
+				watch.put("from", path);
+				watch.put("to", toPath);
+
+//				创建新文件 避免工具自动创建文件后缀名
+				new File(toPath).createNewFile();
+				OutputStream os = new FileOutputStream(toPath);
+				try {
+					/*
+					 * size(width,height) 若图片横比200小，高比300小，不变
+					 * 若图片横比200小，高比300大，高缩小到300，图片比例不变 若图片横比200大，高比300小，横缩小到200，图片比例不变
+					 * 若图片横比200大，高比300大，图片按比例缩小，横为200或高为300
+					 */
+					Thumbnails.of(new File(path))
+//						.scale(1.0D)
+							//					.keepAspectRatio(false)	//默认是按照比例缩放的
+							//					.rotate(90)
+							.size(width, height)
+							//					.watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File("images/watermark.png")), 0.5f)
+//						.outputQuality(1f)	//质量控制
+//						.outputFormatType("png")	//图片格式问题
+//						.toFile(new File(toPath))	//自动添加后缀 噩梦！！！
+							.toOutputStream(os)
+					;
+					os.flush();
+				}finally {
+					if(os != null) {
+						os.close();
+					}
+				}
+				watch.cost("turn");
+				log.info(watch.toPrettyString());
+			}
+		}
+		return res;
+	}
+	public static final List<String> types = Arrays.asList("png", "jpg", "jpeg", "bmp", "gif");
+	public static boolean isImage(String ext){
+		return types.contains(ext.toLowerCase());
+	}
+
+
+
 	public String copyFromStream(InputStream inputStream) throws IOException {
 		return copyFromStream(inputStream, "utf-8");
 	}
@@ -143,16 +214,17 @@ public class FileUtil {
 		if(funFileOrDir == null ) {
 			files.add(file); // 添加当前 节点
 		}
-		if (file.isDirectory()) { // 若是文件夹 则递归子节点 深度优先
+		boolean isChild = true;
+		if (funFileOrDir != null) { // 处理当前节点
+			isChild = funFileOrDir.make(file);
+		}
+		if (isChild && file.isDirectory()) { // 若是文件夹 则递归子节点 深度优先
 			File[] fillArr = file.listFiles();
 			if (fillArr == null)
 				return;
 			for (File file2 : fillArr) {
 				showDir(file2, files, funFileOrDir);// 把遍历得到的东西存放在files里面
 			}
-		}
-		if (funFileOrDir != null) { // 处理当前节点
-			funFileOrDir.make(file);
 		}
 	}
 
@@ -877,5 +949,6 @@ public class FileUtil {
 	public static void out(Object... objects) {
 		Tools.out("FileUtil", objects);
 	}
+	private static Logger log = LoggerFactory.getLogger("Files");
 
 }

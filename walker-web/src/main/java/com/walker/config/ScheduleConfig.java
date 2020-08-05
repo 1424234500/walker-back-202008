@@ -89,7 +89,7 @@ public class ScheduleConfig {
 		List<FileIndex> listSave = new ArrayList<>();
 		List<File> list = FileUtil.showDir(root, new Fun<File>(){
 			@Override
-			public <T> T make(File obj) {
+			public Boolean make(File obj) {
 				if(obj.isFile()){
 					String key = "";
 					try {
@@ -124,7 +124,10 @@ public class ScheduleConfig {
 						listSave.clear();
 					}
  				}
-				return null;
+				if(obj.isDirectory() && obj.getAbsolutePath().endsWith("_temp")){
+					return false;
+				}
+				return true;
 			}
 		});
 		if(listSave.size() > 0){
