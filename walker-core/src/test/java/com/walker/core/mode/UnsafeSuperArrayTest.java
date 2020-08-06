@@ -10,27 +10,21 @@ public class UnsafeSuperArrayTest {
 
     @Test
     public void set() {
-        UnsafeSuperArray array = new UnsafeSuperArray( (long)Integer.MAX_VALUE * 2 );
+        int maxv = 10;  //内存oom Integer.MAX_VALUE;
+//        UnsafeSuperArray array = new UnsafeSuperArray( (long)maxv * 2 );
+        UnsafeSuperArray array = new UnsafeSuperArray( (long)maxv * 2 );
         System.out.println("Array size:" + array.size()); // 4294967294
         int sum=0;
         for (int i = 0; i < 100; i++) {
-            array.set((long)Integer.MAX_VALUE + i, (byte)3);
-            sum += array.get((long)Integer.MAX_VALUE + i);
+            array.set((long)maxv + i, (byte)3);
+            sum += array.get((long)maxv + i);
         }
         System.out.println(sum);
-        array.set(Integer.MAX_VALUE + 998, (byte)6);
+        array.set(maxv + 998, (byte)6);
 
-        int res = array.get(Integer.MAX_VALUE + 998);
+        int res = array.get(maxv + 998);
         Tools.out("get", res, res == 6);
         Assert.assertTrue(res == 6);
 
-    }
-
-    @Test
-    public void get() {
-    }
-
-    @Test
-    public void size() {
     }
 }

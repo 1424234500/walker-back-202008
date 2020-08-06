@@ -11,9 +11,10 @@ public class XmlUtilTest {
 
     @Test
     public void toFullXml() throws DocumentException, FileNotFoundException {
+        String file = "/home/walker/test.xml";
+        FileUtil.saveAs("<html href='www.baidu.com'> <img src='www.ddf.png' >aacb</img> </html>", file, false);
 
-
-        Object bean = XmlUtil.parseConfig("test_temp.xml");
+        Object bean = XmlUtil.parseElement(file);
 //    	debug(JsonUtil.makeJson(bean, 0));
         debug(JsonUtil.makeJson(bean, 6));
 

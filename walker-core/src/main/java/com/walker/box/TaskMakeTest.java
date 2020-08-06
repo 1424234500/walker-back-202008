@@ -3,8 +3,6 @@ package com.walker.box;
 import com.walker.common.util.*;
 import com.walker.core.aop.Fun;
 import com.walker.core.encode.Pinyin;
-import org.springframework.stereotype.Repository;
-import org.springframework.util.StopWatch;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -68,7 +66,7 @@ public class TaskMakeTest {
 
 			@Override
 			public void onStartThread(int threadNo) {
-				StopWatch sw = new StopWatch();
+				Watch sw = new Watch();
 
 				Bean bbb = listOn.get(threadNo);
 				String className = bbb.get("PACKAGE", "");    // com.walker.Main
@@ -85,7 +83,7 @@ public class TaskMakeTest {
 						+ pak.replace('.', File.separatorChar)    //com/walker
 			+ File.separatorChar + testClassName + ".java";	// MainTest.java
 
-				sw.start("ana " + className);
+				sw.cost("ana " + className);
 				Class<?> clz  = ClassUtil.loadClass(className);
 				String modify = Modifier.toString(clz.getModifiers());
 
@@ -168,7 +166,7 @@ public class TaskMakeTest {
 					if(a.annotationType().toString().contains("Entity")){
 						isentity = true;
 					}
-					if(a.annotationType().isAssignableFrom(Repository.class)){
+					if(a.annotationType().toString().endsWith("Repository.class")){
 						isRepon = true;
 					}
 				}
@@ -219,7 +217,7 @@ public class TaskMakeTest {
 				
 
 				
-				sw.stop();
+				sw.cost("all");
 
 //				for(String exceptClass : lexceptClass){
 //					if(className.toLowerCase().contains(exceptClass)){
@@ -260,7 +258,7 @@ public class TaskMakeTest {
 					Class<?>[] paramTypes = method.getParameterTypes();//[String,String]
 					String name = method.getName();//toString
 
-					sw.start("" + method.toString());
+					sw.cost("" + method.toString());
 
 					StringBuilder sba = new StringBuilder();
 					for (Class<?> clzArg : method.getParameterTypes()) {
@@ -290,12 +288,12 @@ public class TaskMakeTest {
 
 
 //					ThreadUtil.sleep(10);
-					sw.stop();
+					sw.cost("all");
 
 				}
 
 				sb.append("}").append("\n");
-				sb.append("//").append(sw.prettyPrint().replace("\n", "\n//"));
+				sb.append("//").append(sw.toPrettyString().replace("\n", "\n//"));
 
 //				Tools.out(sb.toString());
 				FileUtil.mkfile(filepath);

@@ -43,7 +43,7 @@
                     <div>{{item.PRICE | money }} </div>
                 </div>
                 <div class="sub-right">
-                    <div>{{item.ABOUT | substr(10) }}</div>
+                    <div>{{item.NAME | substr(10) }}</div>
                 </div>
             </div>
         </div>

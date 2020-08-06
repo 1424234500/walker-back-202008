@@ -157,6 +157,12 @@
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 			<version>2.10.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
@@ -164,31 +170,89 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>3.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-clients</artifactId>
-			<version>0.11.0.0</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.apache.kafka</groupId>-->
+<!--			<artifactId>kafka-clients</artifactId>-->
+<!--			<version>0.11.0.0</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<artifactId>org.slf4j</artifactId>-->
+<!--					<groupId>slf4j-api</groupId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-streams</artifactId>
 			<version>0.11.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
 			<artifactId>zookeeper</artifactId>
 			<version>3.4.14</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.github.spotbugs</groupId>
+					<artifactId>spotbugs-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.netty</groupId>
+					<artifactId>netty</artifactId>
+					<!--					<version>3.10.6.Final</version>-->
+				</exclusion>
+			</exclusions>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/com.alibaba/dubbo -->
+		<!-- java.lang.reflect.MalformedParameterizedTypeException 异常 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>dubbo</artifactId>
+			<version>2.5.8</version>
+			<!-- 依赖引用冲突，所以排除掉 -->
+			<exclusions>
+				<exclusion>
+					<groupId>spring</groupId>
+					<artifactId>org.springframework</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.netty</groupId>
+					<artifactId>netty</artifactId>
+<!--					<version>3.2.5.Final</version>-->
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.16</version>
 <!--			5.1.38-->
-			<!-- <scope>runtime</scope> -->
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.mchange/c3p0 -->
@@ -202,21 +266,22 @@
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 			<version>2.3.2</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.alibaba/dubbo -->
-		<!-- java.lang.reflect.MalformedParameterizedTypeException 异常 -->
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>dubbo</artifactId>
-			<version>2.5.8</version>
-			<!-- 依赖引用冲突，所以排除掉 -->
 			<exclusions>
 				<exclusion>
-					<artifactId>spring</artifactId>
-					<groupId>org.springframework</groupId>
+					<groupId>com.mchange</groupId>
+					<artifactId>c3p0</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.mchange</groupId>
+					<artifactId>mchange-commons-java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/com.belerweb/pinyin4j -->
 		<dependency>
@@ -232,22 +297,16 @@
 <!--			<scope>provided</scope>-->
 <!--		</dependency>-->
 
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.9</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.apache.poi</groupId>-->
+<!--			<artifactId>poi</artifactId>-->
+<!--			<version>3.9</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.8</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -261,12 +320,6 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.11.2</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>com.google.guava</groupId>-->
-<!--			<artifactId>guava</artifactId>-->
-<!--			<version>25.1-android</version>-->
-<!--			<scope>compile</scope>-->
-<!--		</dependency>-->
 		<!-- https://mvnrepository.com/artifact/ch.ethz.ganymed/ganymed-ssh2 -->
 		<dependency>
 			<groupId>ch.ethz.ganymed</groupId>
@@ -284,6 +337,5 @@
 			<artifactId>thumbnailator</artifactId>
 			<version>0.4.8</version>
 		</dependency>
-
     </dependencies>
 </project>

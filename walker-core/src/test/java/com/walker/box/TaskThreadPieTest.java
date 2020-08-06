@@ -18,7 +18,7 @@ public class TaskThreadPieTest {
 
 
         List<String> ll = new ArrayList<>();
-        for(int i = 0; i < 9999; i++){
+        for(int i = 0; i < 99; i++){
             ll.add("t" + i);
         }
         Iterator<String> it = ll.iterator();

@@ -4,7 +4,6 @@ import com.walker.common.util.Page;
 import com.walker.common.util.Tools;
 import com.walker.core.database.BaseDao;
 import com.walker.core.database.SqlUtil;
-import org.springframework.lang.UsesJava7;
 
 import java.lang.annotation.AnnotationFormatError;
 import java.lang.invoke.MethodHandles;
@@ -89,7 +88,7 @@ public class WalkerJdbcProxy implements InvocationHandler {
 	private boolean isDefaultMethod(Method method) {
 		return (method.getModifiers() & 1033) == 1 && method.getDeclaringClass().isInterface();
 	}
-	@UsesJava7
+//	@UsesJava7
 	private Object invokeDefaultMethod(Object proxy, Method method, Object[] args) throws Throwable {
 		Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, Integer.TYPE);
 		if (!constructor.isAccessible()) {

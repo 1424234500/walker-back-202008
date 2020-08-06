@@ -13,11 +13,14 @@ public class SshTest {
 
         Server server = new Server("39.106.111.11", "walker", "");
         Ssh ssh = new Ssh(server);
-        Tools.out(ssh.execute("ls;date;ll;echo $PATH"));
-        Tools.out(ssh.execute("echo 1"));
-        Tools.out(ssh.execute("echo 2"));
-        ssh.close();
-
+        try {
+            Tools.out(ssh.execute("ls;date;ll;echo $PATH"));
+            Tools.out(ssh.execute("echo 1"));
+            Tools.out(ssh.execute("echo 2"));
+            ssh.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 }
