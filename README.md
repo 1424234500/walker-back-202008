@@ -2,10 +2,12 @@
 	想到什么写点什么
 	
 ####使用Maven多模块项目结构分离
+
     mvn clean package -Dmaven.test.skip=true
     mvn clean install -Dmaven.test.skip=true
 
 ####端口分配
+
     环境火墙8090+
     8090    walker-web
     8091    webservice
